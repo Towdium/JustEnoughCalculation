@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.inventory.Container;
 
 /**
@@ -45,8 +46,9 @@ public abstract class GuiTooltipScreen extends GuiContainer
     public void drawScreen(int mouseX, int mouseY, float f)
     {
         super.drawScreen(mouseX, mouseY, f);
-
+        RenderHelper.disableStandardItemLighting();
         DrawTooltipScreen(mouseX, mouseY);
+        RenderHelper.enableStandardItemLighting();
     }
 
     /**
@@ -60,8 +62,6 @@ public abstract class GuiTooltipScreen extends GuiContainer
     /**
      * Renders any special effects applied to tooltip buttons, and renders any tooltips for GuiButtons 
      * that are being mouseovered.
-     * @param mouseX
-     * @param mouseY
      */
     protected void DrawTooltipScreen(int mouseX, int mouseY)
     {
@@ -71,15 +71,11 @@ public abstract class GuiTooltipScreen extends GuiContainer
         int mousedOverButtonId = -1;
 
         //find out which button is being mouseovered
-        for(int i = 0; i < buttonList.size(); i++)
-        {
-            GuiButton button = (GuiButton)buttonList.get(i);
-
-            if(IsButtonMouseovered(mouseX, mouseY, button))
-            {
+        for (GuiButton button : buttonList) {
+            if (IsButtonMouseovered(mouseX, mouseY, button)) {
                 mousedOverButtonId = button.id;
 
-                if(ShowTooltipButtonMouseoverEffect && GetButtonTooltip(mousedOverButtonId) != null)
+                if (ShowTooltipButtonMouseoverEffect && GetButtonTooltip(mousedOverButtonId) != null)
                     RenderTooltipButtonMouseoverEffect(button);
 
                 break;
@@ -114,9 +110,6 @@ public abstract class GuiTooltipScreen extends GuiContainer
 
     /**
      * Determines if a GuiButton is being mouseovered.
-     * @param mouseX
-     * @param mouseY
-     * @param button
      * @return true if this button is mouseovered
      */
     protected boolean IsButtonMouseovered(int mouseX, int mouseY, GuiButton button)
@@ -130,15 +123,11 @@ public abstract class GuiTooltipScreen extends GuiContainer
      */
     protected void RenderTooltipButtonEffect()
     {
-        for(int i = 0; i < buttonList.size(); i++)
-        {
-            GuiButton button = buttonList.get(i);
-
-            if(GetButtonTooltip(button.id) != null)
-            {
+        for (GuiButton button : buttonList) {
+            if (GetButtonTooltip(button.id) != null) {
                 boolean flag = mc.fontRendererObj.getUnicodeFlag();
                 mc.fontRendererObj.setUnicodeFlag(true);
-                mc.fontRendererObj.drawStringWithShadow("?", button.xPosition+button.getButtonWidth()-5, button.yPosition, 0x99FFFFFF);
+                mc.fontRendererObj.drawStringWithShadow("?", button.xPosition + button.getButtonWidth() - 7, button.yPosition + 1, 14737632);
                 mc.fontRendererObj.setUnicodeFlag(flag);
             }
         }
@@ -146,21 +135,17 @@ public abstract class GuiTooltipScreen extends GuiContainer
 
     /**
      * Render anything special onto buttons that have tooltips assigned to them when they are mousevered.
-     * @param button
      */
     protected void RenderTooltipButtonMouseoverEffect(GuiButton button)
     {
         boolean flag = mc.fontRendererObj.getUnicodeFlag();
         mc.fontRendererObj.setUnicodeFlag(true);
-        mc.fontRendererObj.drawStringWithShadow(FontCodes.AQUA + "?", button.xPosition+button.getButtonWidth()-5, button.yPosition, 0xFFFFFF);
+        mc.fontRendererObj.drawStringWithShadow(FontCodes.AQUA + "?", button.xPosition+button.getButtonWidth()-7, button.yPosition+1, 14737632);
         mc.fontRendererObj.setUnicodeFlag(flag);
     }
 
     /**
      * Renders a tooltip at (x,y).
-     * @param x
-     * @param y
-     * @param tooltip
      */
     protected void RenderTooltip(int x, int y, String tooltip)
     {
@@ -211,24 +196,20 @@ public abstract class GuiTooltipScreen extends GuiContainer
     {
         s = DecodeStringCodes(s);
         String[] tooltipSections = s.split(tooltipNewlineDelimeter);
-        ArrayList<String> tooltipArrayList = new ArrayList<String>();
+        ArrayList<String> tooltipArrayList = new ArrayList<>();
 
         for(String section : tooltipSections)
         {
             String tooltip = "";
             String[] tooltipWords = section.split(" ");
 
-            for(int i = 0; i < tooltipWords.length; i++)
-            {
-                int lineWidthWithNextWord = mc.fontRendererObj.getStringWidth(tooltip + tooltipWords[i]);
-                if(lineWidthWithNextWord > tooltipMaxWidth)
-                {
+            for (String tooltipWord : tooltipWords) {
+                int lineWidthWithNextWord = mc.fontRendererObj.getStringWidth(tooltip + tooltipWord);
+                if (lineWidthWithNextWord > tooltipMaxWidth) {
                     tooltipArrayList.add(tooltip.trim());
-                    tooltip = tooltipWords[i] + " ";
-                }
-                else
-                {
-                    tooltip += tooltipWords[i] + " ";
+                    tooltip = tooltipWord + " ";
+                } else {
+                    tooltip += tooltipWord + " ";
                 }
             }
 
@@ -274,8 +255,6 @@ public abstract class GuiTooltipScreen extends GuiContainer
 
     /***
      * Gets the width of the tooltip in pixels.
-     * @param tooltipArray
-     * @return
      */
     private int GetTooltipWidth(String[] tooltipArray)
     {
@@ -291,8 +270,6 @@ public abstract class GuiTooltipScreen extends GuiContainer
 
     /**
      * Gets the height of the tooltip in pixels.
-     * @param tooltipArray
-     * @return
      */
     private int GetTooltipHeight(String[] tooltipArray)
     {
@@ -304,47 +281,6 @@ public abstract class GuiTooltipScreen extends GuiContainer
         return tooltipHeight;
     }
 
-    /**
-     * Gets a protected/private field from a class using reflection.
-     * @param <T> The return type of the field you are getting
-     * @param <E> The class the field is in
-     * @param classToAccess The ".class" of the class the field is in
-     * @param instance The instance of the class
-     * @param fieldNames comma seperated names the field may have (i.e. obfuscated, non obfuscated).
-     * Obfustated field names can be found in fml/conf/fields.csv
-     * @return
-     */
-    public static <T, E> T GetFieldByReflection(Class<? super E> classToAccess, E instance, String... fieldNames)
-    {
-        Field field = null;
-        for(String fieldName : fieldNames)
-        {
-            try
-            {
-                field = classToAccess.getDeclaredField(fieldName);
-            }
-            catch(NoSuchFieldException e){}
-
-            if(field != null)
-                break;
-        }
-
-        if(field != null)
-        {
-            field.setAccessible(true);
-            T fieldT = null;
-            try
-            {
-                fieldT = (T) field.get(instance);
-            }
-            catch (IllegalArgumentException e){}
-            catch (IllegalAccessException e){}
-
-            return fieldT;
-        }
-
-        return null;
-    }
 
     public class FontCodes
     {

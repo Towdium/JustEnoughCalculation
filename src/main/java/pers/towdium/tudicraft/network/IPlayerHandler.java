@@ -29,5 +29,5 @@ public interface IPlayerHandler {
 
     Recipe getRecipe(int index);
 
-    ImmutableList<ItemStack> getCostOf(ItemStack itemStack, int amount);
+    void syncItemCalculator(ItemStack itemIn, String string);
 }

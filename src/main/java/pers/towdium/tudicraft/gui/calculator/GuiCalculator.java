@@ -6,11 +6,8 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
@@ -20,26 +17,27 @@ import pers.towdium.tudicraft.core.ItemStackWrapper;
 import pers.towdium.tudicraft.gui.GuiTooltipScreen;
 import pers.towdium.tudicraft.gui.recipeEditor.ContainerRecipeEditor;
 import pers.towdium.tudicraft.gui.recipeEditor.GuiRecipeEditor;
-import pers.towdium.tudicraft.network.packages.PackageCalculatorUpdate;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * @author Towdium
  */
 public class GuiCalculator extends GuiTooltipScreen{
     GuiTextField textFieldAmount;
-    GuiButton edit;
+    GuiButton editButton;
+    GuiButton modeButton;
     Calculator.CostRecord costRecord;
     int activeSlot = -1;
     int page = 1;
-    EnumMode mode = EnumMode.input;
+    int total = 1;
+    EnumMode mode = EnumMode.INPUT;
 
 
-    public enum EnumMode {input, output, catalyst}
+    public enum EnumMode {INPUT, OUTPUT, CATALYST}
 
     public GuiCalculator(ContainerCalculator containerCalculator){
         super(containerCalculator);
@@ -48,14 +46,16 @@ public class GuiCalculator extends GuiTooltipScreen{
     @Override
     public void initGui() {
         super.initGui();
-        edit = new GuiButton(3, guiLeft+125, guiTop+31, 44, 20, StatCollector.translateToLocal("gui.calculator.edit"));
-        edit.enabled = false;
+        editButton = new GuiButton(3, guiLeft+90, guiTop+7, 37, 20, StatCollector.translateToLocal("gui.calculator.edit"));
+        editButton.enabled = false;
         buttonList.add(new GuiButton(1, guiLeft+7, guiTop+31, 79, 20, StatCollector.translateToLocal("gui.calculator.calculate")));
-        buttonList.add(new GuiButton(2, guiLeft+125, guiTop+7, 44, 20, StatCollector.translateToLocal("gui.calculator.add")));
-        buttonList.add(edit);
+        buttonList.add(new GuiButton(2, guiLeft+131, guiTop+7, 37, 20, StatCollector.translateToLocal("gui.calculator.add")));
+        buttonList.add(editButton);
         buttonList.add(new GuiButton(4, guiLeft+7, guiTop+139, 20, 20, "<"));
         buttonList.add(new GuiButton(5, guiLeft+149, guiTop+139, 20, 20, ">"));
-        textFieldAmount = new GuiTextField(0, fontRendererObj, guiLeft+39, guiTop+8, 44, 18);
+        modeButton = new GuiButton(6, guiLeft+90, guiTop+31, 79, 20, StatCollector.translateToLocal("gui.calculator.input"));
+        buttonList.add(modeButton);
+        textFieldAmount = new GuiTextField(0, fontRendererObj, guiLeft+39, guiTop+8, 45, 18);
         Slot dest = inventorySlots.getSlot(0);
         ItemStack itemStack = ((ContainerCalculator)inventorySlots).getPlayer().getHeldItem();
         dest.inventory.setInventorySlotContents(dest.getSlotIndex(), ItemStackWrapper.NBT.getItem(itemStack, "dest"));
@@ -79,7 +79,8 @@ public class GuiCalculator extends GuiTooltipScreen{
 
     @Override
     protected void drawGuiContainerForegroundLayer(int p_146979_1_, int p_146979_2_) {
-        this.fontRendererObj.drawString("x", 30, 13, 4210752);
+        fontRendererObj.drawString("x", 30, 13, 4210752);
+        drawCenteredStringWithoutShadow(fontRendererObj, page + " / " + total, 88, 145, 4210752);
     }
 
     @Override
@@ -97,15 +98,43 @@ public class GuiCalculator extends GuiTooltipScreen{
         switch (button.id){
             case 1:
                 if(inventorySlots.getSlot(0).getStack() != null){
-                    Calculator calculator = new Calculator(inventorySlots.getSlot(0).getStack(), Integer.valueOf(textFieldAmount.getText()));
-                    Calculator.CostRecord record = calculator.getCost();
-                    record.unify();
-                    costRecord = record;
+                    try{
+                        int i = Integer.valueOf(textFieldAmount.getText());
+                        Calculator calculator = new Calculator(inventorySlots.getSlot(0).getStack(), i);
+                        Calculator.CostRecord record = calculator.getCost();
+                        record.unify();
+                        costRecord = record;
+                        updateScreen();
+                    }catch (Exception e){
+                        textFieldAmount.setTextColor(16711680);
+                        TimerTask r = new TimerTask() {
+                            @Override
+                            public void run() {
+                                textFieldAmount.setTextColor(14737632);
+                            }
+                        };
+                        Timer t = new Timer();
+                        t.schedule(r, 1000);
+                    }
                 }
                 break;
             case 2:
+                Tudicraft.proxy.getPlayerHandler().syncItemCalculator(inventorySlots.getSlot(0).getStack(), textFieldAmount.getText());
                 mc.displayGuiScreen(new GuiRecipeEditor(new ContainerRecipeEditor(((ContainerCalculator)inventorySlots).getPlayer()), this));
                 break;
+            case 6:
+                switch (mode){
+                    case INPUT:
+                        mode = EnumMode.OUTPUT;
+                        break;
+                    case OUTPUT:
+                        mode = EnumMode.CATALYST;
+                        break;
+                    case CATALYST:
+                        mode = EnumMode.INPUT;
+                        break;
+                }
+                updateScreen();
         }
     }
 
@@ -121,37 +150,14 @@ public class GuiCalculator extends GuiTooltipScreen{
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY, float f) {
-        super.drawScreen(mouseX, mouseY, f);
-        //Method
-    }
-
-    public int getActiveSlot() {
-        return activeSlot;
-    }
-
-    public void setActiveSlot(int activeSlot) {
-        this.activeSlot = activeSlot;
-    }
-
-    @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         if (!this.textFieldAmount.textboxKeyTyped(typedChar, keyCode)){
+
             if(keyCode == 1){
-                ItemStack itemStack = ((ContainerCalculator)inventorySlots).getPlayer().getHeldItem();
-                ItemStackWrapper.NBT.setItem(itemStack, "dest", inventorySlots.getSlot(0).inventory.getStackInSlot(inventorySlots.getSlot(0).getSlotIndex()));
-                ItemStackWrapper.NBT.setString(itemStack, "text", textFieldAmount.getText());
-                Tudicraft.networkWrapper.sendToServer(new PackageCalculatorUpdate(((ContainerCalculator)inventorySlots).getPlayer().getHeldItem()));
+                Tudicraft.proxy.getPlayerHandler().syncItemCalculator(inventorySlots.getSlot(0).getStack(), textFieldAmount.getText());
                 ((ContainerCalculator)inventorySlots).getPlayer().closeScreen();
             }
         }
-    }
-
-    public void updateScreen(){
-
-    }
-
-    public void updateSlots(){
 
     }
 
@@ -177,10 +183,69 @@ public class GuiCalculator extends GuiTooltipScreen{
                 public void renderItemOverlayIntoGUI(FontRenderer fr, ItemStack stack, int xPosition, int yPosition, String text) {
                     boolean b = fr.getUnicodeFlag();
                     fr.setUnicodeFlag(true);
-                    super.renderItemOverlayIntoGUI(fr, stack, xPosition, yPosition, "≈1.23k");
+                    super.renderItemOverlayIntoGUI(fr, stack, xPosition, yPosition, ItemStackWrapper.getDisplayAmount(stack));
                     fr.setUnicodeFlag(b);
                 }
             };
+        }
+    }
+
+    @Override
+    protected void handleMouseClick(Slot slotIn, int slotId, int clickedButton, int clickType) {
+        if (slotIn != null)
+        {
+            slotId = slotIn.slotNumber;
+        }
+        mc.thePlayer.openContainer.slotClick(slotId, clickedButton, clickType, mc.thePlayer);
+    }
+
+    public void updateScreen(){
+        switch (mode){
+            case OUTPUT:
+                modeButton.displayString = StatCollector.translateToLocal("gui.calculator.output");
+                break;
+            case INPUT:
+                modeButton.displayString = StatCollector.translateToLocal("gui.calculator.input");
+                break;
+            case CATALYST:
+                modeButton.displayString = StatCollector.translateToLocal("gui.calculator.catalyst");
+                break;
+        }
+        editButton.enabled = Tudicraft.proxy.getPlayerHandler().getHasRecipeOf(inventorySlots.getSlot(0).getStack());
+
+
+
+        if(costRecord != null){
+            switch (mode){
+                case OUTPUT:
+                    fillSlotsWith(costRecord.getOutputStack(), (page-1)*36);break;
+                case INPUT:
+                    fillSlotsWith(costRecord.getInputStack(), (page-1)*36);break;
+                case CATALYST:
+                    fillSlotsWith(costRecord.getCatalystStack(), (page-1)*36);break;
+            }
+        }
+    }
+
+    public int getActiveSlot() {
+        return activeSlot;
+    }
+
+    public void setActiveSlot(int activeSlot) {
+        this.activeSlot = activeSlot;
+        if(activeSlot == -1){
+            Tudicraft.proxy.getPlayerHandler().syncItemCalculator(inventorySlots.getSlot(0).getStack(), textFieldAmount.getText());
+        }
+    }
+
+    public void drawCenteredStringWithoutShadow(FontRenderer fontRendererIn, String text, int x, int y, int color) {
+        fontRendererIn.drawString(text, x - fontRendererIn.getStringWidth(text) / 2, y, color);
+    }
+
+    private void fillSlotsWith(ItemStack[] itemStacks, int start){
+        int pos = 1;
+        for(int i=start ;i<=itemStacks.length-1 && i<=start+36; i++){
+            inventorySlots.getSlot(pos++).putStack(itemStacks[i]);
         }
     }
 }

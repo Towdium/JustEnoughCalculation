@@ -2,8 +2,13 @@ package pers.towdium.tudicraft.network;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
+import pers.towdium.tudicraft.Tudicraft;
+import pers.towdium.tudicraft.core.ItemStackWrapper;
 import pers.towdium.tudicraft.core.Recipe;
+import pers.towdium.tudicraft.gui.calculator.ContainerCalculator;
+import pers.towdium.tudicraft.network.packages.PackageCalculatorUpdate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,14 +106,12 @@ public class PlayerHandlerClient implements IPlayerHandler {
         return recipes.get(index);
     }
 
-    //TODO
     @Override
-    public ImmutableList<ItemStack> getCostOf(ItemStack itemStack, int amount) {
-        ImmutableList.Builder<ItemStack> builder = new ImmutableList.Builder<>();
-        //recipes.get(getRecipeIndexOf(itemStack))
-
-
-        return null;
+    public void syncItemCalculator(ItemStack itemIn, String string) {
+        ItemStack itemStack = Minecraft.getMinecraft().thePlayer.getHeldItem();
+        ItemStackWrapper.NBT.setItem(itemStack, "dest",itemIn );
+        ItemStackWrapper.NBT.setString(itemStack, "text", string);
+        Tudicraft.networkWrapper.sendToServer(new PackageCalculatorUpdate(itemStack));
     }
 
     ImmutableList<int[]> getAllUnsortedRecipeIndexOf(ItemStack itemStack){

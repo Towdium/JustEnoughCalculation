@@ -2,6 +2,7 @@ package pers.towdium.tudicraft.core;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 /**
  * @author Towdium
@@ -75,6 +76,10 @@ public class ItemRecord{
     }
 
     public ItemStack toItemStack(){
-        return new ItemStack(item, (int) amount, meta);
+        ItemStack itemStack = new ItemStack(item, 1, meta);
+        NBTTagCompound tagCompound = new NBTTagCompound();
+        tagCompound.setLong("amount", amount);
+        itemStack.setTagCompound(tagCompound);
+        return itemStack;
     }
 }

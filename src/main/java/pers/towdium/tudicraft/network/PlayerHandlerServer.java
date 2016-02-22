@@ -54,7 +54,7 @@ public class PlayerHandlerServer implements IPlayerHandler {
     }
 
     @Override
-    public ImmutableList<ItemStack> getCostOf(ItemStack itemStack, int amount) {
-        return null;
+    public void syncItemCalculator(ItemStack itemIn, String string) {
+
     }
 }

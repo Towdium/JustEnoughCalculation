@@ -58,6 +58,13 @@ public class ItemStackWrapper {
         return itemStack.stackSize*100;
     }
 
+    public static String getDisplayAmount(ItemStack itemStack){
+        if(itemStack != null && itemStack.getTagCompound() != null){
+            return itemStack.getTagCompound().getLong("amount")+"";
+        }
+        else return "";
+    }
+
     public static class NBT {
         public static void initNBT(ItemStack itemStack){
             if(!itemStack.hasTagCompound()){
@@ -99,6 +106,13 @@ public class ItemStackWrapper {
                 return dest.getTagCompound().getString(key);
             }
             else return "";
+        }
+
+        public static long getLong(ItemStack dest, String key){
+            if(dest.getTagCompound() != null){
+                return dest.getTagCompound().getLong(key);
+            }
+            else return 0;
         }
     }
 }

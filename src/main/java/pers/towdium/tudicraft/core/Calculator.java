@@ -239,6 +239,36 @@ public class Calculator {
             }
             input = builder.build();
         }
+
+        public ItemStack[] getOutputStack(){
+            ItemStack[] outputStack = new ItemStack[output.size()];
+            int i = 0;
+            for (ItemRecord record : output){
+                outputStack[i] = record.toItemStack();
+                i++;
+            }
+            return outputStack;
+        }
+
+        public ItemStack[] getInputStack(){
+            ItemStack[] inputStack = new ItemStack[input.size()];
+            int i = 0;
+            for (ItemRecord record : input){
+                inputStack[i] = record.toItemStack();
+                i++;
+            }
+            return inputStack;
+        }
+
+        public ItemStack[] getCatalystStack(){
+            ItemStack[] catalystStack = new ItemStack[catalyst.size()];
+            int i = 0;
+            for (ItemRecord record : catalyst){
+                catalystStack[i] = record.toItemStack();
+                i++;
+            }
+            return catalystStack;
+        }
     }
 }
 

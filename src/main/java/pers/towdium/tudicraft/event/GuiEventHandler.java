@@ -32,7 +32,7 @@ public class GuiEventHandler {
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onMouseClick(GuiScreenEvent.MouseInputEvent.Pre event){
         if(event.gui instanceof GuiRecipeEditor){
-            if(new Date().getTime() - time < 500){
+            if(new Date().getTime() - time < 200){
                 event.setCanceled(true);
                 return;
             }
@@ -60,20 +60,33 @@ public class GuiEventHandler {
                 }
             }
         }else if(event.gui instanceof GuiCalculator){
+            if(new Date().getTime() - time < 200){
+                event.setCanceled(true);
+                return;
+            }
             if (((GuiCalculator) event.gui).getActiveSlot() == 0){
-                Slot slot = ((GuiCalculator) event.gui).inventorySlots.getSlot(((GuiCalculator) event.gui).getActiveSlot());
+                Slot slot = ((GuiCalculator) event.gui).inventorySlots.getSlot(0);
                 ItemStack itemStack = JEIPlugin.runtime.getItemListOverlay().getStackUnderMouse();
-                if (itemStack != null){
-                    slot.inventory.setInventorySlotContents(slot.getSlotIndex(), itemStack);
-                }
+                slot.inventory.setInventorySlotContents(slot.getSlotIndex(), itemStack);
                 if (Mouse.isButtonDown(0)){
-                    ((GuiCalculator) event.gui).setActiveSlot(-1);
+                    time = new Date().getTime();
+                    Slot slot1 = ((GuiCalculator) event.gui).getSlotUnderMouse();
+                    if(slot1 != null){
+                        ((GuiCalculator) event.gui).setActiveSlot(slot1.getSlotIndex());
+                    }else {
+                        ((GuiCalculator) event.gui).setActiveSlot(-1);
+                    }
                     ((ContainerCalculator)((GuiCalculator) event.gui).inventorySlots).getPlayer().playSound("random.click", 1f, 1f );
                     event.setCanceled(true);
                 }
             } else if(((GuiCalculator) event.gui).getActiveSlot() != -1) {
                 if (Mouse.isButtonDown(0)){
-                    ((GuiCalculator) event.gui).setActiveSlot(-1);
+                    Slot slot1 = ((GuiCalculator) event.gui).getSlotUnderMouse();
+                    if(slot1 != null){
+                        ((GuiCalculator) event.gui).setActiveSlot(slot1.getSlotIndex());
+                    }else {
+                        ((GuiCalculator) event.gui).setActiveSlot(-1);
+                    }
                     ((ContainerCalculator)((GuiCalculator) event.gui).inventorySlots).getPlayer().playSound("random.click", 1f, 1f );
                     event.setCanceled(true);
                 }

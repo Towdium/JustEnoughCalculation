@@ -1,6 +1,9 @@
 gui.calculator.calculate=Calculate!
 gui.calculator.edit=Edit
 gui.calculator.add=Add
+gui.calculator.output=Output
+gui.calculator.input=Input
+gui.calculator.catalyst=Catalyst
 gui.calculator.editTooltip=Edit records of recipes
 gui.calculator.addTooltip=Add preferred recipe
 gui.itemPicker.confirm=Confirm
