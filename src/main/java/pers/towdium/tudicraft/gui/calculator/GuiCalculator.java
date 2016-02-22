@@ -36,7 +36,6 @@ public class GuiCalculator extends GuiTooltipScreen{
     int total = 1;
     EnumMode mode = EnumMode.INPUT;
 
-
     public enum EnumMode {INPUT, OUTPUT, CATALYST}
 
     public GuiCalculator(ContainerCalculator containerCalculator){

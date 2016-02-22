@@ -1,26 +1,19 @@
 package pers.towdium.tudicraft.event;
 
 
-import mezz.jei.gui.Focus;
 import mezz.jei.gui.ItemListOverlay;
-import mezz.jei.input.InputHandler;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.input.Mouse;
-import pers.towdium.tudicraft.Tudicraft;
 import pers.towdium.tudicraft.gui.calculator.ContainerCalculator;
 import pers.towdium.tudicraft.gui.calculator.GuiCalculator;
 import pers.towdium.tudicraft.gui.recipeEditor.ContainerRecipeEditor;
 import pers.towdium.tudicraft.gui.recipeEditor.GuiRecipeEditor;
-import pers.towdium.tudicraft.gui.recipeEditor.InventoryRecipeEditor;
 import pers.towdium.tudicraft.plugin.JEIPlugin;
 
-import java.lang.reflect.Method;
 import java.util.Date;
 
 /**
