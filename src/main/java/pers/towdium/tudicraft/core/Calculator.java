@@ -28,7 +28,7 @@ public class Calculator {
         this.catalystBuffer = catalystBuffer;
         this.itemRecord = itemRecord;
         this.operateRecords = operateRecords;
-        for (Recipe recipe : Tudicraft.proxy.getPlayerHandler().getAllRecipeOf(new ItemStack(itemRecord.item, itemRecord.meta))){
+        for (Recipe recipe : Tudicraft.proxy.getPlayerHandler().getAllRecipeOf(new ItemStack(itemRecord.item, itemRecord.meta), null)){
             if(checkRecipeValid(recipe)){
                 long count = getOperateCount(recipe, exceedMode);
                 this.currentOperate = new OperateRecord(recipe, count);

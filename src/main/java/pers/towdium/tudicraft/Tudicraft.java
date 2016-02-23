@@ -15,10 +15,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pers.towdium.tudicraft.event.GuiEventHandler;
+import pers.towdium.tudicraft.event.PlayerEventHandler;
 import pers.towdium.tudicraft.gui.GuiHandler;
 import pers.towdium.tudicraft.item.ItemCalculator;
 import pers.towdium.tudicraft.network.IProxy;
 import pers.towdium.tudicraft.network.packages.PackageCalculatorUpdate;
+import pers.towdium.tudicraft.network.packages.PackageRecipeUpdate;
 import pers.towdium.tudicraft.network.packages.PackageSlotUpdate;
 
 /**
@@ -48,8 +50,8 @@ public class Tudicraft {
         GameRegistry.registerItem(itemCalculator,itemCalculator.getUnlocalizedName().substring(5));
         networkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel(Reference.MODID);
         networkWrapper.registerMessage(PackageSlotUpdate.class, PackageSlotUpdate.class, 0, Side.SERVER);
-        networkWrapper.registerMessage(PackageCalculatorUpdate.class, PackageCalculatorUpdate.class, 0, Side.SERVER);
-
+        networkWrapper.registerMessage(PackageCalculatorUpdate.class, PackageCalculatorUpdate.class, 1, Side.SERVER);
+        networkWrapper.registerMessage(PackageRecipeUpdate.class, PackageRecipeUpdate.class, 2, Side.SERVER);
     }
 
     @Mod.EventHandler
@@ -58,8 +60,9 @@ public class Tudicraft {
             Minecraft.getMinecraft().getRenderItem().getItemModelMesher().
                     register(itemCalculator, 0, new ModelResourceLocation(Reference.MODID + ":" + itemCalculator.getUnlocalizedName().substring(5), "inventory"));
         }
-        NetworkRegistry.INSTANCE.registerGuiHandler(Tudicraft.instance, new GuiHandler());
-        MinecraftForge.EVENT_BUS.register(new GuiEventHandler());
+        proxy.init();
+
+
     }
 
 

@@ -1,6 +1,9 @@
 package pers.towdium.tudicraft.core;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 /**
  * @author Towdium
@@ -113,4 +116,97 @@ public class Recipe {
         }
         return true;
     }
+
+    public static class ByteBufUtl{
+        public static Recipe fromByte(ByteBuf buf){
+            short a = buf.readShort();
+            if(a == 0){
+                return null;
+            }
+            short b = buf.readShort();
+            ItemStack[] output = new ItemStack[4];
+            ItemStack[] input = new ItemStack[12];
+            for(int i=0; i<a; i++){
+                output[i] = ByteBufUtils.readItemStack(buf);
+            }
+            for(int i=0; i<b; i++){
+                input[i] = ByteBufUtils.readItemStack(buf);
+            }
+            return new Recipe(output, input);
+        }
+
+        public static void toByte(ByteBuf buf, Recipe recipe){
+            if(recipe == null){
+                buf.writeShort(0);
+                return;
+            }
+            short a = 0;
+            short b = 0;
+            for(ItemStack itemStack : recipe.output){
+                if(itemStack != null){
+                    a++;
+                }
+            }
+            for(ItemStack itemStack : recipe.input){
+                if(itemStack != null){
+                    b++;
+                }
+            }
+            buf.writeShort(a);
+            buf.writeShort(b);
+            ItemStack[] output1 = recipe.output;
+            for (ItemStack itemStack : output1) {
+                if(itemStack != null){
+                    ByteBufUtils.writeItemStack(buf, itemStack);
+                }
+            }
+            ItemStack[] input1 = recipe.input;
+            for (ItemStack itemStack : input1) {
+                if(itemStack != null){
+                    ByteBufUtils.writeItemStack(buf, itemStack);
+                }
+            }
+        }
+    }
+
+    public static class NBTUtl{
+        public static NBTTagCompound toNBT(Recipe recipe){
+            NBTTagCompound tagCompound = new NBTTagCompound();
+            for(int i=0; i<4; i++){
+                if(recipe.output[i] != null){
+                    NBTTagCompound buffer = new NBTTagCompound();
+                    recipe.output[i].writeToNBT(buffer);
+                    tagCompound.setTag(i+"", buffer);
+                }
+            }
+            for(int i=0; i<12; i++){
+                if(recipe.input[i] != null){
+                    NBTTagCompound buffer = new NBTTagCompound();
+                    recipe.input[i].writeToNBT(buffer);
+                    tagCompound.setTag((i+4)+"", buffer);
+                }
+            }
+            return tagCompound;
+        }
+
+        public static Recipe fromNBT (NBTTagCompound tagCompound){
+            ItemStack[] output = new ItemStack[4];
+            ItemStack[] input = new ItemStack[12];
+            for(int i=0; i<4; i++){
+                NBTTagCompound buffer = tagCompound.getCompoundTag(String.valueOf(i));
+                if(buffer != null){
+                    output[i] = ItemStack.loadItemStackFromNBT(buffer);
+                }
+            }
+            for(int i=0; i<12; i++){
+                NBTTagCompound buffer = tagCompound.getCompoundTag(String.valueOf(i+4));
+                if(buffer != null){
+                    input[i] = ItemStack.loadItemStackFromNBT(buffer);
+                }
+            }
+            return new Recipe(output, input);
+        }
+    }
+
+
 }

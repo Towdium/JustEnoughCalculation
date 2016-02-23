@@ -103,7 +103,7 @@ public class GuiCalculator extends GuiTooltipScreen{
                         Calculator.CostRecord record = calculator.getCost();
                         record.unify();
                         costRecord = record;
-                        updateScreen();
+                        updateLayout();
                     }catch (Exception e){
                         textFieldAmount.setTextColor(16711680);
                         TimerTask r = new TimerTask() {
@@ -133,7 +133,7 @@ public class GuiCalculator extends GuiTooltipScreen{
                         mode = EnumMode.INPUT;
                         break;
                 }
-                updateScreen();
+                updateLayout();
         }
     }
 
@@ -198,7 +198,7 @@ public class GuiCalculator extends GuiTooltipScreen{
         mc.thePlayer.openContainer.slotClick(slotId, clickedButton, clickType, mc.thePlayer);
     }
 
-    public void updateScreen(){
+    public void updateLayout(){
         switch (mode){
             case OUTPUT:
                 modeButton.displayString = StatCollector.translateToLocal("gui.calculator.output");
@@ -210,10 +210,7 @@ public class GuiCalculator extends GuiTooltipScreen{
                 modeButton.displayString = StatCollector.translateToLocal("gui.calculator.catalyst");
                 break;
         }
-        editButton.enabled = Tudicraft.proxy.getPlayerHandler().getHasRecipeOf(inventorySlots.getSlot(0).getStack());
-
-
-
+        editButton.enabled = Tudicraft.proxy.getPlayerHandler().getHasRecipeOf(inventorySlots.getSlot(0).getStack(), null);
         if(costRecord != null){
             switch (mode){
                 case OUTPUT:
@@ -243,8 +240,12 @@ public class GuiCalculator extends GuiTooltipScreen{
 
     private void fillSlotsWith(ItemStack[] itemStacks, int start){
         int pos = 1;
-        for(int i=start ;i<=itemStacks.length-1 && i<=start+36; i++){
-            inventorySlots.getSlot(pos++).putStack(itemStacks[i]);
+        for(int i=start; i<start+36; i++){
+            if(i<=itemStacks.length-1){
+                inventorySlots.getSlot(pos++).putStack(itemStacks[i]);
+            }else {
+                inventorySlots.putStackInSlot(pos++, null);
+            }
         }
     }
 }

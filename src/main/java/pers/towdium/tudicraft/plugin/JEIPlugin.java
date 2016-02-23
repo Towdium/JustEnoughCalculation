@@ -16,7 +16,6 @@ import javax.swing.plaf.TableUI;
 public class JEIPlugin implements IModPlugin{
     public static IJeiRuntime runtime;
 
-
     @Override
     public void onJeiHelpersAvailable(IJeiHelpers jeiHelpers) {
 

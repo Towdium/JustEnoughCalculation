@@ -10,6 +10,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import pers.towdium.tudicraft.Tudicraft;
 import pers.towdium.tudicraft.core.Recipe;
+import pers.towdium.tudicraft.network.packages.PackageRecipeUpdate;
 
 import java.io.IOException;
 import java.sql.Time;
@@ -68,7 +69,9 @@ public class GuiRecipeEditor extends GuiContainer{
             Slot slot = inventorySlots.getSlot(buttonId);
             slot.inventory.setInventorySlotContents(slot.getSlotIndex(), null);
         }else if(buttonId == 16) {
-            Tudicraft.proxy.getPlayerHandler().addRecipe(((ContainerRecipeEditor)inventorySlots).buildRecipe());
+            Recipe recipe = ((ContainerRecipeEditor)inventorySlots).buildRecipe();
+            Tudicraft.proxy.getPlayerHandler().addRecipe(recipe, null);
+            Tudicraft.networkWrapper.sendToServer(new PackageRecipeUpdate(recipe, -1));
             mc.displayGuiScreen(parent);
         }else if(buttonId == 17) {
             for(Slot slot : inventorySlots.inventorySlots){

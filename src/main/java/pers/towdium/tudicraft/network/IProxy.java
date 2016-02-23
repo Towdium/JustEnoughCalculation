@@ -11,5 +11,7 @@ import pers.towdium.tudicraft.core.Recipe;
 public interface IProxy {
     IPlayerHandler getPlayerHandler();
 
+    void init();
+
 
 }

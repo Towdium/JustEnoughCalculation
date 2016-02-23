@@ -4,23 +4,33 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.play.server.S42PacketCombatEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import pers.towdium.tudicraft.Tudicraft;
 import pers.towdium.tudicraft.core.ItemStackWrapper;
 import pers.towdium.tudicraft.core.Recipe;
 import pers.towdium.tudicraft.gui.calculator.ContainerCalculator;
 import pers.towdium.tudicraft.network.packages.PackageCalculatorUpdate;
+import pers.towdium.tudicraft.network.packages.PackageRecipeUpdate;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author Towdium
  */
 public class PlayerHandlerClient implements IPlayerHandler {
-    List<Recipe> recipes = new ArrayList<>();
+    List<Recipe> recipes;
 
     @Override
-    public void addRecipe(Recipe recipe) {
+    public void addRecipe(Recipe recipe, UUID uuid) {
         for (Recipe oneRecipe : recipes){
             if(oneRecipe.equals(recipe)){
                 return;
@@ -32,7 +42,7 @@ public class PlayerHandlerClient implements IPlayerHandler {
     }
 
     @Override
-    public boolean getHasRecipeOf(ItemStack itemStack) {
+    public boolean getHasRecipeOf(ItemStack itemStack, UUID uuid) {
         for (Recipe recipe : recipes){
             if(recipe.getHasOutput(itemStack)){
                 return true;
@@ -42,8 +52,8 @@ public class PlayerHandlerClient implements IPlayerHandler {
     }
 
     @Override
-    public Recipe getRecipeOf(ItemStack itemStack) {
-        int i = getRecipeIndexOf(itemStack);
+    public Recipe getRecipeOf(ItemStack itemStack, UUID uuid) {
+        int i = getRecipeIndexOf(itemStack, null);
         if(i == -1){
             return null;
         }else {
@@ -52,16 +62,16 @@ public class PlayerHandlerClient implements IPlayerHandler {
     }
 
     @Override
-    public ImmutableList<Recipe> getAllRecipeOf(ItemStack itemStack) {
+    public ImmutableList<Recipe> getAllRecipeOf(ItemStack itemStack, UUID uuid) {
         ImmutableList.Builder<Recipe> recipeBuilder = new ImmutableList.Builder<>();
-        for(Integer index : getAllRecipeIndexOf(itemStack)){
+        for(Integer index : getAllRecipeIndexOf(itemStack, null)){
             recipeBuilder.add(recipes.get(index));
         }
         return recipeBuilder.build();
     }
 
     @Override
-    public int getRecipeIndexOf(ItemStack itemStack) {
+    public int getRecipeIndexOf(ItemStack itemStack, UUID uuid) {
         int[] result = new int[]{-1, -1, -1, -1};
         for(int[] record : getAllUnsortedRecipeIndexOf(itemStack)){
             result[record[1]] = record[0];
@@ -75,7 +85,7 @@ public class PlayerHandlerClient implements IPlayerHandler {
     }
 
     @Override
-    public ImmutableList<Integer> getAllRecipeIndexOf(ItemStack itemStack) {
+    public ImmutableList<Integer> getAllRecipeIndexOf(ItemStack itemStack, UUID uuid) {
         ImmutableList.Builder<ImmutableList.Builder<Integer>> builder1 = new ImmutableList.Builder<>();
         for(int i=0; i<4; i++){
             builder1.add(new ImmutableList.Builder<Integer>());
@@ -92,17 +102,17 @@ public class PlayerHandlerClient implements IPlayerHandler {
     }
 
     @Override
-    public void removeRecipe(int index) {
+    public void removeRecipe(int index, UUID uuid) {
         recipes.remove(index);
     }
 
     @Override
-    public void setRecipe(Recipe recipe, int index) {
+    public void setRecipe(Recipe recipe, int index, UUID uuid) {
         recipes.set(index, recipe);
     }
 
     @Override
-    public Recipe getRecipe(int index) {
+    public Recipe getRecipe(int index, UUID uuid) {
         return recipes.get(index);
     }
 
@@ -112,6 +122,30 @@ public class PlayerHandlerClient implements IPlayerHandler {
         ItemStackWrapper.NBT.setItem(itemStack, "dest",itemIn );
         ItemStackWrapper.NBT.setString(itemStack, "text", string);
         Tudicraft.networkWrapper.sendToServer(new PackageCalculatorUpdate(itemStack));
+    }
+
+    @Override
+    public void handleLogin(PlayerEvent.LoadFromFile event) {
+        try {
+            FileInputStream stream = new FileInputStream(event.getPlayerFile("jeca"));
+            NBTTagCompound tagCompound = CompressedStreamTools.readCompressed(stream);
+            readFromNBT(tagCompound);
+        } catch (Exception e) {
+            recipes = new ArrayList<>();
+        }
+    }
+
+    @Override
+    public void handleSave(PlayerEvent.SaveToFile event) {
+        try{
+            File file = event.getPlayerFile("jeca");
+            NBTTagCompound compound = new NBTTagCompound();
+            writeToNBT(compound);
+            FileOutputStream fileoutputstream = new FileOutputStream(file);
+            CompressedStreamTools.writeCompressed(compound, fileoutputstream);
+        }catch (Exception e){
+            Tudicraft.log.warn("Fail to save records for"+event.entityPlayer.getDisplayName());
+        }
     }
 
     ImmutableList<int[]> getAllUnsortedRecipeIndexOf(ItemStack itemStack){
@@ -127,4 +161,20 @@ public class PlayerHandlerClient implements IPlayerHandler {
         return builder.build();
     }
 
+    public void readFromNBT(NBTTagCompound tagCompound){
+        int amount = tagCompound.getInteger("amount");
+        List<Recipe> recipes = new ArrayList<>(amount);
+        for(int i=0; i<amount; i++){
+            recipes.add(Recipe.NBTUtl.fromNBT((NBTTagCompound) tagCompound.getTag(String.valueOf(i))));
+        }
+        this.recipes = recipes;
+    }
+
+    public void writeToNBT(NBTTagCompound tagCompound){
+        tagCompound.setInteger("amount", recipes.size());
+        int index = 0;
+        for(Recipe recipe : recipes){
+            tagCompound.setTag(String.valueOf(index++), Recipe.NBTUtl.toNBT(recipe));
+        }
+    }
 }
