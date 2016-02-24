@@ -1,4 +1,4 @@
-package pers.towdium.justEnoughCalculation.gui.calculator;
+package pers.towdium.justEnoughCalculation.gui.guis.calculator;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -14,11 +14,9 @@ import net.minecraft.util.StatCollector;
 import pers.towdium.justEnoughCalculation.JustEnoughCalculation;
 import pers.towdium.justEnoughCalculation.core.Calculator;
 import pers.towdium.justEnoughCalculation.core.ItemStackWrapper;
-import pers.towdium.justEnoughCalculation.gui.GuiTooltipScreen;
-import pers.towdium.justEnoughCalculation.gui.recipeEditor.ContainerRecipeEditor;
-import pers.towdium.justEnoughCalculation.gui.recipeEditor.GuiRecipeEditor;
-import pers.towdium.justEnoughCalculation.network.PlayerHandlerClient;
-import pers.towdium.justEnoughCalculation.network.PlayerHandlerServer;
+import pers.towdium.justEnoughCalculation.gui.commom.GuiTooltipScreen;
+import pers.towdium.justEnoughCalculation.gui.guis.recipeEditor.ContainerRecipeEditor;
+import pers.towdium.justEnoughCalculation.gui.guis.recipeEditor.GuiRecipeEditor;
 import pers.towdium.justEnoughCalculation.network.packets.PacketSyncRecord;
 
 import java.io.IOException;
@@ -123,7 +121,7 @@ public class GuiCalculator extends GuiTooltipScreen{
                 break;
             case 2:
                 JustEnoughCalculation.proxy.getPlayerHandler().syncItemCalculator(inventorySlots.getSlot(0).getStack(), textFieldAmount.getText());
-                mc.displayGuiScreen(new GuiRecipeEditor(new ContainerRecipeEditor(((ContainerCalculator)inventorySlots).getPlayer()), this));
+                mc.displayGuiScreen(new GuiRecipeEditor(new ContainerRecipeEditor(), this));
                 break;
             case 6:
                 switch (mode){

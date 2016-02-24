@@ -8,6 +8,7 @@ gui.calculator.editTooltip=Edit records of recipes
 gui.calculator.addTooltip=Add preferred recipe
 gui.itemPicker.confirm=Confirm
 gui.itemPicker.search=Search
+gui.recipePicker.delete=Delete
 gui.recipeEditor.save=Save
 gui.recipeEditor.clear=Clear
 item.itemCalculator.name=Calculator

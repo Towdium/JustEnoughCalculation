@@ -1,4 +1,4 @@
-package pers.towdium.justEnoughCalculation.gui;
+package pers.towdium.justEnoughCalculation.gui.commom;
 
 import java.util.ArrayList;
 

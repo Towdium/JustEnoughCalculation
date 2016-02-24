@@ -34,4 +34,8 @@ public interface IPlayerHandler {
     void handleLogin(net.minecraftforge.event.entity.player.PlayerEvent.LoadFromFile event);
 
     void handleSave(net.minecraftforge.event.entity.player.PlayerEvent.SaveToFile event);
+
+    boolean removeRecipe(Recipe recipe, UUID uuid);
+
+    boolean containsRecipe(Recipe recipe, UUID uuid);
 }

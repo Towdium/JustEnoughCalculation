@@ -143,6 +143,16 @@ public class PlayerHandlerClient implements IPlayerHandler {
         }
     }
 
+    @Override
+    public boolean removeRecipe(Recipe recipe, UUID uuid) {
+        return recipes.remove(recipe);
+    }
+
+    @Override
+    public boolean containsRecipe(Recipe recipe, UUID uuid) {
+        return recipes.contains(recipe);
+    }
+
     ImmutableList<int[]> getAllUnsortedRecipeIndexOf(ItemStack itemStack){
         ImmutableList.Builder<int[]> builder = new ImmutableList.Builder<>();
         int size = recipes.size();

@@ -114,4 +114,60 @@ public class ItemStackWrapper {
             else return 0;
         }
     }
+
+    public static class Click {
+        public static boolean leftClick(ItemStack itemStack, boolean doChange){
+            if(itemStack == null || itemStack.stackSize>=64){
+                return false;
+            }else {
+                if(doChange){
+                    itemStack.stackSize += 1;
+                }
+                return true;
+            }
+        }
+
+        public static boolean leftShift(ItemStack itemStack, boolean doChange){
+            if(itemStack == null || itemStack.stackSize>=64){
+                return false;
+            }else {
+                if(doChange){
+                    if(itemStack.stackSize == 1){
+                        itemStack.stackSize = 10;
+                    }else if(itemStack.stackSize <= 54){
+                        itemStack.stackSize += 10;
+                    }else {
+                        itemStack.stackSize = 64;
+                    }
+                }
+                return true;
+            }
+        }
+
+        public static boolean rightClick(ItemStack itemStack, boolean doChange){
+            if(itemStack == null){
+                return false;
+            }else {
+                if(doChange){
+                    itemStack.stackSize -= 1;
+                }
+                return true;
+            }
+        }
+
+        public static boolean rightShift(ItemStack itemStack, boolean doChange){
+            if(itemStack == null || itemStack.stackSize>=64){
+                return false;
+            }else {
+                if(doChange){
+                    if(itemStack.stackSize <= 10){
+                        itemStack.stackSize = 0;
+                    } else {
+                        itemStack.stackSize -= 10;
+                    }
+                }
+                return true;
+            }
+        }
+    }
 }

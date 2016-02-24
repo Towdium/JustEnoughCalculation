@@ -1,4 +1,4 @@
-package pers.towdium.justEnoughCalculation.gui.recipeEditor;
+package pers.towdium.justEnoughCalculation.gui.commom.recipe;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -6,27 +6,25 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.inventory.Slot;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
 import pers.towdium.justEnoughCalculation.JustEnoughCalculation;
-import pers.towdium.justEnoughCalculation.core.Recipe;
-import pers.towdium.justEnoughCalculation.network.packets.PacketRecipeUpdate;
 
 import java.io.IOException;
 
 /**
  * @author Towdium
  */
-public class GuiRecipeEditor extends GuiContainer{
-    GuiScreen parent;
+public class GuiRecipe extends GuiContainer{
+    protected GuiScreen parent;
     protected int activeSlot = -1;
 
-    public GuiRecipeEditor(ContainerRecipeEditor containerRecipeEditor, GuiScreen parent){
-        super(containerRecipeEditor);
+
+    public GuiRecipe(ContainerRecipe containerRecipe, GuiScreen parent){
+        super(containerRecipe);
         this.parent = parent;
     }
 
-    public GuiRecipeEditor(ContainerRecipeEditor containerRecipeEditor){
-        super(containerRecipeEditor);
+    public GuiRecipe(ContainerRecipe containerRecipe){
+        super(containerRecipe);
     }
 
     @Override
@@ -45,14 +43,12 @@ public class GuiRecipeEditor extends GuiContainer{
                 buttonList.add(new GuiButton(i+3*a+b, left+b*59, top+a*24, 20, 20, "X"));
             }
         }
-        buttonList.add(new GuiButton(16, guiLeft+125, guiTop+7, 44, 20, StatCollector.translateToLocal("gui.recipeEditor.save")));
-        buttonList.add(new GuiButton(17, guiLeft+125, guiTop+31, 44, 20, StatCollector.translateToLocal("gui.recipeEditor.clear")));
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID,"textures/gui/guiRecipeEditor.png"));
+        this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID,"textures/gui/guiRecipe.png"));
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
         if(activeSlot != -1){
             Slot slot = inventorySlots.getSlot(activeSlot);
@@ -66,15 +62,6 @@ public class GuiRecipeEditor extends GuiContainer{
         if(buttonId <= 15){
             Slot slot = inventorySlots.getSlot(buttonId);
             slot.inventory.setInventorySlotContents(slot.getSlotIndex(), null);
-        }else if(buttonId == 16) {
-            Recipe recipe = ((ContainerRecipeEditor)inventorySlots).buildRecipe();
-            JustEnoughCalculation.proxy.getPlayerHandler().addRecipe(recipe, null);
-            JustEnoughCalculation.networkWrapper.sendToServer(new PacketRecipeUpdate(recipe, -1));
-            mc.displayGuiScreen(parent);
-        }else if(buttonId == 17) {
-            for(Slot slot : inventorySlots.inventorySlots){
-                slot.inventory.setInventorySlotContents(slot.getSlotIndex(), null);
-            }
         }
     }
 
@@ -87,7 +74,7 @@ public class GuiRecipeEditor extends GuiContainer{
         Slot slot = getSlotUnderMouse();
         if(slot != null && mouseButton == 0 && slot.getStack() == null){
             activeSlot = slot.getSlotIndex();
-            ((ContainerRecipeEditor)inventorySlots).getPlayer().playSound("random.click", 1f, 1f );
+            mc.thePlayer.playSound("random.click", 1f, 1f );
         }
     }
 
@@ -105,6 +92,12 @@ public class GuiRecipeEditor extends GuiContainer{
         if (keyCode == 1) {
             mc.displayGuiScreen(parent);
         }
+    }
+
+    public void click(int mouseX, int mouseY, int mouseButton){
+        try {
+            this.mouseClicked(mouseX, mouseY, mouseButton);
+        } catch (IOException ignored) {}
     }
 
     public int getActiveSlot() {

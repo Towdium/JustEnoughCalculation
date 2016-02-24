@@ -1,4 +1,4 @@
-package pers.towdium.justEnoughCalculation.gui.recipeEditor;
+package pers.towdium.justEnoughCalculation.gui.commom.recipe;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -10,27 +10,25 @@ import pers.towdium.justEnoughCalculation.core.Recipe;
 /**
  * @author Towdium
  */
-public class ContainerRecipeEditor extends Container {
+public class ContainerRecipe extends Container {
 
-    InventoryRecipeEditor inventoryRecipeEditor;
-    EntityPlayer player;
+    InventoryRecipe inventoryRecipe;
 
-    public ContainerRecipeEditor(EntityPlayer player){
-        inventoryRecipeEditor = new InventoryRecipeEditor();
+    public ContainerRecipe(){
+        inventoryRecipe = new InventoryRecipe();
         int i, left, top;
         i = 0; left = 9; top = 9;
         for(int a = 0; a < 2; a++){
             for(int b =0; b < 2; b++){
-                addSlotToContainer(new Slot(inventoryRecipeEditor,i+2*a+b,left+b*59,top+a*24));
+                addSlotToContainer(new Slot(inventoryRecipe,i+2*a+b,left+b*59,top+a*24));
             }
         }
         i = 4; left = 9; top = 69;
         for(int a = 0; a < 4; a++){
             for(int b =0; b < 3; b++){
-                addSlotToContainer(new Slot(inventoryRecipeEditor,i+3*a+b,left+b*59,top+a*24));
+                addSlotToContainer(new Slot(inventoryRecipe,i+3*a+b,left+b*59,top+a*24));
             }
         }
-        this.player = player;
     }
 
     @Override
@@ -71,10 +69,6 @@ public class ContainerRecipeEditor extends Container {
     @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
         return null;
-    }
-
-    public EntityPlayer getPlayer() {
-        return player;
     }
 
     public Recipe buildRecipe(){

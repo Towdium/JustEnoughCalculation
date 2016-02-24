@@ -1,4 +1,4 @@
-package pers.towdium.justEnoughCalculation.gui.itemPicker;
+package pers.towdium.justEnoughCalculation.gui.guis.itemPicker;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;

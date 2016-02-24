@@ -8,7 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import pers.towdium.justEnoughCalculation.core.ItemStackWrapper;
-import pers.towdium.justEnoughCalculation.gui.recipeEditor.ContainerRecipeEditor;
+import pers.towdium.justEnoughCalculation.gui.guis.recipeEditor.ContainerRecipeEditor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

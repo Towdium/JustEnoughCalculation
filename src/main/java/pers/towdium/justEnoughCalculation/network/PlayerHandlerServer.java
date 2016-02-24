@@ -80,6 +80,16 @@ public class PlayerHandlerServer implements IPlayerHandler {
         players.get(UUID.fromString(event.playerUUID)).handleSave(event);
     }
 
+    @Override
+    public boolean removeRecipe(Recipe recipe, UUID uuid) {
+        return false;
+    }
+
+    @Override
+    public boolean containsRecipe(Recipe recipe, UUID uuid) {
+        return false;
+    }
+
     public PlayerHandlerClient getClient(UUID uuid){
         return players.get(uuid);
     }

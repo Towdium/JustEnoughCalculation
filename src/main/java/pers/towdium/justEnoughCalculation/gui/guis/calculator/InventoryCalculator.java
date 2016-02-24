@@ -1,4 +1,4 @@
-package pers.towdium.justEnoughCalculation.gui.calculator;
+package pers.towdium.justEnoughCalculation.gui.guis.calculator;
 
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;

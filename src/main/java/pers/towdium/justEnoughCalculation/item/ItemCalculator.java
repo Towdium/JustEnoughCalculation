@@ -20,7 +20,7 @@ public class ItemCalculator extends Item {
 
     @Override
     public ItemStack onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn) {
-        playerIn.openGui(JustEnoughCalculation.instance, GuiHandler.GuiId.CALCULATOR, worldIn, 0, 0, 0);
+        playerIn.openGui(JustEnoughCalculation.instance, GuiHandler.GuiId.RECIPE_PICKER, worldIn, 0, 0, 0);
         return itemStackIn;
     }
 

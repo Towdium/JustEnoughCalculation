@@ -8,10 +8,9 @@ import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.input.Mouse;
-import pers.towdium.justEnoughCalculation.gui.calculator.ContainerCalculator;
-import pers.towdium.justEnoughCalculation.gui.calculator.GuiCalculator;
-import pers.towdium.justEnoughCalculation.gui.recipeEditor.ContainerRecipeEditor;
-import pers.towdium.justEnoughCalculation.gui.recipeEditor.GuiRecipeEditor;
+import pers.towdium.justEnoughCalculation.gui.guis.calculator.ContainerCalculator;
+import pers.towdium.justEnoughCalculation.gui.guis.calculator.GuiCalculator;
+import pers.towdium.justEnoughCalculation.gui.guis.recipeEditor.GuiRecipeEditor;
 import pers.towdium.justEnoughCalculation.plugin.JEIPlugin;
 
 import java.util.Date;
@@ -38,7 +37,7 @@ public class GuiEventHandler {
                     time = new Date().getTime();
                     if(guiContainer.getSlotUnderMouse() != null){
                         guiContainer.setActiveSlot(guiContainer.getSlotUnderMouse().getSlotIndex());
-                        ((ContainerRecipeEditor)((GuiRecipeEditor) event.gui).inventorySlots).getPlayer().playSound("random.click", 1f, 1f );
+                        event.gui.mc.thePlayer.playSound("random.click", 1f, 1f );
                         event.setCanceled(true);
                         return;
                     }
@@ -47,7 +46,7 @@ public class GuiEventHandler {
                     boolean over = ((ItemListOverlay)JEIPlugin.runtime.getItemListOverlay()).isMouseOver(x, y);
                     if(!over || (y>25 && y<guiContainer.height-15)){
                         ((GuiRecipeEditor) event.gui).setActiveSlot(-1);
-                        ((ContainerRecipeEditor)((GuiRecipeEditor) event.gui).inventorySlots).getPlayer().playSound("random.click", 1f, 1f );
+                        event.gui.mc.thePlayer.playSound("random.click", 1f, 1f );
                         event.setCanceled(true);
                     }
                 }
