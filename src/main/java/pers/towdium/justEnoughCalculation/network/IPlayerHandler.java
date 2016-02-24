@@ -38,4 +38,10 @@ public interface IPlayerHandler {
     boolean removeRecipe(Recipe recipe, UUID uuid);
 
     boolean containsRecipe(Recipe recipe, UUID uuid);
+
+    boolean getHasRecipe(UUID uuid);
+
+    ImmutableList<Recipe> getAllRecipe(UUID uuid);
+
+    ImmutableList<Integer> getAllRecipeIndex(UUID uuid);
 }

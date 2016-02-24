@@ -1,5 +1,6 @@
 package pers.towdium.justEnoughCalculation.core;
 
+import com.google.common.collect.ImmutableList;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -117,6 +118,26 @@ public class Recipe {
         return true;
     }
 
+    public ImmutableList<ItemStack> getOutput(){
+        ImmutableList.Builder<ItemStack> builder = new ImmutableList.Builder<>();
+        for(ItemStack itemStack : output){
+            if(itemStack != null){
+                builder.add(itemStack.copy());
+            }
+        }
+        return builder.build();
+    }
+
+    public ImmutableList<ItemStack> getInput(){
+        ImmutableList.Builder<ItemStack> builder = new ImmutableList.Builder<>();
+        for(ItemStack itemStack : input){
+            if(itemStack != null){
+                builder.add(itemStack.copy());
+            }
+        }
+        return builder.build();
+    }
+
     public static class ByteBufUtl{
         public static Recipe fromByte(ByteBuf buf){
             short a = buf.readShort();
@@ -207,6 +228,4 @@ public class Recipe {
             return new Recipe(output, input);
         }
     }
-
-
 }

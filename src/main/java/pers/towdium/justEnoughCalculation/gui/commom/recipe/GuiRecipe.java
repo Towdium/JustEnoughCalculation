@@ -5,10 +5,13 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import pers.towdium.justEnoughCalculation.JustEnoughCalculation;
+import pers.towdium.justEnoughCalculation.core.Recipe;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @author Towdium
@@ -16,7 +19,6 @@ import java.io.IOException;
 public class GuiRecipe extends GuiContainer{
     protected GuiScreen parent;
     protected int activeSlot = -1;
-
 
     public GuiRecipe(ContainerRecipe containerRecipe, GuiScreen parent){
         super(containerRecipe);
@@ -34,13 +36,13 @@ public class GuiRecipe extends GuiContainer{
         i = 0; left = 31 + guiLeft; top = 7 + guiTop;
         for(int a = 0; a < 2; a++){
             for(int b =0; b < 2; b++){
-                buttonList.add(new GuiButton(i+2*a+b, left+b*59, top+a*24, 20, 20, "X"));
+                buttonList.add(new GuiButton(i+2*a+b, left+b*59, top+a*24, 20, 20, "N"));
             }
         }
         i = 4; left = 31 + guiLeft; top = 67 + guiTop;
         for(int a = 0; a < 4; a++){
             for(int b =0; b < 3; b++){
-                buttonList.add(new GuiButton(i+3*a+b, left+b*59, top+a*24, 20, 20, "X"));
+                buttonList.add(new GuiButton(i+3*a+b, left+b*59, top+a*24, 20, 20, "N"));
             }
         }
     }
@@ -73,7 +75,7 @@ public class GuiRecipe extends GuiContainer{
         super.mouseClicked(mouseX, mouseY, mouseButton);
         Slot slot = getSlotUnderMouse();
         if(slot != null && mouseButton == 0 && slot.getStack() == null){
-            activeSlot = slot.getSlotIndex();
+            setActiveSlot(slot.getSlotIndex());
             mc.thePlayer.playSound("random.click", 1f, 1f );
         }
     }
@@ -90,7 +92,11 @@ public class GuiRecipe extends GuiContainer{
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         if (keyCode == 1) {
-            mc.displayGuiScreen(parent);
+            if(activeSlot != -1){
+                setActiveSlot(-1);
+            }else {
+                mc.displayGuiScreen(parent);
+            }
         }
     }
 
@@ -100,11 +106,40 @@ public class GuiRecipe extends GuiContainer{
         } catch (IOException ignored) {}
     }
 
+    public void click(int index){
+        for(GuiButton button : buttonList){
+            if(button.id == index){
+                try {
+                    actionPerformed(button);
+                } catch (IOException ignored) {}
+            }
+        }
+    }
+
     public int getActiveSlot() {
         return activeSlot;
     }
 
     public void setActiveSlot(int activeSlot) {
         this.activeSlot = activeSlot;
+    }
+
+    public void displayRecipe(Recipe recipe){
+        List<ItemStack> output = recipe.getOutput();
+        List<ItemStack> input = recipe.getInput();
+        for(int i=0; i<4; i++){
+            if(i<output.size()){
+                this.inventorySlots.getSlot(i).putStack(output.get(i));
+            }else {
+                this.inventorySlots.getSlot(i).putStack(null);
+            }
+        }
+        for(int i=0; i<12; i++){
+            if(i<input.size()){
+                this.inventorySlots.getSlot(i+4).putStack(input.get(i));
+            }else {
+                this.inventorySlots.getSlot(i+4).putStack(null);
+            }
+        }
     }
 }

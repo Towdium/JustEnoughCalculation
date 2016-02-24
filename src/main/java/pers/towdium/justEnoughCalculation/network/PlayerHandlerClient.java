@@ -37,7 +37,25 @@ public class PlayerHandlerClient implements IPlayerHandler {
     }
 
     @Override
+    public boolean getHasRecipe(UUID uuid) {
+        return recipes.size()!=0;
+    }
+
+    @Override
+    public ImmutableList<Integer> getAllRecipeIndex(UUID uuid) {
+        int a = recipes.size();
+        ImmutableList.Builder<Integer> builder = new ImmutableList.Builder<>();
+        for (int i = 0; i<a; i++){
+            builder.add(i);
+        }
+        return builder.build();
+    }
+
+    @Override
     public boolean getHasRecipeOf(ItemStack itemStack, UUID uuid) {
+        if(itemStack == null){
+            return false;
+        }
         for (Recipe recipe : recipes){
             if(recipe.getHasOutput(itemStack)){
                 return true;
@@ -151,6 +169,11 @@ public class PlayerHandlerClient implements IPlayerHandler {
     @Override
     public boolean containsRecipe(Recipe recipe, UUID uuid) {
         return recipes.contains(recipe);
+    }
+
+    @Override
+    public ImmutableList<Recipe> getAllRecipe(UUID uuid) {
+        return ImmutableList.copyOf(recipes);
     }
 
     ImmutableList<int[]> getAllUnsortedRecipeIndexOf(ItemStack itemStack){

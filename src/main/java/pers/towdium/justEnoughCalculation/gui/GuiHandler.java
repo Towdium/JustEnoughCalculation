@@ -3,10 +3,9 @@ package pers.towdium.justEnoughCalculation.gui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
+import pers.towdium.justEnoughCalculation.JustEnoughCalculation;
 import pers.towdium.justEnoughCalculation.gui.guis.calculator.ContainerCalculator;
 import pers.towdium.justEnoughCalculation.gui.guis.calculator.GuiCalculator;
-import pers.towdium.justEnoughCalculation.gui.guis.itemPicker.ContainerItemPicker;
-import pers.towdium.justEnoughCalculation.gui.guis.itemPicker.GuiItemPicker;
 import pers.towdium.justEnoughCalculation.gui.commom.recipe.ContainerRecipe;
 import pers.towdium.justEnoughCalculation.gui.guis.recipeEditor.ContainerRecipeEditor;
 import pers.towdium.justEnoughCalculation.gui.guis.recipeEditor.GuiRecipeEditor;
@@ -33,9 +32,8 @@ public class GuiHandler implements IGuiHandler {
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         switch (ID) {
             case GuiId.CALCULATOR: return new GuiCalculator(new ContainerCalculator(player, player.getHeldItem()));
-            case GuiId.ITEM_PICKER: return new GuiItemPicker(new ContainerItemPicker());
             case GuiId.RECIPE_EDITOR: return new GuiRecipeEditor(new ContainerRecipeEditor());
-            case GuiId.RECIPE_PICKER: return new GuiRecipePicker(new ContainerRecipe());
+            case GuiId.RECIPE_PICKER: return new GuiRecipePicker(new ContainerRecipe(), JustEnoughCalculation.proxy.getPlayerHandler().getAllRecipeIndex(null));
         }
         return null;
     }

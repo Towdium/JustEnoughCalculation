@@ -58,6 +58,16 @@ public class PlayerHandlerServer implements IPlayerHandler {
     }
 
     @Override
+    public ImmutableList<Recipe> getAllRecipe(UUID uuid) {
+        return null;
+    }
+
+    @Override
+    public ImmutableList<Integer> getAllRecipeIndex(UUID uuid) {
+        return null;
+    }
+
+    @Override
     public Recipe getRecipe(int index, UUID uuid) {
         return null;
     }
@@ -73,6 +83,11 @@ public class PlayerHandlerServer implements IPlayerHandler {
         client.handleLogin(event);
         players.put(event.entityPlayer.getUniqueID(), client);
         //JustEnoughCalculation.networkWrapper.sendTo(new PacketSyncRecord(client), ((EntityPlayerMP) event.entityPlayer));
+    }
+
+    @Override
+    public boolean getHasRecipe(UUID uuid) {
+        return false;
     }
 
     @Override

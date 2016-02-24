@@ -75,12 +75,12 @@ public class Calculator {
         List<ItemRecord> input = new LinkedList<>();
         for(ItemStack itemStack : currentOperate.recipe.output){
             if(itemStack != null){
-                output.add(new ItemRecord(itemStack, currentOperate.count*itemStack.stackSize));
+                output.add(new ItemRecord(itemStack, currentOperate.count*ItemStackWrapper.getUnifiedAmount(itemStack)));
             }
         }
         for(ItemStack itemStack : currentOperate.recipe.input){
             if(itemStack != null){
-                input.add(new ItemRecord(itemStack, currentOperate.count*itemStack.stackSize));
+                input.add(new ItemRecord(itemStack, currentOperate.count*ItemStackWrapper.getUnifiedAmount(itemStack)));
             }
         }
         return new Calculator.CostRecord(output, input);
