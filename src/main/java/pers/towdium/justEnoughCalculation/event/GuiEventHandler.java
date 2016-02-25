@@ -8,6 +8,7 @@ import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.input.Mouse;
+import pers.towdium.justEnoughCalculation.core.ItemStackWrapper;
 import pers.towdium.justEnoughCalculation.gui.guis.calculator.ContainerCalculator;
 import pers.towdium.justEnoughCalculation.gui.guis.calculator.GuiCalculator;
 import pers.towdium.justEnoughCalculation.gui.guis.recipeEditor.GuiRecipeEditor;
@@ -32,7 +33,7 @@ public class GuiEventHandler {
                 GuiRecipeEditor guiContainer = (GuiRecipeEditor) event.gui;
                 ItemStack itemStack = JEIPlugin.runtime.getItemListOverlay().getStackUnderMouse();
                 Slot slot = ((GuiRecipeEditor) event.gui).inventorySlots.getSlot(((GuiRecipeEditor) event.gui).getActiveSlot());
-                slot.inventory.setInventorySlotContents(slot.getSlotIndex(), itemStack);
+                slot.putStack(itemStack == null ? null : itemStack.copy());
                 if(Mouse.isButtonDown(0)){
                     time = new Date().getTime();
                     if(guiContainer.getSlotUnderMouse() != null){
@@ -59,7 +60,11 @@ public class GuiEventHandler {
             if (((GuiCalculator) event.gui).getActiveSlot() == 0){
                 Slot slot = ((GuiCalculator) event.gui).inventorySlots.getSlot(0);
                 ItemStack itemStack = JEIPlugin.runtime.getItemListOverlay().getStackUnderMouse();
-                slot.inventory.setInventorySlotContents(slot.getSlotIndex(), itemStack);
+                if(itemStack != null){
+                    ItemStackWrapper.NBT.initNBT(itemStack);
+                    itemStack.getTagCompound().setBoolean("mark", true);
+                }
+                slot.putStack(itemStack == null ? null : itemStack.copy());
                 if (Mouse.isButtonDown(0)){
                     time = new Date().getTime();
                     Slot slot1 = ((GuiCalculator) event.gui).getSlotUnderMouse();

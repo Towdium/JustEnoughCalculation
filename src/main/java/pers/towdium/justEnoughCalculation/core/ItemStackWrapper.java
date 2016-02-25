@@ -9,7 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
 public class ItemStackWrapper {
 
     public static boolean isTypeEqual(ItemStack one, ItemStack two){
-        return ItemStack.areItemsEqual(one, two);
+        return one != null && two != null && one.getItem() == two.getItem() && one.getMetadata() == two.getMetadata();
     }
 
     public static boolean isStackEqual(ItemStack one, ItemStack two){
@@ -29,25 +29,39 @@ public class ItemStackWrapper {
     }
 
     public static String getDisplayAmount(ItemStack itemStack){
-        if(itemStack != null && itemStack.getTagCompound() != null){
-            long l = itemStack.getTagCompound().getLong("amount");
-            if(l%100==0){
-                return String.valueOf(l/100);
+        if(itemStack != null){
+            if(itemStack.getTagCompound() != null){
+                if(itemStack.getTagCompound().getBoolean("mark")){
+                    return "";
+                }
+                long l = itemStack.getTagCompound().getLong("amount");
+                int i = itemStack.getTagCompound().getInteger("percentage");
+                if(i != 0){
+                    return i + "%";
+                }else{
+                    return String.valueOf((l+99)/100);
+                }
             }else {
-                return String.valueOf(l/100 + 1);
+                return String.valueOf(itemStack.stackSize);
             }
         }
         else return "";
     }
 
     public static ItemStack toPercentage(ItemStack itemStack){
-        NBT.setInt(itemStack, "percentage", 50);
+        NBT.setInt(itemStack, "percentage", itemStack.stackSize*100);
+        itemStack.stackSize = 1;
         return itemStack;
     }
 
     public static ItemStack toNormal(ItemStack itemStack){
+        if(itemStack.hasTagCompound()){
+            int i = itemStack.getTagCompound().getInteger("percentage");
+            itemStack.stackSize = (i+99)/100;
+        }else {
+            itemStack.stackSize = 1;
+        }
         itemStack.setTagCompound(null);
-        itemStack.stackSize = 1;
         return itemStack;
     }
 
@@ -120,7 +134,11 @@ public class ItemStackWrapper {
                 return false;
             }else {
                 if(doChange){
-                    itemStack.stackSize += 1;
+                    if(itemStack.hasTagCompound()){
+                        itemStack.getTagCompound().setInteger("percentage", itemStack.getTagCompound().getInteger("percentage")+1);
+                    }else {
+                        itemStack.stackSize += 1;
+                    }
                 }
                 return true;
             }
@@ -131,12 +149,17 @@ public class ItemStackWrapper {
                 return false;
             }else {
                 if(doChange){
-                    if(itemStack.stackSize == 1){
-                        itemStack.stackSize = 10;
-                    }else if(itemStack.stackSize <= 54){
-                        itemStack.stackSize += 10;
+                    if(itemStack.hasTagCompound()){
+                        int i = itemStack.getTagCompound().getInteger("percentage");
+                        itemStack.getTagCompound().setInteger("percentage", i == 1 ? 10 : i+10);
                     }else {
-                        itemStack.stackSize = 64;
+                        if(itemStack.stackSize == 1){
+                            itemStack.stackSize = 10;
+                        }else if(itemStack.stackSize <= 54){
+                            itemStack.stackSize += 10;
+                        }else {
+                            itemStack.stackSize = 64;
+                        }
                     }
                 }
                 return true;
@@ -144,25 +167,45 @@ public class ItemStackWrapper {
         }
 
         public static boolean rightClick(ItemStack itemStack, boolean doChange){
-            if(itemStack == null){
+            if(itemStack == null || (itemStack.hasTagCompound() && (itemStack.getTagCompound().getInteger("percentage") == 1 || itemStack.getTagCompound().getInteger("percentage") == 0))){
                 return false;
             }else {
                 if(doChange){
-                    itemStack.stackSize -= 1;
+                    if(itemStack.hasTagCompound()){
+                        int i = itemStack.getTagCompound().getInteger("percentage");
+                        if(i == 1 || i == 0){
+                            itemStack.stackSize = 0;
+                            return true;
+                        }
+                        itemStack.getTagCompound().setInteger("percentage", --i);
+                    }else {
+                        itemStack.stackSize -= 1;
+                    }
                 }
                 return true;
             }
         }
 
         public static boolean rightShift(ItemStack itemStack, boolean doChange){
-            if(itemStack == null || itemStack.stackSize>=64){
+            if(itemStack == null){
                 return false;
             }else {
                 if(doChange){
-                    if(itemStack.stackSize <= 10){
-                        itemStack.stackSize = 0;
-                    } else {
-                        itemStack.stackSize -= 10;
+                    if(itemStack.hasTagCompound()){
+                        int i = itemStack.getTagCompound().getInteger("percentage");
+                        if(i == 0 || i == 1){
+                            itemStack.stackSize = 0;
+                            return true;
+                        }
+                        itemStack.getTagCompound().setInteger("percentage", i <= 10 ? 1 : i-10);
+                    }else {
+                        if(itemStack.stackSize == 1){
+                            itemStack.stackSize = 0;
+                        }else if(itemStack.stackSize <= 10){
+                            itemStack.stackSize = 1;
+                        } else {
+                            itemStack.stackSize -= 10;
+                        }
                     }
                 }
                 return true;

@@ -4,6 +4,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import pers.towdium.justEnoughCalculation.JustEnoughCalculation;
+import pers.towdium.justEnoughCalculation.core.ItemStackWrapper;
 import pers.towdium.justEnoughCalculation.core.Recipe;
 
 
@@ -40,22 +42,16 @@ public class ContainerRecipe extends Container {
         if(slot != null){
             ItemStack itemStack = slot.inventory.getStackInSlot(slot.getSlotIndex());
             if(itemStack != null){
-                if(clickedButton == 0){
-                    ItemStack itemStackBuffer = itemStack.copy();
-                    itemStackBuffer.stackSize += 1;
-                    slot.inventory.setInventorySlotContents(slot.getSlotIndex(), itemStackBuffer);
-                    slot.onSlotChanged();
-                }else if(clickedButton == 1){
-                    if(itemStack.stackSize == 1){
-                        slot.inventory.setInventorySlotContents(slot.getSlotIndex(),null);
-                        slot.onSlotChanged();
-                    }else {
-                        ItemStack itemStackBuffer = itemStack.copy();
-                        itemStackBuffer.stackSize -= 1;
-                        slot.inventory.setInventorySlotContents(slot.getSlotIndex(), itemStackBuffer);
-                        slot.onSlotChanged();
-                    }
+                if(clickedButton == 0 && mode == 0){
+                    ItemStackWrapper.Click.leftClick(slot.getStack(), true);
+                }else if(clickedButton == 0 && mode == 1){
+                    ItemStackWrapper.Click.leftShift(slot.getStack(), true);
+                }else if(clickedButton == 1 && mode == 0){
+                    ItemStackWrapper.Click.rightClick(slot.getStack(), true);
+                }else if(clickedButton == 1 && mode == 1){
+                    ItemStackWrapper.Click.rightShift(slot.getStack(), true);
                 }
+                slot.putStack(itemStack.stackSize == 0 ? null : itemStack);
             }
         }
         return null;

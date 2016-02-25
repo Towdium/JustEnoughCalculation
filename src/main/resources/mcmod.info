@@ -1,14 +1,14 @@
 [
 {
-  "modid": "examplemod",
-  "name": "Example Mod",
-  "description": "Example placeholder mod.",
+  "modid": "je_calculation",
+  "name": "Just Enough Calculation",
+  "description": "A simple mod to help you with recipe calculation.",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
-  "authorList": ["ExampleDude"],
-  "credits": "The Forge and FML guys, for making this example",
+  "authorList": ["Towdium"],
+  "credits": "The MCP, Forge and FML guys",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []

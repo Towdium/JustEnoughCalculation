@@ -1,22 +1,29 @@
 package pers.towdium.justEnoughCalculation.gui.commom.recipe;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import pers.towdium.justEnoughCalculation.JustEnoughCalculation;
+import pers.towdium.justEnoughCalculation.core.ItemStackWrapper;
 import pers.towdium.justEnoughCalculation.core.Recipe;
+import pers.towdium.justEnoughCalculation.gui.commom.GuiTooltipScreen;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.List;
 
 /**
  * @author Towdium
  */
-public class GuiRecipe extends GuiContainer{
+public class GuiRecipe extends GuiTooltipScreen{
     protected GuiScreen parent;
     protected int activeSlot = -1;
 
@@ -63,7 +70,13 @@ public class GuiRecipe extends GuiContainer{
         int buttonId = button.id;
         if(buttonId <= 15){
             Slot slot = inventorySlots.getSlot(buttonId);
-            slot.inventory.setInventorySlotContents(slot.getSlotIndex(), null);
+            if(button.displayString.equals("N")){
+                slot.putStack(ItemStackWrapper.toPercentage(slot.getStack()));
+                button.displayString = "P";
+            }else {
+                slot.putStack(ItemStackWrapper.toNormal(slot.getStack()));
+                button.displayString = "N";
+            }
         }
     }
 
@@ -97,6 +110,35 @@ public class GuiRecipe extends GuiContainer{
             }else {
                 mc.displayGuiScreen(parent);
             }
+        }
+    }
+
+    @Override
+    public void setWorldAndResolution(Minecraft mc, int width, int height) {
+        super.setWorldAndResolution(mc, width, height);
+        ModelManager modelManager = null;
+        Field[] fields = mc.getClass().getDeclaredFields();
+        for(Field field : fields){
+            if(ModelManager.class.equals(field.getType())){
+                field.setAccessible(true);
+                try {
+                    modelManager = (ModelManager) field.get(mc);
+                    break;
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        if(modelManager != null){
+            itemRender = new RenderItem(mc.renderEngine, modelManager){
+                @Override
+                public void renderItemOverlayIntoGUI(FontRenderer fr, ItemStack stack, int xPosition, int yPosition, String text) {
+                    boolean b = fr.getUnicodeFlag();
+                    fr.setUnicodeFlag(true);
+                    super.renderItemOverlayIntoGUI(fr, stack, xPosition, yPosition, ItemStackWrapper.getDisplayAmount(stack));
+                    fr.setUnicodeFlag(b);
+                }
+            };
         }
     }
 
@@ -140,6 +182,15 @@ public class GuiRecipe extends GuiContainer{
             }else {
                 this.inventorySlots.getSlot(i+4).putStack(null);
             }
+        }
+    }
+
+    @Override
+    protected String GetButtonTooltip(int buttonId) {
+        if(buttonId == 0){
+            return "Switch between_pN: normal mode_pP: percentage mode";
+        }else {
+            return null;
         }
     }
 }

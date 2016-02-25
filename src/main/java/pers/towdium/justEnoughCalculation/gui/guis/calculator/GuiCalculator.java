@@ -2,6 +2,7 @@ package pers.towdium.justEnoughCalculation.gui.guis.calculator;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
@@ -14,7 +15,6 @@ import net.minecraft.util.StatCollector;
 import pers.towdium.justEnoughCalculation.JustEnoughCalculation;
 import pers.towdium.justEnoughCalculation.core.Calculator;
 import pers.towdium.justEnoughCalculation.core.ItemStackWrapper;
-import pers.towdium.justEnoughCalculation.core.Recipe;
 import pers.towdium.justEnoughCalculation.gui.commom.GuiTooltipScreen;
 import pers.towdium.justEnoughCalculation.gui.commom.recipe.ContainerRecipe;
 import pers.towdium.justEnoughCalculation.gui.guis.recipeEditor.ContainerRecipeEditor;
@@ -33,6 +33,8 @@ import java.util.TimerTask;
  */
 public class GuiCalculator extends GuiTooltipScreen{
     GuiTextField textFieldAmount;
+    GuiButton buttonLeft;
+    GuiButton buttonRight;
     GuiButton buttonEdit;
     GuiButton buttonMode;
     GuiButton buttonCalculate;
@@ -54,6 +56,8 @@ public class GuiCalculator extends GuiTooltipScreen{
     @Override
     public void initGui() {
         super.initGui();
+        buttonLeft = new GuiButton(4, guiLeft+7, guiTop+139, 20, 20, "<");
+        buttonRight = new GuiButton(5, guiLeft+65, guiTop+139, 20, 20, ">");
         buttonEdit = new GuiButton(3, guiLeft+89, guiTop+7, 38, 20, StatCollector.translateToLocal("gui.calculator.edit"));
         buttonCalculate = new GuiButton(1, guiLeft+7, guiTop+31, 78, 20, StatCollector.translateToLocal("gui.calculator.calculate"));
         buttonView = new GuiButton(7, guiLeft+131, guiTop+7, 38, 20, StatCollector.translateToLocal("gui.calculator.view"));
@@ -61,8 +65,8 @@ public class GuiCalculator extends GuiTooltipScreen{
         buttonList.add(new GuiButton(2, guiLeft+89, guiTop+31, 80, 20, StatCollector.translateToLocal("gui.calculator.add")));
         buttonList.add(buttonEdit);
         buttonList.add(buttonView);
-        buttonList.add(new GuiButton(4, guiLeft+7, guiTop+139, 20, 20, "<"));
-        buttonList.add(new GuiButton(5, guiLeft+65, guiTop+139, 20, 20, ">"));
+        buttonList.add(buttonLeft);
+        buttonList.add(buttonRight);
         buttonMode = new GuiButton(6, guiLeft+89, guiTop+139, 80, 20, StatCollector.translateToLocal("gui.calculator.input"));
         buttonList.add(buttonMode);
         textFieldAmount = new GuiTextField(0, fontRendererObj, guiLeft+39, guiTop+8, 45, 18);
@@ -70,7 +74,6 @@ public class GuiCalculator extends GuiTooltipScreen{
         ItemStack itemStack = ((ContainerCalculator)inventorySlots).getPlayer().getHeldItem();
         dest.inventory.setInventorySlotContents(dest.getSlotIndex(), ItemStackWrapper.NBT.getItem(itemStack, "dest"));
         textFieldAmount.setText(ItemStackWrapper.NBT.getString(itemStack, "text"));
-        updateLayout();
     }
 
     @Override
@@ -110,24 +113,7 @@ public class GuiCalculator extends GuiTooltipScreen{
         switch (button.id){
             case 1:
                 if(inventorySlots.getSlot(0).getStack() != null){
-                    try{
-                        int i = Integer.valueOf(textFieldAmount.getText());
-                        Calculator calculator = new Calculator(inventorySlots.getSlot(0).getStack(), i*100);
-                        Calculator.CostRecord record = calculator.getCost();
-                        record.unify();
-                        costRecord = record;
-                        updateLayout();
-                    }catch (Exception e){
-                        textFieldAmount.setTextColor(16711680);
-                        TimerTask r = new TimerTask() {
-                            @Override
-                            public void run() {
-                                textFieldAmount.setTextColor(14737632);
-                            }
-                        };
-                        Timer t = new Timer();
-                        t.schedule(r, 1000);
-                    }
+                    refreshRecipe();
                 }
                 break;
             case 2:
@@ -144,6 +130,16 @@ public class GuiCalculator extends GuiTooltipScreen{
 
                 mc.displayGuiScreen(new GuiRecipePicker(new ContainerRecipe(), this, list));
                 break;
+            case 4:
+                if(page>1){
+                    page--;
+                }
+                break;
+            case 5:
+                if(page<total){
+                    page++;
+                }
+                break;
             case 6:
                 switch (mode){
                     case INPUT:
@@ -156,6 +152,7 @@ public class GuiCalculator extends GuiTooltipScreen{
                         mode = EnumMode.INPUT;
                         break;
                 }
+                page = 1;
                 break;
             case 7:
                 mc.displayGuiScreen(new GuiRecipePicker(new ContainerRecipe(), this, JustEnoughCalculation.proxy.getPlayerHandler().getAllRecipeIndex(null)));
@@ -170,7 +167,7 @@ public class GuiCalculator extends GuiTooltipScreen{
         textFieldAmount.mouseClicked(mouseX, mouseY, mouseButton);
         super.mouseClicked(mouseX, mouseY, mouseButton);
         Slot slot = getSlotUnderMouse();
-        if(slot != null && mouseButton == 0){
+        if(slot != null && slot.getSlotIndex() == 0 && mouseButton == 0){
             setActiveSlot(slot.getSlotIndex());
             ((ContainerCalculator)inventorySlots).getPlayer().playSound("random.click", 1f, 1f );
             updateLayout();
@@ -222,6 +219,8 @@ public class GuiCalculator extends GuiTooltipScreen{
                 }
             };
         }
+        costRecord = null;
+        updateLayout();
     }
 
     @Override
@@ -256,13 +255,20 @@ public class GuiCalculator extends GuiTooltipScreen{
         if(costRecord != null){
             switch (mode){
                 case OUTPUT:
+                    total = (costRecord.getOutputStack().length+35)/36;
                     fillSlotsWith(costRecord.getOutputStack(), (page-1)*36);break;
                 case INPUT:
+                    total = (costRecord.getInputStack().length+35)/36;
                     fillSlotsWith(costRecord.getInputStack(), (page-1)*36);break;
                 case CATALYST:
+                    total = (costRecord.getCatalystStack().length+35)/36;
                     fillSlotsWith(costRecord.getCatalystStack(), (page-1)*36);break;
             }
+        }else {
+            fillSlotsWith(new ItemStack[0], 0);
         }
+        buttonLeft.enabled = page != 1;
+        buttonRight.enabled = page < total;
     }
 
     public int getActiveSlot() {
@@ -270,9 +276,7 @@ public class GuiCalculator extends GuiTooltipScreen{
     }
 
     public void setActiveSlot(int activeSlot) {
-
         if(activeSlot == -1){
-
             JustEnoughCalculation.proxy.getPlayerHandler().syncItemCalculator(inventorySlots.getSlot(0).getStack(), textFieldAmount.getText());
         }else {
             buffer = inventorySlots.getSlot(activeSlot).getStack();
@@ -293,6 +297,26 @@ public class GuiCalculator extends GuiTooltipScreen{
             }else {
                 inventorySlots.putStackInSlot(pos++, null);
             }
+        }
+    }
+
+    private void refreshRecipe(){
+        try {
+            int i = Integer.valueOf(textFieldAmount.getText());
+            Calculator calculator = new Calculator(inventorySlots.getSlot(0).getStack(), i*100);
+            Calculator.CostRecord record = calculator.getCost();
+            record.unify();
+            costRecord = record;
+        } catch (Exception e){
+            textFieldAmount.setTextColor(16711680);
+            TimerTask r = new TimerTask() {
+                @Override
+                public void run() {
+                    textFieldAmount.setTextColor(14737632);
+                }
+            };
+            Timer t = new Timer();
+            t.schedule(r, 1000);
         }
     }
 }

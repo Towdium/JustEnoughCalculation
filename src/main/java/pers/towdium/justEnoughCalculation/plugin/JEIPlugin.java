@@ -35,7 +35,6 @@ public class JEIPlugin implements IModPlugin{
 
     @Override
     public void onRuntimeAvailable(@Nonnull IJeiRuntime jeiRuntime) {
-        JustEnoughCalculation.log.info("载入了！");
         runtime = jeiRuntime;
     }
 }

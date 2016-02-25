@@ -36,11 +36,6 @@ public class GuiRecipeEditor extends GuiRecipe{
     @Override
     public void drawScreen(int mouseX, int mouseY, float f) {
         super.drawScreen(mouseX, mouseY, f);
-        RenderHelper.disableStandardItemLighting();
-        if(activeSlot != -1){
-            RenderTooltip(mouseX, mouseY, new String[]{"haha"});
-        }
-        RenderHelper.enableStandardItemLighting();
     }
 
     @Override
@@ -74,73 +69,5 @@ public class GuiRecipeEditor extends GuiRecipe{
                 slot.inventory.setInventorySlotContents(slot.getSlotIndex(), null);
             }
         }
-    }
-
-    //copied code start
-
-    protected int tooltipXOffset = 0;
-    protected int tooltipYOffset = 10;
-
-    private final static int LINE_HEIGHT = 11;
-
-    protected void RenderTooltip(int x, int y, String[] tooltip)
-    {
-
-        int tooltipWidth = GetTooltipWidth(tooltip);
-        int tooltipHeight = GetTooltipHeight(tooltip);
-
-        int tooltipX = x + tooltipXOffset;
-        int tooltipY = y + tooltipYOffset;
-
-        if(tooltipX > width - tooltipWidth - 7)
-            tooltipX = width - tooltipWidth - 7;
-        if(tooltipY > height -  tooltipHeight - 8)
-            tooltipY = height -  tooltipHeight - 8;
-
-        //render the background inside box
-        int innerAlpha = -0xFEFFFF0;  //very very dark purple
-        drawGradientRect(tooltipX, tooltipY - 1, tooltipX + tooltipWidth + 6, tooltipY, innerAlpha, innerAlpha);
-        drawGradientRect(tooltipX, tooltipY + tooltipHeight + 6, tooltipX + tooltipWidth + 6, tooltipY + tooltipHeight + 7, innerAlpha, innerAlpha);
-        drawGradientRect(tooltipX, tooltipY, tooltipX + tooltipWidth + 6, tooltipY + tooltipHeight + 6, innerAlpha, innerAlpha);
-        drawGradientRect(tooltipX - 1, tooltipY, tooltipX, tooltipY + tooltipHeight + 6, innerAlpha, innerAlpha);
-        drawGradientRect(tooltipX + tooltipWidth + 6, tooltipY, tooltipX + tooltipWidth + 7, tooltipY + tooltipHeight + 6, innerAlpha, innerAlpha);
-
-        //render the background outside box
-        int outerAlpha1 = 0x505000FF;
-        int outerAlpha2 = (outerAlpha1 & 0xFEFEFE) >> 1 | outerAlpha1 & -0x1000000;
-        drawGradientRect(tooltipX, tooltipY + 1, tooltipX + 1, tooltipY + tooltipHeight + 6 - 1, outerAlpha1, outerAlpha2);
-        drawGradientRect(tooltipX + tooltipWidth + 5, tooltipY + 1, tooltipX + tooltipWidth + 7, tooltipY + tooltipHeight + 6 - 1, outerAlpha1, outerAlpha2);
-        drawGradientRect(tooltipX, tooltipY, tooltipX + tooltipWidth + 3, tooltipY + 1, outerAlpha1, outerAlpha1);
-        drawGradientRect(tooltipX, tooltipY + tooltipHeight + 5, tooltipX + tooltipWidth + 7, tooltipY + tooltipHeight + 6, outerAlpha2, outerAlpha2);
-
-        //render the foreground text
-        int lineCount = 0;
-        for (String s : tooltip)
-        {
-            mc.fontRendererObj.drawStringWithShadow(s, tooltipX + 2, tooltipY + 2 + lineCount * LINE_HEIGHT, 0xFFFFFF);
-            lineCount++;
-        }
-    }
-
-    private int GetTooltipWidth(String[] tooltipArray)
-    {
-        int longestWidth = 0;
-        for(String s : tooltipArray)
-        {
-            int width = mc.fontRendererObj.getStringWidth(s);
-            if(width > longestWidth)
-                longestWidth = width;
-        }
-        return longestWidth;
-    }
-
-    private int GetTooltipHeight(String[] tooltipArray)
-    {
-        int tooltipHeight = mc.fontRendererObj.FONT_HEIGHT - 2;
-        if (tooltipArray.length > 1)
-        {
-            tooltipHeight += (tooltipArray.length - 1) * LINE_HEIGHT;
-        }
-        return tooltipHeight;
     }
 }

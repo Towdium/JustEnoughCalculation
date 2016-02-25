@@ -19,6 +19,8 @@ public class Calculator {
     ItemRecord itemRecord;
 
 
+    public Calculator (){}
+
     public Calculator (ItemStack itemStack, int amount){
         this(new ItemRecord(itemStack, amount), new LinkedList<OperateRecord>(), new LinkedList<ItemRecord>(), true);
     }
@@ -27,7 +29,7 @@ public class Calculator {
         this.catalystBuffer = catalystBuffer;
         this.itemRecord = itemRecord;
         this.operateRecords = operateRecords;
-        for (Recipe recipe : JustEnoughCalculation.proxy.getPlayerHandler().getAllRecipeOf(new ItemStack(itemRecord.item, itemRecord.meta), null)){
+        for (Recipe recipe : JustEnoughCalculation.proxy.getPlayerHandler().getAllRecipeOf(new ItemStack(itemRecord.item,1, itemRecord.meta), null)){
             if(checkRecipeValid(recipe)){
                 long count = getOperateCount(recipe, exceedMode);
                 this.currentOperate = new OperateRecord(recipe, count);
@@ -86,6 +88,10 @@ public class Calculator {
         return new Calculator.CostRecord(output, input);
     }
 
+    public CostRecord getEmptyCost(){
+        return new CostRecord();
+    }
+
     protected boolean checkRecipeValid(Recipe recipe){
         for (OperateRecord record : operateRecords){
             if(record.recipe.equals(recipe) && record.count == getOperateCount(recipe)){
@@ -117,6 +123,7 @@ public class Calculator {
         public CostRecord(){
             output = new ArrayList<>();
             input = new ArrayList<>();
+            catalyst = new ArrayList<>();
         }
 
         public CostRecord(List<ItemRecord> output, List<ItemRecord> input) {
