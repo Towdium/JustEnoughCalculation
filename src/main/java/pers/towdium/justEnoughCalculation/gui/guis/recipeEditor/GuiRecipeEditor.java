@@ -2,7 +2,6 @@ package pers.towdium.justEnoughCalculation.gui.guis.recipeEditor;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.inventory.Slot;
 import net.minecraft.util.StatCollector;
 import pers.towdium.justEnoughCalculation.JustEnoughCalculation;
@@ -12,7 +11,6 @@ import pers.towdium.justEnoughCalculation.gui.commom.recipe.GuiRecipe;
 import pers.towdium.justEnoughCalculation.network.packets.PacketRecipeUpdate;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * @author Towdium

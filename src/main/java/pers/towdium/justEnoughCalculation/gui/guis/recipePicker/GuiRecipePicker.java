@@ -3,7 +3,6 @@ package pers.towdium.justEnoughCalculation.gui.guis.recipePicker;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.StatCollector;
 import pers.towdium.justEnoughCalculation.JustEnoughCalculation;
 import pers.towdium.justEnoughCalculation.gui.commom.recipe.ContainerRecipe;

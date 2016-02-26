@@ -1,6 +1,5 @@
 package pers.towdium.justEnoughCalculation;
 
-import net.minecraft.block.BlockStone;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.init.Blocks;
@@ -22,7 +21,6 @@ import pers.towdium.justEnoughCalculation.item.ItemCalculator;
 import pers.towdium.justEnoughCalculation.network.IProxy;
 import pers.towdium.justEnoughCalculation.network.packets.PacketCalculatorUpdate;
 import pers.towdium.justEnoughCalculation.network.packets.PacketRecipeUpdate;
-import pers.towdium.justEnoughCalculation.network.packets.PacketSlotUpdate;
 import pers.towdium.justEnoughCalculation.network.packets.PacketSyncRecord;
 
 /**
@@ -52,7 +50,6 @@ public class JustEnoughCalculation {
     public static void preInit(FMLPreInitializationEvent event){
         GameRegistry.registerItem(itemCalculator,itemCalculator.getUnlocalizedName().substring(5));
         networkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel(Reference.MODID);
-        networkWrapper.registerMessage(PacketSlotUpdate.class, PacketSlotUpdate.class, 0, Side.SERVER);
         networkWrapper.registerMessage(PacketCalculatorUpdate.class, PacketCalculatorUpdate.class, 1, Side.SERVER);
         networkWrapper.registerMessage(PacketRecipeUpdate.class, PacketRecipeUpdate.class, 2, Side.SERVER);
         networkWrapper.registerMessage(PacketSyncRecord.class, PacketSyncRecord.class, 3, Side.CLIENT);

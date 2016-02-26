@@ -2,7 +2,6 @@ package pers.towdium.justEnoughCalculation.plugin;
 
 import mezz.jei.api.*;
 import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
-import pers.towdium.justEnoughCalculation.JustEnoughCalculation;
 
 import javax.annotation.Nonnull;
 

@@ -1,6 +1,5 @@
 package pers.towdium.justEnoughCalculation.item;
 
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -8,7 +7,6 @@ import net.minecraft.world.World;
 import pers.towdium.justEnoughCalculation.JustEnoughCalculation;
 import pers.towdium.justEnoughCalculation.gui.GuiHandler;
 
-import java.util.List;
 
 /**
  * @author Towdium

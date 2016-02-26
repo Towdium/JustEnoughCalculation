@@ -1,12 +1,9 @@
 package pers.towdium.justEnoughCalculation.network;
 
 import com.google.common.collect.ImmutableList;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import pers.towdium.justEnoughCalculation.JustEnoughCalculation;
 import pers.towdium.justEnoughCalculation.core.Recipe;
-import pers.towdium.justEnoughCalculation.network.packets.PacketSyncRecord;
 
 import java.util.HashMap;
 import java.util.UUID;
