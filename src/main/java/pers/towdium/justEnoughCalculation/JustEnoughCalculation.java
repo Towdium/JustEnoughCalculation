@@ -45,7 +45,7 @@ public class JustEnoughCalculation {
     public static class Reference {
         public static final String MODID = "je_calculation";
         public static final String MODNAME = "Just Enough Calculation";
-        public static final String VERSION = "0.1.1";
+        public static final String VERSION = "0.1.2";
     }
 
     @Mod.EventHandler

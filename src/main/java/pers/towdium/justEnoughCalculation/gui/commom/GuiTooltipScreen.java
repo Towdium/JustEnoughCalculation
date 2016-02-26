@@ -10,6 +10,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 /**
  * CODE IS DONE BY Zyin055
@@ -57,9 +58,12 @@ public abstract class GuiTooltipScreen extends GuiContainer
             field = GuiContainer.class.getDeclaredField("theSlot");
             field.setAccessible(true);
             theSlot = (Slot) field.get(this);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception ignored) {}
+        try {
+            field = GuiContainer.class.getDeclaredField("field_147006_u");
+            field.setAccessible(true);
+            theSlot = (Slot) field.get(this);
+        } catch (Exception ignored) {}
         if (inventoryplayer.getItemStack() == null && theSlot != null && theSlot.getHasStack())
         {
             ItemStack itemstack1 = theSlot.getStack();
