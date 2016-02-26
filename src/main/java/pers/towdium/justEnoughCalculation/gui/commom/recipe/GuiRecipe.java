@@ -11,6 +11,7 @@ import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StatCollector;
 import pers.towdium.justEnoughCalculation.JustEnoughCalculation;
 import pers.towdium.justEnoughCalculation.core.ItemStackWrapper;
 import pers.towdium.justEnoughCalculation.core.Recipe;
@@ -188,7 +189,7 @@ public class GuiRecipe extends GuiTooltipScreen{
     @Override
     protected String GetButtonTooltip(int buttonId) {
         if(buttonId == 0){
-            return "Switch between_pN: normal mode_pP: percentage mode";
+            return StatCollector.translateToLocal("gui.calculator.tooltipUse");
         }else {
             return null;
         }

@@ -1,5 +1,6 @@
 package pers.towdium.justEnoughCalculation.item;
 
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -22,11 +23,5 @@ public class ItemCalculator extends Item {
     public ItemStack onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn) {
         playerIn.openGui(JustEnoughCalculation.instance, GuiHandler.GuiId.CALCULATOR, worldIn, 0, 0, 0);
         return itemStackIn;
-    }
-
-    @Override
-    public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
-        //super.addInformation(stack, playerIn, tooltip, advanced);
-        tooltip.add("sdji");
     }
 }

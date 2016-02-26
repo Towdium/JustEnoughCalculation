@@ -22,7 +22,7 @@ import java.util.UUID;
  * @author Towdium
  */
 public class PlayerHandlerClient implements IPlayerHandler {
-    public List<Recipe> recipes;
+    public List<Recipe> recipes = new ArrayList<>();
 
     @Override
     public void addRecipe(Recipe recipe, UUID uuid) {

@@ -61,10 +61,13 @@ public class GuiEventHandler {
                 Slot slot = ((GuiCalculator) event.gui).inventorySlots.getSlot(0);
                 ItemStack itemStack = JEIPlugin.runtime.getItemListOverlay().getStackUnderMouse();
                 if(itemStack != null){
+                    itemStack = itemStack.copy();
+                }
+                if(itemStack != null){
                     ItemStackWrapper.NBT.initNBT(itemStack);
                     itemStack.getTagCompound().setBoolean("mark", true);
                 }
-                slot.putStack(itemStack == null ? null : itemStack.copy());
+                slot.putStack(itemStack == null ? null : itemStack);
                 if (Mouse.isButtonDown(0)){
                     time = new Date().getTime();
                     Slot slot1 = ((GuiCalculator) event.gui).getSlotUnderMouse();

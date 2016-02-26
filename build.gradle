@@ -20,14 +20,17 @@ plugins {
     id "net.minecraftforge.gradle.forge" version "2.0.2"
 }
 */
-version = "1.0"
-group= "com.yourname.modid" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "modid"
+version = "0.1.1"
+group= "pers.towdium.justEnoughcalculation" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "je_calculation"
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
 
 minecraft {
     version = "1.8.9-11.15.1.1722"
     runDir = "run"
-    
+    useDepAts = true
     // the mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   snapshot are built nightly.
     // stable_#            stables are built at the discretion of the MCP team.
@@ -38,6 +41,7 @@ minecraft {
 }
 
 dependencies {
+    deobfCompile "mezz.jei:jei_1.8.9:2.28.2.166"
     // you may put jars on which you depend on in ./libs
     // or you may define them like so..
     //compile "some.group:artifact:version:classifier"
@@ -78,5 +82,11 @@ processResources
     // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
+    }
+}
+
+repositories {
+    maven {
+        url "http://dvs1.progwml6.com/files/maven"
     }
 }

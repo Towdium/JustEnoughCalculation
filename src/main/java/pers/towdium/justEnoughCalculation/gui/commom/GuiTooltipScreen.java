@@ -1,11 +1,15 @@
 package pers.towdium.justEnoughCalculation.gui.commom;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 
 /**
  * CODE IS DONE BY Zyin055
@@ -46,6 +50,21 @@ public abstract class GuiTooltipScreen extends GuiContainer
         super.drawScreen(mouseX, mouseY, f);
         RenderHelper.disableStandardItemLighting();
         DrawTooltipScreen(mouseX, mouseY);
+        InventoryPlayer inventoryplayer = this.mc.thePlayer.inventory;
+        Field field;
+        Slot theSlot = null;
+        try {
+            field = GuiContainer.class.getDeclaredField("theSlot");
+            field.setAccessible(true);
+            theSlot = (Slot) field.get(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (inventoryplayer.getItemStack() == null && theSlot != null && theSlot.getHasStack())
+        {
+            ItemStack itemstack1 = theSlot.getStack();
+            this.renderToolTip(itemstack1, mouseX, mouseY);
+        }
         RenderHelper.enableStandardItemLighting();
     }
 
