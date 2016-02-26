@@ -13,10 +13,10 @@ cases. Have fun!
 
 * Recursive calculation
 * Repeated recipe support
-
-#### Planed features
-
 * Personal preference record
 * Shift - left click for quick input of recipe
 * Support for percentage in recipes
+
+#### Planed features
+
 * Check Player's inventory for missed gradients
