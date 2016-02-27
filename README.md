@@ -20,3 +20,5 @@ cases. Have fun!
 #### Planed features
 
 * Check Player's inventory for missed gradients
+* Special mark for amount acquired by approximation
+* Improve the display for big numbers
