@@ -1,12 +1,9 @@
 package pers.towdium.justEnoughCalculation.gui.commom.recipe;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.client.resources.model.ModelManager;
+import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -16,24 +13,19 @@ import pers.towdium.justEnoughCalculation.core.ItemStackWrapper;
 import pers.towdium.justEnoughCalculation.core.Recipe;
 import pers.towdium.justEnoughCalculation.gui.commom.GuiTooltipScreen;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.List;
 
 /**
  * @author Towdium
  */
 public class GuiRecipe extends GuiTooltipScreen{
-    protected GuiScreen parent;
     protected int activeSlot = -1;
 
-    public GuiRecipe(ContainerRecipe containerRecipe, GuiScreen parent){
-        super(containerRecipe);
-        this.parent = parent;
-    }
-
-    public GuiRecipe(ContainerRecipe containerRecipe){
-        super(containerRecipe);
+    public GuiRecipe(@Nonnull Container inventorySlotsIn, @Nullable GuiScreen parent) {
+        super(inventorySlotsIn, parent);
     }
 
     @Override
@@ -43,13 +35,13 @@ public class GuiRecipe extends GuiTooltipScreen{
         i = 0; left = 31 + guiLeft; top = 7 + guiTop;
         for(int a = 0; a < 2; a++){
             for(int b =0; b < 2; b++){
-                buttonList.add(new GuiButton(i+2*a+b, left+b*59, top+a*24, 20, 20, "N"));
+                buttonList.add(new GuiButton(i+2*a+b, left+b*59, top+a*24, 20, 20, "#"));
             }
         }
         i = 4; left = 31 + guiLeft; top = 67 + guiTop;
         for(int a = 0; a < 4; a++){
             for(int b =0; b < 3; b++){
-                buttonList.add(new GuiButton(i+3*a+b, left+b*59, top+a*24, 20, 20, "N"));
+                buttonList.add(new GuiButton(i+3*a+b, left+b*59, top+a*24, 20, 20, "#"));
             }
         }
     }
@@ -70,18 +62,15 @@ public class GuiRecipe extends GuiTooltipScreen{
         int buttonId = button.id;
         if(buttonId <= 15){
             Slot slot = inventorySlots.getSlot(buttonId);
-            if(button.displayString.equals("N")){
+            if(button.displayString.equals("#")){
                 slot.putStack(ItemStackWrapper.toPercentage(slot.getStack()));
-                button.displayString = "P";
+                button.displayString = "%";
             }else {
                 slot.putStack(ItemStackWrapper.toNormal(slot.getStack()));
-                button.displayString = "N";
+                button.displayString = "#";
             }
         }
     }
-
-    @Override
-    protected void mouseReleased(int mouseX, int mouseY, int state) {}
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
@@ -94,66 +83,12 @@ public class GuiRecipe extends GuiTooltipScreen{
     }
 
     @Override
-    protected void handleMouseClick(Slot slotIn, int slotId, int clickedButton, int clickType) {
-        if (slotIn != null)
-        {
-            slotId = slotIn.slotNumber;
-        }
-        mc.thePlayer.openContainer.slotClick(slotId, clickedButton, clickType, mc.thePlayer);
-    }
-
-    @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         if (keyCode == 1) {
             if(activeSlot != -1){
                 setActiveSlot(-1);
             }else {
-                mc.displayGuiScreen(parent);
-            }
-        }
-    }
-
-    @Override
-    public void setWorldAndResolution(Minecraft mc, int width, int height) {
-        super.setWorldAndResolution(mc, width, height);
-        ModelManager modelManager = null;
-        Field[] fields = mc.getClass().getDeclaredFields();
-        for(Field field : fields){
-            if(ModelManager.class.equals(field.getType())){
-                field.setAccessible(true);
-                try {
-                    modelManager = (ModelManager) field.get(mc);
-                    break;
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        if(modelManager != null){
-            itemRender = new RenderItem(mc.renderEngine, modelManager){
-                @Override
-                public void renderItemOverlayIntoGUI(FontRenderer fr, ItemStack stack, int xPosition, int yPosition, String text) {
-                    boolean b = fr.getUnicodeFlag();
-                    fr.setUnicodeFlag(true);
-                    super.renderItemOverlayIntoGUI(fr, stack, xPosition, yPosition, ItemStackWrapper.getDisplayAmount(stack));
-                    fr.setUnicodeFlag(b);
-                }
-            };
-        }
-    }
-
-    public void click(int mouseX, int mouseY, int mouseButton){
-        try {
-            this.mouseClicked(mouseX, mouseY, mouseButton);
-        } catch (IOException ignored) {}
-    }
-
-    public void click(int index){
-        for(GuiButton button : buttonList){
-            if(button.id == index){
-                try {
-                    actionPerformed(button);
-                } catch (IOException ignored) {}
+                super.keyTyped(typedChar, keyCode);
             }
         }
     }

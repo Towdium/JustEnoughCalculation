@@ -27,10 +27,6 @@ public class GuiRecipeEditor extends GuiRecipe{
         super(containerRecipeEditor, parent);
     }
 
-    public GuiRecipeEditor(ContainerRecipeEditor containerRecipeEditor){
-        super(containerRecipeEditor);
-    }
-
     @Override
     public void drawScreen(int mouseX, int mouseY, float f) {
         super.drawScreen(mouseX, mouseY, f);
@@ -41,6 +37,9 @@ public class GuiRecipeEditor extends GuiRecipe{
         super.initGui();
         buttonList.add(new GuiButton(16, guiLeft+125, guiTop+7, 44, 20, StatCollector.translateToLocal("gui.recipeEditor.save")));
         buttonList.add(new GuiButton(17, guiLeft+125, guiTop+31, 44, 20, StatCollector.translateToLocal("gui.recipeEditor.clear")));
+        if(index != -1){
+            displayRecipe(JustEnoughCalculation.proxy.getPlayerHandler().getRecipe(index, null));
+        }
     }
 
     @Override

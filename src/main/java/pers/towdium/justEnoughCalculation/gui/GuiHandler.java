@@ -10,6 +10,8 @@ import pers.towdium.justEnoughCalculation.gui.commom.recipe.ContainerRecipe;
 import pers.towdium.justEnoughCalculation.gui.guis.recipeEditor.ContainerRecipeEditor;
 import pers.towdium.justEnoughCalculation.gui.guis.recipeEditor.GuiRecipeEditor;
 import pers.towdium.justEnoughCalculation.gui.guis.recipePicker.GuiRecipePicker;
+import pers.towdium.justEnoughCalculation.gui.guis.recipeViewer.ContainerRecipeViewer;
+import pers.towdium.justEnoughCalculation.gui.guis.recipeViewer.GuiRecipeViewer;
 
 
 /**
@@ -18,7 +20,7 @@ import pers.towdium.justEnoughCalculation.gui.guis.recipePicker.GuiRecipePicker;
 public class GuiHandler implements IGuiHandler {
     public static final class GuiId{
         public static final int CALCULATOR = 0;
-        public static final int ITEM_PICKER = 1;
+        public static final int RECIPE_VIEWER = 1;
         public static final int RECIPE_EDITOR = 2;
         public static final int RECIPE_PICKER = 3;
     }
@@ -32,8 +34,9 @@ public class GuiHandler implements IGuiHandler {
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         switch (ID) {
             case GuiId.CALCULATOR: return new GuiCalculator(new ContainerCalculator(player, player.getHeldItem()));
-            case GuiId.RECIPE_EDITOR: return new GuiRecipeEditor(new ContainerRecipeEditor());
-            case GuiId.RECIPE_PICKER: return new GuiRecipePicker(new ContainerRecipe(), JustEnoughCalculation.proxy.getPlayerHandler().getAllRecipeIndex(null));
+            case GuiId.RECIPE_VIEWER: return new GuiRecipeViewer(new ContainerRecipeViewer(), null);
+            case GuiId.RECIPE_EDITOR: return new GuiRecipeEditor(new ContainerRecipeEditor(), null);
+            case GuiId.RECIPE_PICKER: return new GuiRecipePicker(new ContainerRecipe(), null, JustEnoughCalculation.proxy.getPlayerHandler().getAllRecipeIndex(null));
         }
         return null;
     }

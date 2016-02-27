@@ -28,11 +28,6 @@ public class GuiRecipePicker extends GuiRecipe{
         this.recipes = recipes;
     }
 
-    public GuiRecipePicker(ContainerRecipe containerRecipe, List<Integer> recipes){
-        super(containerRecipe);
-        this.recipes = recipes;
-    }
-
     @Override
     public void initGui() {
         super.initGui();

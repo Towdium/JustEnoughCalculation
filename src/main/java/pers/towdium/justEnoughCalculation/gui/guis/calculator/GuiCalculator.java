@@ -1,12 +1,8 @@
 package pers.towdium.justEnoughCalculation.gui.guis.calculator;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -19,10 +15,11 @@ import pers.towdium.justEnoughCalculation.gui.commom.recipe.ContainerRecipe;
 import pers.towdium.justEnoughCalculation.gui.guis.recipeEditor.ContainerRecipeEditor;
 import pers.towdium.justEnoughCalculation.gui.guis.recipeEditor.GuiRecipeEditor;
 import pers.towdium.justEnoughCalculation.gui.guis.recipePicker.GuiRecipePicker;
+import pers.towdium.justEnoughCalculation.gui.guis.recipeViewer.ContainerRecipeViewer;
+import pers.towdium.justEnoughCalculation.gui.guis.recipeViewer.GuiRecipeViewer;
 import pers.towdium.justEnoughCalculation.network.packets.PacketSyncRecord;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -41,14 +38,14 @@ public class GuiCalculator extends GuiTooltipScreen{
     Calculator.CostRecord costRecord;
     int activeSlot = -1;
     int page = 1;
-    int total = 1;
+    int total = 0;
     EnumMode mode = EnumMode.INPUT;
     ItemStack buffer;
 
     public enum EnumMode {INPUT, OUTPUT, CATALYST}
 
     public GuiCalculator(ContainerCalculator containerCalculator){
-        super(containerCalculator);
+        super(containerCalculator, null);
         JustEnoughCalculation.networkWrapper.sendToServer(new PacketSyncRecord());
     }
 
@@ -73,6 +70,7 @@ public class GuiCalculator extends GuiTooltipScreen{
         ItemStack itemStack = ((ContainerCalculator)inventorySlots).getPlayer().getHeldItem();
         dest.inventory.setInventorySlotContents(dest.getSlotIndex(), ItemStackWrapper.NBT.getItem(itemStack, "dest"));
         textFieldAmount.setText(ItemStackWrapper.NBT.getString(itemStack, "text"));
+        updateLayout();
     }
 
     @Override
@@ -93,7 +91,7 @@ public class GuiCalculator extends GuiTooltipScreen{
     @Override
     protected void drawGuiContainerForegroundLayer(int p_146979_1_, int p_146979_2_) {
         fontRendererObj.drawString("x", 30, 13, 4210752);
-        drawCenteredString(fontRendererObj, page + "/" + total, 46, 145, 4210752);
+        drawCenteredString(fontRendererObj, page + "/" + total, 46, 145, 0xFFFFFF);
     }
 
     @Override
@@ -103,7 +101,6 @@ public class GuiCalculator extends GuiTooltipScreen{
             case 3: return StatCollector.translateToLocal("gui.calculator.editTooltip");
             case 7: return StatCollector.translateToLocal("gui.calculator.viewTooltip");
         }
-
         return null;
     }
 
@@ -154,7 +151,7 @@ public class GuiCalculator extends GuiTooltipScreen{
                 page = 1;
                 break;
             case 7:
-                mc.displayGuiScreen(new GuiRecipePicker(new ContainerRecipe(), this, JustEnoughCalculation.proxy.getPlayerHandler().getAllRecipeIndex(null)));
+                mc.displayGuiScreen(new GuiRecipeViewer(new ContainerRecipeViewer(), this));
                 break;
         }
         updateLayout();
@@ -182,53 +179,12 @@ public class GuiCalculator extends GuiTooltipScreen{
                     inventorySlots.getSlot(activeSlot).putStack(buffer);
                     setActiveSlot(-1);
                 }else {
-                    ((ContainerCalculator)inventorySlots).getPlayer().closeScreen();
+                    super.keyTyped(typedChar, keyCode);
                 }
             }
         }else {
             JustEnoughCalculation.proxy.getPlayerHandler().syncItemCalculator(inventorySlots.getSlot(0).getStack(), textFieldAmount.getText());
         }
-
-    }
-
-    @Override
-    public void setWorldAndResolution(Minecraft mc, int width, int height) {
-        super.setWorldAndResolution(mc, width, height);
-        ModelManager modelManager = null;
-        Field[] fields = mc.getClass().getDeclaredFields();
-        for(Field field : fields){
-            if(ModelManager.class.equals(field.getType())){
-                field.setAccessible(true);
-                try {
-                    modelManager = (ModelManager) field.get(mc);
-                    break;
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        if(modelManager != null){
-            itemRender = new RenderItem(mc.renderEngine, modelManager){
-                @Override
-                public void renderItemOverlayIntoGUI(FontRenderer fr, ItemStack stack, int xPosition, int yPosition, String text) {
-                    boolean b = fr.getUnicodeFlag();
-                    fr.setUnicodeFlag(true);
-                    super.renderItemOverlayIntoGUI(fr, stack, xPosition, yPosition, ItemStackWrapper.getDisplayAmount(stack));
-                    fr.setUnicodeFlag(b);
-                }
-            };
-        }
-        costRecord = null;
-        updateLayout();
-    }
-
-    @Override
-    protected void handleMouseClick(Slot slotIn, int slotId, int clickedButton, int clickType) {
-        if (slotIn != null)
-        {
-            slotId = slotIn.slotNumber;
-        }
-        mc.thePlayer.openContainer.slotClick(slotId, clickedButton, clickType, mc.thePlayer);
     }
 
     public void updateLayout(){
@@ -265,6 +221,7 @@ public class GuiCalculator extends GuiTooltipScreen{
             }
         }else {
             fillSlotsWith(new ItemStack[0], 0);
+            total = 0;
         }
         buttonLeft.enabled = page != 1;
         buttonRight.enabled = page < total;
@@ -284,8 +241,11 @@ public class GuiCalculator extends GuiTooltipScreen{
         updateLayout();
     }
 
-    public void drawCenteredStringWithoutShadow(FontRenderer fontRendererIn, String text, int x, int y, int color) {
-        fontRendererIn.drawString(text, x - fontRendererIn.getStringWidth(text) / 2, y, color);
+    public void onOpen(){
+        costRecord = null;
+        if(buttonRight != null){
+            updateLayout();
+        }
     }
 
     private void fillSlotsWith(ItemStack[] itemStacks, int start){

@@ -5,6 +5,7 @@ import mezz.jei.gui.ItemListOverlay;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.input.Mouse;
@@ -91,6 +92,13 @@ public class GuiEventHandler {
                     event.setCanceled(true);
                 }
             }
+        }
+    }
+
+    @SubscribeEvent
+    public void onOpen(GuiOpenEvent event){
+        if(event.gui instanceof GuiCalculator){
+            ((GuiCalculator) event.gui).onOpen();
         }
     }
 }

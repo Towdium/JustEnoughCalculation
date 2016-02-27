@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -11,12 +12,15 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * CODE IS DONE BY Zyin055
  * A GuiScreen replacement that supports putting tooltips onto GuiButtons.
  * SEE HERE: www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/modification-development/1437428-guide-1-7-2-how-to-make-button-tooltips
  */
-public abstract class GuiTooltipScreen extends GuiContainer
+public abstract class GuiTooltipScreen extends GuiJustEnoughCalculation
 {
     /** Show a white "?" in the top right part of any button with a tooltip assigned to it */
     public static boolean ShowTooltipButtonEffect = true;
@@ -41,8 +45,8 @@ public abstract class GuiTooltipScreen extends GuiContainer
     private long mouseoverTime = 0;
     private long prevSystemTime = -1;
 
-    public GuiTooltipScreen(Container inventorySlotsIn) {
-        super(inventorySlotsIn);
+    public GuiTooltipScreen(@Nonnull Container inventorySlotsIn, @Nullable GuiScreen parent) {
+        super(inventorySlotsIn, parent);
     }
 
     public void drawScreen(int mouseX, int mouseY, float f)

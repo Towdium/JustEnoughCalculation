@@ -126,7 +126,7 @@ public class PlayerHandlerClient implements IPlayerHandler {
 
     @Override
     public Recipe getRecipe(int index, UUID uuid) {
-        return recipes.get(index);
+        return index<recipes.size() ? recipes.get(index) : null;
     }
 
     @Override
