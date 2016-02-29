@@ -9,6 +9,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import pers.towdium.justEnoughCalculation.JustEnoughCalculation;
 import pers.towdium.justEnoughCalculation.core.Calculator;
+import pers.towdium.justEnoughCalculation.core.CostRecord;
 import pers.towdium.justEnoughCalculation.core.ItemStackWrapper;
 import pers.towdium.justEnoughCalculation.gui.commom.GuiTooltipScreen;
 import pers.towdium.justEnoughCalculation.gui.commom.recipe.ContainerRecipe;
@@ -20,6 +21,7 @@ import pers.towdium.justEnoughCalculation.gui.guis.recipeViewer.GuiRecipeViewer;
 import pers.towdium.justEnoughCalculation.network.packets.PacketSyncRecord;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -35,7 +37,7 @@ public class GuiCalculator extends GuiTooltipScreen{
     GuiButton buttonMode;
     GuiButton buttonCalculate;
     GuiButton buttonView;
-    Calculator.CostRecord costRecord;
+    CostRecord costRecord;
     int activeSlot = -1;
     int page = 1;
     int total = 0;
@@ -210,17 +212,17 @@ public class GuiCalculator extends GuiTooltipScreen{
         if(costRecord != null){
             switch (mode){
                 case OUTPUT:
-                    total = (costRecord.getOutputStack().length+35)/36;
+                    total = (costRecord.getOutputStack().size()+35)/36;
                     fillSlotsWith(costRecord.getOutputStack(), (page-1)*36);break;
                 case INPUT:
-                    total = (costRecord.getInputStack().length+35)/36;
+                    total = (costRecord.getInputStack().size()+35)/36;
                     fillSlotsWith(costRecord.getInputStack(), (page-1)*36);break;
                 case CATALYST:
-                    total = (costRecord.getCatalystStack().length+35)/36;
+                    total = (costRecord.getCatalystStack().size()+35)/36;
                     fillSlotsWith(costRecord.getCatalystStack(), (page-1)*36);break;
             }
         }else {
-            fillSlotsWith(new ItemStack[0], 0);
+            fillSlotsWith(new ArrayList<ItemStack>(), 0);
             total = 0;
         }
         buttonLeft.enabled = page != 1;
@@ -248,11 +250,11 @@ public class GuiCalculator extends GuiTooltipScreen{
         }
     }
 
-    private void fillSlotsWith(ItemStack[] itemStacks, int start){
+    private void fillSlotsWith(List<ItemStack> itemStacks, int start){
         int pos = 1;
         for(int i=start; i<start+36; i++){
-            if(i<=itemStacks.length-1){
-                inventorySlots.getSlot(pos++).putStack(itemStacks[i]);
+            if(i<=itemStacks.size()-1){
+                inventorySlots.getSlot(pos++).putStack(itemStacks.get(i));
             }else {
                 inventorySlots.putStackInSlot(pos++, null);
             }
@@ -263,9 +265,7 @@ public class GuiCalculator extends GuiTooltipScreen{
         try {
             int i = Integer.valueOf(textFieldAmount.getText());
             Calculator calculator = new Calculator(inventorySlots.getSlot(0).getStack(), i*100);
-            Calculator.CostRecord record = calculator.getCost();
-            record.unify();
-            costRecord = record;
+            costRecord = calculator.getCost();
         } catch (NumberFormatException e){
             textFieldAmount.setTextColor(16711680);
             TimerTask r = new TimerTask() {

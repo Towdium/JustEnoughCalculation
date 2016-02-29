@@ -12,7 +12,25 @@ public class ItemRecord{
     int meta;
     long amount;
     boolean approx;
+    boolean locked;
 
+    /**
+     * Generate ItemRecord based on the ItemStack and multiply the amount
+     */
+    public ItemRecord(ItemStack itemStack, long multiplier){
+        item = itemStack.getItem();
+        meta = itemStack.getMetadata();
+        amount = ItemStackWrapper.getUnifiedAmount(itemStack) * multiplier;
+        approx = itemStack.hasTagCompound() && itemStack.getTagCompound().getBoolean("approx");
+    }
+
+    public ItemRecord(ItemStack itemStack){
+        this(itemStack, 1);
+    }
+
+    /**
+     * Generate ItemRecord with customized amount
+     */
     public ItemRecord(ItemStack itemStack, long amount, boolean approx){
         item = itemStack.getItem();
         meta = itemStack.getMetadata();
@@ -92,6 +110,14 @@ public class ItemRecord{
         }
         itemStack.setTagCompound(tagCompound);
         return itemStack;
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
     }
 
     @Override
