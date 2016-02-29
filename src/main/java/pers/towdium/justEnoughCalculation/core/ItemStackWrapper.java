@@ -67,38 +67,74 @@ public class ItemStackWrapper {
 
     public static String getSimplifiedString(long l, boolean approx){
         String s;
-        if(l<999){
-            s = String.valueOf(l);
-        }else if(l<9999){
-            s = String.format("%.2fK", (double)l/1000);
-        }else if(l<99999){
-            s = String.format("%.1fK", (double)l/1000);
-        }else if(l<999999){
-            s = String.format("%.0fK", (double)l/1000);
-        }else if(l<9999999){
-            s = String.format("%.2fM", (double)l/1000000);
-        }else if(l<99999999){
-            s = String.format("%.1fM", (double)l/1000000);
-        }else if(l<999999999){
-            s = String.format("%.0fM", (double)l/1000000);
-        }else if(l<9999999999L){
-            s = String.format("%.2fB", (double)l/1000000000);
-        }else if(l<99999999999L){
-            s = String.format("%.1fB", (double)l/1000000000);
-        }else if(l<999999999999L){
-            s = String.format("%.0fB", (double)l/1000000000);
-        }else if(l<9999999999999L){
-            s = String.format("%.2fT", (double)l/1000000000000L);
-        }else if(l<99999999999999L){
-            s = String.format("%.1fT", (double)l/1000000000000L);
-        }else {
-            s = String.format("%.0fT", (double)l/1000000000000L);
-        }
         if(approx){
-            return "≈" + s;
+            if(l<999){
+                s = String.valueOf(l);
+            }else if(l<9999){
+                s = String.format("≈%.1fK", (double)l/1000);
+            }else if(l<99999){
+                s = String.format("≈%.0fK", (double)l/1000);
+            }else if(l<999999){
+                s = String.format("≈%.1fM", (double)l/1000000);
+            }else if(l<9999999){
+                s = String.format("≈%.1fM", (double)l/1000000);
+            }else if(l<99999999){
+                s = String.format("≈%.0fM", (double)l/1000000);
+            }else if(l<999999999){
+                s = String.format("≈%.1fB", (double)l/1000000000);
+            }else if(l<9999999999L){
+                s = String.format("≈%.1fB", (double)l/1000000000);
+            }else if(l<99999999999L){
+                s = String.format("≈%.0fB", (double)l/1000000000);
+            }else if(l<999999999999L){
+                s = String.format("≈%.1fT", (double)l/1000000000000L);
+            }else if(l<9999999999999L){
+                s = String.format("≈%.1fT", (double)l/1000000000000L);
+            }else if(l<99999999999999L){
+                s = String.format("≈%.0fT", (double)l/1000000000000L);
+            }else if(l<999999999999999L){
+                s = String.format("≈%.1fG", (double)l/1000000000000000L);
+            }else if(l<9999999999999999L){
+                s = String.format("≈%.1fG", (double)l/1000000000000000L);
+            }else {
+                s = String.format("≈%.0fG", (double)l/1000000000000000L);
+            }
         }else {
-            return s;
+            if(l<999){
+                s = String.valueOf(l);
+            }else if(l<9999){
+                s = String.format("%.2fK", (double)l/1000);
+            }else if(l<99999){
+                s = String.format("%.1fK", (double)l/1000);
+            }else if(l<999999){
+                s = String.format("%.0fK", (double)l/1000);
+            }else if(l<9999999){
+                s = String.format("%.2fM", (double)l/1000000);
+            }else if(l<99999999){
+                s = String.format("%.1fM", (double)l/1000000);
+            }else if(l<999999999){
+                s = String.format("%.0fB", (double)l/1000000);
+            }else if(l<9999999999L){
+                s = String.format("%.2fB", (double)l/1000000000);
+            }else if(l<99999999999L){
+                s = String.format("%.1fB", (double)l/1000000000);
+            }else if(l<999999999999L){
+                s = String.format("%.0fT", (double)l/1000000000);
+            }else if(l<9999999999999L){
+                s = String.format("%.2fT", (double)l/1000000000000L);
+            }else if(l<99999999999999L){
+                s = String.format("%.1fT", (double)l/1000000000000L);
+            }else if(l<999999999999999L){
+                s = String.format("%.0fG", (double)l/1000000000000L);
+            }else if(l<9999999999999999L){
+                s = String.format("%.2fG", (double)l/1000000000000000L);
+            }else if(l<99999999999990999L){
+                s = String.format("%.1fG", (double)l/1000000000000000L);
+            }else {
+                s = String.format("%.0fG", (double)l/1000000000000000L);
+            }
         }
+        return s;
     }
 
     public static class NBT {
