@@ -31,6 +31,9 @@ public class ItemStackWrapper {
                     return "";
                 }
                 long l = itemStack.getTagCompound().getLong("amount");
+                if(l == 0){
+                    return "";
+                }
                 int i = itemStack.getTagCompound().getInteger("percentage");
                 if(i != 0){
                     return i + "%";

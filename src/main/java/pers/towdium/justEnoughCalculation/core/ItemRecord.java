@@ -21,7 +21,7 @@ public class ItemRecord{
         item = itemStack.getItem();
         meta = itemStack.getMetadata();
         amount = ItemStackWrapper.getUnifiedAmount(itemStack) * multiplier;
-        approx = itemStack.hasTagCompound() && itemStack.getTagCompound().getBoolean("approx");
+        approx = itemStack.hasTagCompound() && itemStack.getTagCompound().getBoolean("percentage");
     }
 
     public ItemRecord(ItemStack itemStack){

@@ -22,19 +22,24 @@ public class CostRecord{
         input.add(itemRecord);
     }
 
-    public CostRecord(Recipe recipe, long count){
+    public CostRecord(Recipe recipe, long count, boolean approx){
         output = new ArrayList<>();
         input = new ArrayList<>();
         catalyst = new LinkedList<>();
+        boolean b = recipe.isApprox() || approx;
         for(ItemStack itemStack : recipe.output){
             if(itemStack != null){
-                output.add(new ItemRecord(itemStack, count));
+                ItemRecord record = new ItemRecord(itemStack, count);
+                record.approx = b;
+                output.add(record);
             }
         }
         for(ItemStack itemStack : recipe.input){
             if(itemStack != null){
-                input.add(new ItemRecord(itemStack, count));
-                catalyst.add(new ItemRecord(itemStack, count));
+                ItemRecord record = new ItemRecord(itemStack, count);
+                record.approx = b;
+                input.add(record);
+                catalyst.add(record.copy());
             }
         }
     }
@@ -45,11 +50,17 @@ public class CostRecord{
      */
     public CostRecord(CostRecord costRecord1, CostRecord costRecord2){
         output = new ArrayList<>();
-        output.addAll(costRecord1.output);
+        for (ItemRecord record : costRecord1.output){
+            output.add(record.copy());
+        }
         input = new ArrayList<>();
-        input.addAll(costRecord1.input);
+        for (ItemRecord record : costRecord1.input){
+            input.add(record.copy());
+        }
         catalyst = new LinkedList<>();
-        catalyst.addAll(costRecord1.catalyst);
+        for (ItemRecord record : costRecord1.catalyst){
+            catalyst.add(record.copy());
+        }
         // merge output
         LOOP:
         for(ItemRecord itemRecordAdd : costRecord2.output){
@@ -59,7 +70,7 @@ public class CostRecord{
                     continue LOOP;
                 }
             }
-            output.add(itemRecordAdd);
+            output.add(itemRecordAdd.copy());
         }
         // merge input
         LOOP:
@@ -70,7 +81,7 @@ public class CostRecord{
                     continue LOOP;
                 }
             }
-            input.add(itemRecordAdd);
+            input.add(itemRecordAdd.copy());
         }
         // cancel catalyst by output
         LOOP:
@@ -81,7 +92,7 @@ public class CostRecord{
                     catalyst.remove(i);
                     continue LOOP;
                 }else if(itemRecordAdd.isSameType(itemRecordExt)) {
-                    itemRecordExt.amount -= itemRecordAdd.amount;
+                    itemRecordExt.minus(itemRecordAdd);
                     continue LOOP;
                 }
             }
@@ -91,20 +102,17 @@ public class CostRecord{
         for(ItemRecord itemRecordAdd : costRecord2.catalyst){
             for (ItemRecord itemRecordExt : catalyst) {
                 if (itemRecordAdd.isSameType(itemRecordExt)) {
-                    itemRecordExt.amount += itemRecordAdd.amount;
+                    itemRecordExt.add(itemRecordAdd);
                     continue LOOP;
                 }
             }
-            catalyst.add(itemRecordAdd);
+            catalyst.add(itemRecordAdd.copy());
         }
         // cancel input and output
         for(ItemRecord itemRecordIn : input){
             for(ItemRecord itemRecordOut : output){
                 if(itemRecordIn.isSameType(itemRecordOut)){
-                    long a = itemRecordIn.amount;
-                    long b = itemRecordOut.amount;
-                    itemRecordIn.amount -= a>b ? b : a;
-                    itemRecordOut.amount -= a>b ? b : a;
+                    itemRecordIn.cancel(itemRecordOut);
                 }
             }
         }
@@ -145,13 +153,14 @@ public class CostRecord{
         LOOP:
         for(ItemRecord itemRecord : catalyst){
             if(itemRecord.amount != 0){
-                for(ItemRecord record : output){
-                    if(itemRecord.isSameType(record)){
+                for(ItemRecord record : input){
+                    if(itemRecord.isSameType(record) && record.amount != 0){
                         continue LOOP;
                     }
                 }
-                itemRecord.amount = 0;
-                builder.add(itemRecord.toItemStack());
+                ItemRecord buffer = itemRecord.copy();
+                buffer.amount=0;
+                builder.add(buffer.toItemStack());
             }
         }
         return builder.build();
@@ -162,28 +171,28 @@ public class CostRecord{
         if (obj instanceof CostRecord) {
             for (ItemRecord itemRecordIn : output) {
                 for (ItemRecord itemRecordExt : ((CostRecord) obj).output) {
-                    if ((itemRecordExt.isSameType(itemRecordIn) && itemRecordExt.amount != itemRecordIn.amount) || !itemRecordExt.isSameType(itemRecordIn)) {
+                    if (itemRecordExt.isSameType(itemRecordIn) && itemRecordExt.amount != itemRecordIn.amount) {
                         return false;
                     }
                 }
             }
             for (ItemRecord itemRecordIn : input) {
                 for (ItemRecord itemRecordExt : ((CostRecord) obj).input) {
-                    if ((itemRecordExt.isSameType(itemRecordIn) && itemRecordExt.amount != itemRecordIn.amount)|| !itemRecordExt.isSameType(itemRecordIn)) {
+                    if (itemRecordExt.isSameType(itemRecordIn) && itemRecordExt.amount != itemRecordIn.amount) {
                         return false;
                     }
                 }
             }
             for (ItemRecord itemRecordIn : ((CostRecord) obj).output) {
                 for (ItemRecord itemRecordExt : output) {
-                    if ((itemRecordExt.isSameType(itemRecordIn) && itemRecordExt.amount != itemRecordIn.amount) || !itemRecordExt.isSameType(itemRecordIn)) {
+                    if (itemRecordExt.isSameType(itemRecordIn) && itemRecordExt.amount != itemRecordIn.amount) {
                         return false;
                     }
                 }
             }
             for (ItemRecord itemRecordIn : ((CostRecord) obj).input) {
                 for (ItemRecord itemRecordExt : input) {
-                    if ((itemRecordExt.isSameType(itemRecordIn) && itemRecordExt.amount != itemRecordIn.amount)|| !itemRecordExt.isSameType(itemRecordIn)) {
+                    if (itemRecordExt.isSameType(itemRecordIn) && itemRecordExt.amount != itemRecordIn.amount) {
                         return false;
                     }
                 }

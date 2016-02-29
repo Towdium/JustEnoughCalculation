@@ -25,7 +25,7 @@ public class Calculator {
                 // all the recipes for one item
                 LOOP1:
                 for(Recipe recipe : JustEnoughCalculation.proxy.getPlayerHandler().getAllRecipeOf(itemRecord.toItemStack(), null)){
-                    CostRecord record = new CostRecord(costRecords.get(costRecords.size()-1), new CostRecord(recipe, getCount(itemRecord, recipe)));
+                    CostRecord record = new CostRecord(costRecords.get(costRecords.size()-1), new CostRecord(recipe, getCount(itemRecord, recipe), itemRecord.approx));
                     for(CostRecord costRecord : costRecords){
                         if(costRecord.equals(record)){
                             continue LOOP1;
@@ -48,6 +48,4 @@ public class Calculator {
         long a = recipe.getOutputAmount(itemRecord.toItemStack());
         return (long) ((double)itemRecord.amount/a + 0.5f);
     }
-
-
 }
