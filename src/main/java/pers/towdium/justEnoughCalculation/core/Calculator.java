@@ -22,7 +22,7 @@ public class Calculator {
     public Calculator (){}
 
     public Calculator (ItemStack itemStack, int amount){
-        this(new ItemRecord(itemStack, amount), new LinkedList<OperateRecord>(), new LinkedList<ItemRecord>(), true);
+        this(new ItemRecord(itemStack, amount, false), new LinkedList<OperateRecord>(), new LinkedList<ItemRecord>(), true);
     }
 
     public Calculator (ItemRecord itemRecord, List<OperateRecord> operateRecords, List<ItemRecord> catalystBuffer, boolean exceedMode){
@@ -41,7 +41,7 @@ public class Calculator {
                 for(ItemStack itemStack : recipe.input){
                     if(itemStack != null){
                         calculatorBuilder.add(new Calculator(
-                                new ItemRecord(itemStack, count*recipe.getInputAmount(itemStack)), records, catalystBuffer, true
+                                new ItemRecord(itemStack, count*recipe.getInputAmount(itemStack), false), records, catalystBuffer, true
                         ));
                     }
                 }
@@ -77,12 +77,12 @@ public class Calculator {
         List<ItemRecord> input = new LinkedList<>();
         for(ItemStack itemStack : currentOperate.recipe.output){
             if(itemStack != null){
-                output.add(new ItemRecord(itemStack, currentOperate.count*ItemStackWrapper.getUnifiedAmount(itemStack)));
+                output.add(new ItemRecord(itemStack, currentOperate.count*ItemStackWrapper.getUnifiedAmount(itemStack), false));
             }
         }
         for(ItemStack itemStack : currentOperate.recipe.input){
             if(itemStack != null){
-                input.add(new ItemRecord(itemStack, currentOperate.count*ItemStackWrapper.getUnifiedAmount(itemStack)));
+                input.add(new ItemRecord(itemStack, currentOperate.count*ItemStackWrapper.getUnifiedAmount(itemStack), false));
             }
         }
         return new Calculator.CostRecord(output, input);

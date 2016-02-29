@@ -68,6 +68,28 @@ public class Recipe {
         return -1;
     }
 
+    public int getExactInputIndex(ItemStack itemStack){
+        for(int i = 0; i<12; i++){
+            if(ItemStackWrapper.isStackEqual(input[i], itemStack)){
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public int getInputIndex(ItemStack itemStack){
+        for(int i = 0; i<12; i++){
+            if(ItemStackWrapper.isTypeEqual(input[i], itemStack)){
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public boolean getHasExactInput(ItemStack itemStack){
+        return getExactInputIndex(itemStack) != -1;
+    }
+
     public int getOutputAmount(ItemStack itemStack){
         for(int i = 0; i<4; i++){
             if(ItemStackWrapper.isTypeEqual(output[i], itemStack)){
@@ -88,6 +110,10 @@ public class Recipe {
 
     public boolean getHasOutput(ItemStack itemStack){
         return getOutputIndex(itemStack) != -1;
+    }
+
+    public boolean getHasInput(ItemStack itemStack){
+        return getInputIndex(itemStack) != -1;
     }
 
     @Override
@@ -136,6 +162,20 @@ public class Recipe {
             }
         }
         return builder.build();
+    }
+
+    public boolean isApprox(){
+        for(ItemStack itemstack : input){
+            if(itemstack != null && itemstack.hasTagCompound() && itemstack.getTagCompound().hasKey("percentage")){
+                return true;
+            }
+        }
+        for(ItemStack itemstack : output){
+            if(itemstack != null && itemstack.hasTagCompound() && itemstack.getTagCompound().hasKey("percentage")){
+                return true;
+            }
+        }
+        return false;
     }
 
     public static class ByteBufUtl{

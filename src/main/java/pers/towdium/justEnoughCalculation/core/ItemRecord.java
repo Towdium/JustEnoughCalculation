@@ -11,17 +11,20 @@ public class ItemRecord{
     Item item;
     int meta;
     long amount;
+    boolean approx;
 
-    public ItemRecord(ItemStack itemStack, long amount){
+    public ItemRecord(ItemStack itemStack, long amount, boolean approx){
         item = itemStack.getItem();
         meta = itemStack.getMetadata();
         this.amount = amount;
+        this.approx = approx;
     }
 
-    public ItemRecord(Item item, int meta, long amount) {
+    public ItemRecord(Item item, int meta, long amount, boolean approx) {
         this.item = item;
         this.meta = meta;
         this.amount = amount;
+        this.approx = approx;
     }
 
     @Override
@@ -45,6 +48,7 @@ public class ItemRecord{
     public boolean add(ItemRecord record){
         if (isSameType(record)){
             amount += record.amount;
+            approx = approx || record.approx;
             return true;
         }else {
             return false;
@@ -65,6 +69,10 @@ public class ItemRecord{
             long i = amount>record.amount ? record.amount : amount;
             amount -= i;
             record.amount -= i;
+            if(approx || record.approx){
+                approx = true;
+                record.approx = true;
+            }
             return i!=0;
         }else {
             return false;
@@ -72,14 +80,27 @@ public class ItemRecord{
     }
 
     public ItemRecord copy(){
-        return new ItemRecord(item, meta, amount);
+        return new ItemRecord(item, meta, amount, approx);
     }
 
     public ItemStack toItemStack(){
         ItemStack itemStack = new ItemStack(item, 1, meta);
         NBTTagCompound tagCompound = new NBTTagCompound();
         tagCompound.setLong("amount", amount);
+        if(approx){
+            tagCompound.setBoolean("approx", true);
+        }
         itemStack.setTagCompound(tagCompound);
         return itemStack;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof ItemRecord){
+            ItemRecord record = ((ItemRecord) obj);
+            return record.approx == approx && record.item == item && record.amount == amount && record.meta == meta;
+        }else {
+            return false;
+        }
     }
 }

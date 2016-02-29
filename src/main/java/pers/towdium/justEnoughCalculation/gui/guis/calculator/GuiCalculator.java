@@ -266,7 +266,7 @@ public class GuiCalculator extends GuiTooltipScreen{
             Calculator.CostRecord record = calculator.getCost();
             record.unify();
             costRecord = record;
-        } catch (Exception e){
+        } catch (NumberFormatException e){
             textFieldAmount.setTextColor(16711680);
             TimerTask r = new TimerTask() {
                 @Override
