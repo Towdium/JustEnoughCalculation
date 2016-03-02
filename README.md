@@ -16,9 +16,9 @@ cases. Have fun!
 * Personal preference record
 * Shift - left click for quick input of recipe
 * Support for percentage in recipes
+* Check Player's inventory for missing ingredients
 
 #### Planed features
 
-* Check Player's inventory for missed gradients
-* Special mark for amount acquired by approximation
-* Improve the display for big numbers
+* Add config to disable inventory check
+* Detect and automatically support all recipe types
