@@ -1,6 +1,5 @@
 package pers.towdium.justEnoughCalculation.gui.guis.recipeViewer;
 
-import com.sun.istack.internal.NotNull;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
@@ -15,6 +14,7 @@ import pers.towdium.justEnoughCalculation.gui.guis.recipeEditor.ContainerRecipeE
 import pers.towdium.justEnoughCalculation.gui.guis.recipeEditor.GuiRecipeEditor;
 import pers.towdium.justEnoughCalculation.network.packets.PacketRecipeUpdate;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.List;
@@ -29,7 +29,7 @@ public class GuiRecipeViewer extends GuiJustEnoughCalculation {
     int page = 1;
     int total;
 
-    public GuiRecipeViewer (@NotNull ContainerRecipeViewer container, @Nullable GuiScreen parent){
+    public GuiRecipeViewer (@Nonnull ContainerRecipeViewer container, @Nullable GuiScreen parent){
         super(container, parent);
     }
 

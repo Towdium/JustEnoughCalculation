@@ -21,10 +21,7 @@ import pers.towdium.justEnoughCalculation.gui.guis.recipeViewer.GuiRecipeViewer;
 import pers.towdium.justEnoughCalculation.network.packets.PacketSyncRecord;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 /**
  * @author Towdium
@@ -38,6 +35,7 @@ public class GuiCalculator extends GuiTooltipScreen{
     GuiButton buttonCalculate;
     GuiButton buttonView;
     CostRecord costRecord;
+    Map<Integer, Integer> items;
     int activeSlot = -1;
     int page = 1;
     int total = 0;
@@ -49,6 +47,7 @@ public class GuiCalculator extends GuiTooltipScreen{
     public GuiCalculator(ContainerCalculator containerCalculator){
         super(containerCalculator, null);
         JustEnoughCalculation.networkWrapper.sendToServer(new PacketSyncRecord());
+        items = new HashMap<>(36);
     }
 
     @Override
@@ -88,6 +87,7 @@ public class GuiCalculator extends GuiTooltipScreen{
             this.drawTexturedModalRect(this.guiLeft+slot.xDisplayPosition-1, this.guiTop+slot.yDisplayPosition-1, 196, 0, 18, 18);
         }
         textFieldAmount.drawTextBox();
+        drawMissingTexture();
     }
 
     @Override
@@ -227,6 +227,7 @@ public class GuiCalculator extends GuiTooltipScreen{
         }
         buttonLeft.enabled = page != 1;
         buttonRight.enabled = page < total;
+        checkItem();
     }
 
     public int getActiveSlot() {
@@ -250,7 +251,7 @@ public class GuiCalculator extends GuiTooltipScreen{
         }
     }
 
-    private void fillSlotsWith(List<ItemStack> itemStacks, int start){
+    protected void fillSlotsWith(List<ItemStack> itemStacks, int start){
         int pos = 1;
         for(int i=start; i<start+36; i++){
             if(i<=itemStacks.size()-1){
@@ -261,7 +262,7 @@ public class GuiCalculator extends GuiTooltipScreen{
         }
     }
 
-    private void refreshRecipe(){
+    protected void refreshRecipe(){
         try {
             int i = Integer.valueOf(textFieldAmount.getText());
             Calculator calculator = new Calculator(inventorySlots.getSlot(0).getStack(), i*100);
@@ -276,6 +277,36 @@ public class GuiCalculator extends GuiTooltipScreen{
             };
             Timer t = new Timer();
             t.schedule(r, 1000);
+        }
+    }
+
+    protected void drawMissingTexture(){
+        for(int i=0; i<36; i++){
+            Slot slot = inventorySlots.getSlot(i+1);
+            if(items.containsKey(i)){
+                int store = items.get(i);
+                int a = store == 0 ? 0 : store*0x8000000+0x12ff0000;
+                drawRect(slot.xDisplayPosition+guiLeft-1, slot.yDisplayPosition+guiTop-1, slot.xDisplayPosition+guiLeft+17, slot.yDisplayPosition+guiTop+17, a);
+            }
+        }
+    }
+
+    protected void checkItem(){
+        for(int i=0; i<36; i++){
+            ItemStack itemStack = inventorySlots.getSlot(i+1).getStack();
+            if(itemStack == null){
+                items.put(i, 0);
+                continue;
+            }
+            int amount = 0;
+            for(ItemStack itemStackPlayer : mc.thePlayer.inventory.mainInventory){
+                if(ItemStackWrapper.isTypeEqual(itemStackPlayer, itemStack)){
+                    amount += itemStackPlayer.stackSize;
+                }
+            }
+            int d = (int)(amount/(double)ItemStackWrapper.getGhostItemAmount(itemStack)*15);
+            d = d>15 ? 0 : 15-d;
+            items.put(i, d);
         }
     }
 }

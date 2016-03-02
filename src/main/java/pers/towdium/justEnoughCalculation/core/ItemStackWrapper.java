@@ -137,6 +137,16 @@ public class ItemStackWrapper {
         return s;
     }
 
+    public static long getGhostItemAmount(ItemStack itemStack){
+        if (itemStack.hasTagCompound()){
+            long l = itemStack.getTagCompound().getLong("amount");
+            return (l+99)/100;
+        }else {
+            return 0;
+        }
+
+    }
+
     public static class NBT {
         public static void initNBT(ItemStack itemStack){
             if(!itemStack.hasTagCompound()){
