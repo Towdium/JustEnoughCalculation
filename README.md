@@ -20,5 +20,4 @@ cases. Have fun!
 
 #### Planed features
 
-* Add config to disable inventory check
 * Detect and automatically support all recipe types
