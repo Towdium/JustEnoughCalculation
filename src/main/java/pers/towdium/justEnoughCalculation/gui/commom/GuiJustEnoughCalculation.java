@@ -31,8 +31,7 @@ public abstract class GuiJustEnoughCalculation extends GuiContainer {
 
     @Override
     protected void handleMouseClick(Slot slotIn, int slotId, int clickedButton, int clickType) {
-        if (slotIn != null)
-        {
+        if (slotIn != null) {
             slotId = slotIn.slotNumber;
         }
         mc.thePlayer.openContainer.slotClick(slotId, clickedButton, clickType, mc.thePlayer);

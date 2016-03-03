@@ -93,6 +93,18 @@ public class GuiRecipe extends GuiTooltipScreen{
         }
     }
 
+    @Override
+    protected void handleMouseClick(Slot slotIn, int slotId, int clickedButton, int clickType) {
+        boolean b = false;
+        if(slotIn != null){
+            b = slotIn.getHasStack();
+        }
+        super.handleMouseClick(slotIn, slotId, clickedButton, clickType);
+        if(slotIn != null && b && !slotIn.getHasStack()){
+            buttonList.get(slotIn.getSlotIndex()).displayString = "#";
+        }
+    }
+
     public int getActiveSlot() {
         return activeSlot;
     }
@@ -106,14 +118,22 @@ public class GuiRecipe extends GuiTooltipScreen{
         List<ItemStack> input = recipe.getInput();
         for(int i=0; i<4; i++){
             if(i<output.size()){
-                this.inventorySlots.getSlot(i).putStack(output.get(i));
+                ItemStack itemStack = output.get(i);
+                this.inventorySlots.getSlot(i).putStack(itemStack);
+                if(itemStack.hasTagCompound() && itemStack.getTagCompound().hasKey("percentage")){
+                    buttonList.get(i).displayString = "%";
+                }
             }else {
                 this.inventorySlots.getSlot(i).putStack(null);
             }
         }
         for(int i=0; i<12; i++){
             if(i<input.size()){
-                this.inventorySlots.getSlot(i+4).putStack(input.get(i));
+                ItemStack itemStack = input.get(i);
+                this.inventorySlots.getSlot(i+4).putStack(itemStack);
+                if(itemStack.hasTagCompound() && itemStack.getTagCompound().hasKey("percentage")){
+                    buttonList.get(i+4).displayString = "%";
+                }
             }else {
                 this.inventorySlots.getSlot(i+4).putStack(null);
             }

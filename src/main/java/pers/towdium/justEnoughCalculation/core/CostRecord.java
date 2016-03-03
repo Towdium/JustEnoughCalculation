@@ -39,7 +39,9 @@ public class CostRecord{
                 ItemRecord record = new ItemRecord(itemStack, count);
                 record.approx = b;
                 input.add(record);
-                catalyst.add(record.copy());
+                record = new ItemRecord(itemStack);
+                record.approx = b;
+                catalyst.add(record);
             }
         }
     }
@@ -159,8 +161,10 @@ public class CostRecord{
                     }
                 }
                 ItemRecord buffer = itemRecord.copy();
-                buffer.amount=0;
-                builder.add(buffer.toItemStack());
+                //buffer.amount=0;
+                ItemStack itemStack = buffer.toItemStack();
+                //itemStack.getTagCompound().setBoolean("mark", true);
+                builder.add(itemStack);
             }
         }
         return builder.build();

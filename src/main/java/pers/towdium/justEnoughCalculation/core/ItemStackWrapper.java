@@ -31,7 +31,7 @@ public class ItemStackWrapper {
                     return "";
                 }
                 long l = itemStack.getTagCompound().getLong("amount");
-                if(l == 0){
+                if(l == 0 && itemStack.stackSize == 0){
                     return "";
                 }
                 int i = itemStack.getTagCompound().getInteger("percentage");
@@ -249,7 +249,7 @@ public class ItemStackWrapper {
         }
 
         public static boolean rightClick(ItemStack itemStack, boolean doChange){
-            if(itemStack == null || (itemStack.hasTagCompound() && (itemStack.getTagCompound().getInteger("percentage") == 1 || itemStack.getTagCompound().getInteger("percentage") == 0))){
+            if(itemStack == null){
                 return false;
             }else {
                 if(doChange){

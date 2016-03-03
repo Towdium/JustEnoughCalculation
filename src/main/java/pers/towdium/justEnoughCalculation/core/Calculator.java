@@ -11,6 +11,7 @@ import java.util.List;
  * This is calculating core v3.0, I call it global coordinating calculation XD.
  * The procudure might be more complex, but can avoid some unexpected results.
  */
+
 public class Calculator {
     List<CostRecord> costRecords;
 
@@ -46,6 +47,6 @@ public class Calculator {
 
     protected long getCount(ItemRecord itemRecord, Recipe recipe){
         long a = recipe.getOutputAmount(itemRecord.toItemStack());
-        return (long) ((double)itemRecord.amount/a + 0.5f);
+        return (long)Math.ceil(itemRecord.amount/(double)a);
     }
 }

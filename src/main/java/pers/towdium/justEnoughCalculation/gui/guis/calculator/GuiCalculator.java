@@ -227,7 +227,9 @@ public class GuiCalculator extends GuiTooltipScreen{
         }
         buttonLeft.enabled = page != 1;
         buttonRight.enabled = page < total;
-        checkItem();
+        if(JustEnoughCalculation.config.get("General", "EnableInventoryCheck", true, "Set to false to disable auto inventory check").getBoolean()){
+            checkItem();
+        }
     }
 
     public int getActiveSlot() {
@@ -292,6 +294,12 @@ public class GuiCalculator extends GuiTooltipScreen{
     }
 
     protected void checkItem(){
+        if(mode != EnumMode.INPUT){
+            for(int i=0; i<36; i++){
+                items.put(i, 0);
+            }
+            return;
+        }
         for(int i=0; i<36; i++){
             ItemStack itemStack = inventorySlots.getSlot(i+1).getStack();
             if(itemStack == null){

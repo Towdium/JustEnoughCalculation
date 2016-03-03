@@ -7,6 +7,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -23,6 +24,8 @@ import pers.towdium.justEnoughCalculation.network.packets.PacketCalculatorUpdate
 import pers.towdium.justEnoughCalculation.network.packets.PacketRecipeUpdate;
 import pers.towdium.justEnoughCalculation.network.packets.PacketSyncRecord;
 
+import java.io.File;
+
 /**
  * @author Towdium
  */
@@ -33,6 +36,7 @@ public class JustEnoughCalculation {
     public static Item itemCalculator = new ItemCalculator().setUnlocalizedName("itemCalculator");
     public static SimpleNetworkWrapper networkWrapper;
     public static Logger log = LogManager.getLogger(Reference.MODID);
+    public static Configuration config;
 
     @SidedProxy(clientSide = "pers.towdium.justEnoughCalculation.network.ProxyClient", serverSide = "pers.towdium.justEnoughCalculation.network.ProxyServer")
     public static IProxy proxy;
@@ -43,11 +47,15 @@ public class JustEnoughCalculation {
     public static class Reference {
         public static final String MODID = "je_calculation";
         public static final String MODNAME = "Just Enough Calculation";
-        public static final String VERSION = "0.2.0";
+        public static final String VERSION = "0.3.0";
     }
 
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent event){
+        config = new Configuration(new File(event.getModConfigurationDirectory(), "JustEnoughCalculation" +".cfg"), Reference.VERSION);
+        config.load();
+        config.get("General", "EnableInventoryCheck", true, "Set to false to disable auto inventory check");
+        config.save();
         GameRegistry.registerItem(itemCalculator,itemCalculator.getUnlocalizedName().substring(5));
         networkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel(Reference.MODID);
         networkWrapper.registerMessage(PacketCalculatorUpdate.class, PacketCalculatorUpdate.class, 1, Side.SERVER);
