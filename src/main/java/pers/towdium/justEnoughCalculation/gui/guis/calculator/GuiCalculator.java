@@ -227,7 +227,7 @@ public class GuiCalculator extends GuiTooltipScreen{
         }
         buttonLeft.enabled = page != 1;
         buttonRight.enabled = page < total;
-        if(JustEnoughCalculation.config.get("General", "EnableInventoryCheck", true, "Set to false to disable auto inventory check").getBoolean()){
+        if(JustEnoughCalculation.JECConfig.EnumItems.EnableInventoryCheck.getProperty().getBoolean()){
             checkItem();
         }
     }

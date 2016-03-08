@@ -8,6 +8,7 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -36,7 +37,6 @@ public class JustEnoughCalculation {
     public static Item itemCalculator = new ItemCalculator().setUnlocalizedName("itemCalculator");
     public static SimpleNetworkWrapper networkWrapper;
     public static Logger log = LogManager.getLogger(Reference.MODID);
-    public static Configuration config;
 
     @SidedProxy(clientSide = "pers.towdium.justEnoughCalculation.network.ProxyClient", serverSide = "pers.towdium.justEnoughCalculation.network.ProxyServer")
     public static IProxy proxy;
@@ -47,15 +47,12 @@ public class JustEnoughCalculation {
     public static class Reference {
         public static final String MODID = "je_calculation";
         public static final String MODNAME = "Just Enough Calculation";
-        public static final String VERSION = "0.3.0";
+        public static final String VERSION = "1.1.0";
     }
 
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent event){
-        config = new Configuration(new File(event.getModConfigurationDirectory(), "JustEnoughCalculation" +".cfg"), Reference.VERSION);
-        config.load();
-        config.get("General", "EnableInventoryCheck", true, "Set to false to disable auto inventory check");
-        config.save();
+        JECConfig.preInit(event);
         GameRegistry.registerItem(itemCalculator,itemCalculator.getUnlocalizedName().substring(5));
         networkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel(Reference.MODID);
         networkWrapper.registerMessage(PacketCalculatorUpdate.class, PacketCalculatorUpdate.class, 1, Side.SERVER);
@@ -72,5 +69,133 @@ public class JustEnoughCalculation {
         }
         GameRegistry.addRecipe(new ItemStack(itemCalculator), "SIS", "SRS", "SRS", 'S', new ItemStack(Blocks.stone, 1, 0), 'I', new ItemStack(Items.dye, 1, EnumDyeColor.BLACK.getDyeDamage()), 'R', Items.redstone);
         proxy.init();
+    }
+
+    public static class JECConfig{
+        public static Configuration config;
+        public enum EnumItems {
+            EnableInventoryCheck,
+            ListRecipeBlackList,
+            ListRecipeCategory;
+
+            public String getComment(){
+                switch (this){
+                    case EnableInventoryCheck:
+                        return "Set to false to disable auto inventory check";
+                    case ListRecipeBlackList:
+                        return "Add string identifier here to disable quick transfer of this type recipe\n" +
+                                "Names can be found in ListRecipeCategory";
+                    case ListRecipeCategory:
+                        return "List of categories, this is maintained by the mod automatically";
+                }
+                return "";
+            }
+
+            public String getName(){
+                switch (this){
+                    case EnableInventoryCheck:
+                        return "EnableInventoryCheck";
+                    case ListRecipeBlackList:
+                        return "ListRecipeBlackList";
+                    case ListRecipeCategory:
+                        return "ListRecipeCategory";
+                }
+                return "";
+            }
+
+            public String getCategory(){
+                switch (this){
+                    case EnableInventoryCheck:
+                        return EnumCategory.General.toString();
+                    case ListRecipeBlackList:
+                        return EnumCategory.General.toString();
+                    case ListRecipeCategory:
+                        return EnumCategory.General.toString();
+                }
+                return "";
+            }
+
+            public EnumType getType(){
+                switch (this){
+                    case EnableInventoryCheck:
+                        return EnumType.Boolean;
+                    case ListRecipeBlackList:
+                        return EnumType.ListString;
+                    case ListRecipeCategory:
+                        return EnumType.ListString;
+                }
+                return EnumType.Error;
+            }
+
+            public Object getDefault(){
+                switch (this){
+                    case EnableInventoryCheck:
+                        return true;
+                    case ListRecipeBlackList:
+                        return new String[0];
+                    case ListRecipeCategory:
+                        return new String[]{ "minecraft.crafting", "minecraft.smelting"};
+                }
+                return JECConfig.empty;
+            }
+
+            public Property init(){
+                EnumType type = this.getType();
+                if(type != null){
+                    switch (this.getType()){
+                        case Boolean:
+                            return config.get(this.getCategory(), this.getName(), (Boolean) this.getDefault(), this.getComment());
+                        case ListString:
+                            return config.get(this.getCategory(), this.getName(), (String[]) this.getDefault(), this.getComment());
+                    }
+                    config.getCategory(EnumCategory.General.toString()).get(this.getName());
+                }
+                return config.get(this.getCategory(), this.getName(), false, this.getComment());
+            }
+
+            public Property getProperty(){
+                return config.getCategory(EnumCategory.General.toString()).get(this.getName());
+            }
+        }
+
+        public enum EnumCategory {
+            General;
+
+            @Override
+            public String toString() {
+                switch (this){
+                    case General:
+                        return "general";
+                    default:
+                        return "";
+                }
+            }
+        }
+
+        public enum EnumType { Boolean, ListString, Error }
+
+        public static Object empty;
+
+        public static void preInit(FMLPreInitializationEvent event){
+            config = new Configuration(new File(event.getModConfigurationDirectory(), "JustEnoughCalculation" +".cfg"), Reference.VERSION);
+            config.load();
+            handleFormerVersion();
+            handleInit();
+            config.save();
+        }
+
+        public static void handleFormerVersion(){
+            config.getCategory("general").remove("RecipeTypeSupport");
+        }
+
+        public static void handleInit(){
+            for(EnumItems item : EnumItems.values()){
+                item.init();
+            }
+        }
+
+        public static void save(){
+            config.save();
+        }
     }
 }

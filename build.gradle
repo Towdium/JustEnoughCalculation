@@ -20,10 +20,9 @@ plugins {
     id "net.minecraftforge.gradle.forge" version "2.0.2"
 }
 */
-version = "0.3.0"
-group= "pers.towdium.justEnoughcalculation" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+version = "1.1.0"
+group= "pers.towdium.justEnoughCalulation" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "je_calculation"
-
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
@@ -31,10 +30,17 @@ tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
 
+repositories {
+    maven {
+        url "http://dvs1.progwml6.com/files/maven"
+    }
+}
+
 minecraft {
     version = "1.8.9-11.15.1.1722"
     runDir = "run"
     useDepAts = true
+    
     // the mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   snapshot are built nightly.
     // stable_#            stables are built at the discretion of the MCP team.
@@ -45,7 +51,6 @@ minecraft {
 }
 
 dependencies {
-    deobfCompile "mezz.jei:jei_1.8.9:2.28.2.166"
     // you may put jars on which you depend on in ./libs
     // or you may define them like so..
     //compile "some.group:artifact:version:classifier"
@@ -67,6 +72,7 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
+    deobfCompile "mezz.jei:jei_1.8.9:2.28.2.166"
 }
 
 processResources
@@ -86,11 +92,5 @@ processResources
     // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
-    }
-}
-
-repositories {
-    maven {
-        url "http://dvs1.progwml6.com/files/maven"
     }
 }

@@ -3,6 +3,7 @@ package pers.towdium.justEnoughCalculation.gui.commom;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
+import com.google.common.collect.ImmutableList;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -14,6 +15,7 @@ import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
 
 /**
  * CODE IS DONE BY Zyin055
@@ -174,41 +176,7 @@ public abstract class GuiTooltipScreen extends GuiJustEnoughCalculation
     protected void RenderTooltip(int x, int y, String tooltip)
     {
         String[] tooltipArray = ParseTooltipArrayFromString(tooltip);
-
-        int tooltipWidth = GetTooltipWidth(tooltipArray);
-        int tooltipHeight = GetTooltipHeight(tooltipArray);
-
-        int tooltipX = x + tooltipXOffset;
-        int tooltipY = y + tooltipYOffset;
-
-        if(tooltipX > width - tooltipWidth - 7)
-            tooltipX = width - tooltipWidth - 7;
-        if(tooltipY > height -  tooltipHeight - 8)
-            tooltipY = height -  tooltipHeight - 8;
-
-        //render the background inside box
-        int innerAlpha = -0xFEFFFF0;  //very very dark purple
-        drawGradientRect(tooltipX, tooltipY - 1, tooltipX + tooltipWidth + 6, tooltipY, innerAlpha, innerAlpha);
-        drawGradientRect(tooltipX, tooltipY + tooltipHeight + 6, tooltipX + tooltipWidth + 6, tooltipY + tooltipHeight + 7, innerAlpha, innerAlpha);
-        drawGradientRect(tooltipX, tooltipY, tooltipX + tooltipWidth + 6, tooltipY + tooltipHeight + 6, innerAlpha, innerAlpha);
-        drawGradientRect(tooltipX - 1, tooltipY, tooltipX, tooltipY + tooltipHeight + 6, innerAlpha, innerAlpha);
-        drawGradientRect(tooltipX + tooltipWidth + 6, tooltipY, tooltipX + tooltipWidth + 7, tooltipY + tooltipHeight + 6, innerAlpha, innerAlpha);
-
-        //render the background outside box
-        int outerAlpha1 = 0x505000FF;
-        int outerAlpha2 = (outerAlpha1 & 0xFEFEFE) >> 1 | outerAlpha1 & -0x1000000;
-        drawGradientRect(tooltipX, tooltipY + 1, tooltipX + 1, tooltipY + tooltipHeight + 6 - 1, outerAlpha1, outerAlpha2);
-        drawGradientRect(tooltipX + tooltipWidth + 5, tooltipY + 1, tooltipX + tooltipWidth + 7, tooltipY + tooltipHeight + 6 - 1, outerAlpha1, outerAlpha2);
-        drawGradientRect(tooltipX, tooltipY, tooltipX + tooltipWidth + 3, tooltipY + 1, outerAlpha1, outerAlpha1);
-        drawGradientRect(tooltipX, tooltipY + tooltipHeight + 5, tooltipX + tooltipWidth + 7, tooltipY + tooltipHeight + 6, outerAlpha2, outerAlpha2);
-
-        //render the foreground text
-        int lineCount = 0;
-        for (String s : tooltipArray)
-        {
-            mc.fontRendererObj.drawStringWithShadow(s, tooltipX + 2, tooltipY + 2 + lineCount * LINE_HEIGHT, 0xFFFFFF);
-            lineCount++;
-        }
+        this.drawHoveringText(ImmutableList.copyOf(tooltipArray), x, y, fontRendererObj);
     }
 
     /**

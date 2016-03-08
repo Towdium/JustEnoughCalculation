@@ -6,6 +6,7 @@ import pers.towdium.justEnoughCalculation.JustEnoughCalculation;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  * @author Towdium
  * This is calculating core v3.0, I call it global coordinating calculation XD.
@@ -14,7 +15,7 @@ import java.util.List;
 
 public class Calculator {
     List<CostRecord> costRecords;
-
+    
     public Calculator(ItemStack itemStack, long amount){
         costRecords = new ArrayList<>();
         costRecords.add(new CostRecord(new ItemRecord(itemStack, amount, false)));

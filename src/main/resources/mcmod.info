@@ -7,9 +7,6 @@
   "mcversion": "1.8.9",
   "updateUrl": "",
   "authorList": ["Towdium"],
-  "credits": "The MCP, Forge and FML guys",
-  "logoFile": "",
-  "screenshots": [],
-  "dependencies": []
+  "credits": "The MCP, Forge and FML guys; sesess, Pahimar, MrCrayfish and BedrockMiner"
 }
 ]
