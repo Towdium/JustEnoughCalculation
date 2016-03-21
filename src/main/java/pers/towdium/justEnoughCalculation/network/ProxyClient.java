@@ -1,7 +1,7 @@
 package pers.towdium.justEnoughCalculation.network;
 
+import cpw.mods.fml.common.network.NetworkRegistry;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
 import pers.towdium.justEnoughCalculation.JustEnoughCalculation;
 import pers.towdium.justEnoughCalculation.event.GuiEventHandler;
 import pers.towdium.justEnoughCalculation.event.PlayerEventHandler;

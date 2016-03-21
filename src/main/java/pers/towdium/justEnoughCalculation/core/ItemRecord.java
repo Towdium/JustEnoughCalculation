@@ -19,7 +19,7 @@ public class ItemRecord{
      */
     public ItemRecord(ItemStack itemStack, long multiplier){
         item = itemStack.getItem();
-        meta = itemStack.getMetadata();
+        meta = itemStack.getItemDamage();
         amount = ItemStackWrapper.getUnifiedAmount(itemStack) * multiplier;
         approx = itemStack.hasTagCompound() && itemStack.getTagCompound().getBoolean("percentage");
     }
@@ -33,7 +33,7 @@ public class ItemRecord{
      */
     public ItemRecord(ItemStack itemStack, long amount, boolean approx){
         item = itemStack.getItem();
-        meta = itemStack.getMetadata();
+        meta = itemStack.getItemDamage();
         this.amount = amount;
         this.approx = approx;
     }
@@ -52,7 +52,7 @@ public class ItemRecord{
 
     protected int getOutputAmount(Recipe recipe){
         for(int i = 0; i<4; i++){
-            if(recipe.output[i].getItem() == item && recipe.output[i].getMetadata() == meta){
+            if(recipe.output[i].getItem() == item && recipe.output[i].getItemDamage() == meta){
                 return ItemStackWrapper.getUnifiedAmount(recipe.output[i]);
             }
         }

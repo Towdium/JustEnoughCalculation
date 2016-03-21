@@ -173,33 +173,57 @@ public class CostRecord{
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof CostRecord) {
+            LOOP:
             for (ItemRecord itemRecordIn : output) {
                 for (ItemRecord itemRecordExt : ((CostRecord) obj).output) {
-                    if (itemRecordExt.isSameType(itemRecordIn) && itemRecordExt.amount != itemRecordIn.amount) {
-                        return false;
+                    if(itemRecordExt.isSameType(itemRecordIn)){
+                        if(itemRecordExt.amount != itemRecordIn.amount){
+                            return false;
+                        }else {
+                            continue LOOP;
+                        }
                     }
                 }
+                return false;
             }
+            LOOP:
             for (ItemRecord itemRecordIn : input) {
                 for (ItemRecord itemRecordExt : ((CostRecord) obj).input) {
-                    if (itemRecordExt.isSameType(itemRecordIn) && itemRecordExt.amount != itemRecordIn.amount) {
-                        return false;
+                    if(itemRecordExt.isSameType(itemRecordIn)){
+                        if(itemRecordExt.amount != itemRecordIn.amount){
+                            return false;
+                        }else {
+                            continue LOOP;
+                        }
                     }
                 }
+                return false;
             }
+            LOOP:
             for (ItemRecord itemRecordIn : ((CostRecord) obj).output) {
                 for (ItemRecord itemRecordExt : output) {
-                    if (itemRecordExt.isSameType(itemRecordIn) && itemRecordExt.amount != itemRecordIn.amount) {
-                        return false;
+                    if(itemRecordExt.isSameType(itemRecordIn)){
+                        if(itemRecordExt.amount != itemRecordIn.amount){
+                            return false;
+                        }else {
+                            continue LOOP;
+                        }
                     }
                 }
+                return false;
             }
+            LOOP:
             for (ItemRecord itemRecordIn : ((CostRecord) obj).input) {
                 for (ItemRecord itemRecordExt : input) {
-                    if (itemRecordExt.isSameType(itemRecordIn) && itemRecordExt.amount != itemRecordIn.amount) {
-                        return false;
+                    if(itemRecordExt.isSameType(itemRecordIn)){
+                        if(itemRecordExt.amount != itemRecordIn.amount){
+                            return false;
+                        }else {
+                            continue LOOP;
+                        }
                     }
                 }
+                return false;
             }
             return true;
         } else {

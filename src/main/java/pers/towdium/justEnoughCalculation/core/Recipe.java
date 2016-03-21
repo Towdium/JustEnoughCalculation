@@ -1,10 +1,10 @@
 package pers.towdium.justEnoughCalculation.core;
 
 import com.google.common.collect.ImmutableList;
+import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 /**
  * @author Towdium
@@ -62,6 +62,11 @@ public class Recipe {
     public int getOutputIndex(ItemStack itemStack){
         for(int i = 0; i<4; i++){
             if(ItemStackWrapper.isTypeEqual(output[i], itemStack)){
+                for(ItemStack buffer : input){
+                    if(ItemStackWrapper.isTypeEqual(buffer, output[i]) && ItemStackWrapper.getUnifiedAmount(output[i])<ItemStackWrapper.getUnifiedAmount(buffer)){
+                        return -1;
+                    }
+                }
                 return i;
             }
         }

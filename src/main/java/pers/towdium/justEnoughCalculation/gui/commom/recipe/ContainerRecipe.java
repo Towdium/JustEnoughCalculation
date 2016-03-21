@@ -4,6 +4,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import pers.towdium.justEnoughCalculation.JustEnoughCalculation;
+import pers.towdium.justEnoughCalculation.core.ItemRecord;
 import pers.towdium.justEnoughCalculation.core.ItemStackWrapper;
 import pers.towdium.justEnoughCalculation.core.Recipe;
 
@@ -13,10 +15,8 @@ import pers.towdium.justEnoughCalculation.core.Recipe;
  */
 public class ContainerRecipe extends Container {
 
-    InventoryRecipe inventoryRecipe;
-
     public ContainerRecipe(){
-        inventoryRecipe = new InventoryRecipe();
+        InventoryRecipe inventoryRecipe = new InventoryRecipe();
         int i, left, top;
         i = 0; left = 9; top = 9;
         for(int a = 0; a < 2; a++){
@@ -70,14 +70,28 @@ public class ContainerRecipe extends Container {
         ItemStack[] output = new ItemStack[4];
         boolean flag1 = false, flag2 = false;
         for(int i=0; i<4; i++){
-            output[i] = getSlot(i).getStack();
+            ItemStack buffer = getSlot(i).getStack();
+            if(buffer != null && buffer.hasTagCompound()){
+                buffer.getTagCompound().removeTag(JustEnoughCalculation.Reference.MODID);
+                if(buffer.getTagCompound().hasNoTags()){
+                    buffer.setTagCompound(null);
+                }
+            }
+            output[i] = buffer;
             if(output[i] != null){
                 flag1 = true;
             }
         }
         ItemStack[] input = new ItemStack[12];
         for(int i=4; i<16; i++){
-            input[i-4] = getSlot(i).getStack();
+            ItemStack buffer = getSlot(i).getStack();
+            if(buffer != null && buffer.hasTagCompound()){
+                buffer.getTagCompound().removeTag(JustEnoughCalculation.Reference.MODID);
+                if(buffer.getTagCompound().hasNoTags()){
+                    buffer.setTagCompound(null);
+                }
+            }
+            input[i-4] = buffer;
             if(input[i-4] != null){
                 flag2 = true;
             }

@@ -20,6 +20,8 @@ public class ItemCalculator extends Item {
     @Override
     public ItemStack onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn) {
         playerIn.openGui(JustEnoughCalculation.instance, GuiHandler.GuiId.CALCULATOR, worldIn, 0, 0, 0);
+        ItemStack stack = playerIn.inventory.getStackInSlot(0);
+        JustEnoughCalculation.log.info(stack==null ? "" : stack.getItem().getUnlocalizedName() + "-" + stack.getItemDamage());
         return itemStackIn;
     }
 }

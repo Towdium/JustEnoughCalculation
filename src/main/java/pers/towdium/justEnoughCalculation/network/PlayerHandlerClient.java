@@ -22,7 +22,7 @@ import java.util.UUID;
  * @author Towdium
  */
 public class PlayerHandlerClient implements IPlayerHandler {
-    public List<Recipe> recipes = new ArrayList<>();
+    public List<Recipe> recipes = new ArrayList();
 
     @Override
     public void addRecipe(Recipe recipe, UUID uuid) {
@@ -44,7 +44,7 @@ public class PlayerHandlerClient implements IPlayerHandler {
     @Override
     public ImmutableList<Integer> getAllRecipeIndex(UUID uuid) {
         int a = recipes.size();
-        ImmutableList.Builder<Integer> builder = new ImmutableList.Builder<>();
+        ImmutableList.Builder<Integer> builder = new ImmutableList.Builder();
         for (int i = 0; i<a; i++){
             builder.add(i);
         }
@@ -76,7 +76,7 @@ public class PlayerHandlerClient implements IPlayerHandler {
 
     @Override
     public ImmutableList<Recipe> getAllRecipeOf(ItemStack itemStack, UUID uuid) {
-        ImmutableList.Builder<Recipe> recipeBuilder = new ImmutableList.Builder<>();
+        ImmutableList.Builder<Recipe> recipeBuilder = new ImmutableList.Builder();
         for(Integer index : getAllRecipeIndexOf(itemStack, null)){
             recipeBuilder.add(recipes.get(index));
         }

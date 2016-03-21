@@ -2,6 +2,7 @@ package pers.towdium.justEnoughCalculation.core;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import pers.towdium.justEnoughCalculation.JustEnoughCalculation;
 
 /**
  * @author Towdium
@@ -9,7 +10,7 @@ import net.minecraft.nbt.NBTTagCompound;
 public class ItemStackWrapper {
 
     public static boolean isTypeEqual(ItemStack one, ItemStack two){
-        return one != null && two != null && one.getItem() == two.getItem() && one.getMetadata() == two.getMetadata();
+        return one != null && two != null && one.getItem() == two.getItem() && one.getItemDamage() == two.getItemDamage();
     }
 
     public static boolean isStackEqual(ItemStack one, ItemStack two){
@@ -17,7 +18,7 @@ public class ItemStackWrapper {
     }
 
     public static int getUnifiedAmount(ItemStack itemStack){
-        if(itemStack.hasTagCompound()){
+        if(itemStack.hasTagCompound() && itemStack.getTagCompound().hasKey("percentage")){
             return itemStack.getTagCompound().getInteger("percentage");
         }else {
             return itemStack.stackSize*100;
@@ -30,7 +31,7 @@ public class ItemStackWrapper {
                 if(itemStack.getTagCompound().getBoolean("mark")){
                     return "";
                 }
-                long l = itemStack.getTagCompound().getLong("amount");
+                long l = itemStack.getTagCompound().hasKey("amount") ? itemStack.getTagCompound().getLong("amount") : -1;
                 if(l == 0 && itemStack.stackSize == 0){
                     return "";
                 }
@@ -38,6 +39,9 @@ public class ItemStackWrapper {
                 if(i != 0){
                     return i + "%";
                 }else{
+                    if(l==-1){
+                        return String.valueOf(itemStack.stackSize);
+                    }
                     return getSimplifiedString((l+99)/100, itemStack.getTagCompound().getBoolean("approx"));
                 }
             }else {
@@ -62,6 +66,7 @@ public class ItemStackWrapper {
             itemStack.stackSize = 1;
         }
         itemStack.setTagCompound(null);
+        ItemStackWrapper.NBT.setBool(itemStack, JustEnoughCalculation.Reference.MODID, true);
         return itemStack;
     }
 
@@ -188,11 +193,25 @@ public class ItemStackWrapper {
             dest.getTagCompound().setInteger(key, value);
         }
 
+        public static void setBool(ItemStack dest, String key, boolean value){
+            initNBT(dest);
+            dest.getTagCompound().setBoolean(key, value);
+        }
+
+        public static void setLong(ItemStack dest, String key, long value){
+            initNBT(dest);
+            dest.getTagCompound().setLong(key, value);
+        }
+
         public static String getString(ItemStack dest, String key){
             if(dest.getTagCompound() != null){
                 return dest.getTagCompound().getString(key);
             }
             else return "";
+        }
+
+        public static boolean getBool(ItemStack dest, String key) {
+            return dest.getTagCompound() != null && dest.getTagCompound().getBoolean(key);
         }
 
         public static int getInt(ItemStack dest, String key){
@@ -216,7 +235,7 @@ public class ItemStackWrapper {
                 return false;
             }else {
                 if(doChange){
-                    if(itemStack.hasTagCompound()){
+                    if(itemStack.hasTagCompound() && itemStack.getTagCompound().hasKey("percentage")){
                         itemStack.getTagCompound().setInteger("percentage", itemStack.getTagCompound().getInteger("percentage")+1);
                     }else {
                         itemStack.stackSize += 1;
@@ -231,7 +250,7 @@ public class ItemStackWrapper {
                 return false;
             }else {
                 if(doChange){
-                    if(itemStack.hasTagCompound()){
+                    if(itemStack.hasTagCompound()&& itemStack.getTagCompound().hasKey("percentage")){
                         int i = itemStack.getTagCompound().getInteger("percentage");
                         itemStack.getTagCompound().setInteger("percentage", i == 1 ? 10 : i+10);
                     }else {
@@ -253,7 +272,7 @@ public class ItemStackWrapper {
                 return false;
             }else {
                 if(doChange){
-                    if(itemStack.hasTagCompound()){
+                    if(itemStack.hasTagCompound()&& itemStack.getTagCompound().hasKey("percentage")){
                         int i = itemStack.getTagCompound().getInteger("percentage");
                         if(i == 1 || i == 0){
                             itemStack.stackSize = 0;
@@ -273,7 +292,7 @@ public class ItemStackWrapper {
                 return false;
             }else {
                 if(doChange){
-                    if(itemStack.hasTagCompound()){
+                    if(itemStack.hasTagCompound()&& itemStack.getTagCompound().hasKey("percentage")){
                         int i = itemStack.getTagCompound().getInteger("percentage");
                         if(i == 0 || i == 1){
                             itemStack.stackSize = 0;

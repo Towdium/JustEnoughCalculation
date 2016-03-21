@@ -12,7 +12,7 @@ import java.util.UUID;
  * @author Towdium
  */
 public class PlayerHandlerServer implements IPlayerHandler {
-    HashMap<UUID, PlayerHandlerClient> players = new HashMap<>();
+    private HashMap<UUID,PlayerHandlerClient> players = new HashMap<>();
 
     @Override
     public boolean getHasRecipeOf(ItemStack itemStack, UUID uuid) {

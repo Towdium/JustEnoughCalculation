@@ -1,9 +1,9 @@
 package pers.towdium.justEnoughCalculation.network.packets;
 
+import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
+import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import pers.towdium.justEnoughCalculation.JustEnoughCalculation;
 import pers.towdium.justEnoughCalculation.core.Recipe;
 import pers.towdium.justEnoughCalculation.network.IPlayerHandler;

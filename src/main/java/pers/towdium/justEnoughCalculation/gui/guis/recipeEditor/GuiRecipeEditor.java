@@ -43,7 +43,7 @@ public class GuiRecipeEditor extends GuiRecipe{
     }
 
     @Override
-    protected void actionPerformed(GuiButton button) throws IOException {
+    protected void actionPerformed(GuiButton button){
         super.actionPerformed(button);
         int buttonId = button.id;
         if(buttonId == 16) {
@@ -62,8 +62,8 @@ public class GuiRecipeEditor extends GuiRecipe{
                 mc.displayGuiScreen(parent);
             }
         }else if(buttonId == 17) {
-            for(Slot slot : inventorySlots.inventorySlots){
-                slot.inventory.setInventorySlotContents(slot.getSlotIndex(), null);
+            for(Object slot : inventorySlots.inventorySlots){
+                ((Slot) slot).inventory.setInventorySlotContents(((Slot) slot).getSlotIndex(), null);
             }
         }
     }

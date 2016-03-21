@@ -1,8 +1,11 @@
 package pers.towdium.justEnoughCalculation.gui.guis.calculator;
 
+import codechicken.nei.recipe.GuiCraftingRecipe;
+import codechicken.nei.recipe.ICraftingHandler;
+import codechicken.nei.recipe.TemplateRecipeHandler;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -20,7 +23,6 @@ import pers.towdium.justEnoughCalculation.gui.guis.recipeViewer.ContainerRecipeV
 import pers.towdium.justEnoughCalculation.gui.guis.recipeViewer.GuiRecipeViewer;
 import pers.towdium.justEnoughCalculation.network.packets.PacketSyncRecord;
 
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -66,7 +68,7 @@ public class GuiCalculator extends GuiTooltipScreen{
         buttonList.add(buttonRight);
         buttonMode = new GuiButton(6, guiLeft+89, guiTop+139, 80, 20, StatCollector.translateToLocal("gui.calculator.input"));
         buttonList.add(buttonMode);
-        textFieldAmount = new GuiTextField(0, fontRendererObj, guiLeft+39, guiTop+8, 45, 18);
+        textFieldAmount = new GuiTextField(fontRendererObj, guiLeft+39, guiTop+8, 45, 18);
         Slot dest = inventorySlots.getSlot(0);
         ItemStack itemStack = ((ContainerCalculator)inventorySlots).getPlayer().getHeldItem();
         dest.inventory.setInventorySlotContents(dest.getSlotIndex(), ItemStackWrapper.NBT.getItem(itemStack, "dest"));
@@ -76,7 +78,7 @@ public class GuiCalculator extends GuiTooltipScreen{
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        //GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID,"textures/gui/guiCalculator.png"));
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
         if(activeSlot == 0){
@@ -107,7 +109,7 @@ public class GuiCalculator extends GuiTooltipScreen{
     }
 
     @Override
-    protected void actionPerformed(GuiButton button) throws IOException {
+    protected void actionPerformed(GuiButton button){
         switch (button.id){
             case 1:
                 if(inventorySlots.getSlot(0).getStack() != null){
@@ -160,21 +162,21 @@ public class GuiCalculator extends GuiTooltipScreen{
     }
 
     @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton){
         JustEnoughCalculation.proxy.getPlayerHandler().syncItemCalculator(inventorySlots.getSlot(0).getStack(), textFieldAmount.getText());
         textFieldAmount.mouseClicked(mouseX, mouseY, mouseButton);
         super.mouseClicked(mouseX, mouseY, mouseButton);
-        Slot slot = getSlotUnderMouse();
-        if(slot != null && slot.getSlotIndex() == 0 && mouseButton == 0){
+        //Slot slot = getSlotUnderMouse(mouseX, mouseY);
+        /*if(slot != null && slot.getSlotIndex() == 0 && mouseButton == 0){
             setActiveSlot(slot.getSlotIndex());
             ((ContainerCalculator)inventorySlots).getPlayer().playSound("random.click", 1f, 1f );
             updateLayout();
-        }
+        }*/
 
     }
 
     @Override
-    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+    protected void keyTyped(char typedChar, int keyCode){
         if (!this.textFieldAmount.textboxKeyTyped(typedChar, keyCode)){
             if(keyCode == 1){
                 if(activeSlot != -1){
@@ -257,7 +259,9 @@ public class GuiCalculator extends GuiTooltipScreen{
         int pos = 1;
         for(int i=start; i<start+36; i++){
             if(i<=itemStacks.size()-1){
-                inventorySlots.getSlot(pos++).putStack(itemStacks.get(i));
+                ItemStack buffer = itemStacks.get(i);
+                ItemStackWrapper.NBT.setBool(buffer, JustEnoughCalculation.Reference.MODID, true);
+                inventorySlots.getSlot(pos++).putStack(buffer);
             }else {
                 inventorySlots.putStackInSlot(pos++, null);
             }
@@ -316,5 +320,20 @@ public class GuiCalculator extends GuiTooltipScreen{
             d = d>15 ? 0 : 15-d;
             items.put(i, d);
         }
+    }
+
+    @Override
+    public boolean handleDragNDrop(GuiContainer guiContainer, int i, int i1, ItemStack itemStack, int i2) {
+        Slot slot = getSlotUnderMouse(i, i1);
+        if(slot != null && slot.getSlotIndex() == 0){
+            ItemStack buffer = itemStack.copy();
+            buffer.stackSize = 1;
+            ItemStackWrapper.NBT.setBool(buffer, JustEnoughCalculation.Reference.MODID, true);
+            ItemStackWrapper.NBT.setBool(buffer, "mark", true);
+            slot.putStack(buffer);
+            updateLayout();
+        }
+        itemStack.stackSize=0;
+        return false;
     }
 }

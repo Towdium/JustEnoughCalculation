@@ -1,13 +1,13 @@
 package pers.towdium.justEnoughCalculation.gui.guis.recipeViewer;
 
+import cpw.mods.fml.client.config.GuiButtonExt;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
-import net.minecraftforge.fml.client.config.GuiButtonExt;
 import pers.towdium.justEnoughCalculation.JustEnoughCalculation;
+import pers.towdium.justEnoughCalculation.core.ItemStackWrapper;
 import pers.towdium.justEnoughCalculation.core.Recipe;
 import pers.towdium.justEnoughCalculation.gui.commom.GuiJustEnoughCalculation;
 import pers.towdium.justEnoughCalculation.gui.guis.recipeEditor.ContainerRecipeEditor;
@@ -49,7 +49,7 @@ public class GuiRecipeViewer extends GuiJustEnoughCalculation {
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        //GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID,"textures/gui/guiRecipeViewer.png"));
         drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
     }
@@ -66,13 +66,16 @@ public class GuiRecipeViewer extends GuiJustEnoughCalculation {
         if(page>total){
             page = total;
         }
+        if(page==0){
+            page=1;
+        }
         displayRecipes();
         buttonLeft.enabled = page != 1;
         buttonRight.enabled = page < total;
     }
 
     @Override
-    protected void actionPerformed(GuiButton button) throws IOException {
+    protected void actionPerformed(GuiButton button){
         int i = button.id;
         switch (i){
             case 0:
@@ -103,7 +106,9 @@ public class GuiRecipeViewer extends GuiJustEnoughCalculation {
             List<ItemStack> items = recipe.getOutput();
             for(int i=0; i<4; i++){
                 if(i<items.size()){
-                    inventorySlots.getSlot((position-1)*4+i).putStack(items.get(i));
+                    ItemStack buffer = items.get(i);
+                    ItemStackWrapper.NBT.setBool(buffer, JustEnoughCalculation.Reference.MODID, true);
+                    inventorySlots.getSlot((position-1)*4+i).putStack(buffer);
                 }else {
                     inventorySlots.getSlot((position-1)*4+i).putStack(null);
                 }

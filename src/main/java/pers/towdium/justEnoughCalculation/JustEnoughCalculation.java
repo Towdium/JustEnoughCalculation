@@ -1,24 +1,27 @@
 package pers.towdium.justEnoughCalculation;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import codechicken.nei.api.API;
+import codechicken.nei.api.IConfigureNEI;
+import codechicken.nei.recipe.DefaultOverlayHandler;
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.SidedProxy;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import pers.towdium.justEnoughCalculation.gui.commom.recipe.GuiRecipe;
+import pers.towdium.justEnoughCalculation.gui.guis.recipeEditor.GuiRecipeEditor;
 import pers.towdium.justEnoughCalculation.item.ItemCalculator;
 import pers.towdium.justEnoughCalculation.network.IProxy;
 import pers.towdium.justEnoughCalculation.network.packets.PacketCalculatorUpdate;
@@ -31,10 +34,9 @@ import java.io.File;
  * @author Towdium
  */
 
-@Mod(modid = JustEnoughCalculation.Reference.MODID, name = JustEnoughCalculation.Reference.MODNAME, version = JustEnoughCalculation.Reference.VERSION,
-        dependencies = "required-after:JEI@[1.8.9-2.28.2.166,)")
-public class JustEnoughCalculation {
-    public static Item itemCalculator = new ItemCalculator().setUnlocalizedName("itemCalculator");
+@Mod(modid = JustEnoughCalculation.Reference.MODID, name = JustEnoughCalculation.Reference.MODNAME, version = JustEnoughCalculation.Reference.VERSION)
+public class JustEnoughCalculation{
+    public static Item itemCalculator = new ItemCalculator().setUnlocalizedName("itemCalculator").setTextureName(Reference.MODID + ":" + "itemCalculator");
     public static SimpleNetworkWrapper networkWrapper;
     public static Logger log = LogManager.getLogger(Reference.MODID);
 
@@ -47,7 +49,7 @@ public class JustEnoughCalculation {
     public static class Reference {
         public static final String MODID = "je_calculation";
         public static final String MODNAME = "Just Enough Calculation";
-        public static final String VERSION = "1.1.0";
+        public static final String VERSION = "0.1.0";
     }
 
     @Mod.EventHandler
@@ -63,15 +65,18 @@ public class JustEnoughCalculation {
 
     @Mod.EventHandler
     public static void init(FMLInitializationEvent event){
-        if(event.getSide().isClient()){
+        /*if(event.getSide().isClient()){
             Minecraft.getMinecraft().getRenderItem().getItemModelMesher().
                     register(itemCalculator, 0, new ModelResourceLocation(Reference.MODID + ":" + itemCalculator.getUnlocalizedName().substring(5), "inventory"));
-        }
-        GameRegistry.addRecipe(new ItemStack(itemCalculator), "SIS", "SRS", "SRS", 'S', new ItemStack(Blocks.stone, 1, 0), 'I', new ItemStack(Items.dye, 1, EnumDyeColor.BLACK.getDyeDamage()), 'R', Items.redstone);
+        }*/
+        GameRegistry.addRecipe(new ItemStack(itemCalculator), "SIS", "SRS", "SRS", 'S', new ItemStack(Blocks.stone, 1, 0), 'I', new ItemStack(Items.dye, 1, 0), 'R', Items.redstone);
         proxy.init();
+
+        //DefaultOverlayHandler
     }
 
     public static class JECConfig{
+        public static boolean initialized = false;
         public static Configuration config;
         public enum EnumItems {
             EnableInventoryCheck,
@@ -134,7 +139,7 @@ public class JustEnoughCalculation {
                     case ListRecipeBlackList:
                         return new String[0];
                     case ListRecipeCategory:
-                        return new String[]{ "minecraft.crafting", "minecraft.smelting"};
+                        return new String[]{"crafting", "smelting"};
                 }
                 return JECConfig.empty;
             }

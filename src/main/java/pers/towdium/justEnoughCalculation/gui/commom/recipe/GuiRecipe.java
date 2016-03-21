@@ -1,8 +1,11 @@
 package pers.towdium.justEnoughCalculation.gui.commom.recipe;
 
+import codechicken.nei.VisiblityData;
+import codechicken.nei.api.INEIGuiHandler;
+import codechicken.nei.api.TaggedInventoryArea;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -16,13 +19,14 @@ import pers.towdium.justEnoughCalculation.gui.commom.GuiTooltipScreen;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.List;
 
 /**
  * @author Towdium
  */
-public class GuiRecipe extends GuiTooltipScreen{
-    protected int activeSlot = -1;
+public class GuiRecipe extends GuiTooltipScreen {
+    private int activeSlot = -1;
 
     public GuiRecipe(@Nonnull Container inventorySlotsIn, @Nullable GuiScreen parent) {
         super(inventorySlotsIn, parent);
@@ -48,7 +52,6 @@ public class GuiRecipe extends GuiTooltipScreen{
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID,"textures/gui/guiRecipe.png"));
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
         if(activeSlot != -1){
@@ -58,7 +61,7 @@ public class GuiRecipe extends GuiTooltipScreen{
     }
 
     @Override
-    protected void actionPerformed(GuiButton button) throws IOException {
+    protected void actionPerformed(GuiButton button){
         int buttonId = button.id;
         if(buttonId <= 15){
             Slot slot = inventorySlots.getSlot(buttonId);
@@ -72,18 +75,26 @@ public class GuiRecipe extends GuiTooltipScreen{
         }
     }
 
-    @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+    /*@Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton){
         super.mouseClicked(mouseX, mouseY, mouseButton);
-        Slot slot = getSlotUnderMouse();
+        Slot slot = null;
+        try {
+            Field slotField = this.getClass().getDeclaredField("field_146998_K");
+            slotField.setAccessible(true);
+            slot = (Slot) slotField.get(this);
+        }
+        catch (NoSuchFieldException ignored) {}
+        catch (IllegalAccessException ignored) {}
+
         if(slot != null && mouseButton == 0 && slot.getStack() == null){
             setActiveSlot(slot.getSlotIndex());
             mc.thePlayer.playSound("random.click", 1f, 1f );
         }
-    }
+    }*/
 
     @Override
-    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+    protected void keyTyped(char typedChar, int keyCode) {
         if (keyCode == 1) {
             if(activeSlot != -1){
                 setActiveSlot(-1);
@@ -101,7 +112,7 @@ public class GuiRecipe extends GuiTooltipScreen{
         }
         super.handleMouseClick(slotIn, slotId, clickedButton, clickType);
         if(slotIn != null && b && !slotIn.getHasStack()){
-            buttonList.get(slotIn.getSlotIndex()).displayString = "#";
+            ((GuiButton) buttonList.get(slotIn.getSlotIndex())).displayString = "#";
         }
     }
 
@@ -120,8 +131,9 @@ public class GuiRecipe extends GuiTooltipScreen{
             if(i<output.size()){
                 ItemStack itemStack = output.get(i);
                 this.inventorySlots.getSlot(i).putStack(itemStack);
-                if(itemStack.hasTagCompound() && itemStack.getTagCompound().hasKey("percentage")){
-                    buttonList.get(i).displayString = "%";
+                ItemStackWrapper.NBT.setBool(itemStack, JustEnoughCalculation.Reference.MODID, true);
+                if(itemStack.getTagCompound().hasKey("percentage")){
+                    ((GuiButton) buttonList.get(i)).displayString = "%";
                 }
             }else {
                 this.inventorySlots.getSlot(i).putStack(null);
@@ -131,8 +143,9 @@ public class GuiRecipe extends GuiTooltipScreen{
             if(i<input.size()){
                 ItemStack itemStack = input.get(i);
                 this.inventorySlots.getSlot(i+4).putStack(itemStack);
-                if(itemStack.hasTagCompound() && itemStack.getTagCompound().hasKey("percentage")){
-                    buttonList.get(i+4).displayString = "%";
+                ItemStackWrapper.NBT.setBool(itemStack, JustEnoughCalculation.Reference.MODID, true);
+                if(itemStack.getTagCompound().hasKey("percentage")){
+                    ((GuiButton) buttonList.get(i + 4)).displayString = "%";
                 }
             }else {
                 this.inventorySlots.getSlot(i+4).putStack(null);
@@ -147,5 +160,19 @@ public class GuiRecipe extends GuiTooltipScreen{
         }else {
             return null;
         }
+    }
+
+    @Override
+    public boolean handleDragNDrop(GuiContainer guiContainer, int i, int i1, ItemStack itemStack, int i2) {
+        JustEnoughCalculation.log.info(itemStack.toString());
+        ItemStack buffer = itemStack.copy();
+        ItemStackWrapper.NBT.setBool(buffer, "je_calculation", true);
+        buffer.stackSize=1;
+        Slot slot = getSlotUnderMouse(i, i1);
+        if(slot!=null){
+            slot.putStack(buffer);
+            itemStack.stackSize=0;
+        }
+        return false;
     }
 }

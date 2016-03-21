@@ -2,8 +2,14 @@ package pers.towdium.justEnoughCalculation.gui.commom;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.List;
 
+import codechicken.nei.VisiblityData;
+import codechicken.nei.api.INEIGuiHandler;
+import codechicken.nei.api.TaggedInventoryArea;
+import codechicken.nei.guihook.GuiContainerManager;
 import com.google.common.collect.ImmutableList;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -22,7 +28,7 @@ import javax.annotation.concurrent.Immutable;
  * A GuiScreen replacement that supports putting tooltips onto GuiButtons.
  * SEE HERE: www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/modification-development/1437428-guide-1-7-2-how-to-make-button-tooltips
  */
-public abstract class GuiTooltipScreen extends GuiJustEnoughCalculation
+public abstract class GuiTooltipScreen extends GuiJustEnoughCalculation implements INEIGuiHandler
 {
     /** Show a white "?" in the top right part of any button with a tooltip assigned to it */
     public static boolean ShowTooltipButtonEffect = true;
@@ -72,9 +78,15 @@ public abstract class GuiTooltipScreen extends GuiJustEnoughCalculation
         if (inventoryplayer.getItemStack() == null && theSlot != null && theSlot.getHasStack())
         {
             ItemStack itemstack1 = theSlot.getStack();
-            this.renderToolTip(itemstack1, mouseX, mouseY);
+            //GuiContainerManager.itemDisplayNameMultiline(itemstack1, this, true);
+            drawHoveringText(GuiContainerManager.itemDisplayNameMultiline(itemstack1, this, true), mouseX, mouseY, fontRendererObj);
         }
         RenderHelper.enableStandardItemLighting();
+    }
+
+    @Override
+    protected void drawGuiContainerBackgroundLayer(float p_146976_1_, int p_146976_2_, int p_146976_3_) {
+
     }
 
     /**
@@ -97,12 +109,12 @@ public abstract class GuiTooltipScreen extends GuiJustEnoughCalculation
         int mousedOverButtonId = -1;
 
         //find out which button is being mouseovered
-        for (GuiButton button : buttonList) {
-            if (IsButtonMouseovered(mouseX, mouseY, button)) {
-                mousedOverButtonId = button.id;
+        for (Object button : buttonList) {
+            if (IsButtonMouseovered(mouseX, mouseY, ((GuiButton) button))) {
+                mousedOverButtonId = ((GuiButton) button).id;
 
                 if (ShowTooltipButtonMouseoverEffect && GetButtonTooltip(mousedOverButtonId) != null)
-                    RenderTooltipButtonMouseoverEffect(button);
+                    RenderTooltipButtonMouseoverEffect(((GuiButton) button));
 
                 break;
             }
@@ -138,7 +150,7 @@ public abstract class GuiTooltipScreen extends GuiJustEnoughCalculation
      * Determines if a GuiButton is being mouseovered.
      * @return true if this button is mouseovered
      */
-    protected boolean IsButtonMouseovered(int mouseX, int mouseY, GuiButton button)
+    private boolean IsButtonMouseovered(int mouseX, int mouseY, GuiButton button)
     {
         return mouseX >= button.xPosition + button.getButtonWidth() - 10 && mouseX <= button.xPosition + button.getButtonWidth() &&
                 mouseY >= button.yPosition && mouseY <= button.yPosition + 10;
@@ -147,14 +159,16 @@ public abstract class GuiTooltipScreen extends GuiJustEnoughCalculation
     /**
      * Render anything special onto all buttons that have tooltips assigned to them.
      */
-    protected void RenderTooltipButtonEffect()
+    private void RenderTooltipButtonEffect()
     {
-        for (GuiButton button : buttonList) {
+        for (Object buttonObj : buttonList) {
+            GuiButton button = ((GuiButton) buttonObj);
             if (GetButtonTooltip(button.id) != null) {
-                boolean flag = mc.fontRendererObj.getUnicodeFlag();
-                mc.fontRendererObj.setUnicodeFlag(true);
-                mc.fontRendererObj.drawStringWithShadow("?", button.xPosition + button.getButtonWidth() - 7, button.yPosition + 1, 14737632);
-                mc.fontRendererObj.setUnicodeFlag(flag);
+
+                boolean flag = mc.fontRenderer.getUnicodeFlag();
+                mc.fontRenderer.setUnicodeFlag(true);
+                mc.fontRenderer.drawStringWithShadow("?", button.xPosition + button.getButtonWidth() - 7, button.yPosition + 1, 14737632);
+                mc.fontRenderer.setUnicodeFlag(flag);
             }
         }
     }
@@ -162,18 +176,18 @@ public abstract class GuiTooltipScreen extends GuiJustEnoughCalculation
     /**
      * Render anything special onto buttons that have tooltips assigned to them when they are mousevered.
      */
-    protected void RenderTooltipButtonMouseoverEffect(GuiButton button)
+    private void RenderTooltipButtonMouseoverEffect(GuiButton button)
     {
-        boolean flag = mc.fontRendererObj.getUnicodeFlag();
-        mc.fontRendererObj.setUnicodeFlag(true);
-        mc.fontRendererObj.drawStringWithShadow(FontCodes.AQUA + "?", button.xPosition+button.getButtonWidth()-7, button.yPosition+1, 14737632);
-        mc.fontRendererObj.setUnicodeFlag(flag);
+        boolean flag = mc.fontRenderer.getUnicodeFlag();
+        mc.fontRenderer.setUnicodeFlag(true);
+        mc.fontRenderer.drawStringWithShadow(FontCodes.AQUA + "?", button.xPosition+button.getButtonWidth()-7, button.yPosition+1, 14737632);
+        mc.fontRenderer.setUnicodeFlag(flag);
     }
 
     /**
      * Renders a tooltip at (x,y).
      */
-    protected void RenderTooltip(int x, int y, String tooltip)
+    private void RenderTooltip(int x, int y, String tooltip)
     {
         String[] tooltipArray = ParseTooltipArrayFromString(tooltip);
         this.drawHoveringText(ImmutableList.copyOf(tooltipArray), x, y, fontRendererObj);
@@ -184,11 +198,11 @@ public abstract class GuiTooltipScreen extends GuiJustEnoughCalculation
      * @param s Ex: "Hello,_nI am your _ltooltip_r and you love me."
      * @return An array of Strings such that each String width does not exceed tooltipMaxWidth
      */
-    protected String[] ParseTooltipArrayFromString(String s)
+    private String[] ParseTooltipArrayFromString(String s)
     {
         s = DecodeStringCodes(s);
         String[] tooltipSections = s.split(tooltipNewlineDelimeter);
-        ArrayList<String> tooltipArrayList = new ArrayList<>();
+        ArrayList<String> tooltipArrayList = new ArrayList();
 
         for(String section : tooltipSections)
         {
@@ -196,7 +210,7 @@ public abstract class GuiTooltipScreen extends GuiJustEnoughCalculation
             String[] tooltipWords = section.split(" ");
 
             for (String tooltipWord : tooltipWords) {
-                int lineWidthWithNextWord = mc.fontRendererObj.getStringWidth(tooltip + tooltipWord);
+                int lineWidthWithNextWord = mc.fontRenderer.getStringWidth(tooltip + tooltipWord);
                 if (lineWidthWithNextWord > tooltipMaxWidth) {
                     tooltipArrayList.add(tooltip.trim());
                     tooltip = tooltipWord + " ";
@@ -253,7 +267,7 @@ public abstract class GuiTooltipScreen extends GuiJustEnoughCalculation
         int longestWidth = 0;
         for(String s : tooltipArray)
         {
-            int width = mc.fontRendererObj.getStringWidth(s);
+            int width = mc.fontRenderer.getStringWidth(s);
             if(width > longestWidth)
                 longestWidth = width;
         }
@@ -265,12 +279,38 @@ public abstract class GuiTooltipScreen extends GuiJustEnoughCalculation
      */
     private int GetTooltipHeight(String[] tooltipArray)
     {
-        int tooltipHeight = mc.fontRendererObj.FONT_HEIGHT - 2;
+        int tooltipHeight = mc.fontRenderer.FONT_HEIGHT - 2;
         if (tooltipArray.length > 1)
         {
             tooltipHeight += (tooltipArray.length - 1) * LINE_HEIGHT;
         }
         return tooltipHeight;
+    }
+
+    @Override
+    public VisiblityData modifyVisiblity(GuiContainer guiContainer, VisiblityData visiblityData) {
+        return null;
+    }
+
+    @Override
+    public Iterable<Integer> getItemSpawnSlots(GuiContainer guiContainer, ItemStack itemStack) {
+        return null;
+    }
+
+    @Override
+    public List<TaggedInventoryArea> getInventoryAreas(GuiContainer guiContainer) {
+        return null;
+    }
+
+    @Override
+    public boolean handleDragNDrop(GuiContainer guiContainer, int i, int i1, ItemStack itemStack, int i2) {
+        itemStack.stackSize=0;
+        return false;
+    }
+
+    @Override
+    public boolean hideItemPanelSlot(GuiContainer guiContainer, int i, int i1, int i2, int i3) {
+        return false;
     }
 
 
@@ -303,4 +343,6 @@ public abstract class GuiTooltipScreen extends GuiJustEnoughCalculation
 
         public static final String RESET = "\247r";
     }
+
+
 }

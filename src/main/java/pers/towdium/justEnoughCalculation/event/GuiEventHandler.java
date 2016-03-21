@@ -1,19 +1,11 @@
 package pers.towdium.justEnoughCalculation.event;
 
 
-import mezz.jei.gui.ItemListOverlay;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.client.event.GuiScreenEvent;
+import cpw.mods.fml.common.eventhandler.EventPriority;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.InputEvent;
 import net.minecraftforge.client.event.GuiOpenEvent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import org.lwjgl.input.Mouse;
-import pers.towdium.justEnoughCalculation.core.ItemStackWrapper;
-import pers.towdium.justEnoughCalculation.gui.guis.calculator.ContainerCalculator;
 import pers.towdium.justEnoughCalculation.gui.guis.calculator.GuiCalculator;
-import pers.towdium.justEnoughCalculation.gui.guis.recipeEditor.GuiRecipeEditor;
-import pers.towdium.justEnoughCalculation.plugin.JEIPlugin;
 
 import java.util.Date;
 
@@ -24,13 +16,13 @@ public class GuiEventHandler {
     long time = new Date().getTime();
 
     @SubscribeEvent(priority = EventPriority.HIGH)
-    public void onMouseClick(GuiScreenEvent.MouseInputEvent.Pre event){
-        if(event.gui instanceof GuiRecipeEditor){
+    public void onMouseClick(InputEvent.MouseInputEvent event){
+        /*if(event.gui instanceof GuiRecipeEditor){
             if(new Date().getTime() - time < 200){
                 event.setCanceled(true);
                 return;
             }
-            if (((GuiRecipeEditor) event.gui).getActiveSlot() != -1){
+            if (((GuiRecipeEditor) Minecraft.getMinecraft().currentScreen).getActiveSlot() != -1){
                 GuiRecipeEditor guiContainer = (GuiRecipeEditor) event.gui;
                 ItemStack itemStack = JEIPlugin.runtime.getItemListOverlay().getStackUnderMouse();
                 Slot slot = ((GuiRecipeEditor) event.gui).inventorySlots.getSlot(((GuiRecipeEditor) event.gui).getActiveSlot());
@@ -53,7 +45,8 @@ public class GuiEventHandler {
                     }
                 }
             }
-        }else if(event.gui instanceof GuiCalculator){
+        }else
+        if(event.gui instanceof GuiCalculator){
             if(new Date().getTime() - time < 200){
                 event.setCanceled(true);
                 return;
@@ -92,7 +85,7 @@ public class GuiEventHandler {
                     event.setCanceled(true);
                 }
             }
-        }
+        }*/
     }
 
     @SubscribeEvent

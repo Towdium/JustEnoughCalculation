@@ -1,8 +1,8 @@
 package pers.towdium.justEnoughCalculation.gui;
 
+import cpw.mods.fml.common.network.IGuiHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.IGuiHandler;
 import pers.towdium.justEnoughCalculation.JustEnoughCalculation;
 import pers.towdium.justEnoughCalculation.gui.guis.calculator.ContainerCalculator;
 import pers.towdium.justEnoughCalculation.gui.guis.calculator.GuiCalculator;

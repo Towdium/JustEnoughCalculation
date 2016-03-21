@@ -17,11 +17,15 @@ public class Calculator {
     List<CostRecord> costRecords;
     
     public Calculator(ItemStack itemStack, long amount){
+        int count = 0;
         costRecords = new ArrayList<>();
         costRecords.add(new CostRecord(new ItemRecord(itemStack, amount, false)));
         List<ItemRecord> cancellableItems = costRecords.get(0).getCancellableItems();
         LOOP2:
         while(cancellableItems.size() != 0){
+            if (count > 100) {
+                return;
+            }
             // all the items possible tp cancel
             for(ItemRecord itemRecord : cancellableItems){
                 // all the recipes for one item
@@ -33,6 +37,7 @@ public class Calculator {
                             continue LOOP1;
                         }
                         costRecords.add(record);
+                        count++;
                         cancellableItems = record.getCancellableItems();
                         continue LOOP2;
                     }

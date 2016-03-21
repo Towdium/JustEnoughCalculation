@@ -40,7 +40,7 @@ public class GuiRecipePicker extends GuiRecipe{
     }
 
     @Override
-    protected void actionPerformed(GuiButton button) throws IOException {
+    protected void actionPerformed(GuiButton button){
         super.actionPerformed(button);
         int buttonId = button.id;
         if(buttonId>=0 && buttonId<=15){
@@ -65,10 +65,10 @@ public class GuiRecipePicker extends GuiRecipe{
         }
     }
 
-    @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+    /*@Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton){
         super.mouseClicked(mouseX, mouseY, mouseButton);
-        Slot slot = getSlotUnderMouse();
+        Slot slot = getSlotUnderMouse(mouseX, mouseY);
         if(slot != null){
             GuiRecipeEditor recipeEditor = new GuiRecipeEditor(new ContainerRecipeEditor(), parent, recipes.get(index));
             mc.displayGuiScreen(recipeEditor);
@@ -78,7 +78,7 @@ public class GuiRecipePicker extends GuiRecipe{
                 recipeEditor.setActiveSlot(slot.getSlotIndex());
             }
         }
-    }
+    }*/
 
     public void updateLayout(){
         displayRecipe(JustEnoughCalculation.proxy.getPlayerHandler().getRecipe(recipes.get(index), null));
