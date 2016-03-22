@@ -34,7 +34,8 @@ import java.io.File;
  * @author Towdium
  */
 
-@Mod(modid = JustEnoughCalculation.Reference.MODID, name = JustEnoughCalculation.Reference.MODNAME, version = JustEnoughCalculation.Reference.VERSION)
+@Mod(modid = JustEnoughCalculation.Reference.MODID, name = JustEnoughCalculation.Reference.MODNAME, version = JustEnoughCalculation.Reference.VERSION,
+        dependencies = "after:NotEnoughItems")
 public class JustEnoughCalculation{
     public static Item itemCalculator = new ItemCalculator().setUnlocalizedName("itemCalculator").setTextureName(Reference.MODID + ":" + "itemCalculator");
     public static SimpleNetworkWrapper networkWrapper;
@@ -49,7 +50,7 @@ public class JustEnoughCalculation{
     public static class Reference {
         public static final String MODID = "je_calculation";
         public static final String MODNAME = "Just Enough Calculation";
-        public static final String VERSION = "0.1.0";
+        public static final String VERSION = "0.1.1";
     }
 
     @Mod.EventHandler

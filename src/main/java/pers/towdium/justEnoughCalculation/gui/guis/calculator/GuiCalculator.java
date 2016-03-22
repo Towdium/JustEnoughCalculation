@@ -3,6 +3,7 @@ package pers.towdium.justEnoughCalculation.gui.guis.calculator;
 import codechicken.nei.recipe.GuiCraftingRecipe;
 import codechicken.nei.recipe.ICraftingHandler;
 import codechicken.nei.recipe.TemplateRecipeHandler;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -74,6 +75,30 @@ public class GuiCalculator extends GuiTooltipScreen{
         dest.inventory.setInventorySlotContents(dest.getSlotIndex(), ItemStackWrapper.NBT.getItem(itemStack, "dest"));
         textFieldAmount.setText(ItemStackWrapper.NBT.getString(itemStack, "text"));
         updateLayout();
+        if(!JustEnoughCalculation.JECConfig.initialized){
+            ArrayList<String> idents = new ArrayList<>();
+            LOOP:
+            for(ICraftingHandler handler : GuiCraftingRecipe.craftinghandlers){
+                if(handler instanceof TemplateRecipeHandler){
+                    if(((TemplateRecipeHandler) handler).getOverlayIdentifier() == null){
+                        continue;
+                    }
+                    for (String id : idents){
+                        if(((TemplateRecipeHandler) handler).getOverlayIdentifier().equals(id) ){
+                            continue LOOP;
+                        }
+                    }
+                    idents.add(((TemplateRecipeHandler) handler).getOverlayIdentifier());
+                }
+            }
+            String[] strings = new String[idents.size()];
+            for(int i=0; i<idents.size(); i++){
+                strings[i] = idents.get(i);
+            }
+            JustEnoughCalculation.JECConfig.EnumItems.ListRecipeCategory.getProperty().set(strings);
+            JustEnoughCalculation.JECConfig.save();
+            JustEnoughCalculation.JECConfig.initialized = true;
+        }
     }
 
     @Override

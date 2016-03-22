@@ -3,8 +3,13 @@ package pers.towdium.justEnoughCalculation.event;
 import codechicken.nei.recipe.GuiCraftingRecipe;
 import codechicken.nei.recipe.ICraftingHandler;
 import codechicken.nei.recipe.TemplateRecipeHandler;
+import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 import pers.towdium.justEnoughCalculation.JustEnoughCalculation;
 import net.minecraftforge.event.entity.player.PlayerEvent.*;
 import pers.towdium.justEnoughCalculation.gui.guis.calculator.ContainerCalculator;
@@ -24,30 +29,6 @@ public class PlayerEventHandler {
     @SubscribeEvent
     public void onSave(SaveToFile event){
         JustEnoughCalculation.proxy.getPlayerHandler().handleSave(event);
-        if(!JustEnoughCalculation.JECConfig.initialized){
-            ArrayList<String> idents = new ArrayList<>();
-            LOOP:
-            for(ICraftingHandler handler : GuiCraftingRecipe.craftinghandlers){
-                if(handler instanceof TemplateRecipeHandler){
-                    if(((TemplateRecipeHandler) handler).getOverlayIdentifier() == null){
-                        continue;
-                    }
-                    for (String id : idents){
-                        if(((TemplateRecipeHandler) handler).getOverlayIdentifier().equals(id) ){
-                            continue LOOP;
-                        }
-                    }
-                    idents.add(((TemplateRecipeHandler) handler).getOverlayIdentifier());
-                }
-            }
-            String[] strings = new String[idents.size()];
-            for(int i=0; i<idents.size(); i++){
-                strings[i] = idents.get(i);
-            }
-            JustEnoughCalculation.JECConfig.EnumItems.ListRecipeCategory.getProperty().set(strings);
-            JustEnoughCalculation.JECConfig.save();
-            JustEnoughCalculation.JECConfig.initialized = true;
-        }
     }
 
     @SubscribeEvent
