@@ -48,12 +48,18 @@ public class ItemStackWrapper {
     }
 
     public static ItemStack toPercentage(ItemStack itemStack){
+        if(itemStack == null){
+            return null;
+        }
         NBT.setInt(itemStack, "percentage", itemStack.stackSize*100);
         itemStack.stackSize = 1;
         return itemStack;
     }
 
     public static ItemStack toNormal(ItemStack itemStack){
+        if(itemStack == null){
+            return null;
+        }
         if(itemStack.hasTagCompound()){
             int i = itemStack.getTagCompound().getInteger("percentage");
             itemStack.stackSize = (i+99)/100;
