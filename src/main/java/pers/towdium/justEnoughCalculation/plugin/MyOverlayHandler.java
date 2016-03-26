@@ -25,12 +25,12 @@ public class MyOverlayHandler implements IOverlayHandler {
         LOOP:
         for(PositionedStack item : iRecipeHandler.getIngredientStacks(i)){
             for(ItemStack current : itemStacks){
-                if(ItemStackWrapper.isTypeEqual(current, item.item)){
+                if(ItemStackWrapper.isTypeEqual(current, item.items[0])){
                     current.stackSize++;
                     continue LOOP;
                 }
             }
-            itemStacks.add(item.item.copy());
+            itemStacks.add(item.items[0].copy());
         }
         int index=4;
         for(ItemStack itemStack : itemStacks){

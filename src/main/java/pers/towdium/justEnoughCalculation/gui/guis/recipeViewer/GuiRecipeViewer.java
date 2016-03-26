@@ -1,6 +1,7 @@
 package pers.towdium.justEnoughCalculation.gui.guis.recipeViewer;
 
 import cpw.mods.fml.client.config.GuiButtonExt;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
@@ -63,13 +64,15 @@ public class GuiRecipeViewer extends GuiJustEnoughCalculation {
     public void updateLayout() {
         recipes = JustEnoughCalculation.proxy.getPlayerHandler().getAllRecipeIndex(null);
         total = recipes == null ? 0 : (recipes.size()+5)/6;
-        if(page>total){
+        if(page>total && page != 1){
             page = total;
         }
-        if(page==0){
-            page=1;
-        }
         displayRecipes();
+        for(int i=0; i<6; i++){
+            boolean flag = recipes.size() > (page-1)*6+i;
+            ((GuiButton) buttonList.get(2 + 2 * i)).enabled = flag;
+            ((GuiButton) buttonList.get(3 + 2 * i)).enabled = flag;
+        }
         buttonLeft.enabled = page != 1;
         buttonRight.enabled = page < total;
     }

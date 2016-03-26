@@ -258,19 +258,27 @@ public class Recipe {
         public static Recipe fromNBT (NBTTagCompound tagCompound){
             ItemStack[] output = new ItemStack[4];
             ItemStack[] input = new ItemStack[12];
+            boolean inputNull = true;
+            boolean outputNull = true;
             for(int i=0; i<4; i++){
                 NBTTagCompound buffer = tagCompound.getCompoundTag(String.valueOf(i));
                 if(buffer != null){
                     output[i] = ItemStack.loadItemStackFromNBT(buffer);
+                    if(output[i] != null){
+                        outputNull = false;
+                    }
                 }
             }
             for(int i=0; i<12; i++){
                 NBTTagCompound buffer = tagCompound.getCompoundTag(String.valueOf(i+4));
                 if(buffer != null){
                     input[i] = ItemStack.loadItemStackFromNBT(buffer);
+                    if(input[i]!= null){
+                        inputNull = false;
+                    }
                 }
             }
-            return new Recipe(output, input);
+            return inputNull || outputNull ? null : new Recipe(output, input);
         }
     }
 }
