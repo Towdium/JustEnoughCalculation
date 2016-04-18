@@ -1,4 +1,3 @@
-gui.calculator.calculate=Calculate!
 gui.calculator.edit=Edit recipes
 gui.calculator.add=Add recipe
 gui.calculator.output=Output
@@ -10,10 +9,10 @@ gui.calculator.editTooltip=Show and edit recorded recipes of selected item
 gui.calculator.addTooltip=Add new recipe to the records
 gui.calculator.viewTooltip=Show the list of all recorded recipes
 gui.calculator.modeTooltip=Switch between:_pInput:_pthe ingredients needed_pProcedure:_psequence of what to craft_pOutput:_pextra output produced_pCatalyst:_presources needed but not consumed
+gui.calculator.tooltipUse=Switch between_p#: normal mode_p%: percentage mode_pShift-click for quick change
 gui.recipePicker.delete=Delete
 gui.recipeEditor.save=Save
 gui.recipeEditor.clear=Clear
 gui.recipeViewer.edit=Edit
 gui.recipeViewer.delete=Delete
-gui.calculator.tooltipUse=Switch between_p#: normal mode_p%: percentage mode_pShift-click for quick change
 item.itemCalculator.name=Calculator
