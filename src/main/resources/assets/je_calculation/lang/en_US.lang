@@ -5,6 +5,7 @@ gui.calculator.procedure=Procedure
 gui.calculator.input=Input
 gui.calculator.catalyst=Catalyst
 gui.calculator.view=All records
+gui.calculator.recent=Recent
 gui.calculator.editTooltip=Show and edit recorded recipes of selected item
 gui.calculator.addTooltip=Add new recipe to the records
 gui.calculator.viewTooltip=Show the list of all recorded recipes

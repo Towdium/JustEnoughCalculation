@@ -161,7 +161,7 @@ public class GuiCalculator extends GuiTooltipScreen{
     protected void drawGuiContainerForegroundLayer(int p_146979_1_, int p_146979_2_) {
         super.drawGuiContainerForegroundLayer(p_146979_1_, p_146979_2_);
         fontRendererObj.drawString("x", 30, 13, 4210752);
-        drawCenteredStringWithoutShadow(fontRendererObj, "Recent", 143, 36, 4210752);
+        drawCenteredStringWithoutShadow(fontRendererObj, StatCollector.translateToLocal("gui.calculator.recent"), 143, 36, 4210752);
         drawCenteredString(fontRendererObj, page + "/" + total, 46, 145, 0xFFFFFF);
     }
 
