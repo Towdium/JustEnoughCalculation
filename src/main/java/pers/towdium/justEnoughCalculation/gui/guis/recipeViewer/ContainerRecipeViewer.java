@@ -48,8 +48,5 @@ public class ContainerRecipeViewer extends Container {
 
     @Override
     public void putStackInSlot(int p_75141_1_, ItemStack p_75141_2_) {
-        if(getSlot(p_75141_1_) != null){
-            super.putStackInSlot(p_75141_1_, p_75141_2_);
-        }
     }
 }

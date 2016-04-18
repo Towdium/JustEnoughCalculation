@@ -4,6 +4,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import pers.towdium.justEnoughCalculation.JustEnoughCalculation;
+import pers.towdium.justEnoughCalculation.core.ItemStackWrapper;
 
 
 /**
@@ -42,9 +44,6 @@ public class ContainerCalculator extends Container {
 
     @Override
     public void putStackInSlot(int p_75141_1_, ItemStack p_75141_2_) {
-        if(getSlot(p_75141_1_) != null){
-            super.putStackInSlot(p_75141_1_, p_75141_2_);
-        }
     }
 
     @Override

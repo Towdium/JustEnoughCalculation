@@ -16,8 +16,11 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.InventoryBasic;
+import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import pers.towdium.justEnoughCalculation.gui.commom.recipe.InventoryRecipe;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -308,7 +311,7 @@ public abstract class GuiTooltipScreen extends GuiJustEnoughCalculation implemen
 
     @Override
     public Iterable<Integer> getItemSpawnSlots(GuiContainer guiContainer, ItemStack itemStack) {
-        return null;
+        return new ArrayList<>();
     }
 
     @Override
