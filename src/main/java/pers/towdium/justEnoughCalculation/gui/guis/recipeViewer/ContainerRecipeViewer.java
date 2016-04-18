@@ -37,4 +37,19 @@ public class ContainerRecipeViewer extends Container {
     public ItemStack slotClick(int slotId, int clickedButton, int mode, EntityPlayer playerIn) {
         return null;
     }
+
+    @Override
+    public Slot getSlot(int p_75139_1_) {
+        if(p_75139_1_ <= 23)
+            return super.getSlot(p_75139_1_);
+        else
+            return null;
+    }
+
+    @Override
+    public void putStackInSlot(int p_75141_1_, ItemStack p_75141_2_) {
+        if(getSlot(p_75141_1_) != null){
+            super.putStackInSlot(p_75141_1_, p_75141_2_);
+        }
+    }
 }

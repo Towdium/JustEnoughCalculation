@@ -1,8 +1,5 @@
 package pers.towdium.justEnoughCalculation;
 
-import codechicken.nei.api.API;
-import codechicken.nei.api.IConfigureNEI;
-import codechicken.nei.recipe.DefaultOverlayHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -11,17 +8,14 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import pers.towdium.justEnoughCalculation.gui.commom.recipe.GuiRecipe;
-import pers.towdium.justEnoughCalculation.gui.guis.recipeEditor.GuiRecipeEditor;
 import pers.towdium.justEnoughCalculation.item.ItemCalculator;
 import pers.towdium.justEnoughCalculation.network.IProxy;
 import pers.towdium.justEnoughCalculation.network.packets.PacketCalculatorUpdate;
@@ -29,6 +23,8 @@ import pers.towdium.justEnoughCalculation.network.packets.PacketRecipeUpdate;
 import pers.towdium.justEnoughCalculation.network.packets.PacketSyncRecord;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 
 /**
  * @author Towdium
@@ -50,7 +46,7 @@ public class JustEnoughCalculation{
     public static class Reference {
         public static final String MODID = "je_calculation";
         public static final String MODNAME = "Just Enough Calculation";
-        public static final String VERSION = "0.1.3";
+        public static final String VERSION = "0.3.0";
     }
 
     @Mod.EventHandler
@@ -70,7 +66,23 @@ public class JustEnoughCalculation{
             Minecraft.getMinecraft().getRenderItem().getItemModelMesher().
                     register(itemCalculator, 0, new ModelResourceLocation(Reference.MODID + ":" + itemCalculator.getUnlocalizedName().substring(5), "inventory"));
         }*/
-        GameRegistry.addRecipe(new ItemStack(itemCalculator), "SIS", "SRS", "SRS", 'S', new ItemStack(Blocks.stone, 1, 0), 'I', new ItemStack(Items.dye, 1, 0), 'R', Items.redstone);
+        ShapedOreRecipe recipe = new ShapedOreRecipe(new ItemStack(itemCalculator), "SIS", "SRS", "SOS", 'S', "stone", 'I', "dyeBlack", 'R', "dustRedstone", 'O', "ingotIron"){
+            {
+                try {
+                    Field f = ShapedOreRecipe.class.getDeclaredField("input");
+                    f.setAccessible(true);
+                    Object[] o = (Object[]) f.get(this);
+                    if(o[1] instanceof ArrayList){
+                        ArrayList<ItemStack> buffer = (ArrayList<ItemStack>) o[1];
+                        ArrayList<ItemStack> a = new ArrayList<ItemStack>(buffer);
+                        Item i = GameRegistry.findItem("Botania", "dye");
+                        a.add(new ItemStack(i,1,15));
+                        o[1] = a;
+                    }
+                } catch (Exception ignored) {}
+            }
+        };
+        GameRegistry.addRecipe(recipe);
         proxy.init();
 
         //DefaultOverlayHandler

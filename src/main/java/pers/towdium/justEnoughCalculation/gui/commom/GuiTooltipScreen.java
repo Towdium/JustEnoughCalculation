@@ -30,6 +30,8 @@ import javax.annotation.concurrent.Immutable;
  */
 public abstract class GuiTooltipScreen extends GuiJustEnoughCalculation implements INEIGuiHandler
 {
+    int mousedOverButtonId = -1;
+
     /** Show a white "?" in the top right part of any button with a tooltip assigned to it */
     public static boolean ShowTooltipButtonEffect = true;
 
@@ -57,12 +59,33 @@ public abstract class GuiTooltipScreen extends GuiJustEnoughCalculation implemen
         super(inventorySlotsIn, parent);
     }
 
+    @Override
+    protected void drawGuiContainerForegroundLayer(int p_146979_1_, int p_146979_2_) {
+        super.drawGuiContainerForegroundLayer(p_146979_1_, p_146979_2_);
+        if(ShowTooltipButtonEffect)
+            RenderTooltipButtonEffect();
+        if (ShowTooltipButtonMouseoverEffect && GetButtonTooltip(mousedOverButtonId) != null)
+            for(Object button : buttonList){
+                if(((GuiButton) button).id == mousedOverButtonId){
+                    RenderTooltipButtonMouseoverEffect(((GuiButton) button));
+                }
+            }
+    }
+
     public void drawScreen(int mouseX, int mouseY, float f)
     {
+        for (Object button : buttonList) {
+            if (IsButtonMouseovered(mouseX, mouseY, ((GuiButton) button))) {
+                mousedOverButtonId = ((GuiButton) button).id;
+                break;
+            }
+        }
+
+
         super.drawScreen(mouseX, mouseY, f);
         RenderHelper.disableStandardItemLighting();
         DrawTooltipScreen(mouseX, mouseY);
-        InventoryPlayer inventoryplayer = this.mc.thePlayer.inventory;
+        /*InventoryPlayer inventoryplayer = this.mc.thePlayer.inventory;
         Field field;
         Slot theSlot = null;
         try {
@@ -81,7 +104,8 @@ public abstract class GuiTooltipScreen extends GuiJustEnoughCalculation implemen
             //GuiContainerManager.itemDisplayNameMultiline(itemstack1, this, true);
             drawHoveringText(GuiContainerManager.itemDisplayNameMultiline(itemstack1, this, true), mouseX, mouseY, fontRendererObj);
         }
-        RenderHelper.enableStandardItemLighting();
+        RenderHelper.enableStandardItemLighting();*/
+        mousedOverButtonId = -1;
     }
 
     @Override
@@ -103,22 +127,12 @@ public abstract class GuiTooltipScreen extends GuiJustEnoughCalculation implemen
      */
     protected void DrawTooltipScreen(int mouseX, int mouseY)
     {
-        if(ShowTooltipButtonEffect)
-            RenderTooltipButtonEffect();
 
-        int mousedOverButtonId = -1;
+
+
 
         //find out which button is being mouseovered
-        for (Object button : buttonList) {
-            if (IsButtonMouseovered(mouseX, mouseY, ((GuiButton) button))) {
-                mousedOverButtonId = ((GuiButton) button).id;
 
-                if (ShowTooltipButtonMouseoverEffect && GetButtonTooltip(mousedOverButtonId) != null)
-                    RenderTooltipButtonMouseoverEffect(((GuiButton) button));
-
-                break;
-            }
-        }
 
         //calculate how long this button has been mouseovered for
         if(mousedOverButtonId > -1)
@@ -165,10 +179,10 @@ public abstract class GuiTooltipScreen extends GuiJustEnoughCalculation implemen
             GuiButton button = ((GuiButton) buttonObj);
             if (GetButtonTooltip(button.id) != null) {
 
-                boolean flag = mc.fontRenderer.getUnicodeFlag();
-                mc.fontRenderer.setUnicodeFlag(true);
-                mc.fontRenderer.drawStringWithShadow("?", button.xPosition + button.getButtonWidth() - 7, button.yPosition + 1, 14737632);
-                mc.fontRenderer.setUnicodeFlag(flag);
+                boolean flag = fontRendererObj.getUnicodeFlag();
+                fontRendererObj.setUnicodeFlag(true);
+                fontRendererObj.drawStringWithShadow("?", button.xPosition + button.getButtonWidth() - 7 -guiLeft, button.yPosition + 1 - guiTop, 14737632);
+                fontRendererObj.setUnicodeFlag(flag);
             }
         }
     }
@@ -178,10 +192,10 @@ public abstract class GuiTooltipScreen extends GuiJustEnoughCalculation implemen
      */
     private void RenderTooltipButtonMouseoverEffect(GuiButton button)
     {
-        boolean flag = mc.fontRenderer.getUnicodeFlag();
-        mc.fontRenderer.setUnicodeFlag(true);
-        mc.fontRenderer.drawStringWithShadow(FontCodes.AQUA + "?", button.xPosition+button.getButtonWidth()-7, button.yPosition+1, 14737632);
-        mc.fontRenderer.setUnicodeFlag(flag);
+        boolean flag = fontRendererObj.getUnicodeFlag();
+        fontRendererObj.setUnicodeFlag(true);
+        fontRendererObj.drawStringWithShadow(FontCodes.AQUA + "?", button.xPosition+button.getButtonWidth()-7 - guiLeft, button.yPosition+1 - guiTop, 14737632);
+        fontRendererObj.setUnicodeFlag(flag);
     }
 
     /**

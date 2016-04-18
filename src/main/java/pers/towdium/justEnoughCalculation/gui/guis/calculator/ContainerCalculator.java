@@ -18,11 +18,32 @@ public class ContainerCalculator extends Container {
         this.inventoryCalculator = new InventoryCalculator(itemCalculator);
         addSlotToContainer(new Slot(inventoryCalculator, 0,9,9));
         int i, left, top;
-        i = 1; left = 8; top = 64;
-        for(int a = 0; a < 4; a++){
+        i = 1; left = 8; top = 80;
+        for(int a = 0; a < 3; a++){
             for(int b =0; b < 9; b++){
                 addSlotToContainer(new Slot(inventoryCalculator,i+9*a+b,left+b*18,top+a*18));
             }
+        }
+        i = 28; left = 8; top = 32;
+        for(int a = 0; a < 1; a++){
+            for(int b =0; b < 6; b++){
+                addSlotToContainer(new Slot(inventoryCalculator,i+9*a+b,left+b*18,top+a*18));
+            }
+        }
+    }
+
+    @Override
+    public Slot getSlot(int p_75139_1_) {
+        if(p_75139_1_ <= 33)
+            return super.getSlot(p_75139_1_);
+        else
+            return null;
+    }
+
+    @Override
+    public void putStackInSlot(int p_75141_1_, ItemStack p_75141_2_) {
+        if(getSlot(p_75141_1_) != null){
+            super.putStackInSlot(p_75141_1_, p_75141_2_);
         }
     }
 

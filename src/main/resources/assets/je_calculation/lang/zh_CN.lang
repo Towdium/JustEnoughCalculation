@@ -2,6 +2,7 @@ gui.calculator.calculate=开始计算吧!
 gui.calculator.edit=编辑
 gui.calculator.add=添加
 gui.calculator.output=产出
+gui.calculator.procedure=步骤
 gui.calculator.input=材料
 gui.calculator.catalyst=催化
 gui.calculator.view=浏览

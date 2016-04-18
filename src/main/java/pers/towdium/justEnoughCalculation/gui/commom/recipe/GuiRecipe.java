@@ -75,6 +75,8 @@ public class GuiRecipe extends GuiTooltipScreen {
         }
     }
 
+
+
     /*@Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton){
         super.mouseClicked(mouseX, mouseY, mouseButton);
@@ -164,7 +166,7 @@ public class GuiRecipe extends GuiTooltipScreen {
 
     @Override
     public boolean handleDragNDrop(GuiContainer guiContainer, int i, int i1, ItemStack itemStack, int i2) {
-        JustEnoughCalculation.log.info(itemStack.toString());
+        //JustEnoughCalculation.log.info(itemStack.toString());
         ItemStack buffer = itemStack.copy();
         ItemStackWrapper.NBT.setBool(buffer, "je_calculation", true);
         buffer.stackSize=1;

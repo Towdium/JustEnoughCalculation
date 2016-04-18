@@ -17,6 +17,8 @@ cases. Have fun!
 * Personal preference record
 * Support for percentage in recipes
 * Check Player's inventory for missed gradients
+* View the crafting procedure
+* Recent records
 
 #### Planed features
 

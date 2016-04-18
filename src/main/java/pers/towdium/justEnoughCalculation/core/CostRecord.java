@@ -11,21 +11,24 @@ import java.util.List;
  * @author Towdium
  */
 public class CostRecord{
-    List<ItemRecord> output;
-    List<ItemRecord> input;
-    List<ItemRecord> catalyst;
+    private List<ItemRecord> output;
+    private List<ItemRecord> input;
+    private List<ItemRecord> catalyst;
+    private List<ItemRecord> procedure;
 
     public CostRecord(ItemRecord itemRecord){
         output = new ArrayList<>();
         input = new ArrayList<>();
         catalyst = new LinkedList<>();
+        procedure = new ArrayList<>();
         input.add(itemRecord);
     }
 
-    public CostRecord(Recipe recipe, long count, boolean approx){
+    public CostRecord(Recipe recipe, long count, boolean approx, ItemRecord dest){
         output = new ArrayList<>();
         input = new ArrayList<>();
         catalyst = new LinkedList<>();
+        procedure = new ArrayList<>();
         boolean b = recipe.isApprox() || approx;
         for(ItemStack itemStack : recipe.output){
             if(itemStack != null){
@@ -44,6 +47,7 @@ public class CostRecord{
                 catalyst.add(record);
             }
         }
+        procedure.add(dest);
     }
 
     /**
@@ -62,6 +66,13 @@ public class CostRecord{
         catalyst = new LinkedList<>();
         for (ItemRecord record : costRecord1.catalyst){
             catalyst.add(record.copy());
+        }
+        procedure = new ArrayList<>();
+        for (ItemRecord record : costRecord1.procedure){
+            procedure.add(record.copy());
+        }
+        for (ItemRecord record : costRecord2.procedure){
+            procedure.add(record.copy());
         }
         // merge output
         LOOP:
@@ -120,7 +131,7 @@ public class CostRecord{
         }
     }
 
-    public ImmutableList<ItemRecord> getCancellableItems(){
+    ImmutableList<ItemRecord> getCancellableItems(){
         ImmutableList.Builder<ItemRecord> builder = new ImmutableList.Builder<>();
         for(ItemRecord itemRecord : input){
             if(!itemRecord.isLocked() && itemRecord.amount != 0){
@@ -134,6 +145,17 @@ public class CostRecord{
         ImmutableList.Builder<ItemStack> builder = new ImmutableList.Builder<>();
         for(ItemRecord itemRecord : output){
             if(itemRecord.amount != 0){
+                builder.add(itemRecord.toItemStack());
+            }
+        }
+        return builder.build();
+    }
+
+    public ImmutableList<ItemStack> getProcedureStack(){
+        ImmutableList.Builder<ItemStack> builder = new ImmutableList.Builder<>();
+        for (int i = procedure.size()-1; i >=0; i--) {
+            ItemRecord itemRecord = procedure.get(i);
+            if (itemRecord.amount != 0) {
                 builder.add(itemRecord.toItemStack());
             }
         }

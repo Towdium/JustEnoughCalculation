@@ -33,6 +33,21 @@ public class ContainerRecipe extends Container {
     }
 
     @Override
+    public Slot getSlot(int p_75139_1_) {
+        if(p_75139_1_ <= 15)
+            return super.getSlot(p_75139_1_);
+        else
+            return null;
+    }
+
+    @Override
+    public void putStackInSlot(int p_75141_1_, ItemStack p_75141_2_) {
+        if(getSlot(p_75141_1_) != null){
+            super.putStackInSlot(p_75141_1_, p_75141_2_);
+        }
+    }
+
+    @Override
     public ItemStack slotClick(int slotId, int clickedButton, int mode, EntityPlayer playerIn) {
         if(slotId<0 || slotId>=16){
             return null;
