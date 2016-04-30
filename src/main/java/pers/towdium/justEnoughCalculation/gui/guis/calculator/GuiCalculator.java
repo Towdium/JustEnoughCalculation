@@ -47,6 +47,7 @@ public class GuiCalculator extends GuiTooltipScreen{
     int total = 0;
     EnumMode mode = EnumMode.INPUT;
     ItemStack buffer;
+    boolean init = false;
 
     public enum EnumMode {
         INPUT, PROCEDURE, OUTPUT, CATALYST;
@@ -114,6 +115,7 @@ public class GuiCalculator extends GuiTooltipScreen{
         }
         textFieldAmount.setText(ItemStackWrapper.NBT.getString(itemStack, "text"));
         mode = EnumMode.fromInt(ItemStackWrapper.NBT.getInt(calculatorItem, "mode"));
+        init = true;
         onOpen();
         if(!JustEnoughCalculation.JECConfig.initialized){
             ArrayList<String> idents = new ArrayList<>();
@@ -363,14 +365,11 @@ public class GuiCalculator extends GuiTooltipScreen{
 
     public void onOpen(){
         if(inventorySlots.getSlot(0).getStack() != null){
-            //mode = EnumMode.INPUT;
             refreshRecipe();
+        }
+        if(init){
             updateLayout();
         }
-        /*costRecord = null;
-        if(buttonRight != null){
-            updateLayout();
-        }*/
     }
 
     protected void fillSlotsWith(List<ItemStack> itemStacks, int start){
