@@ -295,6 +295,7 @@ public class GuiCalculator extends GuiTooltipScreen{
             }
         } else {
             JustEnoughCalculation.proxy.getPlayerHandler().syncItemCalculator(inventorySlots.getSlot(0).getStack(), textFieldAmount.getText());
+
             refreshRecipe();
             updateLayout();
         }
@@ -401,40 +402,44 @@ public class GuiCalculator extends GuiTooltipScreen{
             };
             Timer t = new Timer();
             t.schedule(r, 1000);
+            if(inventorySlots.getSlot(0).getStack() == null) {
+                return;
+            }
+        }
+        if(dest == null) {
+            return;
         }
         Calculator calculator = new Calculator(dest, i*100);
         costRecord = calculator.getCost();
-        if(dest != null){
-            dest = dest.copy();
-            dest.getTagCompound().removeTag(JustEnoughCalculation.Reference.MODID);
-            ItemStack calculatorItem = ((ContainerCalculator)inventorySlots).getPlayer().getHeldItem();
-            ItemStack[] stack = new ItemStack[6];
-            for(int j=0; j<recentLen; j++){
-                stack[j] = ItemStackWrapper.NBT.getItem(calculatorItem, "recent"+j);
-            }
-            int duplicate = -1;
-            for(int j=0; j<recentLen; j++){
-                if(stack[j] != null && ItemStackWrapper.isTypeEqual(dest, stack[j])){
-                    duplicate = j;
-                }
-            }
-            if(duplicate == -1){
-                ItemStackWrapper.NBT.setItem(calculatorItem, "recent0", dest);
-                inventorySlots.getSlot(28).putStack(dest);
-                for(int j=0; j<recentLen-1; j++){
-                    ItemStackWrapper.NBT.setItem(calculatorItem, "recent"+(j+1), stack[j]);
-                    inventorySlots.getSlot(27+2+j).putStack(stack[j]);
-                }
-            }else {
-                ItemStackWrapper.NBT.setItem(calculatorItem, "recent0", dest);
-                inventorySlots.getSlot(28).putStack(dest);
-                for(int j=0; j<duplicate; j++){
-                    ItemStackWrapper.NBT.setItem(calculatorItem, "recent"+(j+1), stack[j]);
-                    inventorySlots.getSlot(27+2+j).putStack(stack[j]);
-                }
-            }
-            JustEnoughCalculation.proxy.getPlayerHandler().syncItemCalculator(dest, textFieldAmount.getText());
+        dest = dest.copy();
+        dest.getTagCompound().removeTag(JustEnoughCalculation.Reference.MODID);
+        ItemStack calculatorItem = ((ContainerCalculator)inventorySlots).getPlayer().getHeldItem();
+        ItemStack[] stack = new ItemStack[6];
+        for(int j=0; j<recentLen; j++){
+            stack[j] = ItemStackWrapper.NBT.getItem(calculatorItem, "recent"+j);
         }
+        int duplicate = -1;
+        for(int j=0; j<recentLen; j++){
+            if(stack[j] != null && ItemStackWrapper.isTypeEqual(dest, stack[j])){
+                duplicate = j;
+            }
+        }
+        if(duplicate == -1){
+            ItemStackWrapper.NBT.setItem(calculatorItem, "recent0", dest);
+            inventorySlots.getSlot(28).putStack(dest);
+            for(int j=0; j<recentLen-1; j++){
+                ItemStackWrapper.NBT.setItem(calculatorItem, "recent"+(j+1), stack[j]);
+                inventorySlots.getSlot(27+2+j).putStack(stack[j]);
+            }
+        }else {
+            ItemStackWrapper.NBT.setItem(calculatorItem, "recent0", dest);
+            inventorySlots.getSlot(28).putStack(dest);
+            for(int j=0; j<duplicate; j++){
+                ItemStackWrapper.NBT.setItem(calculatorItem, "recent"+(j+1), stack[j]);
+                inventorySlots.getSlot(27+2+j).putStack(stack[j]);
+            }
+        }
+        JustEnoughCalculation.proxy.getPlayerHandler().syncItemCalculator(dest, textFieldAmount.getText());
     }
 
     protected void drawMissingTexture(){

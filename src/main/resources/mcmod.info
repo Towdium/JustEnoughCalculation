@@ -3,7 +3,7 @@
   "modid": "je_calculation",
   "name": "Just Enough Calculation",
   "description": "A simple mod to help you with recipe calculation.",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "mcversion": "1.7.10",
   "url": "https://github.com/Towdium/JustEnoughCalculation",
   "updateUrl": "http://minecratft.curseforge.com/projects/just-enough-calculation",
