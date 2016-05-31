@@ -46,7 +46,7 @@ public class JustEnoughCalculation{
     public static class Reference {
         public static final String MODID = "je_calculation";
         public static final String MODNAME = "Just Enough Calculation";
-        public static final String VERSION = "0.3.3";
+        public static final String VERSION = "0.3.4";
     }
 
     @Mod.EventHandler
@@ -76,7 +76,8 @@ public class JustEnoughCalculation{
                         ArrayList<ItemStack> buffer = (ArrayList<ItemStack>) o[1];
                         ArrayList<ItemStack> a = new ArrayList<ItemStack>(buffer);
                         Item i = GameRegistry.findItem("Botania", "dye");
-                        a.add(new ItemStack(i,1,15));
+                        if (i != null)
+                            a.add(new ItemStack(i,1,15));
                         o[1] = a;
                     }
                 } catch (Exception ignored) {}
