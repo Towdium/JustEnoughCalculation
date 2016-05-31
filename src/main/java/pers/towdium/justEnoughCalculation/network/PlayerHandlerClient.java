@@ -193,7 +193,10 @@ public class PlayerHandlerClient implements IPlayerHandler {
         int amount = tagCompound.getInteger("amount");
         List<Recipe> recipes = new ArrayList<>(amount);
         for(int i=0; i<amount; i++){
-            recipes.add(Recipe.NBTUtl.fromNBT((NBTTagCompound) tagCompound.getTag(String.valueOf(i))));
+            Recipe buffer = Recipe.NBTUtl.fromNBT((NBTTagCompound)tagCompound.getTag(String.valueOf(i)));
+            if(buffer!=null){
+                recipes.add(buffer);
+            }
         }
         this.recipes = recipes;
     }

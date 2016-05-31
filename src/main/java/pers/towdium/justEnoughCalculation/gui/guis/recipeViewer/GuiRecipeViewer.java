@@ -63,10 +63,15 @@ public class GuiRecipeViewer extends GuiJustEnoughCalculation {
     public void updateLayout() {
         recipes = JustEnoughCalculation.proxy.getPlayerHandler().getAllRecipeIndex(null);
         total = recipes == null ? 0 : (recipes.size()+5)/6;
-        if(page>total && page != 0){
+        if(page>total && page != 1){
             page = total;
         }
         displayRecipes();
+        for(int i=0; i<6; i++){
+            boolean flag = recipes.size() > (page-1)*6+i;
+            buttonList.get(2+2*i).enabled = flag;
+            buttonList.get(3+2*i).enabled = flag;
+        }
         buttonLeft.enabled = page != 1;
         buttonRight.enabled = page < total;
     }

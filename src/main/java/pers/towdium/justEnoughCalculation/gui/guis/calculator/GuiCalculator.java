@@ -227,6 +227,7 @@ public class GuiCalculator extends GuiTooltipScreen{
         }
         buttonLeft.enabled = page != 1;
         buttonRight.enabled = page < total;
+        buttonView.enabled = JustEnoughCalculation.proxy.getPlayerHandler().getHasRecipe(null);
         if(JustEnoughCalculation.JECConfig.EnumItems.EnableInventoryCheck.getProperty().getBoolean()){
             checkItem();
         }
