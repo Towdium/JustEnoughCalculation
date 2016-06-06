@@ -12,13 +12,17 @@ cases. Have fun!
 #### Achieved features
 
 * Recursive calculation
-* Repeated recipe support
 * Shift - left click for quick input of recipe
-* Personal preference record
 * Support for percentage in recipes
-* Check Player's inventory for missed gradients
+* Check Player's inventory for missing gradients
+* Recent history records
 
 #### Planed features
 
 * Liquid support
+* Recipe grouping
+* Available when only installed on client side
+* Enhanced catalyst options for JEI integration
+* Configurable starting materials
+* Basic oreDict preference
 
