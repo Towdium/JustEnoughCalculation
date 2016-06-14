@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import pers.towdium.justEnoughCalculation.gui.GuiHandler;
 import pers.towdium.justEnoughCalculation.item.ItemCalculator;
 
 import java.io.File;
@@ -22,12 +23,12 @@ import java.io.File;
 @Mod(modid = JustEnoughCalculation.Reference.MODID, name = JustEnoughCalculation.Reference.MODNAME, version = JustEnoughCalculation.Reference.VERSION,
         dependencies = "required-after:JEI")
 public class JustEnoughCalculation {
-    public static Item itemCalculator = new ItemCalculator().setUnlocalizedName("itemCalculator").setRegistryName("itemCalculator");
+    @Mod.Instance(JustEnoughCalculation.Reference.MODID)
+    public static JustEnoughCalculation instance;
     public static SimpleNetworkWrapper networkWrapper;
     public static Logger log = LogManager.getLogger(Reference.MODID);
 
-    @Mod.Instance(JustEnoughCalculation.Reference.MODID)
-    public static JustEnoughCalculation instance;
+    public static Item itemCalculator = new ItemCalculator().setUnlocalizedName("itemCalculator").setRegistryName("itemCalculator");
 
     public static class Reference {
         public static final String MODID = "je_calculation";
@@ -43,6 +44,7 @@ public class JustEnoughCalculation {
 
     @Mod.EventHandler
     public static void init(FMLInitializationEvent event) {
+        NetworkRegistry.INSTANCE.registerGuiHandler(JustEnoughCalculation.instance, new GuiHandler());
         if (event.getSide().isClient()) {
             Minecraft.getMinecraft().getRenderItem().getItemModelMesher().
                     register(itemCalculator, 0, new ModelResourceLocation(Reference.MODID + ":" + itemCalculator.getUnlocalizedName().substring(5), "inventory"));
