@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import  net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -13,8 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pers.towdium.justEnoughCalculation.gui.GuiHandler;
 import pers.towdium.justEnoughCalculation.item.ItemCalculator;
-
-import java.io.File;
+import pers.towdium.justEnoughCalculation.network.IProxy;
 
 /**
  * @author Towdium
@@ -25,6 +25,8 @@ import java.io.File;
 public class JustEnoughCalculation {
     @Mod.Instance(JustEnoughCalculation.Reference.MODID)
     public static JustEnoughCalculation instance;
+    @SidedProxy(clientSide = "pers.towdium.justEnoughCalculation.network.ProxyClient", serverSide = "pers.towdium.justEnoughCalculation.network.ProxyServer")
+    public static IProxy proxy;
     public static SimpleNetworkWrapper networkWrapper;
     public static Logger log = LogManager.getLogger(Reference.MODID);
 
@@ -38,6 +40,7 @@ public class JustEnoughCalculation {
 
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent event) {
+        JECConfig.preInit(event);
         GameRegistry.register(itemCalculator);
         networkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel(Reference.MODID);
     }
@@ -45,9 +48,12 @@ public class JustEnoughCalculation {
     @Mod.EventHandler
     public static void init(FMLInitializationEvent event) {
         NetworkRegistry.INSTANCE.registerGuiHandler(JustEnoughCalculation.instance, new GuiHandler());
+        proxy.init();
         if (event.getSide().isClient()) {
             Minecraft.getMinecraft().getRenderItem().getItemModelMesher().
                     register(itemCalculator, 0, new ModelResourceLocation(Reference.MODID + ":" + itemCalculator.getUnlocalizedName().substring(5), "inventory"));
         }
     }
+
+
 }

@@ -13,11 +13,11 @@ import java.util.List;
  * Author:  Towdium
  * Created: 2016/6/13.
  */
-public abstract class ContainerJEC extends Container {
+public abstract class JECContainer extends Container {
     InventoryBasic inventory;
     List<int[]> slotBuffer = new ArrayList<>();
 
-    public ContainerJEC(){
+    public JECContainer(){
         addSlots();
         int count = 0;
         int current = -1;
@@ -43,6 +43,8 @@ public abstract class ContainerJEC extends Container {
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
         return null;
     }
+
+
 
     protected void addSlotSingle(int left, int top){
         slotBuffer.add(new int[]{left, top, 0, 0, 1, 1});

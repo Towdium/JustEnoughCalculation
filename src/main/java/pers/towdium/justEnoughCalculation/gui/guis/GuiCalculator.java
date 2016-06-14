@@ -4,10 +4,13 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ClickType;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import pers.towdium.justEnoughCalculation.JustEnoughCalculation;
-import pers.towdium.justEnoughCalculation.gui.ContainerJEC;
-import pers.towdium.justEnoughCalculation.gui.GuiContainerJEC;
+import pers.towdium.justEnoughCalculation.gui.JECContainer;
+import pers.towdium.justEnoughCalculation.gui.JECGuiContainer;
 
 import javax.annotation.Nullable;
 
@@ -15,7 +18,7 @@ import javax.annotation.Nullable;
  * Author:  Towdium
  * Created: 2016/6/13.
  */
-public class GuiCalculator extends GuiContainerJEC {
+public class GuiCalculator extends JECGuiContainer {
     GuiTextField textFieldAmount;
 
     GuiButton buttonSearch;
@@ -67,12 +70,18 @@ public class GuiCalculator extends GuiContainerJEC {
     }
 
     public GuiCalculator(GuiScreen parent) {
-        super(new ContainerJEC() {
+        super(new JECContainer() {
             @Override
             protected void addSlots() {
                 addSlotSingle(9, 9);
                 addSlotGroup(8, 32, 18, 18, 1, 6);
                 addSlotGroup(8, 82, 18, 18, 3, 9);
+            }
+
+            @Nullable
+            @Override
+            public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
+                return null;
             }
         }, parent);
     }
@@ -112,7 +121,7 @@ public class GuiCalculator extends GuiContainerJEC {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
         fontRendererObj.drawString("x", 30, 13, 4210752);
         drawCenteredStringWithoutShadow(fontRendererObj, "Recent", 144, 36, 4210752);
-        drawCenteredString(fontRendererObj, page + "/" + total, 34, 145, 0xFFFFFF);
+        drawCenteredString(fontRendererObj, page + "/" + total, 33, 145, 0xFFFFFF);
     }
 
     @Nullable
@@ -122,5 +131,10 @@ public class GuiCalculator extends GuiContainerJEC {
             case 4: return "Hello\\nShit";
             default: return null;
         }
+    }
+
+    @Override
+    protected int getSizeSlotActive(int index) {
+        return index == 0 ? 20 : 0;
     }
 }

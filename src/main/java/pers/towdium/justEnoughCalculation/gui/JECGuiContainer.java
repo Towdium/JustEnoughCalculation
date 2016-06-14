@@ -5,7 +5,14 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.client.event.sound.SoundEvent;
+import org.lwjgl.input.Mouse;
+import pers.towdium.justEnoughCalculation.plugin.JEIPlugin;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -15,27 +22,72 @@ import java.util.Arrays;
  * Author:  Towdium
  * Created: 2016/6/13.
  */
-public abstract class GuiContainerJEC extends GuiContainer {
+public abstract class JECGuiContainer extends GuiContainer {
     GuiScreen parent;
+    int activeSlot = -1;
     long timeStart = 0;
 
-    public GuiContainerJEC(Container inventorySlotsIn, GuiScreen parent) {
+    public JECGuiContainer(Container inventorySlotsIn, GuiScreen parent) {
         super(inventorySlotsIn);
         this.parent = parent;
+    }
+
+    public boolean setActiveSlot(int id){
+        if(id == -1 || getSizeSlotActive(id) != 0){
+            activeSlot = id;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public int getActiveSlot(){
+        return activeSlot;
     }
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
         RenderHelper.disableStandardItemLighting();
+
         drawTooltipScreen(mouseX, mouseY);
         RenderHelper.enableStandardItemLighting();
     }
 
     @Override
+    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+        drawActiveSlot();
+        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+    }
+
+    @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         if(keyCode == 1){
-            mc.displayGuiScreen(parent);
+            if(activeSlot != -1){
+                setActiveSlot(-1);
+            } else {
+                mc.displayGuiScreen(parent);
+            }
+        }
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    public void handleMouseEvent(GuiScreenEvent.MouseInputEvent.Pre event, int mouseX, int mouseY){
+        if(Mouse.isButtonDown(0)){
+            if(activeSlot == -1){
+                Slot slot = getSlotUnderMouse();
+                if(slot != null && setActiveSlot(slot.getSlotIndex())){
+                    mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
+                }
+            } else {
+                activeSlot = -1;
+                mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
+                event.setCanceled(true);
+            }
+        }
+        if(activeSlot != -1){
+            ItemStack stack = JEIPlugin.runtime.getItemListOverlay().getStackUnderMouse();
+            inventorySlots.getSlot(activeSlot).putStack(stack == null ? null : stack.copy());
         }
     }
 
@@ -65,6 +117,16 @@ public abstract class GuiContainerJEC extends GuiContainer {
         }
     }
 
+    protected void drawActiveSlot(){
+        if(activeSlot != -1){
+            Slot slot = inventorySlots.getSlot(activeSlot);
+            int size = getSizeSlotActive(activeSlot);
+            int move = (size-16)/2;
+            drawRect(slot.xDisplayPosition-move, slot.yDisplayPosition-move, slot.xDisplayPosition+size-move, slot.yDisplayPosition+size-move, 0x60aeff00);
+        }
+
+    }
+
     protected boolean isMouseOver(GuiButton button, int mouseX, int mouseY) {
         return mouseX >= button.xPosition + button.getButtonWidth() - 10
                 && mouseX <= button.xPosition + button.getButtonWidth()
@@ -78,7 +140,7 @@ public abstract class GuiContainerJEC extends GuiContainer {
 
     // Methods to be overridden
     @Nullable
-    protected String getButtonTooltip(int buttonId){
-        return null;
-    }
+    protected abstract String getButtonTooltip(int buttonId);
+
+    protected abstract int getSizeSlotActive(int index);
 }
