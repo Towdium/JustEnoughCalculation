@@ -13,6 +13,7 @@ import pers.towdium.justEnoughCalculation.gui.JECContainer;
 import pers.towdium.justEnoughCalculation.gui.JECGuiContainer;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
 
 /**
  * Author:  Towdium
@@ -92,11 +93,11 @@ public class GuiCalculator extends JECGuiContainer {
         buttonSearch = new GuiButton(1, guiLeft+119, guiTop+7, 50, 20, "search");
         buttonAdd = new GuiButton(2, guiLeft+7, guiTop+53, 52, 20, "Add");
         buttonView = new GuiButton(3, guiLeft+63, guiTop+53, 52, 20, "Records");
-        buttonSettings = new GuiButton(1, guiLeft+119, guiTop+53, 50, 20, "Settings");
-        buttonLeft = new GuiButton(4, guiLeft+7, guiTop+139, 14, 20, "<");
-        buttonRight = new GuiButton(5, guiLeft+45, guiTop+139, 14, 20, ">");
-        buttonMode = new GuiButton(6, guiLeft+63, guiTop+139, 52, 20, "Catalyst");
-        buttonStock = new GuiButton(2, guiLeft+119, guiTop+139, 50, 20, "Stock");
+        buttonSettings = new GuiButton(4, guiLeft+119, guiTop+53, 50, 20, "Settings");
+        buttonLeft = new GuiButton(5, guiLeft+7, guiTop+139, 14, 20, "<");
+        buttonRight = new GuiButton(6, guiLeft+45, guiTop+139, 14, 20, ">");
+        buttonMode = new GuiButton(7, guiLeft+63, guiTop+139, 52, 20, "Catalyst");
+        buttonStock = new GuiButton(8, guiLeft+119, guiTop+139, 50, 20, "Stock");
         buttonList.add(buttonSearch);
         buttonList.add(buttonAdd);
         buttonList.add(buttonView);
@@ -122,6 +123,13 @@ public class GuiCalculator extends JECGuiContainer {
         fontRendererObj.drawString("x", 30, 13, 4210752);
         drawCenteredStringWithoutShadow(fontRendererObj, "Recent", 144, 36, 4210752);
         drawCenteredString(fontRendererObj, page + "/" + total, 33, 145, 0xFFFFFF);
+    }
+
+    @Override
+    protected void actionPerformed(GuiButton button) throws IOException {
+        switch (button.id){
+            case 1: mc.displayGuiScreen(new GuiRecipeSearch(this));
+        }
     }
 
     @Nullable

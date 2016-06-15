@@ -11,7 +11,9 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.sound.SoundEvent;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import pers.towdium.justEnoughCalculation.JustEnoughCalculation;
 import pers.towdium.justEnoughCalculation.plugin.JEIPlugin;
 
 import javax.annotation.Nullable;
@@ -72,23 +74,25 @@ public abstract class JECGuiContainer extends GuiContainer {
     }
 
     @SuppressWarnings("ConstantConditions")
-    public void handleMouseEvent(GuiScreenEvent.MouseInputEvent.Pre event, int mouseX, int mouseY){
-        if(Mouse.isButtonDown(0)){
+    public boolean handleMouseEvent(int mouseX, int mouseY){
+        if(Mouse.getEventButton() == 0 && Mouse.getEventButtonState()){
             if(activeSlot == -1){
                 Slot slot = getSlotUnderMouse();
                 if(slot != null && setActiveSlot(slot.getSlotIndex())){
                     mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
                 }
+                return false;
             } else {
                 activeSlot = -1;
                 mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
-                event.setCanceled(true);
+                return true;
             }
-        }
-        if(activeSlot != -1){
+        } else if(activeSlot != -1){
             ItemStack stack = JEIPlugin.runtime.getItemListOverlay().getStackUnderMouse();
             inventorySlots.getSlot(activeSlot).putStack(stack == null ? null : stack.copy());
+            return false;
         }
+        return false;
     }
 
     protected void drawTooltipScreen(int mouseX, int mouseY){

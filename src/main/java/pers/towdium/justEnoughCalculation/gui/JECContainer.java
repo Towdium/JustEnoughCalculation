@@ -22,13 +22,13 @@ public abstract class JECContainer extends Container {
         int count = 0;
         int current = -1;
         for(int[] record: slotBuffer){
-            count += (record[4] + record[5]);
+            count += (record[4] * record[5]);
         }
         inventory = new InventoryBasic("Temp", false, count);
         for(int[] record: slotBuffer){
             for(int a = 0; a < record[4]; a++){
                 for(int b =0; b < record[5]; b++){
-                    addSlotToContainer(new Slot(inventory,++current+record[4]*a+b,record[0]+b*record[2],record[1]+a*record[3]));
+                    addSlotToContainer(new Slot(inventory,++current,record[0]+b*record[2],record[1]+a*record[3]));
                 }
             }
         }
