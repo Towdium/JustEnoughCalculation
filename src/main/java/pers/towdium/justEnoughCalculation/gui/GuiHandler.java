@@ -5,6 +5,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import pers.towdium.justEnoughCalculation.gui.guis.GuiCalculator;
+import pers.towdium.justEnoughCalculation.gui.guis.GuiEditor;
 import pers.towdium.justEnoughCalculation.gui.guis.GuiRecipeSearch;
 
 /**
@@ -15,6 +16,7 @@ public class GuiHandler implements IGuiHandler {
     public static final class GuiId{
         public static final int CALCULATOR = 0;
         public static final int RECIPE_SEARCH = 1;
+        public static final int EDITOR = 2;
     }
 
     @Override
@@ -27,6 +29,7 @@ public class GuiHandler implements IGuiHandler {
         switch (ID) {
             case GuiId.CALCULATOR: return new GuiCalculator(null);
             case GuiId.RECIPE_SEARCH: return new GuiRecipeSearch(Minecraft.getMinecraft().currentScreen);
+            case GuiId.EDITOR: return new GuiEditor(null);
         }
         return null;
     }

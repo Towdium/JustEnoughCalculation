@@ -22,7 +22,7 @@ public class ItemCalculator extends Item {
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
-        playerIn.openGui(JustEnoughCalculation.instance, GuiHandler.GuiId.CALCULATOR, worldIn, 0, 0, 0);
+        playerIn.openGui(JustEnoughCalculation.instance, GuiHandler.GuiId.EDITOR, worldIn, 0, 0, 0);
         return ActionResult.newResult(EnumActionResult.SUCCESS, itemStackIn);
     }
 }

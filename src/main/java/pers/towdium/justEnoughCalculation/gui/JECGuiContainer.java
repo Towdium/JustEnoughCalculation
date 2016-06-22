@@ -9,15 +9,12 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.client.event.sound.SoundEvent;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import pers.towdium.justEnoughCalculation.JustEnoughCalculation;
 import pers.towdium.justEnoughCalculation.plugin.JEIPlugin;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -128,7 +125,15 @@ public abstract class JECGuiContainer extends GuiContainer {
             int move = (size-16)/2;
             drawRect(slot.xDisplayPosition-move, slot.yDisplayPosition-move, slot.xDisplayPosition+size-move, slot.yDisplayPosition+size-move, 0x60aeff00);
         }
+    }
 
+    public void drawCenteredStringMultiLine(FontRenderer fontRendererIn, String text, int x1, int x2, int y1, int y2, int color) {
+        String[] buffer = text.split("\\n");
+        float x = (x1+x2)/2.0f;
+        float y = (y1+y2-buffer.length*10+2)/2.0f-10;
+        for(String s : buffer){
+            fontRendererIn.drawStringWithShadow(s, x-fontRendererIn.getStringWidth(s)/2, y+=10, color);
+        }
     }
 
     protected boolean isMouseOver(GuiButton button, int mouseX, int mouseY) {
