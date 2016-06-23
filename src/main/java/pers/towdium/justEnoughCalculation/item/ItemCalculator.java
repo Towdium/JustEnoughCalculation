@@ -20,6 +20,7 @@ public class ItemCalculator extends Item {
         setMaxStackSize(1);
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
         playerIn.openGui(JustEnoughCalculation.instance, GuiHandler.GuiId.EDITOR, worldIn, 0, 0, 0);

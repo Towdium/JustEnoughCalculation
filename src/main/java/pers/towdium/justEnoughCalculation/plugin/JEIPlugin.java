@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableList;
 import mezz.jei.api.*;
 import mezz.jei.api.recipe.IRecipeCategory;
 import pers.towdium.justEnoughCalculation.JECConfig;
+import pers.towdium.justEnoughCalculation.gui.guis.GuiCalculator;
+import pers.towdium.justEnoughCalculation.gui.guis.GuiEditor;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
@@ -27,7 +29,8 @@ public class JEIPlugin implements IModPlugin{
                     continue LOOP;
                 }
             }
-            //registry.getRecipeTransferRegistry().addRecipeTransferHandler(new NormalRecipeTransferHandler(s));
+            registry.getRecipeTransferRegistry().addRecipeTransferHandler(new JECRecipeTransferHandler(s, GuiEditor.ContainerEditor.class));
+            registry.getRecipeTransferRegistry().addRecipeTransferHandler(new JECRecipeTransferHandler(s, GuiCalculator.ContainerCalculator.class));
         }
     }
 

@@ -28,14 +28,7 @@ public class GuiEditor extends JECGuiContainer {
 
 
     public GuiEditor(GuiScreen parent) {
-        super(new JECContainer() {
-            @Override
-            protected void addSlots() {
-                addSlotGroup(46, 33, 21, 33, 1, 4);
-                addSlotGroup(46, 66, 21, 33, 1, 4);
-                addSlotGroup(46, 99, 21, 32, 2, 6);
-            }
-        }, parent);
+        super(new ContainerEditor(), parent);
     }
 
     @Override
@@ -94,5 +87,14 @@ public class GuiEditor extends JECGuiContainer {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID,"textures/gui/guiEditor.png"));
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
+    }
+
+    public static class ContainerEditor extends JECContainer{
+        @Override
+        protected void addSlots() {
+            addSlotGroup(46, 33, 21, 33, 1, 4);
+            addSlotGroup(46, 66, 21, 33, 1, 4);
+            addSlotGroup(46, 99, 21, 32, 2, 6);
+        }
     }
 }

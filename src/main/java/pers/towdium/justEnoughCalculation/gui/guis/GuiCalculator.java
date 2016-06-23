@@ -6,6 +6,7 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import pers.towdium.justEnoughCalculation.JustEnoughCalculation;
@@ -71,20 +72,7 @@ public class GuiCalculator extends JECGuiContainer {
     }
 
     public GuiCalculator(GuiScreen parent) {
-        super(new JECContainer() {
-            @Override
-            protected void addSlots() {
-                addSlotSingle(9, 9);
-                addSlotGroup(8, 32, 18, 18, 1, 6);
-                addSlotGroup(8, 82, 18, 18, 3, 9);
-            }
-
-            @Nullable
-            @Override
-            public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
-                return null;
-            }
-        }, parent);
+        super(new ContainerCalculator(), parent);
     }
 
     @Override
@@ -144,5 +132,20 @@ public class GuiCalculator extends JECGuiContainer {
     @Override
     protected int getSizeSlotActive(int index) {
         return index == 0 ? 20 : 0;
+    }
+
+    public static class ContainerCalculator extends JECContainer {
+        @Override
+        protected void addSlots() {
+            addSlotSingle(9, 9);
+            addSlotGroup(8, 32, 18, 18, 1, 6);
+            addSlotGroup(8, 82, 18, 18, 3, 9);
+        }
+
+        @Nullable
+        @Override
+        public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
+            return null;
+        }
     }
 }
