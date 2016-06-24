@@ -12,6 +12,7 @@ import net.minecraft.util.ResourceLocation;
 import pers.towdium.justEnoughCalculation.JustEnoughCalculation;
 import pers.towdium.justEnoughCalculation.gui.JECContainer;
 import pers.towdium.justEnoughCalculation.gui.JECGuiContainer;
+import pers.towdium.justEnoughCalculation.gui.JECGuiContainer.*;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -130,9 +131,11 @@ public class GuiCalculator extends JECGuiContainer {
     }
 
     @Override
-    protected int getSizeSlotActive(int index) {
-        return index == 0 ? 20 : 0;
+    protected int getSizeSlot(int index) {
+        return index == 0 ? 20 : 18;
     }
+
+
 
     public static class ContainerCalculator extends JECContainer {
         @Override
@@ -142,10 +145,9 @@ public class GuiCalculator extends JECGuiContainer {
             addSlotGroup(8, 82, 18, 18, 3, 9);
         }
 
-        @Nullable
         @Override
-        public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
-            return null;
+        public EnumSlotType getSlotType(int index) {
+            return index == 0 ? EnumSlotType.SELECT : EnumSlotType.DISABLED;
         }
     }
 }

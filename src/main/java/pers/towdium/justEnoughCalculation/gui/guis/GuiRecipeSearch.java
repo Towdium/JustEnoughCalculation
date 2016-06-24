@@ -5,6 +5,8 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import pers.towdium.justEnoughCalculation.JustEnoughCalculation;
+import pers.towdium.justEnoughCalculation.gui.JECGuiContainer;
+import scala.tools.cmd.gen.AnyVals;
 
 import javax.annotation.Nullable;
 
@@ -46,6 +48,11 @@ public class GuiRecipeSearch extends GuiRecipeList {
                 super.addSlots();
                 addSlotSingle(9, 9);
             }
+
+            @Override
+            public EnumSlotType getSlotType(int index) {
+                return index == 20 ? EnumSlotType.SELECT : EnumSlotType.DISABLED;
+            }
         }, parent);
     }
 
@@ -72,7 +79,7 @@ public class GuiRecipeSearch extends GuiRecipeList {
     }
 
     @Override
-    protected int getSizeSlotActive(int index) {
-        return index == 20 ? 20 : 0;
+    protected int getSizeSlot(int index) {
+        return index == 20 ? 20 : 18;
     }
 }

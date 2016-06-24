@@ -14,7 +14,6 @@ import pers.towdium.justEnoughCalculation.plugin.JEIPlugin;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -31,17 +30,13 @@ public abstract class JECGuiContainer extends GuiContainer {
         this.parent = parent;
     }
 
-    public boolean setActiveSlot(int id){
-        if(id == -1 || getSizeSlotActive(id) != 0){
+    public boolean setActiveSlot(int id) {
+        if (id == -1 || ((JECContainer) inventorySlots).getSlotType(id) != JECContainer.EnumSlotType.DISABLED) {
             activeSlot = id;
             return true;
         } else {
             return false;
         }
-    }
-
-    public int getActiveSlot(){
-        return activeSlot;
     }
 
     @Override
@@ -55,14 +50,16 @@ public abstract class JECGuiContainer extends GuiContainer {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        drawActiveSlot();
+        if (activeSlot != -1) {
+            drawSlotOverlay(activeSlot, 0x60aeff00);
+        }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
     }
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        if(keyCode == 1){
-            if(activeSlot != -1){
+        if (keyCode == 1) {
+            if (activeSlot != -1) {
                 setActiveSlot(-1);
             } else {
                 mc.displayGuiScreen(parent);
@@ -71,12 +68,23 @@ public abstract class JECGuiContainer extends GuiContainer {
     }
 
     @SuppressWarnings("ConstantConditions")
-    public boolean handleMouseEvent(int mouseX, int mouseY){
-        if(Mouse.getEventButton() == 0 && Mouse.getEventButtonState()){
-            if(activeSlot == -1){
+    public boolean handleMouseEvent(int mouseX, int mouseY) {
+        if (Mouse.getEventButton() == 0 && Mouse.getEventButtonState()) {
+            if (activeSlot == -1) {
                 Slot slot = getSlotUnderMouse();
-                if(slot != null && setActiveSlot(slot.getSlotIndex())){
-                    mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
+                if (slot != null) {
+                    switch (((JECContainer) inventorySlots).getSlotType(slot.getSlotIndex())){
+                        case SELECT:
+                            if(setActiveSlot(slot.getSlotIndex())){
+                                mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
+                            }
+                            break;
+                        case AMOUNT:
+                            if(!slot.getHasStack() && setActiveSlot(slot.getSlotIndex())){
+                                mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
+                            }
+                            break;
+                    }
                 }
                 return false;
             } else {
@@ -84,7 +92,7 @@ public abstract class JECGuiContainer extends GuiContainer {
                 mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
                 return true;
             }
-        } else if(activeSlot != -1){
+        } else if (activeSlot != -1) {
             ItemStack stack = JEIPlugin.runtime.getItemListOverlay().getStackUnderMouse();
             inventorySlots.getSlot(activeSlot).putStack(stack == null ? null : stack.copy());
             return false;
@@ -92,7 +100,7 @@ public abstract class JECGuiContainer extends GuiContainer {
         return false;
     }
 
-    protected void drawTooltipScreen(int mouseX, int mouseY){
+    protected void drawTooltipScreen(int mouseX, int mouseY) {
         boolean flagUnicode = mc.fontRendererObj.getUnicodeFlag();
         boolean flagOver = false;
         mc.fontRendererObj.setUnicodeFlag(true);
@@ -100,39 +108,37 @@ public abstract class JECGuiContainer extends GuiContainer {
             String tooltip = getButtonTooltip(button.id);
             if (tooltip != null) {
                 mc.fontRendererObj.drawStringWithShadow("?", button.xPosition + button.getButtonWidth() - 7, button.yPosition + 1, 14737632);
-                if(isMouseOver(button, mouseX, mouseY)){
+                if (isMouseOver(button, mouseX, mouseY)) {
                     flagOver = true;
-                    mc.fontRendererObj.drawStringWithShadow("\247b?", button.xPosition+button.getButtonWidth()-7, button.yPosition+1, 16777215);
+                    mc.fontRendererObj.drawStringWithShadow("\247b?", button.xPosition + button.getButtonWidth() - 7, button.yPosition + 1, 16777215);
                     mc.fontRendererObj.setUnicodeFlag(flagUnicode);
-                    if(timeStart == 0){
+                    if (timeStart == 0) {
                         timeStart = System.currentTimeMillis();
-                    } else if(System.currentTimeMillis()-timeStart > 1000){
-                        drawHoveringText(Arrays.asList(tooltip.split("\\\\n")), mouseX, mouseY);
+                    } else if (System.currentTimeMillis() - timeStart > 1000) {
+                        drawHoveringText(Arrays.asList(tooltip.split("\\n")), mouseX, mouseY);
                     }
                 }
             }
         }
-        if(!flagOver){
+        if (!flagOver) {
             timeStart = 0;
             mc.fontRendererObj.setUnicodeFlag(flagUnicode);
         }
     }
 
-    protected void drawActiveSlot(){
-        if(activeSlot != -1){
-            Slot slot = inventorySlots.getSlot(activeSlot);
-            int size = getSizeSlotActive(activeSlot);
-            int move = (size-16)/2;
-            drawRect(slot.xDisplayPosition-move, slot.yDisplayPosition-move, slot.xDisplayPosition+size-move, slot.yDisplayPosition+size-move, 0x60aeff00);
-        }
+    protected void drawSlotOverlay(int index, int color){
+        Slot slot = inventorySlots.getSlot(index);
+        int size = getSizeSlot(index);
+        int move = (size - 16) / 2;
+        drawRect(slot.xDisplayPosition - move, slot.yDisplayPosition - move, slot.xDisplayPosition + size - move, slot.yDisplayPosition + size - move, color);
     }
 
     public void drawCenteredStringMultiLine(FontRenderer fontRendererIn, String text, int x1, int x2, int y1, int y2, int color) {
         String[] buffer = text.split("\\n");
-        float x = (x1+x2)/2.0f;
-        float y = (y1+y2-buffer.length*10+2)/2.0f-10;
-        for(String s : buffer){
-            fontRendererIn.drawStringWithShadow(s, x-fontRendererIn.getStringWidth(s)/2, y+=10, color);
+        float x = (x1 + x2) / 2.0f;
+        float y = (y1 + y2 - buffer.length * 10 + 2) / 2.0f - 10;
+        for (String s : buffer) {
+            fontRendererIn.drawStringWithShadow(s, x - fontRendererIn.getStringWidth(s) / 2, y += 10, color);
         }
     }
 
@@ -151,5 +157,5 @@ public abstract class JECGuiContainer extends GuiContainer {
     @Nullable
     protected abstract String getButtonTooltip(int buttonId);
 
-    protected abstract int getSizeSlotActive(int index);
+    protected abstract int getSizeSlot(int index);
 }

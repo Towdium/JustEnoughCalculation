@@ -1,7 +1,7 @@
-container.editor.output=Output
-container.editor.catalyst=Cata-\nlyst
-container.editor.input=Input
-container.editor.newGroup=New Group
-container.editor.save=Save
-container.editor.clear=Clear
-container.editor.help=Help
+gui.editor.output=Output
+gui.editor.catalyst=Cata-\nlyst
+gui.editor.input=Input
+gui.editor.newGroup=New Group
+gui.editor.save=Save
+gui.editor.clear=Clear
+gui.editor.help=Help

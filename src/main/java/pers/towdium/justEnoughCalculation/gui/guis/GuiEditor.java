@@ -78,7 +78,7 @@ public class GuiEditor extends JECGuiContainer {
     }
 
     @Override
-    protected int getSizeSlotActive(int index) {
+    protected int getSizeSlot(int index) {
         return 20;
     }
 
@@ -95,6 +95,11 @@ public class GuiEditor extends JECGuiContainer {
             addSlotGroup(46, 33, 21, 33, 1, 4);
             addSlotGroup(46, 66, 21, 33, 1, 4);
             addSlotGroup(46, 99, 21, 32, 2, 6);
+        }
+
+        @Override
+        public EnumSlotType getSlotType(int index) {
+            return EnumSlotType.AMOUNT;
         }
     }
 }

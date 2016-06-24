@@ -1,11 +1,16 @@
 package pers.towdium.justEnoughCalculation.gui;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import org.lwjgl.input.Mouse;
+import pers.towdium.justEnoughCalculation.JustEnoughCalculation;
+import pers.towdium.justEnoughCalculation.core.ItemStackHelper;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +21,8 @@ import java.util.List;
 public abstract class JECContainer extends Container {
     InventoryBasic inventory;
     List<int[]> slotBuffer = new ArrayList<>();
+
+    public enum EnumSlotType {SELECT, AMOUNT, DISABLED}
 
     public JECContainer(){
         addSlots();
@@ -34,6 +41,7 @@ public abstract class JECContainer extends Container {
         }
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     public boolean canInteractWith(EntityPlayer playerIn) {
         return true;
@@ -44,7 +52,27 @@ public abstract class JECContainer extends Container {
         return null;
     }
 
-
+    @Nullable
+    @Override
+    public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
+        if(slotId >=0 && getSlotType(slotId)==EnumSlotType.AMOUNT){
+            ItemStack itemStack = getSlot(slotId).getStack();
+            if(itemStack != null){
+                itemStack = itemStack.copy();
+                if(dragType == 0 && clickTypeIn == ClickType.PICKUP){
+                    ItemStackHelper.Click.leftClick(itemStack, true);
+                }else if(dragType == 0 && clickTypeIn == ClickType.QUICK_MOVE){
+                    ItemStackHelper.Click.leftShift(itemStack, true);
+                }else if(dragType == 1 && clickTypeIn == ClickType.PICKUP){
+                    ItemStackHelper.Click.rightClick(itemStack, true);
+                }else if(dragType == 1 && clickTypeIn == ClickType.QUICK_MOVE){
+                    ItemStackHelper.Click.rightShift(itemStack, true);
+                }
+                getSlot(slotId).putStack(itemStack.stackSize == 0 ? null : itemStack);
+            }
+        }
+        return null;
+    }
 
     protected void addSlotSingle(int left, int top){
         slotBuffer.add(new int[]{left, top, 0, 0, 1, 1});
@@ -55,4 +83,6 @@ public abstract class JECContainer extends Container {
     }
 
     protected abstract void addSlots();
+
+    public abstract EnumSlotType getSlotType(int index);
 }
