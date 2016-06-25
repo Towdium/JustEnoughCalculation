@@ -6,8 +6,6 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import org.lwjgl.input.Mouse;
-import pers.towdium.justEnoughCalculation.JustEnoughCalculation;
 import pers.towdium.justEnoughCalculation.core.ItemStackHelper;
 
 import javax.annotation.Nullable;
@@ -60,15 +58,15 @@ public abstract class JECContainer extends Container {
             if(itemStack != null){
                 itemStack = itemStack.copy();
                 if(dragType == 0 && clickTypeIn == ClickType.PICKUP){
-                    ItemStackHelper.Click.leftClick(itemStack, true);
+                    itemStack = ItemStackHelper.Click.leftClick(itemStack);
                 }else if(dragType == 0 && clickTypeIn == ClickType.QUICK_MOVE){
-                    ItemStackHelper.Click.leftShift(itemStack, true);
+                    itemStack = ItemStackHelper.Click.leftShift(itemStack);
                 }else if(dragType == 1 && clickTypeIn == ClickType.PICKUP){
-                    ItemStackHelper.Click.rightClick(itemStack, true);
+                    itemStack = ItemStackHelper.Click.rightClick(itemStack);
                 }else if(dragType == 1 && clickTypeIn == ClickType.QUICK_MOVE){
-                    ItemStackHelper.Click.rightShift(itemStack, true);
+                    itemStack = ItemStackHelper.Click.rightShift(itemStack);
                 }
-                getSlot(slotId).putStack(itemStack.stackSize == 0 ? null : itemStack);
+                getSlot(slotId).putStack(itemStack);
             }
         }
         return null;

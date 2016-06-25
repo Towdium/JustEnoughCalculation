@@ -1,20 +1,28 @@
 package pers.towdium.justEnoughCalculation.gui;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.client.renderer.block.model.ModelManager;
+import net.minecraft.client.renderer.color.ItemColors;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import org.lwjgl.input.Mouse;
+import pers.towdium.justEnoughCalculation.core.ItemStackHelper;
+import pers.towdium.justEnoughCalculation.core.ReflectionHelper;
 import pers.towdium.justEnoughCalculation.plugin.JEIPlugin;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.function.Supplier;
 
 /**
  * Author:  Towdium
@@ -24,6 +32,7 @@ public abstract class JECGuiContainer extends GuiContainer {
     GuiScreen parent;
     int activeSlot = -1;
     long timeStart = 0;
+    ItemStack temp;
 
     public JECGuiContainer(Container inventorySlotsIn, GuiScreen parent) {
         super(inventorySlotsIn);
@@ -36,6 +45,23 @@ public abstract class JECGuiContainer extends GuiContainer {
             return true;
         } else {
             return false;
+        }
+    }
+
+    @Override
+    public void setWorldAndResolution(Minecraft mc, int width, int height) {
+        super.setWorldAndResolution(mc, width, height);
+        ModelManager tempMM = ReflectionHelper.getField(mc, "modelManager", "field_175617_aL");
+        if(tempMM != null){
+            itemRender = new RenderItem(mc.getTextureManager(), tempMM, mc.getItemColors()){
+                @Override
+                public void renderItemOverlayIntoGUI(@SuppressWarnings("NullableProblems") FontRenderer fr, ItemStack stack, int xPosition, int yPosition, String text) {
+                    boolean b = fr.getUnicodeFlag();
+                    fr.setUnicodeFlag(true);
+                    super.renderItemOverlayIntoGUI(fr, stack, xPosition, yPosition, stack == null ? "" : ItemStackHelper.NBT.getType(stack).getDisplayString(ItemStackHelper.NBT.getAmount(stack)));
+                    fr.setUnicodeFlag(b);
+                }
+            };
         }
     }
 
@@ -60,6 +86,7 @@ public abstract class JECGuiContainer extends GuiContainer {
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         if (keyCode == 1) {
             if (activeSlot != -1) {
+                inventorySlots.getSlot(activeSlot).putStack(temp);
                 setActiveSlot(-1);
             } else {
                 mc.displayGuiScreen(parent);
@@ -75,11 +102,13 @@ public abstract class JECGuiContainer extends GuiContainer {
                 if (slot != null) {
                     switch (((JECContainer) inventorySlots).getSlotType(slot.getSlotIndex())){
                         case SELECT:
+                            temp = slot.getStack();
                             if(setActiveSlot(slot.getSlotIndex())){
                                 mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
                             }
                             break;
                         case AMOUNT:
+                            temp = slot.getStack();
                             if(!slot.getHasStack() && setActiveSlot(slot.getSlotIndex())){
                                 mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
                             }
@@ -88,13 +117,15 @@ public abstract class JECGuiContainer extends GuiContainer {
                 }
                 return false;
             } else {
+                Slot active = inventorySlots.getSlot(activeSlot);
+                active.putStack(ItemStackHelper.toItemStackJEC(active.getStack()));
                 activeSlot = -1;
                 mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
                 return true;
             }
         } else if (activeSlot != -1) {
             ItemStack stack = JEIPlugin.runtime.getItemListOverlay().getStackUnderMouse();
-            inventorySlots.getSlot(activeSlot).putStack(stack == null ? null : stack.copy());
+            inventorySlots.getSlot(activeSlot).putStack(stack == null ? null : ItemStackHelper.toItemStackJEC(stack.copy()));
             return false;
         }
         return false;
@@ -158,4 +189,11 @@ public abstract class JECGuiContainer extends GuiContainer {
     protected abstract String getButtonTooltip(int buttonId);
 
     protected abstract int getSizeSlot(int index);
+
+    static class RenderItemSupplier implements Supplier<RenderItem>{
+        @Override
+        public RenderItem get() {
+            return null;
+        }
+    }
 }

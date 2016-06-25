@@ -9,4 +9,8 @@ public class ProxyServer implements IProxy {
 
     }
 
+    @Override
+    public void preInit() {
+    }
+
 }

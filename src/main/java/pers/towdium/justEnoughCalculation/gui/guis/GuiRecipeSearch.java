@@ -5,8 +5,6 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import pers.towdium.justEnoughCalculation.JustEnoughCalculation;
-import pers.towdium.justEnoughCalculation.gui.JECGuiContainer;
-import scala.tools.cmd.gen.AnyVals;
 
 import javax.annotation.Nullable;
 

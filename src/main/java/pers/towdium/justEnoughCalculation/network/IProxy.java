@@ -6,4 +6,6 @@ package pers.towdium.justEnoughCalculation.network;
 
 public interface IProxy {
     void init();
+
+    void preInit();
 }

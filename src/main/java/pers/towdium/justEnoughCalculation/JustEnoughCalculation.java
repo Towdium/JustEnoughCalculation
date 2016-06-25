@@ -3,6 +3,7 @@ package pers.towdium.justEnoughCalculation;
 import net.minecraft.client.Minecraft;
 import  net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -43,17 +44,12 @@ public class JustEnoughCalculation {
         JECConfig.preInit(event);
         GameRegistry.register(itemCalculator);
         networkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel(Reference.MODID);
+        proxy.preInit();
     }
 
     @Mod.EventHandler
     public static void init(FMLInitializationEvent event) {
         NetworkRegistry.INSTANCE.registerGuiHandler(JustEnoughCalculation.instance, new GuiHandler());
         proxy.init();
-        if (event.getSide().isClient()) {
-            Minecraft.getMinecraft().getRenderItem().getItemModelMesher().
-                    register(itemCalculator, 0, new ModelResourceLocation(Reference.MODID + ":" + itemCalculator.getUnlocalizedName().substring(5), "inventory"));
-        }
     }
-
-
 }

@@ -5,3 +5,4 @@ gui.editor.newGroup=New Group
 gui.editor.save=Save
 gui.editor.clear=Clear
 gui.editor.help=Help
+item.itemCalculator.name=Calculator
