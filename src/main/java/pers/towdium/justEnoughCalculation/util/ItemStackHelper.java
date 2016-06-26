@@ -1,4 +1,4 @@
-package pers.towdium.justEnoughCalculation.core;
+package pers.towdium.justEnoughCalculation.util;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

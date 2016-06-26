@@ -10,7 +10,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
-import pers.towdium.justEnoughCalculation.core.ItemStackHelper;
+import pers.towdium.justEnoughCalculation.util.ItemStackHelper;
 import pers.towdium.justEnoughCalculation.gui.guis.GuiEditor;
 
 import javax.annotation.Nonnull;

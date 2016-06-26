@@ -8,15 +8,13 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.block.model.ModelManager;
-import net.minecraft.client.renderer.color.ItemColors;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import org.lwjgl.input.Mouse;
-import pers.towdium.justEnoughCalculation.core.ItemStackHelper;
-import pers.towdium.justEnoughCalculation.core.ReflectionHelper;
+import pers.towdium.justEnoughCalculation.util.ItemStackHelper;
+import pers.towdium.justEnoughCalculation.util.ReflectionHelper;
 import pers.towdium.justEnoughCalculation.plugin.JEIPlugin;
 
 import javax.annotation.Nullable;

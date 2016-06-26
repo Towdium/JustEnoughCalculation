@@ -6,7 +6,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import pers.towdium.justEnoughCalculation.core.ItemStackHelper;
+import pers.towdium.justEnoughCalculation.util.ItemStackHelper;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;

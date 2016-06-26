@@ -1,4 +1,4 @@
-package pers.towdium.justEnoughCalculation.core;
+package pers.towdium.justEnoughCalculation.util;
 
 import java.lang.reflect.Field;
 
