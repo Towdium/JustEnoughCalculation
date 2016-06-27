@@ -18,7 +18,7 @@ public class ItemStackHelper {
     public static final String keyAmount = "amount";
     public static final String keyType = "type";
 
-    public enum EnumStackType {
+    public enum EnumStackAmountType {
         INVALID, NUMBER, PERCENTAGE, FLUID;
 
         public String getDisplayString(long l){
@@ -127,15 +127,21 @@ public class ItemStackHelper {
         }
     }
 
-    public static boolean isTypeEqual(ItemStack one, ItemStack two){
+    public static boolean isTypeEqual(@Nullable ItemStack one, @Nullable ItemStack two){
         return one != null && two != null && one.getItem() == two.getItem() && one.getMetadata() == two.getMetadata() &&
                 NBT.equalsIgnoreJEC(one.getTagCompound(), two.getTagCompound());
     }
 
-    public static ItemStack toItemStackJEC(ItemStack itemStack){
-        NBT.setData(itemStack, EnumStackType.NUMBER, itemStack.stackSize);
+    @Nullable
+    public static ItemStack toItemStackJEC(@Nullable ItemStack itemStack){
+        if (itemStack == null) return null;
+        NBT.setData(itemStack, EnumStackAmountType.NUMBER, itemStack.stackSize);
         itemStack.stackSize = 1;
         return itemStack;
+    }
+
+    public static boolean isItemStackJEC(@Nullable ItemStack itemStack){
+        return itemStack != null && itemStack.getTagCompound() != null && itemStack.getTagCompound().hasKey(JustEnoughCalculation.Reference.MODID);
     }
 
     public static class NBT {
@@ -157,11 +163,11 @@ public class ItemStackHelper {
             return setLong(itemStack, true, keyAmount, amount);
         }
 
-        public static ItemStack setType (ItemStack itemStack, EnumStackType type){
+        public static ItemStack setType (ItemStack itemStack, EnumStackAmountType type){
             return setInteger(itemStack, true, keyType, type.ordinal());
         }
 
-        public static ItemStack setData (ItemStack itemStack, EnumStackType type, long amount){
+        public static ItemStack setData (ItemStack itemStack, EnumStackAmountType type, long amount){
             setInteger(itemStack, true, keyType, type.ordinal());
             return setLong(itemStack, true, keyAmount, amount);
         }
@@ -194,8 +200,8 @@ public class ItemStackHelper {
             return itemStack;
         }
 
-        public static EnumStackType getType (ItemStack itemStack){
-            return EnumStackType.values()[getInteger(itemStack, true, keyType)];
+        public static EnumStackAmountType getType (ItemStack itemStack){
+            return EnumStackAmountType.values()[getInteger(itemStack, true, keyType)];
         }
 
         public static long getAmount (ItemStack itemStack){
