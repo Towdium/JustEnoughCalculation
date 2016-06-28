@@ -24,7 +24,6 @@ public class ProxyClient implements IProxy {
 
     @Override
     public void init() {
-        NetworkRegistry.INSTANCE.registerGuiHandler(JustEnoughCalculation.instance, new GuiHandler());
         MinecraftForge.EVENT_BUS.register(new MouseEventHandler());
     }
 }

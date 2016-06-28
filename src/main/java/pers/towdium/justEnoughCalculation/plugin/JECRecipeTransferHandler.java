@@ -55,7 +55,7 @@ public class JECRecipeTransferHandler implements IRecipeTransferHandler {
                 if(ingredient.isInput()){
                     ItemStack itemStack = ingredient.getAllIngredients().get(0);
                     for (ItemStack exist : inputStacks){
-                        if(ItemStackHelper.isTypeEqual(exist, itemStack)){
+                        if(ItemStackHelper.isItemEqual(exist, itemStack)){
                             exist.stackSize += itemStack.stackSize;
                             continue LOOP;
                         }
@@ -64,7 +64,7 @@ public class JECRecipeTransferHandler implements IRecipeTransferHandler {
                 }else {
                     ItemStack itemStack = ingredient.getAllIngredients().get(0);
                     for (ItemStack exist : outputStacks){
-                        if(ItemStackHelper.isTypeEqual(exist, itemStack)){
+                        if(ItemStackHelper.isItemEqual(exist, itemStack)){
                             exist.stackSize += itemStack.stackSize;
                             continue LOOP;
                         }

@@ -127,7 +127,7 @@ public class ItemStackHelper {
         }
     }
 
-    public static boolean isTypeEqual(@Nullable ItemStack one, @Nullable ItemStack two){
+    public static boolean isItemEqual(@Nullable ItemStack one, @Nullable ItemStack two){
         return one != null && two != null && one.getItem() == two.getItem() && one.getMetadata() == two.getMetadata() &&
                 NBT.equalsIgnoreJEC(one.getTagCompound(), two.getTagCompound());
     }

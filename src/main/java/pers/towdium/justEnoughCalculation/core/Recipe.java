@@ -8,10 +8,7 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import pers.towdium.justEnoughCalculation.util.ItemStackHelper;
 import pers.towdium.justEnoughCalculation.util.function.TriConsumer;
 
-import javax.annotation.Nullable;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Function;
+import java.util.function.*;
 
 /**
  * Author: Towdium
@@ -21,6 +18,7 @@ public class Recipe {
     ItemStack[] output;
     ItemStack[] catalyst;
     ItemStack[] input;
+    String group;
 
     enum EnumStackIOType{
         OUTPUT, CATALYST, INPUT;
@@ -35,7 +33,7 @@ public class Recipe {
         }
     }
 
-    public Recipe(ItemStack[] output, ItemStack[] catalyst, ItemStack[] input) {
+    public Recipe(ItemStack[] output, ItemStack[] catalyst, ItemStack[] input, String group) {
         BiFunction<ItemStack[], Integer, Boolean> checkArray = (itemStackIn, amount) -> {
             if(itemStackIn.length != amount)
                 return false;
@@ -59,36 +57,54 @@ public class Recipe {
         this.output = copyArray.apply(output);
         this.catalyst = copyArray.apply(catalyst);
         this.input = copyArray.apply(input);
+        this.group = group;
     }
 
-    @Nullable
-    public ItemStack getItemStackInput(ItemStack itemStack){
-        return getItemSack(input, itemStack);
+    public int getIndexInput(ItemStack itemStack){
+        return getIndex(input, itemStack);
     }
 
-    @Nullable
-    public ItemStack getItemStackCatalyst(ItemStack itemStack){
-        return getItemSack(catalyst, itemStack);
+    public int getIndexCatalyst(ItemStack itemStack){
+        return getIndex(catalyst, itemStack);
     }
 
-    @Nullable
-    public ItemStack getItemStackOutput(ItemStack itemStack){
-        return getItemSack(output, itemStack);
+    public int getIndexOutput(ItemStack itemStack){
+        return getIndex(output, itemStack);
     }
 
-    @Nullable
-    ItemStack getItemSack(ItemStack[] itemStacks, ItemStack itemStackIn){
-        for(ItemStack itemStack : itemStacks){
-            if(ItemStackHelper.isTypeEqual(itemStack, itemStackIn)){
-                return itemStack;
+    int getIndex(ItemStack[] itemStacks, ItemStack itemStackIn){
+        for(int i = 0; i < itemStacks.length; i++) {
+            if(ItemStackHelper.isItemEqual(itemStacks[i], itemStackIn)){
+                return i;
             }
         }
-        return null;
+        return -1;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (! (obj instanceof Recipe)){
+            return false;
+        }
+        BiFunction<ItemStack[], ItemStack[], Boolean> checkEqual = (itemStacks1, itemStacks2) -> {
+            if(itemStacks1.length != itemStacks2.length)
+                return false;
+            int len = itemStacks1.length;
+            for(int i = 0; i < len; i++) {
+                if(!ItemStack.areItemStacksEqual(itemStacks1[i], itemStacks2[i])){
+                    return false;
+                }
+            }
+            return true;
+        };
+        Recipe r = (Recipe) obj;
+        return checkEqual.apply(output, r.output) && checkEqual.apply(catalyst, r.catalyst) &&
+                checkEqual.apply(input, r.input) && group.equals(r.group);
     }
 
     public static class IOUtl{
         public static Recipe fromByte(ByteBuf buf){
-            return fromContainer((enumStackIOType, integer) -> ByteBufUtils.readItemStack(buf));
+            return fromContainer((enumStackIOType, integer) -> ByteBufUtils.readItemStack(buf), () -> ByteBufUtils.readUTF8String(buf));
         }
 
         public static Recipe fromNbt(NBTTagCompound tagCompound){
@@ -96,11 +112,11 @@ public class Recipe {
                 NBTTagCompound temp = tagCompound.getCompoundTag(String.valueOf(enumStackIOType.ordinal()));
                 temp = temp.getCompoundTag(String.valueOf(integer));
                 return ItemStack.loadItemStackFromNBT(temp);
-            });
+            }, () -> tagCompound.getString("Group"));
         }
 
         public static void toByte(ByteBuf buf, Recipe recipe) {
-            toContainer((enumStackIOType, integer, itemStack) -> ByteBufUtils.writeItemStack(buf, itemStack), recipe);
+            toContainer((enumStackIOType, integer, itemStack) -> ByteBufUtils.writeItemStack(buf, itemStack), (string) -> ByteBufUtils.writeUTF8String(buf, string), recipe);
         }
 
         public static void toNbt(Recipe recipe){
@@ -113,32 +129,33 @@ public class Recipe {
                     tagCompound.setTag(temp, new NBTTagCompound());
                 }
                 tagCompound.getCompoundTag(temp).setTag(String.valueOf(integer), stackInfo);
-            }, recipe);
+            }, (s -> tagCompound.setString("Group", s)) , recipe);
         }
 
-        static Recipe fromContainer(BiFunction<EnumStackIOType, Integer, ItemStack> func){
+        static Recipe fromContainer(BiFunction<EnumStackIOType, Integer, ItemStack> funcStack, Supplier<String> funcGroup){
             Function<EnumStackIOType, ItemStack[]> readArray = (type) -> {
                 int len = type.getLength();
                 ItemStack[] buffer = new ItemStack[len];
                 for(int i = 0; i <len; i++){
-                    buffer[i] = func.apply(type, i);
+                    buffer[i] = funcStack.apply(type, i);
                 }
                 return buffer;
             };
-            return new Recipe(readArray.apply(EnumStackIOType.OUTPUT),
-                    readArray.apply(EnumStackIOType.CATALYST), readArray.apply(EnumStackIOType.INPUT));
+            return new Recipe(readArray.apply(EnumStackIOType.OUTPUT), readArray.apply(EnumStackIOType.CATALYST),
+                    readArray.apply(EnumStackIOType.INPUT), funcGroup.get());
         }
 
-        static void toContainer(TriConsumer<EnumStackIOType, Integer, ItemStack> func, Recipe recipe) {
+        static void toContainer(TriConsumer<EnumStackIOType, Integer, ItemStack> funcStack, Consumer<String> funcGroup, Recipe recipe) {
             BiConsumer<EnumStackIOType, ItemStack[]> writeArray = ((type, itemStacks) -> {
                 int len = type.getLength();
                 for(int i = 0; i <len; i++){
-                    func.accept(type, i, itemStacks[i]);
+                    funcStack.accept(type, i, itemStacks[i]);
                 }
             });
             writeArray.accept(EnumStackIOType.OUTPUT, recipe.output);
             writeArray.accept(EnumStackIOType.CATALYST, recipe.catalyst);
             writeArray.accept(EnumStackIOType.INPUT, recipe.input);
+            funcGroup.accept(recipe.group);
         }
     }
 }
