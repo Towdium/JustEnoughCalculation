@@ -40,8 +40,8 @@ public class GuiCalculator extends JECGuiContainer {
     public enum EnumMode {
         INPUT, PROCEDURE, OUTPUT, CATALYST;
 
-        int toInt(){
-            switch (this){
+        int toInt() {
+            switch (this) {
                 case INPUT:
                     return 1;
                 case PROCEDURE:
@@ -55,8 +55,8 @@ public class GuiCalculator extends JECGuiContainer {
             }
         }
 
-        static EnumMode fromInt(int i){
-            switch (i){
+        static EnumMode fromInt(int i) {
+            switch (i) {
                 case 1:
                     return INPUT;
                 case 2:
@@ -78,14 +78,14 @@ public class GuiCalculator extends JECGuiContainer {
     @Override
     public void initGui() {
         super.initGui();
-        buttonSearch = new GuiButton(1, guiLeft+119, guiTop+7, 50, 20, "search");
-        buttonAdd = new GuiButton(2, guiLeft+7, guiTop+53, 52, 20, "Add");
-        buttonView = new GuiButton(3, guiLeft+63, guiTop+53, 52, 20, "Records");
-        buttonSettings = new GuiButton(4, guiLeft+119, guiTop+53, 50, 20, "Settings");
-        buttonLeft = new GuiButton(5, guiLeft+7, guiTop+139, 14, 20, "<");
-        buttonRight = new GuiButton(6, guiLeft+45, guiTop+139, 14, 20, ">");
-        buttonMode = new GuiButton(7, guiLeft+63, guiTop+139, 52, 20, "Catalyst");
-        buttonStock = new GuiButton(8, guiLeft+119, guiTop+139, 50, 20, "Stock");
+        buttonSearch = new GuiButton(1, guiLeft + 119, guiTop + 7, 50, 20, "search");
+        buttonAdd = new GuiButton(2, guiLeft + 7, guiTop + 53, 52, 20, "Add");
+        buttonView = new GuiButton(3, guiLeft + 63, guiTop + 53, 52, 20, "Records");
+        buttonSettings = new GuiButton(4, guiLeft + 119, guiTop + 53, 50, 20, "Settings");
+        buttonLeft = new GuiButton(5, guiLeft + 7, guiTop + 139, 14, 20, "<");
+        buttonRight = new GuiButton(6, guiLeft + 45, guiTop + 139, 14, 20, ">");
+        buttonMode = new GuiButton(7, guiLeft + 63, guiTop + 139, 52, 20, "Catalyst");
+        buttonStock = new GuiButton(8, guiLeft + 119, guiTop + 139, 50, 20, "Stock");
         buttonList.add(buttonSearch);
         buttonList.add(buttonAdd);
         buttonList.add(buttonView);
@@ -94,13 +94,13 @@ public class GuiCalculator extends JECGuiContainer {
         buttonList.add(buttonRight);
         buttonList.add(buttonMode);
         buttonList.add(buttonStock);
-        textFieldAmount = new GuiTextField(0, fontRendererObj, guiLeft+39, guiTop+8, 75, 18);
+        textFieldAmount = new GuiTextField(0, fontRendererObj, guiLeft + 39, guiTop + 8, 75, 18);
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID,"textures/gui/guiCalculator.png"));
+        this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID, "textures/gui/guiCalculator.png"));
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
         textFieldAmount.drawTextBox();
     }
@@ -115,19 +115,26 @@ public class GuiCalculator extends JECGuiContainer {
 
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
-        switch (button.id){
-            case 1: mc.displayGuiScreen(new GuiRecipeSearch(this)); return;
-            case 2: mc.displayGuiScreen(new GuiEditor(this)); return;
-            case 3: mc.displayGuiScreen(new GuiRecipeViewer(this));
+        switch (button.id) {
+            case 1:
+                mc.displayGuiScreen(new GuiRecipeSearch(this));
+                return;
+            case 2:
+                mc.displayGuiScreen(new GuiEditor(this));
+                return;
+            case 3:
+                mc.displayGuiScreen(new GuiRecipeViewer(this));
         }
     }
 
     @Nullable
     @Override
     protected String getButtonTooltip(int buttonId) {
-        switch (buttonId){
-            case 4: return "Hello\nWorld";
-            default: return null;
+        switch (buttonId) {
+            case 4:
+                return "Hello\nWorld";
+            default:
+                return null;
         }
     }
 
@@ -151,16 +158,16 @@ public class GuiCalculator extends JECGuiContainer {
             if (activeSlot == -1) {
                 Slot slot = getSlotUnderMouse();
                 if (slot != null) {
-                    switch (((JECContainer) inventorySlots).getSlotType(slot.getSlotIndex())){
+                    switch (((JECContainer) inventorySlots).getSlotType(slot.getSlotIndex())) {
                         case SELECT:
                             temp = slot.getStack();
-                            if(setActiveSlot(slot.getSlotIndex())){
+                            if (setActiveSlot(slot.getSlotIndex())) {
                                 mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
                             }
                             break;
                         case AMOUNT:
                             temp = slot.getStack();
-                            if(!slot.getHasStack() && setActiveSlot(slot.getSlotIndex())){
+                            if (!slot.getHasStack() && setActiveSlot(slot.getSlotIndex())) {
                                 mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
                             }
                             break;

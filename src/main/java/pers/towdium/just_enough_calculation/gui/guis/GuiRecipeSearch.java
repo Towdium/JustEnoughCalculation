@@ -22,21 +22,29 @@ public class GuiRecipeSearch extends GuiRecipeList {
     enum EnumMode {
         IN, OUT, IO;
 
-        EnumMode next(){
-            switch (this){
-                case OUT: return IN;
-                case IN: return IO;
-                case IO: return OUT;
-                default: return OUT;
+        EnumMode next() {
+            switch (this) {
+                case OUT:
+                    return IN;
+                case IN:
+                    return IO;
+                case IO:
+                    return OUT;
+                default:
+                    return OUT;
             }
         }
 
-        EnumMode last(){
-            switch (this){
-                case OUT: return IO;
-                case IN: return OUT;
-                case IO: return IN;
-                default: return OUT;
+        EnumMode last() {
+            switch (this) {
+                case OUT:
+                    return IO;
+                case IN:
+                    return OUT;
+                case IO:
+                    return IN;
+                default:
+                    return OUT;
             }
         }
     }
@@ -58,8 +66,8 @@ public class GuiRecipeSearch extends GuiRecipeList {
     @Override
     public void initGui() {
         super.initGui();
-        buttonMode = new GuiButton(12, 31+guiLeft, 7+guiTop, 84, 20, "mode");
-        buttonSearch = new GuiButton(13, 119+guiLeft, 7+guiTop, 50, 20, "search");
+        buttonMode = new GuiButton(12, 31 + guiLeft, 7 + guiTop, 84, 20, "mode");
+        buttonSearch = new GuiButton(13, 119 + guiLeft, 7 + guiTop, 50, 20, "search");
         buttonList.add(buttonMode);
         buttonList.add(buttonSearch);
     }
@@ -78,7 +86,7 @@ public class GuiRecipeSearch extends GuiRecipeList {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID,"textures/gui/guiRecipeSearch.png"));
+        this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID, "textures/gui/guiRecipeSearch.png"));
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
     }
 

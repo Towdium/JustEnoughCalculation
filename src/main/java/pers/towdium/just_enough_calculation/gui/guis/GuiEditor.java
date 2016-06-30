@@ -40,24 +40,24 @@ public class GuiEditor extends JECGuiContainer {
         super.initGui();
         buttonMode = new ArrayList<>();
         int count = -1;
-        for(int i = 0; i < 2; i++){
-            for(int j = 0; j < 4; j++){
-                buttonMode.add(new GuiButtonExt(++count, 44+j*21+guiLeft, 51+i*33+guiTop, 10, 10, "#"));
-                buttonMode.add(new GuiButtonExt(++count, 54+j*21+guiLeft, 51+i*33+guiTop, 10, 10, "I"));
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 4; j++) {
+                buttonMode.add(new GuiButtonExt(++count, 44 + j * 21 + guiLeft, 51 + i * 33 + guiTop, 10, 10, "#"));
+                buttonMode.add(new GuiButtonExt(++count, 54 + j * 21 + guiLeft, 51 + i * 33 + guiTop, 10, 10, "I"));
             }
         }
-        for(int i = 0; i < 2; i++){
-            for(int j = 0; j < 6; j++){
-                buttonMode.add(new GuiButtonExt(++count, 44+j*21+guiLeft, 117+i*32+guiTop, 10, 10, "#"));
-                buttonMode.add(new GuiButtonExt(++count, 54+j*21+guiLeft, 117+i*32+guiTop, 10, 10, "I"));
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 6; j++) {
+                buttonMode.add(new GuiButtonExt(++count, 44 + j * 21 + guiLeft, 117 + i * 32 + guiTop, 10, 10, "#"));
+                buttonMode.add(new GuiButtonExt(++count, 54 + j * 21 + guiLeft, 117 + i * 32 + guiTop, 10, 10, "I"));
             }
         }
-        buttonLeft = new GuiButtonExt(40, guiLeft+7, guiTop+7, 14, 20, "<");
-        buttonRight = new GuiButtonExt(41, guiLeft+90, guiTop+7, 14, 20, ">");
-        buttonNew = new GuiButtonExt(42, guiLeft+108, guiTop+7, 61, 20, JECTranslator.format("gui.editor.newGroup"));
-        buttonHelp = new GuiButtonExt(43, guiLeft+131, guiTop+75, 38, 18, JECTranslator.format("gui.editor.help"));
-        buttonSave = new GuiButtonExt(44, guiLeft+131, guiTop+31, 38, 18, JECTranslator.format("gui.editor.save"));
-        buttonClear = new GuiButtonExt(45, guiLeft+131, guiTop+53, 38, 18, JECTranslator.format("gui.editor.clear"));
+        buttonLeft = new GuiButtonExt(40, guiLeft + 7, guiTop + 7, 14, 20, "<");
+        buttonRight = new GuiButtonExt(41, guiLeft + 90, guiTop + 7, 14, 20, ">");
+        buttonNew = new GuiButtonExt(42, guiLeft + 108, guiTop + 7, 61, 20, JECTranslator.format("gui.editor.newGroup"));
+        buttonHelp = new GuiButtonExt(43, guiLeft + 131, guiTop + 75, 38, 18, JECTranslator.format("gui.editor.help"));
+        buttonSave = new GuiButtonExt(44, guiLeft + 131, guiTop + 31, 38, 18, JECTranslator.format("gui.editor.save"));
+        buttonClear = new GuiButtonExt(45, guiLeft + 131, guiTop + 53, 38, 18, JECTranslator.format("gui.editor.clear"));
         buttonList.addAll(buttonMode);
         buttonList.add(buttonLeft);
         buttonList.add(buttonRight);
@@ -89,7 +89,7 @@ public class GuiEditor extends JECGuiContainer {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID,"textures/gui/guiEditor.png"));
+        this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID, "textures/gui/guiEditor.png"));
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
     }
 
@@ -104,9 +104,9 @@ public class GuiEditor extends JECGuiContainer {
 
     public Recipe toRecipe() {
         BiFunction<Integer, Integer, ItemStack[]> toArray = (start, end) -> {
-            ItemStack[] buffer = new ItemStack[end-start+1];
-            for(int i = start; i <= end; i++) {
-                buffer[i-start] = inventorySlots.getSlot(i).getStack();
+            ItemStack[] buffer = new ItemStack[end - start + 1];
+            for (int i = start; i <= end; i++) {
+                buffer[i - start] = inventorySlots.getSlot(i).getStack();
             }
             return buffer;
         };
@@ -117,7 +117,7 @@ public class GuiEditor extends JECGuiContainer {
         return "Default";
     }
 
-    public static class ContainerEditor extends JECContainer{
+    public static class ContainerEditor extends JECContainer {
         @Override
         protected void addSlots() {
             addSlotGroup(46, 33, 21, 33, 1, 4);

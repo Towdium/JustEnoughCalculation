@@ -16,8 +16,10 @@ import pers.towdium.just_enough_calculation.event.MouseEventHandler;
 public class ProxyClient implements IProxy {
     @Override
     public void preInit() {
-            ModelLoader.setCustomModelResourceLocation(JustEnoughCalculation.itemCalculator, 0, new ModelResourceLocation(JustEnoughCalculation.Reference.MODID + ":" + JustEnoughCalculation.itemCalculator.getUnlocalizedName().substring(5), "inventory"));
-        }
+        ModelLoader.setCustomModelResourceLocation(JustEnoughCalculation.itemCalculator, 0,
+                new ModelResourceLocation(JustEnoughCalculation.Reference.MODID + ":" +
+                        JustEnoughCalculation.itemCalculator.getUnlocalizedName().substring(5), "inventory"));
+    }
 
     @Override
     public void init() {

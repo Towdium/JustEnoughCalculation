@@ -8,10 +8,10 @@ import java.lang.reflect.Field;
  */
 public class ReflectionHelper {
     @SuppressWarnings("unchecked")
-    public static <T, C> T getField(C o, String... names){
+    public static <T, C> T getField(C o, String... names) {
         Field field = null;
         boolean flag = false;
-        for(String name : names){
+        for (String name : names) {
             try {
                 field = o.getClass().getDeclaredField(name);
             } catch (NoSuchFieldException e) {
@@ -20,9 +20,9 @@ public class ReflectionHelper {
             flag = true;
             break;
         }
-        if(!flag){
+        if (!flag) {
             String buffer = "Field not found in class " + o.getClass().getCanonicalName() + ":";
-            for(String s : names){
+            for (String s : names) {
                 buffer += " ";
                 buffer += s;
             }

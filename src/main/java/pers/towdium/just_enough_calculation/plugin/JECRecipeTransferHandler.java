@@ -44,27 +44,27 @@ public class JECRecipeTransferHandler implements IRecipeTransferHandler {
     @Nullable
     @Override
     public IRecipeTransferError transferRecipe(@Nonnull Container container, @Nonnull IRecipeLayout iRecipeLayout, @Nonnull EntityPlayer entityPlayer, boolean maxTransfer, boolean doTransfer) {
-        if(doTransfer){
+        if (doTransfer) {
             List<ItemStack> outputStacks = new ArrayList<>();
             List<ItemStack> inputStacks = new ArrayList<>();
             LOOP:
-            for(IGuiIngredient<ItemStack> ingredient : iRecipeLayout.getItemStacks().getGuiIngredients().values()){
-                if(ingredient.getAllIngredients().size()==0){
+            for (IGuiIngredient<ItemStack> ingredient : iRecipeLayout.getItemStacks().getGuiIngredients().values()) {
+                if (ingredient.getAllIngredients().size() == 0) {
                     continue;
                 }
-                if(ingredient.isInput()){
+                if (ingredient.isInput()) {
                     ItemStack itemStack = ingredient.getAllIngredients().get(0);
-                    for (ItemStack exist : inputStacks){
-                        if(ItemStackHelper.isItemEqual(exist, itemStack)){
+                    for (ItemStack exist : inputStacks) {
+                        if (ItemStackHelper.isItemEqual(exist, itemStack)) {
                             exist.stackSize += itemStack.stackSize;
                             continue LOOP;
                         }
                     }
                     inputStacks.add(itemStack.copy());
-                }else {
+                } else {
                     ItemStack itemStack = ingredient.getAllIngredients().get(0);
-                    for (ItemStack exist : outputStacks){
-                        if(ItemStackHelper.isItemEqual(exist, itemStack)){
+                    for (ItemStack exist : outputStacks) {
+                        if (ItemStackHelper.isItemEqual(exist, itemStack)) {
                             exist.stackSize += itemStack.stackSize;
                             continue LOOP;
                         }
@@ -74,15 +74,15 @@ public class JECRecipeTransferHandler implements IRecipeTransferHandler {
             }
             Minecraft mc = Minecraft.getMinecraft();
             RecipesGui gui = (RecipesGui) mc.currentScreen;
-            if(gui!=null){
+            if (gui != null) {
                 mc.displayGuiScreen(new GuiEditor(gui.getParentScreen()));
                 GuiContainer myGuiContainer = (GuiContainer) mc.currentScreen;
-                if(myGuiContainer != null){
-                    for(int i=0; i<=outputStacks.size()-1 && i<=3; i++){
+                if (myGuiContainer != null) {
+                    for (int i = 0; i <= outputStacks.size() - 1 && i <= 3; i++) {
                         myGuiContainer.inventorySlots.getSlot(i).putStack(ItemStackHelper.toItemStackJEC(outputStacks.get(i)));
                     }
-                    for(int i=8; i<=8+inputStacks.size()-1 && i<=19; i++){
-                        myGuiContainer.inventorySlots.getSlot(i).putStack(ItemStackHelper.toItemStackJEC(inputStacks.get(i-8)));
+                    for (int i = 8; i <= 8 + inputStacks.size() - 1 && i <= 19; i++) {
+                        myGuiContainer.inventorySlots.getSlot(i).putStack(ItemStackHelper.toItemStackJEC(inputStacks.get(i - 8)));
                     }
                     myGuiContainer.inventorySlots.getSlot(4).putStack(ItemStackHelper.toItemStackJEC(
                             JEIPlugin.recipeRegistry.getCraftingItems(

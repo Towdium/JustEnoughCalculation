@@ -39,13 +39,13 @@ public abstract class GuiRecipeList extends JECGuiContainer {
     @Override
     public void initGui() {
         super.initGui();
-        buttonList.add(new GuiButtonExt(0, guiLeft+7, guiTop+133, 13, 12, "<"));
-        buttonList.add(new GuiButtonExt(1, guiLeft+156, guiTop+133, 13, 12, ">"));
-        buttonList.add(new GuiButtonExt(2, guiLeft+7, guiTop+147, 13, 12, "<"));
-        buttonList.add(new GuiButtonExt(3, guiLeft+156, guiTop+147, 13, 12, ">"));
-        for(int i=0; i<row; i++){
-            buttonList.add(new GuiButtonExt(2*i+4, guiLeft+83, guiTop+top+20*i, 41, 18,"edit"));
-            buttonList.add(new GuiButtonExt(1+2*i+4, guiLeft+128, guiTop+top+20*i, 41, 18, "delete"));
+        buttonList.add(new GuiButtonExt(0, guiLeft + 7, guiTop + 133, 13, 12, "<"));
+        buttonList.add(new GuiButtonExt(1, guiLeft + 156, guiTop + 133, 13, 12, ">"));
+        buttonList.add(new GuiButtonExt(2, guiLeft + 7, guiTop + 147, 13, 12, "<"));
+        buttonList.add(new GuiButtonExt(3, guiLeft + 156, guiTop + 147, 13, 12, ">"));
+        for (int i = 0; i < row; i++) {
+            buttonList.add(new GuiButtonExt(2 * i + 4, guiLeft + 83, guiTop + top + 20 * i, 41, 18, "edit"));
+            buttonList.add(new GuiButtonExt(1 + 2 * i + 4, guiLeft + 128, guiTop + top + 20 * i, 41, 18, "delete"));
         }
         updateLayout();
     }
@@ -73,14 +73,14 @@ public abstract class GuiRecipeList extends JECGuiContainer {
     }
 
     protected void putRecipe(int position, @Nullable Recipe recipe) {
-        if(recipe == null) {
-            for(int i = 0; i<4; i++) {
-                inventorySlots.getSlot(position*4+i).putStack(null);
+        if (recipe == null) {
+            for (int i = 0; i < 4; i++) {
+                inventorySlots.getSlot(position * 4 + i).putStack(null);
             }
         } else {
             List<ItemStack> buffer = recipe.getOutput();
-            for(int i = 0; i<4; i++) {
-                inventorySlots.getSlot(position*4+i).putStack(buffer.get(i));
+            for (int i = 0; i < 4; i++) {
+                inventorySlots.getSlot(position * 4 + i).putStack(buffer.get(i));
             }
         }
     }
@@ -92,14 +92,14 @@ public abstract class GuiRecipeList extends JECGuiContainer {
         page = bufferA.size() == 0 ? 0 : page == 0 ? total : page > total ? 1 : page;
         bufferA.forEach(integer -> {
             Recipe r = PlayerRecordHelper.getRecipe(integer);
-            if(r.getGroup().equals(PlayerRecordHelper.getGroupName(group)))
+            if (r.getGroup().equals(PlayerRecordHelper.getGroupName(group)))
                 bufferB.add(r);
         });
-        for(int i = (page-1)*row; i < page*row && page != 0; i++) {
+        for (int i = (page - 1) * row; i < page * row && page != 0; i++) {
             if (i < bufferB.size()) {
-                putRecipe(i-(page-1)*row,  bufferB.get(i));
+                putRecipe(i - (page - 1) * row, bufferB.get(i));
             } else {
-                putRecipe(i-(page-1)*row,  null);
+                putRecipe(i - (page - 1) * row, null);
             }
         }
     }

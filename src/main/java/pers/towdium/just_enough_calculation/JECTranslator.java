@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
  */
 @SideOnly(Side.CLIENT)
 public class JECTranslator {
-    public static String format(String translateKey, Object... parameters){
+    public static String format(String translateKey, Object... parameters) {
         String buffer = I18n.format(translateKey, parameters);
         buffer = StringEscapeUtils.unescapeJava(buffer);
         return buffer.replace("\t", "    ");

@@ -22,18 +22,18 @@ public abstract class JECContainer extends Container {
 
     public enum EnumSlotType {SELECT, AMOUNT, DISABLED}
 
-    public JECContainer(){
+    public JECContainer() {
         addSlots();
         int count = 0;
         int current = -1;
-        for(int[] record: slotBuffer){
+        for (int[] record : slotBuffer) {
             count += (record[4] * record[5]);
         }
         inventory = new InventoryBasic("Temp", false, count);
-        for(int[] record: slotBuffer){
-            for(int a = 0; a < record[4]; a++){
-                for(int b =0; b < record[5]; b++){
-                    addSlotToContainer(new Slot(inventory,++current,record[0]+b*record[2],record[1]+a*record[3]));
+        for (int[] record : slotBuffer) {
+            for (int a = 0; a < record[4]; a++) {
+                for (int b = 0; b < record[5]; b++) {
+                    addSlotToContainer(new Slot(inventory, ++current, record[0] + b * record[2], record[1] + a * record[3]));
                 }
             }
         }
@@ -53,17 +53,17 @@ public abstract class JECContainer extends Container {
     @Nullable
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
-        if(slotId >=0 && getSlotType(slotId)==EnumSlotType.AMOUNT){
+        if (slotId >= 0 && getSlotType(slotId) == EnumSlotType.AMOUNT) {
             ItemStack itemStack = getSlot(slotId).getStack();
-            if(itemStack != null){
+            if (itemStack != null) {
                 itemStack = itemStack.copy();
-                if(dragType == 0 && clickTypeIn == ClickType.PICKUP){
+                if (dragType == 0 && clickTypeIn == ClickType.PICKUP) {
                     itemStack = ItemStackHelper.Click.leftClick(itemStack);
-                }else if(dragType == 0 && clickTypeIn == ClickType.QUICK_MOVE){
+                } else if (dragType == 0 && clickTypeIn == ClickType.QUICK_MOVE) {
                     itemStack = ItemStackHelper.Click.leftShift(itemStack);
-                }else if(dragType == 1 && clickTypeIn == ClickType.PICKUP){
+                } else if (dragType == 1 && clickTypeIn == ClickType.PICKUP) {
                     itemStack = ItemStackHelper.Click.rightClick(itemStack);
-                }else if(dragType == 1 && clickTypeIn == ClickType.QUICK_MOVE){
+                } else if (dragType == 1 && clickTypeIn == ClickType.QUICK_MOVE) {
                     itemStack = ItemStackHelper.Click.rightShift(itemStack);
                 }
                 getSlot(slotId).putStack(itemStack);
@@ -72,11 +72,11 @@ public abstract class JECContainer extends Container {
         return null;
     }
 
-    protected void addSlotSingle(int left, int top){
+    protected void addSlotSingle(int left, int top) {
         slotBuffer.add(new int[]{left, top, 0, 0, 1, 1});
     }
 
-    protected void addSlotGroup(int left, int top, int intervalH, int intervalV, int sizeH, int sizeV){
+    protected void addSlotGroup(int left, int top, int intervalH, int intervalV, int sizeH, int sizeV) {
         slotBuffer.add(new int[]{left, top, intervalH, intervalV, sizeH, sizeV});
     }
 

@@ -50,8 +50,8 @@ public abstract class JECGuiContainer extends GuiContainer {
     public void setWorldAndResolution(Minecraft mc, int width, int height) {
         super.setWorldAndResolution(mc, width, height);
         ModelManager tempMM = ReflectionHelper.getField(mc, "modelManager", "field_175617_aL");
-        if(tempMM != null){
-            itemRender = new RenderItem(mc.getTextureManager(), tempMM, mc.getItemColors()){
+        if (tempMM != null) {
+            itemRender = new RenderItem(mc.getTextureManager(), tempMM, mc.getItemColors()) {
                 @Override
                 public void renderItemOverlayIntoGUI(@SuppressWarnings("NullableProblems") FontRenderer fr, ItemStack stack, int xPosition, int yPosition, String text) {
                     boolean b = fr.getUnicodeFlag();
@@ -98,16 +98,16 @@ public abstract class JECGuiContainer extends GuiContainer {
             if (activeSlot == -1) {
                 Slot slot = getSlotUnderMouse();
                 if (slot != null) {
-                    switch (((JECContainer) inventorySlots).getSlotType(slot.getSlotIndex())){
+                    switch (((JECContainer) inventorySlots).getSlotType(slot.getSlotIndex())) {
                         case SELECT:
                             temp = slot.getStack();
-                            if(setActiveSlot(slot.getSlotIndex())){
+                            if (setActiveSlot(slot.getSlotIndex())) {
                                 mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
                             }
                             break;
                         case AMOUNT:
                             temp = slot.getStack();
-                            if(!slot.getHasStack() && setActiveSlot(slot.getSlotIndex())){
+                            if (!slot.getHasStack() && setActiveSlot(slot.getSlotIndex())) {
                                 mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
                             }
                             break;
@@ -156,7 +156,7 @@ public abstract class JECGuiContainer extends GuiContainer {
         }
     }
 
-    protected void drawSlotOverlay(int index, int color){
+    protected void drawSlotOverlay(int index, int color) {
         Slot slot = inventorySlots.getSlot(index);
         int size = getSizeSlot(index);
         int move = (size - 16) / 2;
@@ -189,9 +189,10 @@ public abstract class JECGuiContainer extends GuiContainer {
 
     protected abstract int getSizeSlot(int index);
 
-    protected void onItemStackSet(int index) {}
+    protected void onItemStackSet(int index) {
+    }
 
-    static class RenderItemSupplier implements Supplier<RenderItem>{
+    static class RenderItemSupplier implements Supplier<RenderItem> {
         @Override
         public RenderItem get() {
             return null;

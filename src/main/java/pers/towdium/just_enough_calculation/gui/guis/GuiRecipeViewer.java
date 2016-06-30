@@ -40,14 +40,14 @@ public class GuiRecipeViewer extends GuiRecipeList {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID,"textures/gui/guiRecipeViewer.png"));
+        this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID, "textures/gui/guiRecipeViewer.png"));
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
     }
 
     @Override
     List<Integer> getRecipeIndex() {
         List<Integer> buffer = new ArrayList<>(PlayerRecordHelper.getSize());
-        for(int i = PlayerRecordHelper.getSize()-1; i >= 0; i--){
+        for (int i = PlayerRecordHelper.getSize() - 1; i >= 0; i--) {
             buffer.add(i);
         }
         return buffer;

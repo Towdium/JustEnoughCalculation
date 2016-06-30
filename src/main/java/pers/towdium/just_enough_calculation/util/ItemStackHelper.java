@@ -21,105 +21,105 @@ public class ItemStackHelper {
     public enum EnumStackAmountType {
         INVALID, NUMBER, PERCENTAGE, FLUID;
 
-        public String getDisplayString(long l){
-            switch (this){
+        public String getDisplayString(long l) {
+            switch (this) {
                 case NUMBER:
-                    if(l<999){
+                    if (l < 999) {
                         return String.valueOf(l);
-                    }else if(l<9999){
-                        return String.format("%.2fK", (double)l/1000);
-                    }else if(l<99999){
-                        return String.format("%.1fK", (double)l/1000);
-                    }else if(l<999999){
-                        return String.format("%.0fK", (double)l/1000);
-                    }else if(l<9999999){
-                        return String.format("%.2fM", (double)l/1000000);
-                    }else if(l<99999999){
-                        return String.format("%.1fM", (double)l/1000000);
-                    }else if(l<999999999){
-                        return String.format("%.0fB", (double)l/1000000);
-                    }else if(l<9999999999L){
-                        return String.format("%.2fB", (double)l/1000000000);
-                    }else if(l<99999999999L){
-                        return String.format("%.1fB", (double)l/1000000000);
-                    }else if(l<999999999999L){
-                        return String.format("%.0fT", (double)l/1000000000);
-                    }else if(l<9999999999999L){
-                        return String.format("%.2fT", (double)l/1000000000000L);
-                    }else if(l<99999999999999L){
-                        return String.format("%.1fT", (double)l/1000000000000L);
-                    }else if(l<999999999999999L){
-                        return String.format("%.0fG", (double)l/1000000000000L);
-                    }else if(l<9999999999999999L){
-                        return String.format("%.2fG", (double)l/1000000000000000L);
-                    }else if(l<99999999999990999L){
-                        return String.format("%.1fG", (double)l/1000000000000000L);
-                    }else {
-                        return String.format("%.0fG", (double)l/1000000000000000L);
+                    } else if (l < 9999) {
+                        return String.format("%.2fK", (double) l / 1000);
+                    } else if (l < 99999) {
+                        return String.format("%.1fK", (double) l / 1000);
+                    } else if (l < 999999) {
+                        return String.format("%.0fK", (double) l / 1000);
+                    } else if (l < 9999999) {
+                        return String.format("%.2fM", (double) l / 1000000);
+                    } else if (l < 99999999) {
+                        return String.format("%.1fM", (double) l / 1000000);
+                    } else if (l < 999999999) {
+                        return String.format("%.0fB", (double) l / 1000000);
+                    } else if (l < 9999999999L) {
+                        return String.format("%.2fB", (double) l / 1000000000);
+                    } else if (l < 99999999999L) {
+                        return String.format("%.1fB", (double) l / 1000000000);
+                    } else if (l < 999999999999L) {
+                        return String.format("%.0fT", (double) l / 1000000000);
+                    } else if (l < 9999999999999L) {
+                        return String.format("%.2fT", (double) l / 1000000000000L);
+                    } else if (l < 99999999999999L) {
+                        return String.format("%.1fT", (double) l / 1000000000000L);
+                    } else if (l < 999999999999999L) {
+                        return String.format("%.0fG", (double) l / 1000000000000L);
+                    } else if (l < 9999999999999999L) {
+                        return String.format("%.2fG", (double) l / 1000000000000000L);
+                    } else if (l < 99999999999990999L) {
+                        return String.format("%.1fG", (double) l / 1000000000000000L);
+                    } else {
+                        return String.format("%.0fG", (double) l / 1000000000000000L);
                     }
                 case PERCENTAGE:
-                    if(l<999){
+                    if (l < 999) {
                         return String.valueOf(l);
-                    }else if(l<9999){
-                        return String.format("≈%.1fK", (double)l/1000);
-                    }else if(l<99999){
-                        return String.format("≈%.0fK", (double)l/1000);
-                    }else if(l<999999){
-                        return String.format("≈%.1fM", (double)l/1000000);
-                    }else if(l<9999999){
-                        return String.format("≈%.1fM", (double)l/1000000);
-                    }else if(l<99999999){
-                        return String.format("≈%.0fM", (double)l/1000000);
-                    }else if(l<999999999){
-                        return String.format("≈%.1fB", (double)l/1000000000);
-                    }else if(l<9999999999L){
-                        return String.format("≈%.1fB", (double)l/1000000000);
-                    }else if(l<99999999999L){
-                        return String.format("≈%.0fB", (double)l/1000000000);
-                    }else if(l<999999999999L){
-                        return String.format("≈%.1fT", (double)l/1000000000000L);
-                    }else if(l<9999999999999L){
-                        return String.format("≈%.1fT", (double)l/1000000000000L);
-                    }else if(l<99999999999999L){
-                        return String.format("≈%.0fT", (double)l/1000000000000L);
-                    }else if(l<999999999999999L){
-                        return String.format("≈%.1fG", (double)l/1000000000000000L);
-                    }else if(l<9999999999999999L){
-                        return String.format("≈%.1fG", (double)l/1000000000000000L);
-                    }else {
-                        return String.format("≈%.0fG", (double)l/1000000000000000L);
+                    } else if (l < 9999) {
+                        return String.format("≈%.1fK", (double) l / 1000);
+                    } else if (l < 99999) {
+                        return String.format("≈%.0fK", (double) l / 1000);
+                    } else if (l < 999999) {
+                        return String.format("≈%.1fM", (double) l / 1000000);
+                    } else if (l < 9999999) {
+                        return String.format("≈%.1fM", (double) l / 1000000);
+                    } else if (l < 99999999) {
+                        return String.format("≈%.0fM", (double) l / 1000000);
+                    } else if (l < 999999999) {
+                        return String.format("≈%.1fB", (double) l / 1000000000);
+                    } else if (l < 9999999999L) {
+                        return String.format("≈%.1fB", (double) l / 1000000000);
+                    } else if (l < 99999999999L) {
+                        return String.format("≈%.0fB", (double) l / 1000000000);
+                    } else if (l < 999999999999L) {
+                        return String.format("≈%.1fT", (double) l / 1000000000000L);
+                    } else if (l < 9999999999999L) {
+                        return String.format("≈%.1fT", (double) l / 1000000000000L);
+                    } else if (l < 99999999999999L) {
+                        return String.format("≈%.0fT", (double) l / 1000000000000L);
+                    } else if (l < 999999999999999L) {
+                        return String.format("≈%.1fG", (double) l / 1000000000000000L);
+                    } else if (l < 9999999999999999L) {
+                        return String.format("≈%.1fG", (double) l / 1000000000000000L);
+                    } else {
+                        return String.format("≈%.0fG", (double) l / 1000000000000000L);
                     }
                 case FLUID:
-                    if(l<999){
+                    if (l < 999) {
                         return String.valueOf(l) + "mb";
-                    }else if(l<9999){
-                        return String.format("%.2fb", (double)l/1000);
-                    }else if(l<99999){
-                        return String.format("%.1fb", (double)l/1000);
-                    }else if(l<999999){
-                        return String.format("%.0fb", (double)l/1000);
-                    }else if(l<9999999){
-                        return String.format("%.1fKb", (double)l/1000000);
-                    }else if(l<99999999){
-                        return String.format("%.0fKb", (double)l/1000000);
-                    }else if(l<999999999){
-                        return String.format("%.1fMb", (double)l/1000000000);
-                    }else if(l<9999999999L){
-                        return String.format("%.1fMb", (double)l/1000000000);
-                    }else if(l<99999999999L){
-                        return String.format("%.0fMb", (double)l/1000000000);
-                    }else if(l<999999999999L){
-                        return String.format("%.1fBb", (double)l/1000000000000L);
-                    }else if(l<9999999999999L){
-                        return String.format("%.1fBb", (double)l/1000000000000L);
-                    }else if(l<99999999999999L){
-                        return String.format("%.0fBb", (double)l/1000000000000L);
-                    }else if(l<999999999999999L){
-                        return String.format("%.1fTb", (double)l/1000000000000000L);
-                    }else if(l<9999999999999999L){
-                        return String.format("%.1fTb", (double)l/1000000000000000L);
-                    }else {
-                        return String.format("%.0fTb", (double)l/1000000000000000L);
+                    } else if (l < 9999) {
+                        return String.format("%.2fb", (double) l / 1000);
+                    } else if (l < 99999) {
+                        return String.format("%.1fb", (double) l / 1000);
+                    } else if (l < 999999) {
+                        return String.format("%.0fb", (double) l / 1000);
+                    } else if (l < 9999999) {
+                        return String.format("%.1fKb", (double) l / 1000000);
+                    } else if (l < 99999999) {
+                        return String.format("%.0fKb", (double) l / 1000000);
+                    } else if (l < 999999999) {
+                        return String.format("%.1fMb", (double) l / 1000000000);
+                    } else if (l < 9999999999L) {
+                        return String.format("%.1fMb", (double) l / 1000000000);
+                    } else if (l < 99999999999L) {
+                        return String.format("%.0fMb", (double) l / 1000000000);
+                    } else if (l < 999999999999L) {
+                        return String.format("%.1fBb", (double) l / 1000000000000L);
+                    } else if (l < 9999999999999L) {
+                        return String.format("%.1fBb", (double) l / 1000000000000L);
+                    } else if (l < 99999999999999L) {
+                        return String.format("%.0fBb", (double) l / 1000000000000L);
+                    } else if (l < 999999999999999L) {
+                        return String.format("%.1fTb", (double) l / 1000000000000000L);
+                    } else if (l < 9999999999999999L) {
+                        return String.format("%.1fTb", (double) l / 1000000000000000L);
+                    } else {
+                        return String.format("%.0fTb", (double) l / 1000000000000000L);
                     }
                 default:
                     return "";
@@ -127,28 +127,28 @@ public class ItemStackHelper {
         }
     }
 
-    public static boolean isItemEqual(@Nullable ItemStack one, @Nullable ItemStack two){
+    public static boolean isItemEqual(@Nullable ItemStack one, @Nullable ItemStack two) {
         return one != null && two != null && one.getItem() == two.getItem() && one.getMetadata() == two.getMetadata() &&
                 NBT.equalsIgnoreJEC(one.getTagCompound(), two.getTagCompound());
     }
 
     @Nullable
-    public static ItemStack toItemStackJEC(@Nullable ItemStack itemStack){
+    public static ItemStack toItemStackJEC(@Nullable ItemStack itemStack) {
         if (itemStack == null) return null;
         NBT.setData(itemStack, EnumStackAmountType.NUMBER, itemStack.stackSize);
         itemStack.stackSize = 1;
         return itemStack;
     }
 
-    public static boolean isItemStackJEC(@Nullable ItemStack itemStack){
+    public static boolean isItemStackJEC(@Nullable ItemStack itemStack) {
         return itemStack == null || (itemStack.getTagCompound() != null && itemStack.getTagCompound().hasKey(JustEnoughCalculation.Reference.MODID));
     }
 
     public static class NBT {
-        public static boolean equalsIgnoreJEC (@Nullable NBTTagCompound a, @Nullable NBTTagCompound b){
-            if(a == null && b == null){
+        public static boolean equalsIgnoreJEC(@Nullable NBTTagCompound a, @Nullable NBTTagCompound b) {
+            if (a == null && b == null) {
                 return true;
-            } else if (a == null || b == null){
+            } else if (a == null || b == null) {
                 return false;
             } else {
                 NBTTagCompound aNew = ((NBTTagCompound) a.copy());
@@ -159,39 +159,39 @@ public class ItemStackHelper {
             }
         }
 
-        public static ItemStack setAmount (ItemStack itemStack, long amount){
+        public static ItemStack setAmount(ItemStack itemStack, long amount) {
             return setLong(itemStack, true, keyAmount, amount);
         }
 
-        public static ItemStack setType (ItemStack itemStack, EnumStackAmountType type){
+        public static ItemStack setType(ItemStack itemStack, EnumStackAmountType type) {
             return setInteger(itemStack, true, keyType, type.ordinal());
         }
 
-        public static ItemStack setData (ItemStack itemStack, EnumStackAmountType type, long amount){
+        public static ItemStack setData(ItemStack itemStack, EnumStackAmountType type, long amount) {
             setInteger(itemStack, true, keyType, type.ordinal());
             return setLong(itemStack, true, keyAmount, amount);
         }
 
-        public static ItemStack setInteger(ItemStack itemStack, boolean isolate, String key, int value){
+        public static ItemStack setInteger(ItemStack itemStack, boolean isolate, String key, int value) {
             return setValue(itemStack, isolate, (nbtTagCompound -> nbtTagCompound.setInteger(key, value)));
         }
 
-        public static ItemStack setLong(ItemStack itemStack, boolean isolate, String key, long value){
+        public static ItemStack setLong(ItemStack itemStack, boolean isolate, String key, long value) {
             return setValue(itemStack, isolate, (nbtTagCompound -> nbtTagCompound.setLong(key, value)));
         }
 
-        public static ItemStack setBoolean(ItemStack itemStack, boolean isolate, String key, boolean value){
+        public static ItemStack setBoolean(ItemStack itemStack, boolean isolate, String key, boolean value) {
             return setValue(itemStack, isolate, (nbtTagCompound -> nbtTagCompound.setBoolean(key, value)));
         }
 
-        static ItemStack setValue(ItemStack itemStack, boolean isolate, Consumer<NBTTagCompound> func){
+        static ItemStack setValue(ItemStack itemStack, boolean isolate, Consumer<NBTTagCompound> func) {
             NBTTagCompound tagCompound = itemStack.getTagCompound();
-            if(tagCompound == null){
+            if (tagCompound == null) {
                 tagCompound = new NBTTagCompound();
                 itemStack.setTagCompound(tagCompound);
             }
-            if(isolate){
-                if(!tagCompound.hasKey(JustEnoughCalculation.Reference.MODID)){
+            if (isolate) {
+                if (!tagCompound.hasKey(JustEnoughCalculation.Reference.MODID)) {
                     tagCompound.setTag(JustEnoughCalculation.Reference.MODID, new NBTTagCompound());
                 }
                 tagCompound = tagCompound.getCompoundTag(JustEnoughCalculation.Reference.MODID);
@@ -200,17 +200,17 @@ public class ItemStackHelper {
             return itemStack;
         }
 
-        public static EnumStackAmountType getType (ItemStack itemStack){
+        public static EnumStackAmountType getType(ItemStack itemStack) {
             return EnumStackAmountType.values()[getInteger(itemStack, true, keyType)];
         }
 
-        public static long getAmount (ItemStack itemStack){
+        public static long getAmount(ItemStack itemStack) {
             return getLong(itemStack, true, keyAmount);
         }
 
-        public static long getAmountItem (ItemStack itemStack) {
+        public static long getAmountItem(ItemStack itemStack) {
             long amount = getAmount(itemStack);
-            switch (getType(itemStack)){
+            switch (getType(itemStack)) {
                 case NUMBER:
                     return amount;
                 case PERCENTAGE:
@@ -222,9 +222,9 @@ public class ItemStackHelper {
             }
         }
 
-        public static long getAmountInternal (ItemStack itemStack) {
+        public static long getAmountInternal(ItemStack itemStack) {
             long amount = getAmount(itemStack);
-            switch (getType(itemStack)){
+            switch (getType(itemStack)) {
                 case NUMBER:
                     return amount * 100;
                 case PERCENTAGE:
@@ -236,16 +236,16 @@ public class ItemStackHelper {
             }
         }
 
-        public static int getInteger(ItemStack itemStack, boolean isolate, String key){
+        public static int getInteger(ItemStack itemStack, boolean isolate, String key) {
             return getTag(itemStack, isolate).getInteger(key);
         }
 
-        public static long getLong(ItemStack itemStack, boolean isolate, String key){
+        public static long getLong(ItemStack itemStack, boolean isolate, String key) {
             return getTag(itemStack, isolate).getLong(key);
         }
 
         @SuppressWarnings("TrivialFunctionalExpressionUsage")
-        static NBTTagCompound getTag(@Nonnull ItemStack itemStack, boolean isolate){
+        static NBTTagCompound getTag(@Nonnull ItemStack itemStack, boolean isolate) {
             return isolate ? itemStack.getSubCompound(JustEnoughCalculation.Reference.MODID, true) :
                     itemStack.hasTagCompound() ? itemStack.getTagCompound() : ((Supplier<NBTTagCompound>) () -> {
                         itemStack.setTagCompound(new NBTTagCompound());
@@ -257,40 +257,44 @@ public class ItemStackHelper {
     public static class Click {
         @Nullable
         public static ItemStack leftClick(@Nullable ItemStack itemStack) {
-            return getClick(itemStack, (l -> l+1), (l -> l+1), (l -> 0L));
+            return getClick(itemStack, (l -> l + 1), (l -> l + 1), (l -> 0L));
         }
 
         @Nullable
         public static ItemStack leftShift(@Nullable ItemStack itemStack) {
-            return getClick(itemStack, (l -> l==1 ? 10 : l+10), (l -> l==1 ? 10 : l+10), (l -> 0L));
+            return getClick(itemStack, (l -> l == 1 ? 10 : l + 10), (l -> l == 1 ? 10 : l + 10), (l -> 0L));
         }
 
         @Nullable
         public static ItemStack rightClick(@Nullable ItemStack itemStack) {
-            return getClick(itemStack, (l -> l-1), (l -> l-1), (l -> 0L));
+            return getClick(itemStack, (l -> l - 1), (l -> l - 1), (l -> 0L));
         }
 
         @Nullable
         public static ItemStack rightShift(@Nullable ItemStack itemStack) {
-            return getClick(itemStack, (l -> l==1 ? 0 : l<=10 ? 1 : l-10), (l -> l==1 ? 0 : l<=10 ? 1 : l-10), (l -> 0L));
+            return getClick(itemStack, (l -> l == 1 ? 0 : l <= 10 ? 1 : l - 10), (l -> l == 1 ? 0 : l <= 10 ? 1 : l - 10), (l -> 0L));
         }
 
         @Nullable
         static ItemStack getClick(@Nullable ItemStack itemStack, Function<Long, Long> funcNumber,
-                                  Function<Long, Long> funcPercentage, Function<Long, Long> funcFluid){
-            if(itemStack == null){
+                                  Function<Long, Long> funcPercentage, Function<Long, Long> funcFluid) {
+            if (itemStack == null) {
                 return null;
             } else {
                 long amount = NBT.getAmount(itemStack);
-                switch (NBT.getType(itemStack)){
+                switch (NBT.getType(itemStack)) {
                     case INVALID:
-                        amount = 0; break;
+                        amount = 0;
+                        break;
                     case NUMBER:
-                        amount = funcNumber.apply(amount); break;
+                        amount = funcNumber.apply(amount);
+                        break;
                     case PERCENTAGE:
-                        amount = funcPercentage.apply(amount); break;
+                        amount = funcPercentage.apply(amount);
+                        break;
                     case FLUID:
-                        amount = funcFluid.apply(amount); break;
+                        amount = funcFluid.apply(amount);
+                        break;
                 }
                 return amount == 0 ? null : NBT.setAmount(itemStack, amount);
             }
