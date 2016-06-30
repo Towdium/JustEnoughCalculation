@@ -3,15 +3,22 @@ package pers.towdium.justEnoughCalculation.gui.guis;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
 import pers.towdium.justEnoughCalculation.JECTranslator;
 import pers.towdium.justEnoughCalculation.JustEnoughCalculation;
+import pers.towdium.justEnoughCalculation.core.Recipe;
 import pers.towdium.justEnoughCalculation.gui.JECContainer;
 import pers.towdium.justEnoughCalculation.gui.JECGuiContainer;
+import pers.towdium.justEnoughCalculation.util.PlayerRecordHelper;
+import scala.Int;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.function.BiFunction;
 
 /**
  * Author:  Towdium
@@ -25,7 +32,6 @@ public class GuiEditor extends JECGuiContainer {
     GuiButton buttonHelp;
     GuiButton buttonSave;
     GuiButton buttonClear;
-
 
     public GuiEditor(GuiScreen parent) {
         super(new ContainerEditor(), parent);
@@ -87,6 +93,30 @@ public class GuiEditor extends JECGuiContainer {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID,"textures/gui/guiEditor.png"));
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
+    }
+
+    @Override
+    protected void actionPerformed(GuiButton button) throws IOException {
+        switch (button.id) {
+            case 44:
+                PlayerRecordHelper.addRecipe(toRecipe());
+                mc.displayGuiScreen(parent);
+        }
+    }
+
+    public Recipe toRecipe() {
+        BiFunction<Integer, Integer, ItemStack[]> toArray = (start, end) -> {
+            ItemStack[] buffer = new ItemStack[end-start+1];
+            for(int i = start; i <= end; i++) {
+                buffer[i-start] = inventorySlots.getSlot(i).getStack();
+            }
+            return buffer;
+        };
+        return new Recipe(toArray.apply(0, 3), toArray.apply(4, 7), toArray.apply(8, 19), getGroup());
+    }
+
+    protected String getGroup() {
+        return "Default";
     }
 
     public static class ContainerEditor extends JECContainer{

@@ -5,8 +5,10 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import pers.towdium.justEnoughCalculation.JustEnoughCalculation;
+import pers.towdium.justEnoughCalculation.gui.JECContainer;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * Author:  Towdium
@@ -40,10 +42,9 @@ public class GuiRecipeSearch extends GuiRecipeList {
     }
 
     public GuiRecipeSearch(GuiScreen parent) {
-        super(new ContainerRecipeList() {
+        super(new JECContainer() {
             @Override
             protected void addSlots() {
-                super.addSlots();
                 addSlotSingle(9, 9);
             }
 
@@ -51,7 +52,7 @@ public class GuiRecipeSearch extends GuiRecipeList {
             public EnumSlotType getSlotType(int index) {
                 return index == 20 ? EnumSlotType.SELECT : EnumSlotType.DISABLED;
             }
-        }, parent);
+        }, parent, 6, 6);
     }
 
     @Override
@@ -61,6 +62,11 @@ public class GuiRecipeSearch extends GuiRecipeList {
         buttonSearch = new GuiButton(13, 119+guiLeft, 7+guiTop, 50, 20, "search");
         buttonList.add(buttonMode);
         buttonList.add(buttonSearch);
+    }
+
+    @Override
+    List<Integer> getRecipeIndex() {
+        return null;
     }
 
     @Nullable

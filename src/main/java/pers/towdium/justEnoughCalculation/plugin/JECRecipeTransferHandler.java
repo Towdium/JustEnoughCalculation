@@ -79,16 +79,16 @@ public class JECRecipeTransferHandler implements IRecipeTransferHandler {
                 GuiContainer myGuiContainer = (GuiContainer) mc.currentScreen;
                 if(myGuiContainer != null){
                     for(int i=0; i<=outputStacks.size()-1 && i<=3; i++){
-                        myGuiContainer.inventorySlots.getSlot(i).putStack(outputStacks.get(i));
+                        myGuiContainer.inventorySlots.getSlot(i).putStack(ItemStackHelper.toItemStackJEC(outputStacks.get(i)));
                     }
                     for(int i=8; i<=8+inputStacks.size()-1 && i<=19; i++){
-                        myGuiContainer.inventorySlots.getSlot(i).putStack(inputStacks.get(i-8));
+                        myGuiContainer.inventorySlots.getSlot(i).putStack(ItemStackHelper.toItemStackJEC(inputStacks.get(i-8)));
                     }
-                    myGuiContainer.inventorySlots.getSlot(4).putStack(
+                    myGuiContainer.inventorySlots.getSlot(4).putStack(ItemStackHelper.toItemStackJEC(
                             JEIPlugin.recipeRegistry.getCraftingItems(
                                     JEIPlugin.recipeRegistry.getRecipeCategories(Collections.singletonList(recipeUID)).get(0)
                             ).iterator().next().copy()
-                    );
+                    ));
                 }
             }
         }

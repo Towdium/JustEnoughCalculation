@@ -27,10 +27,10 @@ import java.util.function.Supplier;
  * Created: 2016/6/13.
  */
 public abstract class JECGuiContainer extends GuiContainer {
-    GuiScreen parent;
-    int activeSlot = -1;
+    protected GuiScreen parent;
+    protected int activeSlot = -1;
     long timeStart = 0;
-    ItemStack temp;
+    protected ItemStack temp;
 
     public JECGuiContainer(Container inventorySlotsIn, GuiScreen parent) {
         super(inventorySlotsIn);
@@ -117,6 +117,7 @@ public abstract class JECGuiContainer extends GuiContainer {
             } else {
                 Slot active = inventorySlots.getSlot(activeSlot);
                 active.putStack(ItemStackHelper.toItemStackJEC(active.getStack()));
+                onItemStackSet(activeSlot);
                 activeSlot = -1;
                 mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
                 return true;
@@ -187,6 +188,8 @@ public abstract class JECGuiContainer extends GuiContainer {
     protected abstract String getButtonTooltip(int buttonId);
 
     protected abstract int getSizeSlot(int index);
+
+    protected void onItemStackSet(int index) {}
 
     static class RenderItemSupplier implements Supplier<RenderItem>{
         @Override

@@ -122,7 +122,7 @@ public class ItemStackHelper {
                         return String.format("%.0fTb", (double)l/1000000000000000L);
                     }
                 default:
-                    return "N/A";
+                    return "";
             }
         }
     }
@@ -141,7 +141,7 @@ public class ItemStackHelper {
     }
 
     public static boolean isItemStackJEC(@Nullable ItemStack itemStack){
-        return itemStack != null && itemStack.getTagCompound() != null && itemStack.getTagCompound().hasKey(JustEnoughCalculation.Reference.MODID);
+        return itemStack == null || (itemStack.getTagCompound() != null && itemStack.getTagCompound().hasKey(JustEnoughCalculation.Reference.MODID));
     }
 
     public static class NBT {

@@ -5,14 +5,19 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.input.Mouse;
 import pers.towdium.justEnoughCalculation.JustEnoughCalculation;
 import pers.towdium.justEnoughCalculation.gui.JECContainer;
 import pers.towdium.justEnoughCalculation.gui.JECGuiContainer;
 import pers.towdium.justEnoughCalculation.gui.JECGuiContainer.*;
+import pers.towdium.justEnoughCalculation.plugin.JEIPlugin;
+import pers.towdium.justEnoughCalculation.util.ItemStackHelper;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -33,7 +38,6 @@ public class GuiCalculator extends JECGuiContainer {
     GuiButton buttonMode;
     GuiButton buttonStock;
 
-    int activeSlot = -1;
     int page = 1;
     int total = 0;
     EnumMode mode = EnumMode.INPUT;
@@ -117,7 +121,9 @@ public class GuiCalculator extends JECGuiContainer {
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
         switch (button.id){
-            case 1: mc.displayGuiScreen(new GuiRecipeSearch(this));
+            case 1: mc.displayGuiScreen(new GuiRecipeSearch(this)); return;
+            case 2: mc.displayGuiScreen(new GuiEditor(this)); return;
+            case 3: mc.displayGuiScreen(new GuiRecipeViewer(this));
         }
     }
 
@@ -125,7 +131,7 @@ public class GuiCalculator extends JECGuiContainer {
     @Override
     protected String getButtonTooltip(int buttonId) {
         switch (buttonId){
-            case 4: return "Hello\\nShit";
+            case 4: return "Hello\nWorld";
             default: return null;
         }
     }
@@ -135,7 +141,52 @@ public class GuiCalculator extends JECGuiContainer {
         return index == 0 ? 20 : 18;
     }
 
+    @Override
+    protected void onItemStackSet(int index) {
+        ItemStack itemStack = inventorySlots.getSlot(index).getStack();
+        if (itemStack != null && itemStack.getTagCompound() != null) {
+            itemStack.getTagCompound().removeTag(JustEnoughCalculation.Reference.MODID);
+        }
+    }
 
+    @Override
+    @SuppressWarnings("ConstantConditions")
+    public boolean handleMouseEvent(int mouseX, int mouseY) {
+        if (Mouse.getEventButton() == 0 && Mouse.getEventButtonState()) {
+            if (activeSlot == -1) {
+                Slot slot = getSlotUnderMouse();
+                if (slot != null) {
+                    switch (((JECContainer) inventorySlots).getSlotType(slot.getSlotIndex())){
+                        case SELECT:
+                            temp = slot.getStack();
+                            if(setActiveSlot(slot.getSlotIndex())){
+                                mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
+                            }
+                            break;
+                        case AMOUNT:
+                            temp = slot.getStack();
+                            if(!slot.getHasStack() && setActiveSlot(slot.getSlotIndex())){
+                                mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
+                            }
+                            break;
+                    }
+                }
+                return false;
+            } else {
+                Slot active = inventorySlots.getSlot(activeSlot);
+                active.putStack(active.getStack());
+                onItemStackSet(activeSlot);
+                activeSlot = -1;
+                mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
+                return true;
+            }
+        } else if (activeSlot != -1) {
+            ItemStack stack = JEIPlugin.runtime.getItemListOverlay().getStackUnderMouse();
+            inventorySlots.getSlot(activeSlot).putStack(stack == null ? null : stack.copy());
+            return false;
+        }
+        return false;
+    }
 
     public static class ContainerCalculator extends JECContainer {
         @Override

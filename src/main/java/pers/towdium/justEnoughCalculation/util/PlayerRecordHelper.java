@@ -16,6 +16,10 @@ import java.util.List;
 public class PlayerRecordHelper {
     static PlayerHandlerSP playerHandler = new PlayerHandlerSP();
 
+    public static String getGroupName(int index) {
+        return playerHandler.getGroupName(index);
+    }
+
     public static void addRecipe(Recipe recipe) {
         playerHandler.addRecipe(recipe);
     }
@@ -42,5 +46,9 @@ public class PlayerRecordHelper {
 
     public static List<Integer> getIndexInput(ItemStack itemStack) {
         return playerHandler.getIndexInput(itemStack);
+    }
+
+    public static int getSize() {
+        return playerHandler.getSize();
     }
 }

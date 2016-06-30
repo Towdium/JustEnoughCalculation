@@ -1,6 +1,5 @@
 package pers.towdium.justEnoughCalculation.core;
 
-
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -8,6 +7,9 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import pers.towdium.justEnoughCalculation.util.ItemStackHelper;
 import pers.towdium.justEnoughCalculation.util.function.TriConsumer;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.*;
 
 /**
@@ -47,7 +49,7 @@ public class Recipe {
             ItemStack[] buffer = new ItemStack[itemStacks.length];
             int count = -1;
             for(ItemStack itemStack : itemStacks){
-                buffer[++count] = itemStack.copy();
+                buffer[++count] = itemStack == null ? null : itemStack.copy();
             }
             return buffer;
         };
@@ -100,6 +102,28 @@ public class Recipe {
         Recipe r = (Recipe) obj;
         return checkEqual.apply(output, r.output) && checkEqual.apply(catalyst, r.catalyst) &&
                 checkEqual.apply(input, r.input) && group.equals(r.group);
+    }
+
+    public List<ItemStack> getOutput() {
+        return getList(output);
+    }
+
+    public List<ItemStack> getCatalyst() {
+        return getList(catalyst);
+    }
+
+    public List<ItemStack> getInput() {
+        return getList(input);
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    public List<ItemStack> getList(ItemStack[] itemStacks) {
+        List<ItemStack> buffer = new ArrayList<>();
+        Collections.addAll(buffer, itemStacks);
+        return buffer;
     }
 
     public static class IOUtl{

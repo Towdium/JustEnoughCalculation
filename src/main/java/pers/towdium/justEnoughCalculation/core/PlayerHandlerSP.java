@@ -24,6 +24,16 @@ public class PlayerHandlerSP {
             }
         }
         recipes.add(recipe);
+        for (String s : groupNames) {
+            if (s.equals(recipe.getGroup())){
+                return;
+            }
+        }
+        groupNames.add(recipe.getGroup());
+    }
+
+    public String getGroupName(int index) {
+        return groupNames.get(index);
     }
 
     public Recipe getRecipe(int index) {
