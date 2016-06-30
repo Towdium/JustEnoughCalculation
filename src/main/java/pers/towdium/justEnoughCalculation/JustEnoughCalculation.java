@@ -1,7 +1,7 @@
 package pers.towdium.justEnoughCalculation;
 
 import net.minecraft.client.Minecraft;
-import  net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.Mod;
@@ -20,7 +20,6 @@ import pers.towdium.justEnoughCalculation.network.IProxy;
 /**
  * @author Towdium
  */
-
 @Mod(modid = JustEnoughCalculation.Reference.MODID, name = JustEnoughCalculation.Reference.MODNAME, version = JustEnoughCalculation.Reference.VERSION,
         dependencies = "required-after:JEI")
 public class JustEnoughCalculation {
