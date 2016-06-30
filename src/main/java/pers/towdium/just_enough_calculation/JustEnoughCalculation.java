@@ -22,18 +22,12 @@ import pers.towdium.just_enough_calculation.network.IProxy;
 public class JustEnoughCalculation {
     @Mod.Instance(JustEnoughCalculation.Reference.MODID)
     public static JustEnoughCalculation instance;
-    @SidedProxy(clientSide = "pers.towdium.justEnoughCalculation.network.ProxyClient", serverSide = "pers.towdium.justEnoughCalculation.network.ProxyServer")
+    @SidedProxy(clientSide = "pers.towdium.just_enough_calculation.network.ProxyClient", serverSide = "pers.towdium.just_enough_calculation.network.ProxyServer")
     public static IProxy proxy;
     public static SimpleNetworkWrapper networkWrapper;
     public static Logger log = LogManager.getLogger(Reference.MODID);
 
     public static Item itemCalculator = new ItemCalculator().setUnlocalizedName("itemCalculator").setRegistryName("itemCalculator");
-
-    public static class Reference {
-        public static final String MODID = "je_calculation";
-        public static final String MODNAME = "Just Enough Calculation";
-        public static final String VERSION = "1.9.4-0.0.1";
-    }
 
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent event) {
@@ -47,5 +41,11 @@ public class JustEnoughCalculation {
     public static void init(FMLInitializationEvent event) {
         NetworkRegistry.INSTANCE.registerGuiHandler(JustEnoughCalculation.instance, new GuiHandler());
         proxy.init();
+    }
+
+    public static class Reference {
+        public static final String MODID = "je_calculation";
+        public static final String MODNAME = "Just Enough Calculation";
+        public static final String VERSION = "1.9.4-0.0.1";
     }
 }
