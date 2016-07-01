@@ -1,16 +1,18 @@
 package pers.towdium.just_enough_calculation.gui.guis;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
-import pers.towdium.just_enough_calculation.JECTranslator;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.core.Recipe;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
 import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
+import pers.towdium.just_enough_calculation.util.LocalizationHelper;
 import pers.towdium.just_enough_calculation.util.PlayerRecordHelper;
 
 import javax.annotation.Nullable;
@@ -23,6 +25,7 @@ import java.util.function.BiFunction;
  * Created: 2016/6/21.
  */
 public class GuiEditor extends JECGuiContainer {
+    public boolean newGroup = false;
     ArrayList<GuiButton> buttonMode;
     GuiButton buttonLeft;
     GuiButton buttonRight;
@@ -30,6 +33,9 @@ public class GuiEditor extends JECGuiContainer {
     GuiButton buttonHelp;
     GuiButton buttonSave;
     GuiButton buttonClear;
+    GuiTextField textGroup;
+    int group = 0;
+    String customName;
 
     public GuiEditor(GuiScreen parent) {
         super(new ContainerEditor(), parent);
@@ -52,12 +58,12 @@ public class GuiEditor extends JECGuiContainer {
                 buttonMode.add(new GuiButtonExt(++count, 54 + j * 21 + guiLeft, 117 + i * 32 + guiTop, 10, 10, "I"));
             }
         }
-        buttonLeft = new GuiButtonExt(40, guiLeft + 7, guiTop + 7, 14, 20, "<");
-        buttonRight = new GuiButtonExt(41, guiLeft + 90, guiTop + 7, 14, 20, ">");
-        buttonNew = new GuiButtonExt(42, guiLeft + 108, guiTop + 7, 61, 20, JECTranslator.format("gui.editor.newGroup"));
-        buttonHelp = new GuiButtonExt(43, guiLeft + 131, guiTop + 75, 38, 18, JECTranslator.format("gui.editor.help"));
-        buttonSave = new GuiButtonExt(44, guiLeft + 131, guiTop + 31, 38, 18, JECTranslator.format("gui.editor.save"));
-        buttonClear = new GuiButtonExt(45, guiLeft + 131, guiTop + 53, 38, 18, JECTranslator.format("gui.editor.clear"));
+        buttonLeft = new GuiButtonNew(40, guiLeft + 7, guiTop + 7, 14, 20, "<");
+        buttonRight = new GuiButtonNew(41, guiLeft + 90, guiTop + 7, 14, 20, ">");
+        buttonNew = new GuiButtonExt(42, guiLeft + 108, guiTop + 7, 61, 20, LocalizationHelper.format("gui.editor.newGroup"));
+        buttonHelp = new GuiButtonExt(43, guiLeft + 131, guiTop + 75, 38, 18, LocalizationHelper.format("gui.editor.help"));
+        buttonSave = new GuiButtonExt(44, guiLeft + 131, guiTop + 31, 38, 18, LocalizationHelper.format("gui.editor.save"));
+        buttonClear = new GuiButtonExt(45, guiLeft + 131, guiTop + 53, 38, 18, LocalizationHelper.format("gui.editor.clear"));
         buttonList.addAll(buttonMode);
         buttonList.add(buttonLeft);
         buttonList.add(buttonRight);
@@ -65,14 +71,23 @@ public class GuiEditor extends JECGuiContainer {
         buttonList.add(buttonHelp);
         buttonList.add(buttonSave);
         buttonList.add(buttonClear);
+        textGroup = new GuiTextField(0, fontRendererObj, guiLeft + 8, guiTop + 8, 95, 18);
+        if (customName == null && PlayerRecordHelper.getSizeGroup() == 0) {
+            customName = "Default";
+        }
+        buttonRight.enabled = !newGroup;
+        buttonRight.enabled = !newGroup;
     }
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        drawCenteredStringMultiLine(fontRendererObj, JECTranslator.format("gui.editor.output"), 7, 44, 31, 61, 0xFFFFFF);
-        drawCenteredStringMultiLine(fontRendererObj, JECTranslator.format("gui.editor.catalyst"), 7, 44, 64, 94, 0xFFFFFF);
-        drawCenteredStringMultiLine(fontRendererObj, JECTranslator.format("gui.editor.input"), 7, 44, 97, 159, 0xFFFFFF);
+        drawCenteredStringMultiLine(fontRendererObj, LocalizationHelper.format("gui.editor.output"), 7, 44, 31, 61, 0xFFFFFF);
+        drawCenteredStringMultiLine(fontRendererObj, LocalizationHelper.format("gui.editor.catalyst"), 7, 44, 64, 94, 0xFFFFFF);
+        drawCenteredStringMultiLine(fontRendererObj, LocalizationHelper.format("gui.editor.input"), 7, 44, 97, 159, 0xFFFFFF);
+        if (!newGroup) {
+            drawCenteredStringMultiLine(fontRendererObj, getGroup(), 7, 104, 7, 27, 0xFFFFFF);
+        }
     }
 
     @Nullable
@@ -91,14 +106,80 @@ public class GuiEditor extends JECGuiContainer {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID, "textures/gui/guiEditor.png"));
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
+        if (newGroup) {
+            textGroup.drawTextBox();
+        }
     }
 
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
         switch (button.id) {
+            case 40:
+                if (customName == null) {
+                    if (group + 1 >= PlayerRecordHelper.getSizeGroup()) {
+                        group = 0;
+                    } else {
+                        ++group;
+                    }
+                } else {
+                    if (PlayerRecordHelper.getSizeGroup() != 0) {
+                        group = PlayerRecordHelper.getSizeGroup() - 1;
+                        customName = null;
+                    } else {
+                        customName = "Default";
+                    }
+                }
+                break;
+            case 41:
+                if (customName == null) {
+                    if (group == 0) {
+                        group = PlayerRecordHelper.getSizeGroup() - 1;
+                    } else {
+                        --group;
+                    }
+                } else {
+                    if (PlayerRecordHelper.getSizeGroup() != 0) {
+                        group = 0;
+                        customName = null;
+                    } else {
+                        customName = "Default";
+                    }
+                }
+                break;
+            case 42:
+                if (newGroup) {
+                    customName = textGroup.getText();
+                    group = 0;
+                    textGroup.setText("");
+                    newGroup = false;
+                    buttonLeft.enabled = true;
+                    buttonRight.enabled = true;
+                    buttonNew.displayString = LocalizationHelper.format("gui.editor.newGroup");
+                } else {
+                    buttonLeft.enabled = false;
+                    buttonRight.enabled = false;
+                    newGroup = true;
+                    buttonNew.displayString = LocalizationHelper.format("gui.editor.confirm");
+                }
+                break;
             case 44:
-                PlayerRecordHelper.addRecipe(toRecipe());
+                PlayerRecordHelper.addRecipe(toRecipe(), getGroup());
                 mc.displayGuiScreen(parent);
+        }
+    }
+
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        if (newGroup) {
+            textGroup.mouseClicked(mouseX, mouseY, mouseButton);
+        }
+        super.mouseClicked(mouseX, mouseY, mouseButton);
+    }
+
+    @Override
+    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+        if (!(newGroup && textGroup.textboxKeyTyped(typedChar, keyCode))) {
+            super.keyTyped(typedChar, keyCode);
         }
     }
 
@@ -110,11 +191,17 @@ public class GuiEditor extends JECGuiContainer {
             }
             return buffer;
         };
-        return new Recipe(toArray.apply(0, 3), toArray.apply(4, 7), toArray.apply(8, 19), getGroup());
+        return new Recipe(toArray.apply(0, 3), toArray.apply(4, 7), toArray.apply(8, 19));
     }
 
     protected String getGroup() {
-        return "Default";
+        if (customName != null) {
+            return customName;
+        } else if (PlayerRecordHelper.getSizeGroup() > group) {
+            return PlayerRecordHelper.getGroupName(group);
+        } else {
+            return "Default";
+        }
     }
 
     public static class ContainerEditor extends JECContainer {
@@ -128,6 +215,20 @@ public class GuiEditor extends JECGuiContainer {
         @Override
         public EnumSlotType getSlotType(int index) {
             return EnumSlotType.AMOUNT;
+        }
+    }
+
+    class GuiButtonNew extends GuiButtonExt {
+        public GuiButtonNew(int id, int xPos, int yPos, int width, int height, String displayString) {
+            super(id, xPos, yPos, width, height, displayString);
+        }
+
+        @SuppressWarnings("NullableProblems")
+        @Override
+        public void drawButton(Minecraft mc, int mouseX, int mouseY) {
+            if (enabled) {
+                super.drawButton(mc, mouseX, mouseY);
+            }
         }
     }
 }

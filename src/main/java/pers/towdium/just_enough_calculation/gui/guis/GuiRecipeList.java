@@ -7,11 +7,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
 import pers.towdium.just_enough_calculation.core.Recipe;
 import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
+import pers.towdium.just_enough_calculation.util.LocalizationHelper;
 import pers.towdium.just_enough_calculation.util.PlayerRecordHelper;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -53,7 +53,9 @@ public abstract class GuiRecipeList extends JECGuiContainer {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        drawCenteredStringMultiLine(fontRendererObj, PlayerRecordHelper.getGroupName(group), 7, 169, 133, 145, 0xFFFFFF);
+        drawCenteredStringMultiLine(fontRendererObj,
+                PlayerRecordHelper.getSizeGroup() > group ? PlayerRecordHelper.getGroupName(group) :
+                        LocalizationHelper.format("gui.editor.noRecord"), 7, 169, 133, 145, 0xFFFFFF);
         drawCenteredStringMultiLine(fontRendererObj, page + "/" + total, 7, 169, 147, 159, 0xFFFFFF);
 
     }
@@ -85,24 +87,19 @@ public abstract class GuiRecipeList extends JECGuiContainer {
         }
     }
 
+    @Override
     protected void updateLayout() {
-        List<Integer> bufferA = getRecipeIndex();
-        List<Recipe> bufferB = new ArrayList<>();
-        total = (bufferA.size() + row - 1) / row;
-        page = bufferA.size() == 0 ? 0 : page == 0 ? total : page > total ? 1 : page;
-        bufferA.forEach(integer -> {
-            Recipe r = PlayerRecordHelper.getRecipe(integer);
-            if (r.getGroup().equals(PlayerRecordHelper.getGroupName(group)))
-                bufferB.add(r);
-        });
-        for (int i = (page - 1) * row; i < page * row && page != 0; i++) {
-            if (i < bufferB.size()) {
-                putRecipe(i - (page - 1) * row, bufferB.get(i));
-            } else {
-                putRecipe(i - (page - 1) * row, null);
+        if (PlayerRecordHelper.getSizeGroup() > 0) {
+            List<Recipe> buffer = getSuitableRecipeIndex(PlayerRecordHelper.getRecipeInGroup(PlayerRecordHelper.getGroupName(group)));
+            for (int i = (page - 1) * row; i < page * row && page != 0; i++) {
+                if (i < buffer.size()) {
+                    putRecipe(i - (page - 1) * row, buffer.get(i));
+                } else {
+                    putRecipe(i - (page - 1) * row, null);
+                }
             }
         }
     }
 
-    abstract List<Integer> getRecipeIndex();
+    protected abstract List<Recipe> getSuitableRecipeIndex(List<Recipe> recipeList);
 }

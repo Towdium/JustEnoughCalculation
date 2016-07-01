@@ -5,4 +5,6 @@ gui.editor.newGroup=New Group
 gui.editor.save=Save
 gui.editor.clear=Clear
 gui.editor.help=Help
+gui.editor.noRecord=No Record
+gui.editor.confirm=Confirm
 item.itemCalculator.name=Calculator

@@ -6,12 +6,13 @@ import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mezz.jei.gui.RecipesGui;
 import mezz.jei.gui.ingredients.IGuiIngredient;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
-import pers.towdium.just_enough_calculation.util.ItemStackHelper;
 import pers.towdium.just_enough_calculation.gui.guis.GuiEditor;
+import pers.towdium.just_enough_calculation.util.ItemStackHelper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -75,7 +76,13 @@ public class JECRecipeTransferHandler implements IRecipeTransferHandler {
             Minecraft mc = Minecraft.getMinecraft();
             RecipesGui gui = (RecipesGui) mc.currentScreen;
             if (gui != null) {
-                mc.displayGuiScreen(new GuiEditor(gui.getParentScreen()));
+                GuiScreen parent = gui.getParentScreen();
+                if (parent instanceof GuiEditor) {
+                    ((GuiEditor) parent).newGroup = false;
+                    mc.displayGuiScreen(parent);
+                } else {
+                    mc.displayGuiScreen(new GuiEditor(parent));
+                }
                 GuiContainer myGuiContainer = (GuiContainer) mc.currentScreen;
                 if (myGuiContainer != null) {
                     for (int i = 0; i <= outputStacks.size() - 1 && i <= 3; i++) {

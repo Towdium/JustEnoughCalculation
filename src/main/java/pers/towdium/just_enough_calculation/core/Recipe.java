@@ -10,7 +10,10 @@ import pers.towdium.just_enough_calculation.util.function.TriConsumer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.*;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Author: Towdium
@@ -20,26 +23,8 @@ public class Recipe {
     ItemStack[] output;
     ItemStack[] catalyst;
     ItemStack[] input;
-    String group;
 
-    enum EnumStackIOType {
-        OUTPUT, CATALYST, INPUT;
-
-        public int getLength() {
-            switch (this) {
-                case OUTPUT:
-                    return 4;
-                case CATALYST:
-                    return 4;
-                case INPUT:
-                    return 12;
-                default:
-                    return 0;
-            }
-        }
-    }
-
-    public Recipe(ItemStack[] output, ItemStack[] catalyst, ItemStack[] input, String group) {
+    public Recipe(ItemStack[] output, ItemStack[] catalyst, ItemStack[] input) {
         BiFunction<ItemStack[], Integer, Boolean> checkArray = (itemStackIn, amount) -> {
             if (itemStackIn.length != amount)
                 return false;
@@ -63,7 +48,6 @@ public class Recipe {
         this.output = copyArray.apply(output);
         this.catalyst = copyArray.apply(catalyst);
         this.input = copyArray.apply(input);
-        this.group = group;
     }
 
     public int getIndexInput(ItemStack itemStack) {
@@ -104,8 +88,7 @@ public class Recipe {
             return true;
         };
         Recipe r = (Recipe) obj;
-        return checkEqual.apply(output, r.output) && checkEqual.apply(catalyst, r.catalyst) &&
-                checkEqual.apply(input, r.input) && group.equals(r.group);
+        return checkEqual.apply(output, r.output) && checkEqual.apply(catalyst, r.catalyst) && checkEqual.apply(input, r.input);
     }
 
     public List<ItemStack> getOutput() {
@@ -120,14 +103,27 @@ public class Recipe {
         return getList(input);
     }
 
-    public String getGroup() {
-        return group;
-    }
-
     public List<ItemStack> getList(ItemStack[] itemStacks) {
         List<ItemStack> buffer = new ArrayList<>();
         Collections.addAll(buffer, itemStacks);
         return buffer;
+    }
+
+    enum EnumStackIOType {
+        OUTPUT, CATALYST, INPUT;
+
+        public int getLength() {
+            switch (this) {
+                case OUTPUT:
+                    return 4;
+                case CATALYST:
+                    return 4;
+                case INPUT:
+                    return 12;
+                default:
+                    return 0;
+            }
+        }
     }
 
     public static class IOUtl {
@@ -144,7 +140,7 @@ public class Recipe {
         }
 
         public static void toByte(ByteBuf buf, Recipe recipe) {
-            toContainer((enumStackIOType, integer, itemStack) -> ByteBufUtils.writeItemStack(buf, itemStack), (string) -> ByteBufUtils.writeUTF8String(buf, string), recipe);
+            toContainer((enumStackIOType, integer, itemStack) -> ByteBufUtils.writeItemStack(buf, itemStack), recipe);
         }
 
         public static void toNbt(Recipe recipe) {
@@ -157,7 +153,7 @@ public class Recipe {
                     tagCompound.setTag(temp, new NBTTagCompound());
                 }
                 tagCompound.getCompoundTag(temp).setTag(String.valueOf(integer), stackInfo);
-            }, (s -> tagCompound.setString("Group", s)), recipe);
+            }, recipe);
         }
 
         static Recipe fromContainer(BiFunction<EnumStackIOType, Integer, ItemStack> funcStack, Supplier<String> funcGroup) {
@@ -170,10 +166,10 @@ public class Recipe {
                 return buffer;
             };
             return new Recipe(readArray.apply(EnumStackIOType.OUTPUT), readArray.apply(EnumStackIOType.CATALYST),
-                    readArray.apply(EnumStackIOType.INPUT), funcGroup.get());
+                    readArray.apply(EnumStackIOType.INPUT));
         }
 
-        static void toContainer(TriConsumer<EnumStackIOType, Integer, ItemStack> funcStack, Consumer<String> funcGroup, Recipe recipe) {
+        static void toContainer(TriConsumer<EnumStackIOType, Integer, ItemStack> funcStack, Recipe recipe) {
             BiConsumer<EnumStackIOType, ItemStack[]> writeArray = ((type, itemStacks) -> {
                 int len = type.getLength();
                 for (int i = 0; i < len; i++) {
@@ -183,7 +179,6 @@ public class Recipe {
             writeArray.accept(EnumStackIOType.OUTPUT, recipe.output);
             writeArray.accept(EnumStackIOType.CATALYST, recipe.catalyst);
             writeArray.accept(EnumStackIOType.INPUT, recipe.input);
-            funcGroup.accept(recipe.group);
         }
     }
 }

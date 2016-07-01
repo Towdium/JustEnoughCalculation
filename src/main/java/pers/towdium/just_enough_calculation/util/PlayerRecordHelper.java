@@ -3,8 +3,8 @@ package pers.towdium.just_enough_calculation.util;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import pers.towdium.just_enough_calculation.core.Recipe;
 import pers.towdium.just_enough_calculation.core.PlayerHandlerSP;
+import pers.towdium.just_enough_calculation.core.Recipe;
 
 import java.util.List;
 
@@ -20,35 +20,31 @@ public class PlayerRecordHelper {
         return playerHandler.getGroupName(index);
     }
 
-    public static void addRecipe(Recipe recipe) {
-        playerHandler.addRecipe(recipe);
+    public static void addRecipe(Recipe recipe, String string) {
+        playerHandler.addRecipe(recipe, string);
     }
 
-    public static Recipe getRecipe(int index) {
-        return playerHandler.getRecipe(index);
+    public static Recipe getRecipe(String string, int index) {
+        return playerHandler.getRecipe(string, index);
     }
 
-    public static void removeRecipe(int index) {
-        playerHandler.removeRecipe(index);
+    public static void removeRecipe(String string, int index) {
+        playerHandler.removeRecipe(string, index);
     }
 
     public static Recipe getRecipeOutput(ItemStack itemStack) {
         return playerHandler.getRecipeOutput(itemStack);
     }
 
-    public static List<Integer> getIndexOutput(ItemStack itemStack) {
-        return playerHandler.getIndexOutput(itemStack);
+    public static List<Recipe> getRecipeInGroup(String string) {
+        return playerHandler.getRecipeInGroup(string);
     }
 
-    public static List<Integer> getIndexCatalyst(ItemStack itemStack) {
-        return playerHandler.getIndexCatalyst(itemStack);
+    public static int getSizeRecipe() {
+        return playerHandler.getSizeRecipe();
     }
 
-    public static List<Integer> getIndexInput(ItemStack itemStack) {
-        return playerHandler.getIndexInput(itemStack);
-    }
-
-    public static int getSize() {
-        return playerHandler.getSize();
+    public static int getSizeGroup() {
+        return playerHandler.getSizeGroup();
     }
 }

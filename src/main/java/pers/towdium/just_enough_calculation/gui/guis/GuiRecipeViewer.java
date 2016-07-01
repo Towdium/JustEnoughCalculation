@@ -4,11 +4,10 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
+import pers.towdium.just_enough_calculation.core.Recipe;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
-import pers.towdium.just_enough_calculation.util.PlayerRecordHelper;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -45,11 +44,7 @@ public class GuiRecipeViewer extends GuiRecipeList {
     }
 
     @Override
-    List<Integer> getRecipeIndex() {
-        List<Integer> buffer = new ArrayList<>(PlayerRecordHelper.getSize());
-        for (int i = PlayerRecordHelper.getSize() - 1; i >= 0; i--) {
-            buffer.add(i);
-        }
-        return buffer;
+    protected List<Recipe> getSuitableRecipeIndex(List<Recipe> recipeList) {
+        return recipeList;
     }
 }

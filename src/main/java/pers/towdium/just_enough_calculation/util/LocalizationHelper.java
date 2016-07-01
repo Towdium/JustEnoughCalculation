@@ -1,4 +1,4 @@
-package pers.towdium.just_enough_calculation;
+package pers.towdium.just_enough_calculation.util;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.relauncher.Side;
@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
  * Created: 2016/6/22.
  */
 @SideOnly(Side.CLIENT)
-public class JECTranslator {
+public class LocalizationHelper {
     public static String format(String translateKey, Object... parameters) {
         String buffer = I18n.format(translateKey, parameters);
         buffer = StringEscapeUtils.unescapeJava(buffer);

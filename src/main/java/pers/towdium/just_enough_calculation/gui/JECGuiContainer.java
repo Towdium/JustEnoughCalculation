@@ -13,9 +13,9 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import org.lwjgl.input.Mouse;
+import pers.towdium.just_enough_calculation.plugin.JEIPlugin;
 import pers.towdium.just_enough_calculation.util.ItemStackHelper;
 import pers.towdium.just_enough_calculation.util.ReflectionHelper;
-import pers.towdium.just_enough_calculation.plugin.JEIPlugin;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -29,8 +29,8 @@ import java.util.function.Supplier;
 public abstract class JECGuiContainer extends GuiContainer {
     protected GuiScreen parent;
     protected int activeSlot = -1;
-    long timeStart = 0;
     protected ItemStack temp;
+    long timeStart = 0;
 
     public JECGuiContainer(Container inventorySlotsIn, GuiScreen parent) {
         super(inventorySlotsIn);
@@ -190,6 +190,9 @@ public abstract class JECGuiContainer extends GuiContainer {
     protected abstract int getSizeSlot(int index);
 
     protected void onItemStackSet(int index) {
+    }
+
+    protected void updateLayout() {
     }
 
     static class RenderItemSupplier implements Supplier<RenderItem> {
