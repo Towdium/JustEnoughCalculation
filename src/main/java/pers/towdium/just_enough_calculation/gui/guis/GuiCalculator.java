@@ -13,9 +13,11 @@ import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
 import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
 import pers.towdium.just_enough_calculation.plugin.JEIPlugin;
+import pers.towdium.just_enough_calculation.util.ItemStackHelper;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.util.function.BiFunction;
 
 /**
  * Author:  Towdium
@@ -36,40 +38,6 @@ public class GuiCalculator extends JECGuiContainer {
     int page = 1;
     int total = 0;
     EnumMode mode = EnumMode.INPUT;
-
-    public enum EnumMode {
-        INPUT, PROCEDURE, OUTPUT, CATALYST;
-
-        int toInt() {
-            switch (this) {
-                case INPUT:
-                    return 1;
-                case PROCEDURE:
-                    return 2;
-                case OUTPUT:
-                    return 3;
-                case CATALYST:
-                    return 4;
-                default:
-                    return 1;
-            }
-        }
-
-        static EnumMode fromInt(int i) {
-            switch (i) {
-                case 1:
-                    return INPUT;
-                case 2:
-                    return PROCEDURE;
-                case 3:
-                    return OUTPUT;
-                case 4:
-                    return CATALYST;
-                default:
-                    return INPUT;
-            }
-        }
-    }
 
     public GuiCalculator(GuiScreen parent) {
         super(new ContainerCalculator(), parent);
@@ -188,6 +156,45 @@ public class GuiCalculator extends JECGuiContainer {
             return false;
         }
         return false;
+    }
+
+    @Override
+    protected BiFunction<Long, ItemStackHelper.EnumStackAmountType, String> getFormer() {
+        return (aLong, type) -> type.getStringResult(aLong);
+    }
+
+    public enum EnumMode {
+        INPUT, PROCEDURE, OUTPUT, CATALYST;
+
+        static EnumMode fromInt(int i) {
+            switch (i) {
+                case 1:
+                    return INPUT;
+                case 2:
+                    return PROCEDURE;
+                case 3:
+                    return OUTPUT;
+                case 4:
+                    return CATALYST;
+                default:
+                    return INPUT;
+            }
+        }
+
+        int toInt() {
+            switch (this) {
+                case INPUT:
+                    return 1;
+                case PROCEDURE:
+                    return 2;
+                case OUTPUT:
+                    return 3;
+                case CATALYST:
+                    return 4;
+                default:
+                    return 1;
+            }
+        }
     }
 
     public static class ContainerCalculator extends JECContainer {

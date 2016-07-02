@@ -21,7 +21,7 @@ import java.util.List;
 public abstract class GuiRecipeList extends JECGuiContainer {
     int row;
     int top;
-    int page = 1;
+    int page = 0;
     int total = 0;
     int group = 0;
 

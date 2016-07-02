@@ -5,6 +5,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
@@ -12,6 +13,7 @@ import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.core.Recipe;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
 import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
+import pers.towdium.just_enough_calculation.util.ItemStackHelper;
 import pers.towdium.just_enough_calculation.util.LocalizationHelper;
 import pers.towdium.just_enough_calculation.util.PlayerRecordHelper;
 
@@ -113,58 +115,74 @@ public class GuiEditor extends JECGuiContainer {
 
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
-        switch (button.id) {
-            case 40:
-                if (customName == null) {
-                    if (group + 1 >= PlayerRecordHelper.getSizeGroup()) {
+        if (button.id < 40) {
+            Slot slot = inventorySlots.getSlot(button.id / 2);
+            if (button.id % 2 == 0) {
+                switch (button.displayString) {
+                    case "#":
+                        slot.putStack(ItemStackHelper.toItemStackOfType(ItemStackHelper.EnumStackAmountType.PERCENTAGE, slot.getStack()));
+                        button.displayString = "%";
+                        break;
+                    case "%":
+                        slot.putStack(ItemStackHelper.toItemStackOfType(ItemStackHelper.EnumStackAmountType.NUMBER, slot.getStack()));
+                        button.displayString = "#";
+                        break;
+                }
+            }
+        } else {
+            switch (button.id) {
+                case 40:
+                    if (customName == null) {
+                        if (group + 1 >= PlayerRecordHelper.getSizeGroup()) {
+                            group = 0;
+                        } else {
+                            ++group;
+                        }
+                    } else {
+                        if (PlayerRecordHelper.getSizeGroup() != 0) {
+                            group = PlayerRecordHelper.getSizeGroup() - 1;
+                            customName = null;
+                        } else {
+                            customName = "Default";
+                        }
+                    }
+                    break;
+                case 41:
+                    if (customName == null) {
+                        if (group == 0) {
+                            group = PlayerRecordHelper.getSizeGroup() - 1;
+                        } else {
+                            --group;
+                        }
+                    } else {
+                        if (PlayerRecordHelper.getSizeGroup() != 0) {
+                            group = 0;
+                            customName = null;
+                        } else {
+                            customName = "Default";
+                        }
+                    }
+                    break;
+                case 42:
+                    if (newGroup) {
+                        customName = textGroup.getText();
                         group = 0;
+                        textGroup.setText("");
+                        newGroup = false;
+                        buttonLeft.enabled = true;
+                        buttonRight.enabled = true;
+                        buttonNew.displayString = LocalizationHelper.format("gui.editor.newGroup");
                     } else {
-                        ++group;
+                        buttonLeft.enabled = false;
+                        buttonRight.enabled = false;
+                        newGroup = true;
+                        buttonNew.displayString = LocalizationHelper.format("gui.editor.confirm");
                     }
-                } else {
-                    if (PlayerRecordHelper.getSizeGroup() != 0) {
-                        group = PlayerRecordHelper.getSizeGroup() - 1;
-                        customName = null;
-                    } else {
-                        customName = "Default";
-                    }
-                }
-                break;
-            case 41:
-                if (customName == null) {
-                    if (group == 0) {
-                        group = PlayerRecordHelper.getSizeGroup() - 1;
-                    } else {
-                        --group;
-                    }
-                } else {
-                    if (PlayerRecordHelper.getSizeGroup() != 0) {
-                        group = 0;
-                        customName = null;
-                    } else {
-                        customName = "Default";
-                    }
-                }
-                break;
-            case 42:
-                if (newGroup) {
-                    customName = textGroup.getText();
-                    group = 0;
-                    textGroup.setText("");
-                    newGroup = false;
-                    buttonLeft.enabled = true;
-                    buttonRight.enabled = true;
-                    buttonNew.displayString = LocalizationHelper.format("gui.editor.newGroup");
-                } else {
-                    buttonLeft.enabled = false;
-                    buttonRight.enabled = false;
-                    newGroup = true;
-                    buttonNew.displayString = LocalizationHelper.format("gui.editor.confirm");
-                }
-                break;
-            case 44:
-                PlayerRecordHelper.addRecipe(toRecipe(), getGroup());
-                mc.displayGuiScreen(parent);
+                    break;
+                case 44:
+                    PlayerRecordHelper.addRecipe(toRecipe(), getGroup());
+                    mc.displayGuiScreen(parent);
+            }
         }
     }
 

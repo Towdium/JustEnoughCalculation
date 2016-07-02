@@ -15,11 +15,13 @@ import net.minecraft.item.ItemStack;
 import org.lwjgl.input.Mouse;
 import pers.towdium.just_enough_calculation.plugin.JEIPlugin;
 import pers.towdium.just_enough_calculation.util.ItemStackHelper;
+import pers.towdium.just_enough_calculation.util.ItemStackHelper.NBT;
 import pers.towdium.just_enough_calculation.util.ReflectionHelper;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 /**
@@ -56,7 +58,7 @@ public abstract class JECGuiContainer extends GuiContainer {
                 public void renderItemOverlayIntoGUI(@SuppressWarnings("NullableProblems") FontRenderer fr, ItemStack stack, int xPosition, int yPosition, String text) {
                     boolean b = fr.getUnicodeFlag();
                     fr.setUnicodeFlag(true);
-                    super.renderItemOverlayIntoGUI(fr, stack, xPosition, yPosition, stack == null ? "" : ItemStackHelper.NBT.getType(stack).getDisplayString(ItemStackHelper.NBT.getAmount(stack)));
+                    super.renderItemOverlayIntoGUI(fr, stack, xPosition, yPosition, stack == null ? "" : getFormer().apply(NBT.getAmount(stack), NBT.getType(stack)));
                     fr.setUnicodeFlag(b);
                 }
             };
@@ -193,6 +195,10 @@ public abstract class JECGuiContainer extends GuiContainer {
     }
 
     protected void updateLayout() {
+    }
+
+    protected BiFunction<Long, ItemStackHelper.EnumStackAmountType, String> getFormer() {
+        return (aLong, type) -> type.getStringEditor(aLong);
     }
 
     static class RenderItemSupplier implements Supplier<RenderItem> {
