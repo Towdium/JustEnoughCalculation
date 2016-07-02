@@ -57,12 +57,19 @@ public abstract class GuiRecipeList extends JECGuiContainer {
                 PlayerRecordHelper.getSizeGroup() > group ? PlayerRecordHelper.getGroupName(group) :
                         LocalizationHelper.format("gui.editor.noRecord"), 7, 169, 133, 145, 0xFFFFFF);
         drawCenteredStringMultiLine(fontRendererObj, page + "/" + total, 7, 169, 147, 159, 0xFFFFFF);
-
     }
 
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
         switch (button.id) {
+            case 0:
+                --group;
+                updateLayout();
+                break;
+            case 1:
+                ++group;
+                updateLayout();
+                break;
             case 2:
                 --page;
                 updateLayout();
@@ -89,8 +96,19 @@ public abstract class GuiRecipeList extends JECGuiContainer {
 
     @Override
     protected void updateLayout() {
+        if (group > PlayerRecordHelper.getSizeGroup() - 1) {
+            group = 0;
+        } else if (group < 0) {
+            group = PlayerRecordHelper.getSizeGroup() - 1;
+        }
         if (PlayerRecordHelper.getSizeGroup() > 0) {
             List<Recipe> buffer = getSuitableRecipeIndex(PlayerRecordHelper.getRecipeInGroup(PlayerRecordHelper.getGroupName(group)));
+            total = (buffer.size() + row - 1) / row;
+            if (page > total) {
+                page = 1;
+            } else if (page <= 0) {
+                page = total;
+            }
             for (int i = (page - 1) * row; i < page * row && page != 0; i++) {
                 if (i < buffer.size()) {
                     putRecipe(i - (page - 1) * row, buffer.get(i));
@@ -98,7 +116,11 @@ public abstract class GuiRecipeList extends JECGuiContainer {
                     putRecipe(i - (page - 1) * row, null);
                 }
             }
+        } else {
+            page = 0;
+            total = 0;
         }
+
     }
 
     protected abstract List<Recipe> getSuitableRecipeIndex(List<Recipe> recipeList);
