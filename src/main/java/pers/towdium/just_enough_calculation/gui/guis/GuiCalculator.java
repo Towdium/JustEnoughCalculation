@@ -83,7 +83,7 @@ public class GuiCalculator extends JECGuiContainer {
                 mc.displayGuiScreen(new GuiRecipeSearch(this, inventorySlots.getSlot(0).getStack()));
                 return;
             case 2:
-                mc.displayGuiScreen(new GuiEditor(this));
+                mc.displayGuiScreen(new GuiEditor(this, null));
                 return;
             case 3:
                 mc.displayGuiScreen(new GuiRecipeViewer(this));

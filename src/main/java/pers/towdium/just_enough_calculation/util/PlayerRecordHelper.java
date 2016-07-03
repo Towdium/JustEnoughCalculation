@@ -32,6 +32,10 @@ public class PlayerRecordHelper {
         playerHandler.removeRecipe(string, index);
     }
 
+    public static void setRecipe(String group, String groupOld, int index, Recipe recipe) {
+        playerHandler.setRecipe(group, groupOld, index, recipe);
+    }
+
     public static Recipe getRecipeOutput(ItemStack itemStack) {
         return playerHandler.getRecipeOutput(itemStack);
     }
@@ -46,5 +50,9 @@ public class PlayerRecordHelper {
 
     public static int getSizeGroup() {
         return playerHandler.getSizeGroup();
+    }
+
+    public static int getIndexGroup(String s) {
+        return playerHandler.getIndexGroup(s);
     }
 }

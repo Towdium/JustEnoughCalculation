@@ -16,10 +16,14 @@ import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
 import pers.towdium.just_enough_calculation.util.ItemStackHelper;
 import pers.towdium.just_enough_calculation.util.LocalizationHelper;
 import pers.towdium.just_enough_calculation.util.PlayerRecordHelper;
+import pers.towdium.just_enough_calculation.util.wrappers.Pair;
+import pers.towdium.just_enough_calculation.util.wrappers.Singleton;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
 /**
@@ -38,9 +42,12 @@ public class GuiEditor extends JECGuiContainer {
     GuiTextField textGroup;
     int group = 0;
     String customName;
+    Pair<String, Integer> dest;
+    boolean initialized = false;
 
-    public GuiEditor(GuiScreen parent) {
+    public GuiEditor(GuiScreen parent, Pair<String, Integer> index) {
         super(new ContainerEditor(), parent);
+        this.dest = index;
     }
 
     @Override
@@ -79,6 +86,10 @@ public class GuiEditor extends JECGuiContainer {
         }
         buttonRight.enabled = !newGroup;
         buttonRight.enabled = !newGroup;
+        if (!initialized && dest != null) {
+            putRecipe(PlayerRecordHelper.getRecipe(dest.one, dest.two));
+            group = PlayerRecordHelper.getIndexGroup(dest.one);
+        }
     }
 
     @Override
@@ -180,7 +191,12 @@ public class GuiEditor extends JECGuiContainer {
                     }
                     break;
                 case 44:
-                    PlayerRecordHelper.addRecipe(toRecipe(), getGroup());
+                    if (dest == null) {
+                        PlayerRecordHelper.addRecipe(toRecipe(), getGroup());
+                    } else {
+                        PlayerRecordHelper.setRecipe(getGroup(), dest.one, dest.two, toRecipe());
+                    }
+
                     mc.displayGuiScreen(parent);
             }
         }
@@ -199,6 +215,16 @@ public class GuiEditor extends JECGuiContainer {
         if (!(newGroup && textGroup.textboxKeyTyped(typedChar, keyCode))) {
             super.keyTyped(typedChar, keyCode);
         }
+    }
+
+    public void putRecipe(Recipe recipe) {
+        BiConsumer<Integer, List<ItemStack>> putStacks = (integer, itemStacks) -> {
+            Singleton<Integer> i = new Singleton<>(integer - 1);
+            itemStacks.forEach(itemStack -> inventorySlots.getSlot(++i.value).putStack(itemStack));
+        };
+        putStacks.accept(0, recipe.getOutput());
+        putStacks.accept(4, recipe.getCatalyst());
+        putStacks.accept(8, recipe.getInput());
     }
 
     public Recipe toRecipe() {

@@ -86,10 +86,12 @@ public abstract class GuiRecipeList extends JECGuiContainer {
                 break;
         }
         if (button.id <= row * 2 + 3 && button.id > 3) {
+            Pair<String, Integer> pair = result.get((page - 1) * row + (button.id - 4) / 2);
             if (button.id % 2 != 0) {
-                Pair<String, Integer> pair = result.get((page - 1) * row + (button.id - 4) / 2);
                 PlayerRecordHelper.removeRecipe(pair.one, pair.two);
                 updateLayout();
+            } else {
+                mc.displayGuiScreen(new GuiEditor(this, pair));
             }
         }
     }

@@ -78,6 +78,15 @@ public class PlayerHandlerSP {
         }
     }
 
+    public void setRecipe(String group, String groupOld, int index, Recipe recipe) {
+        if (group.equals(groupOld)) {
+            recipes.get(groupOld).set(index, recipe);
+        } else {
+            removeRecipe(groupOld, index);
+            addRecipe(recipe, group);
+        }
+    }
+
     public int getSizeRecipe() {
         Singleton<Integer> i = new Singleton<>(0);
         recipes.forEach((s, recipeList) -> i.value += recipeList.size());
@@ -129,5 +138,18 @@ public class PlayerHandlerSP {
         List<Pair<String, Integer>> bufferC = new ArrayList<>(size);
         bufferB.forEach(elementList -> elementList.forEach(bufferC::add));
         return bufferC;
+    }
+
+    public int getIndexGroup(String s) {
+        int i = 0;
+        Map.Entry<String, List<Recipe>> temp = null;
+        for (Iterator<Map.Entry<String, List<Recipe>>> it = recipes.entrySet().iterator(); it.hasNext(); temp = it.next()) {
+            if (temp != null && s.equals(temp.getKey())) {
+                return i;
+            } else {
+                ++i;
+            }
+        }
+        return -1;
     }
 }

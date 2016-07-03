@@ -26,7 +26,7 @@ public class GuiHandler implements IGuiHandler {
             case GuiId.RECIPE_SEARCH:
                 return new GuiRecipeSearch(Minecraft.getMinecraft().currentScreen, null);
             case GuiId.EDITOR:
-                return new GuiEditor(null);
+                return new GuiEditor(null, null);
         }
         return null;
     }

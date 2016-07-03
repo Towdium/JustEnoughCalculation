@@ -82,7 +82,7 @@ public class JECRecipeTransferHandler implements IRecipeTransferHandler {
                     ((GuiEditor) parent).newGroup = false;
                     mc.displayGuiScreen(parent);
                 } else {
-                    mc.displayGuiScreen(new GuiEditor(parent));
+                    mc.displayGuiScreen(new GuiEditor(parent, null));
                 }
                 GuiContainer myGuiContainer = (GuiContainer) mc.currentScreen;
                 if (myGuiContainer != null) {
