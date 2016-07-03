@@ -4,8 +4,8 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
-import pers.towdium.just_enough_calculation.core.Recipe;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
+import pers.towdium.just_enough_calculation.util.wrappers.Pair;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -44,7 +44,7 @@ public class GuiRecipeViewer extends GuiRecipeList {
     }
 
     @Override
-    protected List<Recipe> getSuitableRecipeIndex(List<Recipe> recipeList) {
+    protected List<Pair<String, Integer>> getSuitableRecipeIndex(List<Pair<String, Integer>> recipeList) {
         return recipeList;
     }
 }

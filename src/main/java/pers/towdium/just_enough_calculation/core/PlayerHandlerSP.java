@@ -72,6 +72,9 @@ public class PlayerHandlerSP {
             throw new RuntimeException("Key " + group + " not found in the map.");
         } else {
             temp.remove(index);
+            if (temp.size() == 0) {
+                recipes.remove(group);
+            }
         }
     }
 

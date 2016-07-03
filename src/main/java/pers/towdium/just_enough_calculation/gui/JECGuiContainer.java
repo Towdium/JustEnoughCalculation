@@ -16,7 +16,7 @@ import org.lwjgl.input.Mouse;
 import pers.towdium.just_enough_calculation.plugin.JEIPlugin;
 import pers.towdium.just_enough_calculation.util.ItemStackHelper;
 import pers.towdium.just_enough_calculation.util.ItemStackHelper.NBT;
-import pers.towdium.just_enough_calculation.util.ReflectionHelper;
+import pers.towdium.just_enough_calculation.util.Utilities;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -51,7 +51,7 @@ public abstract class JECGuiContainer extends GuiContainer {
     @Override
     public void setWorldAndResolution(Minecraft mc, int width, int height) {
         super.setWorldAndResolution(mc, width, height);
-        ModelManager tempMM = ReflectionHelper.getField(mc, "modelManager", "field_175617_aL");
+        ModelManager tempMM = Utilities.getField(mc, "modelManager", "field_175617_aL");
         if (tempMM != null) {
             itemRender = new RenderItem(mc.getTextureManager(), tempMM, mc.getItemColors()) {
                 @Override
@@ -117,8 +117,8 @@ public abstract class JECGuiContainer extends GuiContainer {
                 }
                 return false;
             } else {
-                Slot active = inventorySlots.getSlot(activeSlot);
-                active.putStack(ItemStackHelper.toItemStackJEC(active.getStack()));
+                //Slot active = inventorySlots.getSlot(activeSlot);
+                //active.putStack(ItemStackHelper.toItemStackJEC(active.getStack()));
                 onItemStackSet(activeSlot);
                 activeSlot = -1;
                 mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
@@ -126,7 +126,9 @@ public abstract class JECGuiContainer extends GuiContainer {
             }
         } else if (activeSlot != -1) {
             ItemStack stack = JEIPlugin.runtime.getItemListOverlay().getStackUnderMouse();
-            inventorySlots.getSlot(activeSlot).putStack(stack == null ? null : ItemStackHelper.toItemStackJEC(stack.copy()));
+            inventorySlots.getSlot(activeSlot).putStack(stack == null ? null :
+                    ((JECContainer) inventorySlots).getSlotType(activeSlot) == JECContainer.EnumSlotType.AMOUNT ?
+                            ItemStackHelper.toItemStackJEC(stack.copy()) : stack.copy());
             return false;
         }
         return false;

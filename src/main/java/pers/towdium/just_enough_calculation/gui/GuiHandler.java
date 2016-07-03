@@ -13,12 +13,6 @@ import pers.towdium.just_enough_calculation.gui.guis.GuiRecipeSearch;
  * Created: 2016/6/13.
  */
 public class GuiHandler implements IGuiHandler {
-    public static final class GuiId {
-        public static final int CALCULATOR = 0;
-        public static final int RECIPE_SEARCH = 1;
-        public static final int EDITOR = 2;
-    }
-
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         return null;
@@ -30,10 +24,16 @@ public class GuiHandler implements IGuiHandler {
             case GuiId.CALCULATOR:
                 return new GuiCalculator(null);
             case GuiId.RECIPE_SEARCH:
-                return new GuiRecipeSearch(Minecraft.getMinecraft().currentScreen);
+                return new GuiRecipeSearch(Minecraft.getMinecraft().currentScreen, null);
             case GuiId.EDITOR:
                 return new GuiEditor(null);
         }
         return null;
+    }
+
+    public static final class GuiId {
+        public static final int CALCULATOR = 0;
+        public static final int RECIPE_SEARCH = 1;
+        public static final int EDITOR = 2;
     }
 }

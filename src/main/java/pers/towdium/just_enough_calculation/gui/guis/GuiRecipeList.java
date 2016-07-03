@@ -9,9 +9,11 @@ import pers.towdium.just_enough_calculation.core.Recipe;
 import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
 import pers.towdium.just_enough_calculation.util.LocalizationHelper;
 import pers.towdium.just_enough_calculation.util.PlayerRecordHelper;
+import pers.towdium.just_enough_calculation.util.wrappers.Pair;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,9 +23,11 @@ import java.util.List;
 public abstract class GuiRecipeList extends JECGuiContainer {
     int row;
     int top;
-    int page = 0;
+    int page = 1;
     int total = 0;
     int group = 0;
+    List<GuiButton> buttons;
+    List<Pair<String, Integer>> result;
 
     public GuiRecipeList(Container inventorySlotsIn, GuiScreen parent, int row, int top) {
         super(inventorySlotsIn, parent);
@@ -43,10 +47,12 @@ public abstract class GuiRecipeList extends JECGuiContainer {
         buttonList.add(new GuiButtonExt(1, guiLeft + 156, guiTop + 133, 13, 12, ">"));
         buttonList.add(new GuiButtonExt(2, guiLeft + 7, guiTop + 147, 13, 12, "<"));
         buttonList.add(new GuiButtonExt(3, guiLeft + 156, guiTop + 147, 13, 12, ">"));
+        buttons = new ArrayList<>(row * 2);
         for (int i = 0; i < row; i++) {
-            buttonList.add(new GuiButtonExt(2 * i + 4, guiLeft + 83, guiTop + top + 20 * i, 41, 18, "edit"));
-            buttonList.add(new GuiButtonExt(1 + 2 * i + 4, guiLeft + 128, guiTop + top + 20 * i, 41, 18, "delete"));
+            buttons.add(new GuiButtonExt(2 * i + 4, guiLeft + 83, guiTop + top + 20 * i, 41, 18, "edit"));
+            buttons.add(new GuiButtonExt(1 + 2 * i + 4, guiLeft + 128, guiTop + top + 20 * i, 41, 18, "delete"));
         }
+        buttonList.addAll(buttons);
         updateLayout();
     }
 
@@ -79,6 +85,13 @@ public abstract class GuiRecipeList extends JECGuiContainer {
                 updateLayout();
                 break;
         }
+        if (button.id <= row * 2 + 3 && button.id > 3) {
+            if (button.id % 2 != 0) {
+                Pair<String, Integer> pair = result.get((page - 1) * row + (button.id - 4) / 2);
+                PlayerRecordHelper.removeRecipe(pair.one, pair.two);
+                updateLayout();
+            }
+        }
     }
 
     protected void putRecipe(int position, @Nullable Recipe recipe) {
@@ -100,28 +113,42 @@ public abstract class GuiRecipeList extends JECGuiContainer {
             group = 0;
         } else if (group < 0) {
             group = PlayerRecordHelper.getSizeGroup() - 1;
+            group = group < 0 ? 0 : group;
         }
         if (PlayerRecordHelper.getSizeGroup() > 0) {
-            List<Recipe> buffer = getSuitableRecipeIndex(PlayerRecordHelper.getRecipeInGroup(PlayerRecordHelper.getGroupName(group)));
-            total = (buffer.size() + row - 1) / row;
+            List<Pair<String, Integer>> buffer = new ArrayList<>();
+            String name = PlayerRecordHelper.getGroupName(group);
+            for (int i = PlayerRecordHelper.getRecipeInGroup(name).size() - 1; i >= 0; i--) {
+                buffer.add(new Pair<>(name, i));
+            }
+            result = getSuitableRecipeIndex(buffer);
+            total = (result.size() + row - 1) / row;
             if (page > total) {
                 page = 1;
             } else if (page <= 0) {
                 page = total;
             }
             for (int i = (page - 1) * row; i < page * row && page != 0; i++) {
-                if (i < buffer.size()) {
-                    putRecipe(i - (page - 1) * row, buffer.get(i));
+                if (i < result.size()) {
+                    putRecipe(i - (page - 1) * row, PlayerRecordHelper.getRecipe(result.get(i).one, result.get(i).two));
+                    buttons.get((i - (page - 1) * row) * 2).enabled = true;
+                    buttons.get((i - (page - 1) * row) * 2 + 1).enabled = true;
                 } else {
                     putRecipe(i - (page - 1) * row, null);
+                    buttons.get((i - (page - 1) * row) * 2).enabled = false;
+                    buttons.get((i - (page - 1) * row) * 2 + 1).enabled = false;
                 }
             }
+
         } else {
             page = 0;
             total = 0;
+            for (int i = 0; i < row; i++) {
+                putRecipe(i, null);
+            }
+            buttons.forEach(guiButton -> guiButton.enabled = false);
         }
-
     }
 
-    protected abstract List<Recipe> getSuitableRecipeIndex(List<Recipe> recipeList);
+    protected abstract List<Pair<String, Integer>> getSuitableRecipeIndex(List<Pair<String, Integer>> recipeList);
 }

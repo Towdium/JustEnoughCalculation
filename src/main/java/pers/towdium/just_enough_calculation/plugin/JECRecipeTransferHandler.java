@@ -18,6 +18,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -91,11 +92,10 @@ public class JECRecipeTransferHandler implements IRecipeTransferHandler {
                     for (int i = 8; i <= 8 + inputStacks.size() - 1 && i <= 19; i++) {
                         myGuiContainer.inventorySlots.getSlot(i).putStack(ItemStackHelper.toItemStackJEC(inputStacks.get(i - 8)));
                     }
-                    myGuiContainer.inventorySlots.getSlot(4).putStack(ItemStackHelper.toItemStackJEC(
-                            JEIPlugin.recipeRegistry.getCraftingItems(
-                                    JEIPlugin.recipeRegistry.getRecipeCategories(Collections.singletonList(recipeUID)).get(0)
-                            ).iterator().next().copy()
-                    ));
+                    Iterator<ItemStack> i = JEIPlugin.recipeRegistry.getCraftingItems(
+                            JEIPlugin.recipeRegistry.getRecipeCategories(Collections.singletonList(recipeUID)).get(0)
+                    ).iterator();
+                    myGuiContainer.inventorySlots.getSlot(4).putStack(ItemStackHelper.toItemStackJEC(i.hasNext() ? i.next().copy() : null));
                 }
             }
         }

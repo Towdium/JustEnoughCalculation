@@ -3,7 +3,6 @@ package pers.towdium.just_enough_calculation.util;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
-import pers.towdium.just_enough_calculation.util.function.TriFunction;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -81,44 +80,16 @@ public class ItemStackHelper {
     public enum EnumStackAmountType {
         INVALID, NUMBER, PERCENTAGE, FLUID;
 
-        static String cutFloat(float f, int size) {
-            TriFunction<Float, Integer, Integer, String> form = (fl, len, max) -> {
-                int scale = len - 1 - String.valueOf(fl.intValue()).length();
-                return String.format("%." + (scale > max ? max : scale) + 'f', fl);
-            };
-            int scale = (int) Math.log10(f) / 3;
-            switch (scale) {
-                case 0:
-                    return form.apply(f, size, 2);
-                case 1:
-                    return form.apply(f / 1000.0f, size, 2) + 'K';
-                case 2:
-                    return form.apply(f / 1000000.0f, size, 2) + 'M';
-                case 3:
-                    return form.apply(f / 1000000000.0f, size, 2) + 'B';
-                case 4:
-                    return form.apply(f / 1000000000000.0f, size, 2) + 'G';
-                default:
-                    return form.apply(f / 1000000000000000.0f, size, 2) + 'T';
-            }
-        }
 
-        static String cutLong(long i, int size) {
-            if (i < 1000) {
-                return String.valueOf(i);
-            } else {
-                return cutFloat(i, size);
-            }
-        }
 
         public String getStringResult(long l) {
             switch (this) {
                 case NUMBER:
-                    return cutLong(l, 5);
+                    return Utilities.cutLong(l, 5);
                 case PERCENTAGE:
-                    return "≈" + cutFloat(l / 100.0f, 4);
+                    return "≈" + Utilities.cutFloat(l / 100.0f, 4);
                 case FLUID:
-                    return l > 1000 ? cutFloat(l / 1000.0f, 4) + 'b' : String.valueOf(l) + "mb";
+                    return l > 1000 ? Utilities.cutFloat(l / 1000.0f, 4) + 'b' : String.valueOf(l) + "mb";
                 default:
                     return "";
             }
@@ -127,11 +98,11 @@ public class ItemStackHelper {
         public String getStringEditor(long l) {
             switch (this) {
                 case NUMBER:
-                    return cutLong(l, 5);
+                    return Utilities.cutLong(l, 5);
                 case PERCENTAGE:
                     return String.valueOf(l) + "%";
                 case FLUID:
-                    return l > 1000 ? cutFloat(l / 1000.0f, 4) + 'b' : String.valueOf(l) + "mb";
+                    return l > 1000 ? Utilities.cutFloat(l / 1000.0f, 4) + 'b' : String.valueOf(l) + "mb";
                 default:
                     return "";
             }
