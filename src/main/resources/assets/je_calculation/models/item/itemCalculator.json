@@ -1,6 +1,6 @@
 {
-    "parent": "item/generated",
-    "textures": {
-        "layer0": "je_calculation:items/itemCalculator"
-    }
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "je_calculation:items/itemCalculator"
+  }
 }

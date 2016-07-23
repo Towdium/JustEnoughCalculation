@@ -1,8 +1,13 @@
 package pers.towdium.just_enough_calculation.util;
 
+import com.google.common.primitives.Ints;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.util.EnumFacing;
 import pers.towdium.just_enough_calculation.util.function.TriFunction;
 
+import java.awt.*;
 import java.lang.reflect.Field;
 
 /**
@@ -10,6 +15,9 @@ import java.lang.reflect.Field;
  * Date:   2016/6/25.
  */
 public class Utilities {
+
+    // FOR STRING FORMATTING
+
     @SuppressWarnings("unchecked")
     public static <T, C> T getField(C o, String... names) {
         Field field = null;
@@ -73,5 +81,113 @@ public class Utilities {
 
     public static String cutString(String s, int length, FontRenderer fontRenderer) {
         return fontRenderer.getStringWidth(s) <= length ? s : fontRenderer.trimStringToWidth(s, length - 6) + "...";
+    }
+
+    // FOR MODEL CALCULATING
+
+    public static int[] vertexToInts(float x, float y, float z, int color, TextureAtlasSprite texture, float u, float v) {
+        return new int[]{
+                Float.floatToRawIntBits(x),
+                Float.floatToRawIntBits(y),
+                Float.floatToRawIntBits(z),
+                color,
+                Float.floatToRawIntBits(texture.getInterpolatedU(u)),
+                Float.floatToRawIntBits(texture.getInterpolatedV(v)),
+                0
+        };
+    }
+
+    public static BakedQuad createBakedQuadForFace(float centreLR, float width, float centreUD, float height, float forwardDisplacement,
+                                                   int itemRenderLayer, TextureAtlasSprite texture, EnumFacing face) {
+        float x1, x2, x3, x4;
+        float y1, y2, y3, y4;
+        float z1, z2, z3, z4;
+        final float CUBE_MIN = 0.0F;
+        final float CUBE_MAX = 1.0F;
+
+        switch (face) {
+            case UP: {
+                x1 = x2 = centreLR + width / 2.0F;
+                x3 = x4 = centreLR - width / 2.0F;
+                z1 = z4 = centreUD + height / 2.0F;
+                z2 = z3 = centreUD - height / 2.0F;
+                y1 = y2 = y3 = y4 = CUBE_MAX + forwardDisplacement;
+                break;
+            }
+            case DOWN: {
+                x1 = x2 = centreLR + width / 2.0F;
+                x3 = x4 = centreLR - width / 2.0F;
+                z1 = z4 = centreUD - height / 2.0F;
+                z2 = z3 = centreUD + height / 2.0F;
+                y1 = y2 = y3 = y4 = CUBE_MIN - forwardDisplacement;
+                break;
+            }
+            case WEST: {
+                z1 = z2 = centreLR + width / 2.0F;
+                z3 = z4 = centreLR - width / 2.0F;
+                y1 = y4 = centreUD - height / 2.0F;
+                y2 = y3 = centreUD + height / 2.0F;
+                x1 = x2 = x3 = x4 = CUBE_MIN - forwardDisplacement;
+                break;
+            }
+            case EAST: {
+                z1 = z2 = centreLR - width / 2.0F;
+                z3 = z4 = centreLR + width / 2.0F;
+                y1 = y4 = centreUD - height / 2.0F;
+                y2 = y3 = centreUD + height / 2.0F;
+                x1 = x2 = x3 = x4 = CUBE_MAX + forwardDisplacement;
+                break;
+            }
+            case NORTH: {
+                x1 = x2 = centreLR - width / 2.0F;
+                x3 = x4 = centreLR + width / 2.0F;
+                y1 = y4 = centreUD - height / 2.0F;
+                y2 = y3 = centreUD + height / 2.0F;
+                z1 = z2 = z3 = z4 = CUBE_MIN - forwardDisplacement;
+                break;
+            }
+            case SOUTH: {
+                x1 = x2 = centreLR + width / 2.0F;
+                x3 = x4 = centreLR - width / 2.0F;
+                y1 = y4 = centreUD - height / 2.0F;
+                y2 = y3 = centreUD + height / 2.0F;
+                z1 = z2 = z3 = z4 = CUBE_MAX + forwardDisplacement;
+                break;
+            }
+            default: {
+                assert false : "Unexpected facing in createBakedQuadForFace:" + face;
+                return null;
+            }
+        }
+
+        return new BakedQuad(Ints.concat(vertexToInts(x1, y1, z1, Color.WHITE.getRGB(), texture, 16, 16),
+                vertexToInts(x2, y2, z2, Color.WHITE.getRGB(), texture, 16, 0),
+                vertexToInts(x3, y3, z3, Color.WHITE.getRGB(), texture, 0, 0),
+                vertexToInts(x4, y4, z4, Color.WHITE.getRGB(), texture, 0, 16)),
+                itemRenderLayer, face, texture, true, net.minecraft.client.renderer.vertex.DefaultVertexFormats.ITEM);
+    }
+
+    // REFLECTION
+
+    public static Object getField(Class c, Object o, String... names) throws ReflectiveOperationException {
+        Field f = null;
+        for (String name : names) {
+            try {
+                f = c.getDeclaredField(name);
+            } catch (NoSuchFieldException ignored) {
+            }
+        }
+        if (f == null) {
+            String s = "Field ";
+            for (String name : names) {
+                s += "\"";
+                s += name;
+                s += "\",";
+            }
+            throw new NoSuchFieldException(s.substring(0, s.length() - 1) + " not found in class " + c.getName());
+        }
+        f.setAccessible(true);
+        o = f.get(o);
+        return o;
     }
 }

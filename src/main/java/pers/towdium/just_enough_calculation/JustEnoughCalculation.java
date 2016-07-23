@@ -5,13 +5,16 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import pers.towdium.just_enough_calculation.command.CommandGiveItem;
 import pers.towdium.just_enough_calculation.gui.GuiHandler;
 import pers.towdium.just_enough_calculation.item.ItemCalculator;
+import pers.towdium.just_enough_calculation.item.ItemFluidContainer;
 import pers.towdium.just_enough_calculation.network.IProxy;
 
 /**
@@ -28,11 +31,13 @@ public class JustEnoughCalculation {
     public static Logger log = LogManager.getLogger(Reference.MODID);
 
     public static Item itemCalculator = new ItemCalculator().setUnlocalizedName("itemCalculator").setRegistryName("itemCalculator");
+    public static Item itemFluidContainer = new ItemFluidContainer().setUnlocalizedName("itemFluidContainer").setRegistryName("itemFluidContainer");
 
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent event) {
         JECConfig.preInit(event);
         GameRegistry.register(itemCalculator);
+        GameRegistry.register(itemFluidContainer);
         networkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel(Reference.MODID);
         proxy.preInit();
     }
@@ -41,6 +46,11 @@ public class JustEnoughCalculation {
     public static void init(FMLInitializationEvent event) {
         NetworkRegistry.INSTANCE.registerGuiHandler(JustEnoughCalculation.instance, new GuiHandler());
         proxy.init();
+    }
+
+    @Mod.EventHandler
+    public void onServerStart(FMLServerStartingEvent event) {
+        event.registerServerCommand(new CommandGiveItem());
     }
 
     public static class Reference {

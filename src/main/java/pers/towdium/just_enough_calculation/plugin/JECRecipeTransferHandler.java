@@ -10,7 +10,13 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 import pers.towdium.just_enough_calculation.gui.guis.GuiEditor;
 import pers.towdium.just_enough_calculation.util.ItemStackHelper;
 
@@ -96,6 +102,19 @@ public class JECRecipeTransferHandler implements IRecipeTransferHandler {
                             JEIPlugin.recipeRegistry.getRecipeCategories(Collections.singletonList(recipeUID)).get(0)
                     ).iterator();
                     myGuiContainer.inventorySlots.getSlot(4).putStack(ItemStackHelper.toItemStackJEC(i.hasNext() ? i.next().copy() : null));
+
+                    Item bucket = Item.REGISTRY.getObject(new ResourceLocation("minecraft:bucket"));
+                    Fluid water = FluidRegistry.getFluid("water");
+                    if (bucket != null && water != null) {
+                        ItemStack itemStack = new ItemStack(bucket);
+                        net.minecraftforge.fluids.capability.IFluidHandler f = FluidUtil.getFluidHandler(itemStack);
+                        if (f != null)
+                            f.fill(new FluidStack(water, 1000), true);
+
+                        myGuiContainer.inventorySlots.getSlot(19).putStack(itemStack
+                        );
+                    }
+
                 }
             }
         }

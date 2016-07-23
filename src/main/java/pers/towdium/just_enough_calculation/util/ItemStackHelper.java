@@ -2,6 +2,8 @@ package pers.towdium.just_enough_calculation.util;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 
 import javax.annotation.Nonnull;
@@ -17,6 +19,7 @@ import java.util.function.Supplier;
 public class ItemStackHelper {
     public static final String keyAmount = "amount";
     public static final String keyType = "type";
+    public static final String keyFluid = "fluid";
 
     public static boolean isItemEqual(@Nullable ItemStack one, @Nullable ItemStack two) {
         return one != null && two != null && one.getItem() == two.getItem() && one.getMetadata() == two.getMetadata() &&
@@ -80,8 +83,6 @@ public class ItemStackHelper {
     public enum EnumStackAmountType {
         INVALID, NUMBER, PERCENTAGE, FLUID;
 
-
-
         public String getStringResult(long l) {
             switch (this) {
                 case NUMBER:
@@ -132,6 +133,10 @@ public class ItemStackHelper {
             return setInteger(itemStack, true, keyType, type.ordinal());
         }
 
+        public static ItemStack setFluid(ItemStack itemStack, Fluid fluid) {
+            return setString(itemStack, true, keyFluid, fluid.getName());
+        }
+
         public static ItemStack setData(ItemStack itemStack, EnumStackAmountType type, long amount) {
             setInteger(itemStack, true, keyType, type.ordinal());
             return setLong(itemStack, true, keyAmount, amount);
@@ -147,6 +152,10 @@ public class ItemStackHelper {
 
         public static ItemStack setBoolean(ItemStack itemStack, boolean isolate, String key, boolean value) {
             return setValue(itemStack, isolate, (nbtTagCompound -> nbtTagCompound.setBoolean(key, value)));
+        }
+
+        public static ItemStack setString(ItemStack itemStack, boolean isolate, String key, String value) {
+            return setValue(itemStack, isolate, (nbtTagCompound -> nbtTagCompound.setString(key, value)));
         }
 
         static ItemStack setValue(ItemStack itemStack, boolean isolate, Consumer<NBTTagCompound> func) {
@@ -171,6 +180,10 @@ public class ItemStackHelper {
 
         public static long getAmount(ItemStack itemStack) {
             return getLong(itemStack, true, keyAmount);
+        }
+
+        public static Fluid getFluid(ItemStack itemStack) {
+            return FluidRegistry.getFluid(getString(itemStack, true, keyFluid));
         }
 
         public static long getAmountItem(ItemStack itemStack) {
@@ -207,6 +220,10 @@ public class ItemStackHelper {
 
         public static long getLong(ItemStack itemStack, boolean isolate, String key) {
             return getTag(itemStack, isolate).getLong(key);
+        }
+
+        public static String getString(ItemStack itemStack, boolean isolate, String key) {
+            return getTag(itemStack, isolate).getString(key);
         }
 
         @SuppressWarnings("TrivialFunctionalExpressionUsage")

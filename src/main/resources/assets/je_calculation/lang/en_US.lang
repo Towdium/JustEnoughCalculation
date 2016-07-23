@@ -8,3 +8,4 @@ gui.editor.help=Help
 gui.editor.noRecord=No Record
 gui.editor.confirm=Confirm
 item.itemCalculator.name=Calculator
+item.itemFluidContainer.name=Fluid Container
