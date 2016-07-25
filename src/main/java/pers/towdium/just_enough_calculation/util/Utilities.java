@@ -104,6 +104,10 @@ public class Utilities {
         float z1, z2, z3, z4;
         final float CUBE_MIN = 0.0F;
         final float CUBE_MAX = 1.0F;
+        final float u1 = (centreLR - width / 2.0f) * 16.0f;
+        final float u2 = (centreLR + width / 2.0f) * 16.0f;
+        final float v1 = (centreUD - height / 2.0f) * 16.0f;
+        final float v2 = (centreUD + height / 2.0f) * 16.0f;
 
         switch (face) {
             case UP: {
@@ -160,10 +164,10 @@ public class Utilities {
             }
         }
 
-        return new BakedQuad(Ints.concat(vertexToInts(x1, y1, z1, Color.WHITE.getRGB(), texture, 16, 16),
-                vertexToInts(x2, y2, z2, Color.WHITE.getRGB(), texture, 16, 0),
-                vertexToInts(x3, y3, z3, Color.WHITE.getRGB(), texture, 0, 0),
-                vertexToInts(x4, y4, z4, Color.WHITE.getRGB(), texture, 0, 16)),
+        return new BakedQuad(Ints.concat(vertexToInts(x1, y1, z1, Color.WHITE.getRGB(), texture, u2, v2),
+                vertexToInts(x2, y2, z2, Color.WHITE.getRGB(), texture, u2, v1),
+                vertexToInts(x3, y3, z3, Color.WHITE.getRGB(), texture, u1, v1),
+                vertexToInts(x4, y4, z4, Color.WHITE.getRGB(), texture, u1, v2)),
                 itemRenderLayer, face, texture, true, net.minecraft.client.renderer.vertex.DefaultVertexFormats.ITEM);
     }
 

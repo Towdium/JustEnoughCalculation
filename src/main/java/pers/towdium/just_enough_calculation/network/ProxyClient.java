@@ -7,7 +7,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
-import pers.towdium.just_enough_calculation.event.ModelBakeEventHandler;
+import pers.towdium.just_enough_calculation.event.ModelEventHandler;
 import pers.towdium.just_enough_calculation.event.MouseEventHandler;
 
 /**
@@ -26,7 +26,7 @@ public class ProxyClient implements IProxy {
     @Override
     public void init() {
         MinecraftForge.EVENT_BUS.register(new MouseEventHandler());
-        MinecraftForge.EVENT_BUS.register(new ModelBakeEventHandler());
+        MinecraftForge.EVENT_BUS.register(new ModelEventHandler());
     }
 
     @Override

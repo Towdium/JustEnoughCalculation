@@ -11,7 +11,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import pers.towdium.just_enough_calculation.command.CommandGiveItem;
 import pers.towdium.just_enough_calculation.gui.GuiHandler;
 import pers.towdium.just_enough_calculation.item.ItemCalculator;
 import pers.towdium.just_enough_calculation.item.ItemFluidContainer;
@@ -50,7 +49,7 @@ public class JustEnoughCalculation {
 
     @Mod.EventHandler
     public void onServerStart(FMLServerStartingEvent event) {
-        event.registerServerCommand(new CommandGiveItem());
+        event.registerServerCommand(new JECCommand());
     }
 
     public static class Reference {

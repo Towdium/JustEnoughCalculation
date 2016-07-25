@@ -6,11 +6,14 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.IPerspectiveAwareModel;
+import net.minecraftforge.client.model.ItemTextureQuadConverter;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fluids.Fluid;
 import org.apache.commons.lang3.tuple.Pair;
@@ -20,9 +23,9 @@ import pers.towdium.just_enough_calculation.util.Utilities;
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
-import static pers.towdium.just_enough_calculation.util.Utilities.createBakedQuadForFace;
+import java.util.Map;
 
 /**
  * Author: Towdium
@@ -32,23 +35,49 @@ import static pers.towdium.just_enough_calculation.util.Utilities.createBakedQua
 @SuppressWarnings("NullableProblems")
 public class ModelFluidContainer implements IPerspectiveAwareModel {
     public static final ModelResourceLocation modelResourceLocation = new ModelResourceLocation("je_calculation:itemFluidContainer", "inventory");
+    public static final ResourceLocation liquidResourceLocation = new ResourceLocation("je_calculation:items/itemFluidContainer_liquid");
+    //public static final ResourceLocation coverResourceLocation = new ResourceLocation("je_calculation:items/itemFluidContainer_cover");
 
+    int color;
     IBakedModel originalModel;
     TextureAtlasSprite particle;
+    ImmutableMap<ItemCameraTransforms.TransformType, TRSRTransformation> transform;
+    List<BakedQuad> buffer;
 
-    public ModelFluidContainer(IBakedModel originalModel, TextureAtlasSprite particle) {
+
+    public ModelFluidContainer(IBakedModel originalModel, TextureAtlasSprite particle, int color) {
         this.originalModel = originalModel;
         this.particle = particle;
+        this.color = color;
+        try {
+            Class c = Class.forName("net.minecraftforge.client.model.ItemLayerModel$BakedItemModel");
+            //noinspection unchecked
+            transform = ((ImmutableMap<ItemCameraTransforms.TransformType, TRSRTransformation>) Utilities.getField(c, originalModel, "transforms"));
+        } catch (ReflectiveOperationException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
-        List<BakedQuad> buffer = new ArrayList<>(originalModel.getQuads(state, side, rand));
-        if (particle != null) {
-            buffer.add(createBakedQuadForFace(0.5f, 5 / 8.0f, 0.5f, 5 / 8.0f, 0.001f - 15 / 32.0f, 0, particle, EnumFacing.SOUTH));
-            buffer.add(createBakedQuadForFace(0.5f, 5 / 8.0f, 0.5f, 5 / 8.0f, 0.001f - 15 / 32.0f, 0, particle, EnumFacing.NORTH));
-        }
-        return buffer;
+        if (buffer == null && particle != null) {
+            buffer = new ArrayList<>(2);
+            TextureAtlasSprite fluid = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(liquidResourceLocation.toString());
+            //TextureAtlasSprite cover = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite("forge:items/bucket_cover");
+            buffer.addAll(ItemTextureQuadConverter.convertTexture(DefaultVertexFormats.ITEM, TRSRTransformation.identity(), fluid, particle, 7.498f / 16f, EnumFacing.NORTH, color));
+            buffer.addAll(ItemTextureQuadConverter.convertTexture(DefaultVertexFormats.ITEM, TRSRTransformation.identity(), fluid, particle, 8.502f / 16f, EnumFacing.SOUTH, color));
+            //buffer.add(ItemTextureQuadConverter.genQuad(DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP, TRSRTransformation.identity(), 0, 0, 16, 16, 7.496f / 16f, cover, EnumFacing.NORTH, 0xffffffff));
+            //buffer.add(ItemTextureQuadConverter.genQuad(DefaultVertexFormats.ITEM, TRSRTransformation.identity(), 0, 0, 16, 16, 8.504f / 16f, cover, EnumFacing.SOUTH, 0xffffffff));
+            //buffer.add(ItemTextureQuadConverter.genQuad(DefaultVertexFormats.ITEM, TRSRTransformation.identity(), 3, 3, 13, 13, 7.498f/16.0f, particle, EnumFacing.NORTH, 0xFFFFFFFF));
+            //buffer.add(ItemTextureQuadConverter.genQuad(DefaultVertexFormats.ITEM, TRSRTransformation.identity(), 3, 3, 13, 13, 8.502f/16.0f, particle, EnumFacing.SOUTH, 0xFFFFFFFF));
+            //buffer.add(createBakedQuadForFace(0.5f, 5 / 8.0f, 0.5f, 5 / 8.0f, 0.0001f - 15 / 32.0f, 0, particle, EnumFacing.SOUTH));
+            //buffer.add(createBakedQuadForFace(0.5f, 5 / 8.0f, 0.5f, 5 / 8.0f, 0.0001f - 15 / 32.0f, 0, particle, EnumFacing.NORTH));
+        } else if (buffer == null)
+            buffer = new ArrayList<>();
+        ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
+        builder.addAll(originalModel.getQuads(state, side, rand));
+        builder.addAll(buffer);
+        return builder.build();
     }
 
     @Override
@@ -84,19 +113,12 @@ public class ModelFluidContainer implements IPerspectiveAwareModel {
 
     @Override
     public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType) {
-        ImmutableMap<ItemCameraTransforms.TransformType, TRSRTransformation> transform;
-        try {
-            Class c = Class.forName("net.minecraftforge.client.model.ItemLayerModel$BakedItemModel");
-            //noinspection unchecked
-            transform = ((ImmutableMap<ItemCameraTransforms.TransformType, TRSRTransformation>) Utilities.getField(c, originalModel, "transforms"));
-        } catch (ReflectiveOperationException | RuntimeException e) {
-            e.printStackTrace();
-            return ((IPerspectiveAwareModel) originalModel).handlePerspective(cameraTransformType);
-        }
         return IPerspectiveAwareModel.MapWrapper.handlePerspective(this, transform, cameraTransformType);
     }
 
     static class ModelFluidContainerOverride extends ItemOverrideList {
+
+        static Map<String, IBakedModel> buffer = new HashMap<>();
 
         public ModelFluidContainerOverride() {
             super(ImmutableList.of());
@@ -105,9 +127,14 @@ public class ModelFluidContainer implements IPerspectiveAwareModel {
         @Override
         public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, World world, EntityLivingBase entity) {
             Fluid fluid = ItemStackHelper.NBT.getFluid(stack);
-            if (fluid != null)
-                return new ModelFluidContainer(((ModelFluidContainer) originalModel).originalModel, Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(fluid.getStill().toString()));
-            else
+            if (fluid != null && buffer.containsKey(fluid.getName()))
+                return buffer.get(fluid.getName());
+            else if (fluid != null) {
+                buffer.put(fluid.getName(),
+                        new ModelFluidContainer(((ModelFluidContainer) originalModel).originalModel,
+                                Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(fluid.getStill().toString()), fluid.getColor()));
+                return buffer.get(fluid.getName());
+            } else
                 return originalModel;
         }
     }
