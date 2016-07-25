@@ -34,9 +34,10 @@ import java.util.Map;
 
 @SuppressWarnings("NullableProblems")
 public class ModelFluidContainer implements IPerspectiveAwareModel {
+    //public static final ModelResourceLocation varientResourceLocation = new ModelResourceLocation("je_calculation:dynbucket", "inventory");
     public static final ModelResourceLocation modelResourceLocation = new ModelResourceLocation("je_calculation:itemFluidContainer", "inventory");
     public static final ResourceLocation liquidResourceLocation = new ResourceLocation("je_calculation:items/itemFluidContainer_liquid");
-    //public static final ResourceLocation coverResourceLocation = new ResourceLocation("je_calculation:items/itemFluidContainer_cover");
+    public static final ResourceLocation coverResourceLocation = new ResourceLocation("je_calculation:items/itemFluidContainer_cover");
 
     int color;
     IBakedModel originalModel;
@@ -63,15 +64,11 @@ public class ModelFluidContainer implements IPerspectiveAwareModel {
         if (buffer == null && particle != null) {
             buffer = new ArrayList<>(2);
             TextureAtlasSprite fluid = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(liquidResourceLocation.toString());
-            //TextureAtlasSprite cover = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite("forge:items/bucket_cover");
+            //TextureAtlasSprite cover = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(coverResourceLocation.toString());
             buffer.addAll(ItemTextureQuadConverter.convertTexture(DefaultVertexFormats.ITEM, TRSRTransformation.identity(), fluid, particle, 7.498f / 16f, EnumFacing.NORTH, color));
             buffer.addAll(ItemTextureQuadConverter.convertTexture(DefaultVertexFormats.ITEM, TRSRTransformation.identity(), fluid, particle, 8.502f / 16f, EnumFacing.SOUTH, color));
-            //buffer.add(ItemTextureQuadConverter.genQuad(DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP, TRSRTransformation.identity(), 0, 0, 16, 16, 7.496f / 16f, cover, EnumFacing.NORTH, 0xffffffff));
+            //buffer.add(ItemTextureQuadConverter.genQuad(DefaultVertexFormats.ITEM, TRSRTransformation.identity(), 0, 0, 16, 16, 7.496f / 16f, cover, EnumFacing.NORTH, 0xffffffff));
             //buffer.add(ItemTextureQuadConverter.genQuad(DefaultVertexFormats.ITEM, TRSRTransformation.identity(), 0, 0, 16, 16, 8.504f / 16f, cover, EnumFacing.SOUTH, 0xffffffff));
-            //buffer.add(ItemTextureQuadConverter.genQuad(DefaultVertexFormats.ITEM, TRSRTransformation.identity(), 3, 3, 13, 13, 7.498f/16.0f, particle, EnumFacing.NORTH, 0xFFFFFFFF));
-            //buffer.add(ItemTextureQuadConverter.genQuad(DefaultVertexFormats.ITEM, TRSRTransformation.identity(), 3, 3, 13, 13, 8.502f/16.0f, particle, EnumFacing.SOUTH, 0xFFFFFFFF));
-            //buffer.add(createBakedQuadForFace(0.5f, 5 / 8.0f, 0.5f, 5 / 8.0f, 0.0001f - 15 / 32.0f, 0, particle, EnumFacing.SOUTH));
-            //buffer.add(createBakedQuadForFace(0.5f, 5 / 8.0f, 0.5f, 5 / 8.0f, 0.0001f - 15 / 32.0f, 0, particle, EnumFacing.NORTH));
         } else if (buffer == null)
             buffer = new ArrayList<>();
         ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
