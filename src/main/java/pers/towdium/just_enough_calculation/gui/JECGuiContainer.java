@@ -200,7 +200,7 @@ public abstract class JECGuiContainer extends GuiContainer {
 
     protected abstract int getSizeSlot(int index);
 
-    protected void onItemStackSet(int index) {
+    public void onItemStackSet(int index) {
     }
 
     protected void updateLayout() {

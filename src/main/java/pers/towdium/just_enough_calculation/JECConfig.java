@@ -57,20 +57,6 @@ public class JECConfig {
             return "";
         }
 
-        public String getName() {
-            switch (this) {
-                case EnableInventoryCheck:
-                    return "EnableInventoryCheck";
-                case EnableFluidMerge:
-                    return "EnableFluidMerge";
-                case ListRecipeBlackList:
-                    return "ListRecipeBlackList";
-                case ListRecipeCategory:
-                    return "ListRecipeCategory";
-            }
-            return "";
-        }
-
         public String getCategory() {
             switch (this) {
                 case EnableInventoryCheck:
@@ -118,17 +104,17 @@ public class JECConfig {
             if (type != null) {
                 switch (this.getType()) {
                     case Boolean:
-                        return config.get(this.getCategory(), this.getName(), (Boolean) this.getDefault(), this.getComment());
+                        return config.get(this.getCategory(), this.toString(), (Boolean) this.getDefault(), this.getComment());
                     case ListString:
-                        return config.get(this.getCategory(), this.getName(), (String[]) this.getDefault(), this.getComment());
+                        return config.get(this.getCategory(), this.toString(), (String[]) this.getDefault(), this.getComment());
                 }
-                config.getCategory(EnumCategory.General.toString()).get(this.getName());
+                config.getCategory(EnumCategory.General.toString()).get(this.toString());
             }
-            return config.get(this.getCategory(), this.getName(), false, this.getComment());
+            return config.get(this.getCategory(), this.toString(), false, this.getComment());
         }
 
         public Property getProperty() {
-            return config.getCategory(EnumCategory.General.toString()).get(this.getName());
+            return config.getCategory(EnumCategory.General.toString()).get(this.toString());
         }
     }
 

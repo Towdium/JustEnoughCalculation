@@ -85,7 +85,9 @@ public class JECRecipeTransferHandler implements IRecipeTransferHandler {
 
             TriConsumer<Integer, Integer, List<ItemStack>> arranger = (start, end, stacks) -> {
                 for (int i = start; i <= end; i++) {
-                    editor.inventorySlots.getSlot(i).putStack(stacks.size() > i - start ? stacks.get(i - start) : null);
+                    ItemStack stack = stacks.size() > i - start ? stacks.get(i - start) : null;
+                    editor.inventorySlots.getSlot(i).putStack(stack);
+                    editor.onItemStackSet(i);
                 }
             };
 

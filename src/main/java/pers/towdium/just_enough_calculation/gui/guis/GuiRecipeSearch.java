@@ -101,7 +101,7 @@ public class GuiRecipeSearch extends GuiRecipeList {
     }
 
     @Override
-    protected void onItemStackSet(int index) {
+    public void onItemStackSet(int index) {
         super.onItemStackSet(index);
         updateLayout();
     }

@@ -5,6 +5,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -32,7 +33,7 @@ import java.util.function.BiFunction;
  */
 public class GuiEditor extends JECGuiContainer {
     public boolean newGroup = false;
-    ArrayList<GuiButton> buttonMode;
+    public ArrayList<GuiButton> buttonMode;
     GuiButton buttonLeft;
     GuiButton buttonRight;
     GuiButton buttonNew;
@@ -40,7 +41,7 @@ public class GuiEditor extends JECGuiContainer {
     GuiButton buttonSave;
     GuiButton buttonClear;
     GuiTextField textGroup;
-    int group = 0;
+    int group;
     String customName;
     Pair<String, Integer> dest;
     boolean initialized = false;
@@ -48,6 +49,8 @@ public class GuiEditor extends JECGuiContainer {
     public GuiEditor(GuiScreen parent, Pair<String, Integer> index) {
         super(new ContainerEditor(), parent);
         this.dest = index;
+        int size = PlayerRecordHelper.getSizeGroup();
+        group = size == 0 ? 0 : size - 1;
     }
 
     @Override
@@ -144,10 +147,10 @@ public class GuiEditor extends JECGuiContainer {
             switch (button.id) {
                 case 40:
                     if (customName == null) {
-                        if (group + 1 >= PlayerRecordHelper.getSizeGroup()) {
-                            group = 0;
+                        if (group == 0) {
+                            group = PlayerRecordHelper.getSizeGroup() - 1;
                         } else {
-                            ++group;
+                            --group;
                         }
                     } else {
                         if (PlayerRecordHelper.getSizeGroup() != 0) {
@@ -160,10 +163,10 @@ public class GuiEditor extends JECGuiContainer {
                     break;
                 case 41:
                     if (customName == null) {
-                        if (group == 0) {
-                            group = PlayerRecordHelper.getSizeGroup() - 1;
+                        if (group + 1 >= PlayerRecordHelper.getSizeGroup()) {
+                            group = 0;
                         } else {
-                            --group;
+                            ++group;
                         }
                     } else {
                         if (PlayerRecordHelper.getSizeGroup() != 0) {
@@ -215,6 +218,23 @@ public class GuiEditor extends JECGuiContainer {
         if (!(newGroup && textGroup.textboxKeyTyped(typedChar, keyCode))) {
             super.keyTyped(typedChar, keyCode);
         }
+    }
+
+    @Override
+    protected void handleMouseClick(Slot slotIn, int slotId, int mouseButton, ClickType type) {
+        super.handleMouseClick(slotIn, slotId, mouseButton, type);
+        onItemStackSet(slotId);
+    }
+
+    @Override
+    public void onItemStackSet(int index) {
+        ItemStack stack = inventorySlots.getSlot(index).getStack();
+        boolean fluid = stack != null && ItemStackHelper.NBT.getType(stack) == ItemStackHelper.EnumStackAmountType.FLUID;
+        GuiButton button = buttonMode.get(2 * index);
+        button.enabled = !fluid;
+        button.displayString = "#";
+        button = buttonMode.get(2 * index + 1);
+        button.displayString = fluid ? "F" : "I";
     }
 
     public void putRecipe(Recipe recipe) {
