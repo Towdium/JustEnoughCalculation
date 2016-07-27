@@ -34,10 +34,9 @@ import java.util.Map;
 
 @SuppressWarnings("NullableProblems")
 public class ModelFluidContainer implements IPerspectiveAwareModel {
-    //public static final ModelResourceLocation varientResourceLocation = new ModelResourceLocation("je_calculation:dynbucket", "inventory");
     public static final ModelResourceLocation modelResourceLocation = new ModelResourceLocation("je_calculation:itemFluidContainer", "inventory");
     public static final ResourceLocation liquidResourceLocation = new ResourceLocation("je_calculation:items/itemFluidContainer_liquid");
-    public static final ResourceLocation coverResourceLocation = new ResourceLocation("je_calculation:items/itemFluidContainer_cover");
+    //public static final ResourceLocation coverResourceLocation = new ResourceLocation("je_calculation:items/itemFluidContainer_cover");
 
     int color;
     IBakedModel originalModel;

@@ -9,3 +9,4 @@ gui.editor.noRecord=No Record
 gui.editor.confirm=Confirm
 item.itemCalculator.name=Calculator
 item.itemFluidContainer.name=Fluid Container
+item.itemFluidContainer.tooltip=Amount: %dmb

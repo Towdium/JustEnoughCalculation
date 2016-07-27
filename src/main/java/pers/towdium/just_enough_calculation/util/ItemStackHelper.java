@@ -4,10 +4,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
+import pers.towdium.just_enough_calculation.util.function.TriFunction;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -39,45 +42,93 @@ public class ItemStackHelper {
     }
 
     @Nullable
-    public static ItemStack toItemStackOfType(EnumStackAmountType type, @Nullable ItemStack itemStack) {
-        long amount = NBT.getAmount(itemStack);
-        switch (NBT.getType(itemStack)) {
+    public static ItemStack mergeStack(ItemStack stack1, ItemStack stack2, boolean positive, boolean newStack) {
+        if (!isItemEqual(stack1, stack2)) {
+            return null;
+        }
+        ItemStack buffer = newStack ? stack1.copy() : stack1;
+        BiFunction<Long, Long, Long> counter = positive ? (a, b) -> a + b : (a, b) -> a - b;
+        TriFunction<ItemStack, ItemStack, EnumStackAmountType, ItemStack> merger = (a, b, type) ->
+                NBT.setData(buffer, type, counter.apply(getAmountInType(type, stack1), getAmountInType(type, stack2)));
+        switch (NBT.getType(stack1)) {
             case NUMBER:
-                switch (type) {
+                switch (NBT.getType(stack2)) {
                     case NUMBER:
-                        return itemStack;
+                        return merger.apply(buffer, stack2, EnumStackAmountType.NUMBER);
                     case PERCENTAGE:
-                        return NBT.setData(itemStack, type, amount * 100);
-                    case FLUID:
-                        return NBT.setData(itemStack, type, amount * 1000);
+                        return merger.apply(buffer, stack2, EnumStackAmountType.PERCENTAGE);
                     default:
                         return null;
                 }
             case PERCENTAGE:
-                switch (type) {
+                switch (NBT.getType(stack2)) {
                     case NUMBER:
-                        return NBT.setData(itemStack, type, (amount + 99) / 100);
+                        return merger.apply(buffer, stack2, EnumStackAmountType.PERCENTAGE);
                     case PERCENTAGE:
-                        return itemStack;
-                    case FLUID:
-                        return NBT.setData(itemStack, type, amount * 10);
+                        return merger.apply(buffer, stack2, EnumStackAmountType.PERCENTAGE);
                     default:
                         return null;
                 }
             case FLUID:
-                switch (type) {
-                    case NUMBER:
-                        return NBT.setData(itemStack, type, (amount + 999) / 1000);
-                    case PERCENTAGE:
-                        return NBT.setData(itemStack, type, (amount + 9) / 10);
+                switch (NBT.getType(stack2)) {
                     case FLUID:
-                        return itemStack;
+                        return merger.apply(buffer, stack2, EnumStackAmountType.FLUID);
                     default:
                         return null;
                 }
             default:
                 return null;
         }
+    }
+
+    public static long getAmountInType(EnumStackAmountType type, @Nullable ItemStack itemStack) {
+        long amount = NBT.getAmount(itemStack);
+        switch (NBT.getType(itemStack)) {
+            case NUMBER:
+                switch (type) {
+                    case NUMBER:
+                        return amount;
+                    case PERCENTAGE:
+                        return amount * 100;
+                    case FLUID:
+                        return amount * 1000;
+                    default:
+                        return 0;
+                }
+            case PERCENTAGE:
+                switch (type) {
+                    case NUMBER:
+                        return (amount + 99) / 100;
+                    case PERCENTAGE:
+                        return amount;
+                    case FLUID:
+                        return amount * 10;
+                    default:
+                        return 0;
+                }
+            case FLUID:
+                switch (type) {
+                    case NUMBER:
+                        return (amount + 999) / 1000;
+                    case PERCENTAGE:
+                        return (amount + 9) / 10;
+                    case FLUID:
+                        return amount;
+                    default:
+                        return 0;
+                }
+            default:
+                return 0;
+        }
+    }
+
+    @Nullable
+    public static ItemStack toItemStackOfType(EnumStackAmountType type, @Nullable ItemStack itemStack) {
+        return NBT.setData(itemStack, type, getAmountInType(type, itemStack));
+    }
+
+    public static ItemStack toItemStackJEC(FluidStack stack) {
+        return NBT.setData(new ItemStack(JustEnoughCalculation.itemFluidContainer), stack);
     }
 
     public enum EnumStackAmountType {
@@ -138,8 +189,13 @@ public class ItemStackHelper {
         }
 
         public static ItemStack setData(ItemStack itemStack, EnumStackAmountType type, long amount) {
-            setInteger(itemStack, true, keyType, type.ordinal());
+            setType(itemStack, type);
             return setLong(itemStack, true, keyAmount, amount);
+        }
+
+        public static ItemStack setData(ItemStack itemStack, FluidStack stack) {
+            setFluid(itemStack, stack.getFluid());
+            return setAmount(itemStack, stack.amount);
         }
 
         public static ItemStack setInteger(ItemStack itemStack, boolean isolate, String key, int value) {

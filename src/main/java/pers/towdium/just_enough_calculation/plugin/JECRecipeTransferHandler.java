@@ -4,21 +4,15 @@ import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mezz.jei.gui.RecipesGui;
-import mezz.jei.gui.ingredients.IGuiIngredient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
 import pers.towdium.just_enough_calculation.gui.guis.GuiEditor;
 import pers.towdium.just_enough_calculation.util.ItemStackHelper;
+import pers.towdium.just_enough_calculation.util.function.TriConsumer;
+import pers.towdium.just_enough_calculation.util.wrappers.Singleton;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -26,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 /**
  * @author Towdium
@@ -53,70 +48,51 @@ public class JECRecipeTransferHandler implements IRecipeTransferHandler {
     @Override
     public IRecipeTransferError transferRecipe(@Nonnull Container container, @Nonnull IRecipeLayout iRecipeLayout, @Nonnull EntityPlayer entityPlayer, boolean maxTransfer, boolean doTransfer) {
         if (doTransfer) {
+            BiConsumer<List<ItemStack>, ItemStack> merger = (itemStacks, stack) -> {
+                Singleton<Boolean> flag = new Singleton<>(false);
+                itemStacks.forEach(itemStack ->
+                        flag.value = flag.value || ItemStackHelper.mergeStack(itemStack, stack, true, false) != null
+                );
+                if (!flag.value)
+                    itemStacks.add(stack);
+            };
             List<ItemStack> outputStacks = new ArrayList<>();
             List<ItemStack> inputStacks = new ArrayList<>();
-            LOOP:
-            for (IGuiIngredient<ItemStack> ingredient : iRecipeLayout.getItemStacks().getGuiIngredients().values()) {
-                if (ingredient.getAllIngredients().size() == 0) {
-                    continue;
-                }
-                if (ingredient.isInput()) {
-                    ItemStack itemStack = ingredient.getAllIngredients().get(0);
-                    for (ItemStack exist : inputStacks) {
-                        if (ItemStackHelper.isItemEqual(exist, itemStack)) {
-                            exist.stackSize += itemStack.stackSize;
-                            continue LOOP;
-                        }
-                    }
-                    inputStacks.add(itemStack.copy());
-                } else {
-                    ItemStack itemStack = ingredient.getAllIngredients().get(0);
-                    for (ItemStack exist : outputStacks) {
-                        if (ItemStackHelper.isItemEqual(exist, itemStack)) {
-                            exist.stackSize += itemStack.stackSize;
-                            continue LOOP;
-                        }
-                    }
-                    outputStacks.add(itemStack.copy());
-                }
-            }
+
+            iRecipeLayout.getItemStacks().getGuiIngredients().values().forEach(ingredient -> {
+                if (ingredient.getAllIngredients().size() != 0)
+                    merger.accept(ingredient.isInput() ? inputStacks :
+                            outputStacks, ItemStackHelper.toItemStackJEC(ingredient.getAllIngredients().get(0).copy()));
+            });
+            iRecipeLayout.getFluidStacks().getGuiIngredients().values().forEach(ingredient -> {
+                if (ingredient.getAllIngredients().size() != 0)
+                    merger.accept(ingredient.isInput() ? inputStacks :
+                            outputStacks, ItemStackHelper.toItemStackJEC(ingredient.getAllIngredients().get(0).copy()));
+            });
+
+            Iterator<ItemStack> iterator = JEIPlugin.recipeRegistry.getCraftingItems(
+                    JEIPlugin.recipeRegistry.getRecipeCategories(Collections.singletonList(recipeUID)).get(0)
+            ).iterator();
+
             Minecraft mc = Minecraft.getMinecraft();
             RecipesGui gui = (RecipesGui) mc.currentScreen;
-            if (gui != null) {
-                GuiScreen parent = gui.getParentScreen();
-                if (parent instanceof GuiEditor) {
-                    ((GuiEditor) parent).newGroup = false;
-                    mc.displayGuiScreen(parent);
-                } else {
-                    mc.displayGuiScreen(new GuiEditor(parent, null));
-                }
-                GuiContainer myGuiContainer = (GuiContainer) mc.currentScreen;
-                if (myGuiContainer != null) {
-                    for (int i = 0; i <= outputStacks.size() - 1 && i <= 3; i++) {
-                        myGuiContainer.inventorySlots.getSlot(i).putStack(ItemStackHelper.toItemStackJEC(outputStacks.get(i)));
-                    }
-                    for (int i = 8; i <= 8 + inputStacks.size() - 1 && i <= 19; i++) {
-                        myGuiContainer.inventorySlots.getSlot(i).putStack(ItemStackHelper.toItemStackJEC(inputStacks.get(i - 8)));
-                    }
-                    Iterator<ItemStack> i = JEIPlugin.recipeRegistry.getCraftingItems(
-                            JEIPlugin.recipeRegistry.getRecipeCategories(Collections.singletonList(recipeUID)).get(0)
-                    ).iterator();
-                    myGuiContainer.inventorySlots.getSlot(4).putStack(ItemStackHelper.toItemStackJEC(i.hasNext() ? i.next().copy() : null));
-
-                    Item bucket = Item.REGISTRY.getObject(new ResourceLocation("minecraft:bucket"));
-                    Fluid water = FluidRegistry.getFluid("water");
-                    if (bucket != null && water != null) {
-                        ItemStack itemStack = new ItemStack(bucket);
-                        net.minecraftforge.fluids.capability.IFluidHandler f = FluidUtil.getFluidHandler(itemStack);
-                        if (f != null)
-                            f.fill(new FluidStack(water, 1000), true);
-
-                        myGuiContainer.inventorySlots.getSlot(19).putStack(itemStack
-                        );
-                    }
-
-                }
+            if (gui == null) {
+                return null;
             }
+            GuiScreen parent = gui.getParentScreen();
+            GuiEditor editor = parent instanceof GuiEditor ? (GuiEditor) parent : new GuiEditor(parent, null);
+
+            TriConsumer<Integer, Integer, List<ItemStack>> arranger = (start, end, stacks) -> {
+                for (int i = start; i <= end; i++) {
+                    editor.inventorySlots.getSlot(i).putStack(stacks.size() > i - start ? stacks.get(i - start) : null);
+                }
+            };
+
+            mc.displayGuiScreen(editor);
+            arranger.accept(0, 3, outputStacks);
+            arranger.accept(8, 19, inputStacks);
+            arranger.accept(4, 7, iterator.hasNext() ?
+                    Collections.singletonList(ItemStackHelper.toItemStackJEC(iterator.next())) : new ArrayList<>());
         }
         return null;
     }

@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.block.model.ModelManager;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -88,10 +89,16 @@ public abstract class JECGuiContainer extends GuiContainer {
             if (activeSlot != -1) {
                 inventorySlots.getSlot(activeSlot).putStack(temp);
                 setActiveSlot(-1);
+                mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
             } else {
                 mc.displayGuiScreen(parent);
             }
         }
+    }
+
+    @SuppressWarnings("NullableProblems")
+    protected void handleMouseClick(Slot slotIn, int slotId, int mouseButton, ClickType type) {
+        inventorySlots.slotClick(slotIn == null ? slotId : slotIn.slotNumber, mouseButton, type, mc.thePlayer);
     }
 
     @SuppressWarnings("ConstantConditions")
