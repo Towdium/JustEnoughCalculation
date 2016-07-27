@@ -13,9 +13,32 @@ import java.io.File;
 
 public class JECConfig {
     public static Configuration config;
+    public static Object empty;
+
+    public static void preInit(FMLPreInitializationEvent event) {
+        config = new Configuration(new File(event.getModConfigurationDirectory(), "JustEnoughCalculation" + ".cfg"), JustEnoughCalculation.Reference.VERSION);
+        config.load();
+        handleFormerVersion();
+        handleInit();
+        config.save();
+    }
+
+    public static void handleFormerVersion() {
+    }
+
+    public static void handleInit() {
+        for (EnumItems item : EnumItems.values()) {
+            item.init();
+        }
+    }
+
+    public static void save() {
+        config.save();
+    }
 
     public enum EnumItems {
         EnableInventoryCheck,
+        EnableFluidMerge,
         ListRecipeBlackList,
         ListRecipeCategory;
 
@@ -23,6 +46,8 @@ public class JECConfig {
             switch (this) {
                 case EnableInventoryCheck:
                     return "Set to false to disable auto inventory check";
+                case EnableFluidMerge:
+                    return "Set to true to enable fluid merging when quick transfer recipes";
                 case ListRecipeBlackList:
                     return "Add string identifier here to disable quick transfer of this type recipe\n" +
                             "Names can be found in ListRecipeCategory";
@@ -36,6 +61,8 @@ public class JECConfig {
             switch (this) {
                 case EnableInventoryCheck:
                     return "EnableInventoryCheck";
+                case EnableFluidMerge:
+                    return "EnableFluidMerge";
                 case ListRecipeBlackList:
                     return "ListRecipeBlackList";
                 case ListRecipeCategory:
@@ -47,6 +74,8 @@ public class JECConfig {
         public String getCategory() {
             switch (this) {
                 case EnableInventoryCheck:
+                    return EnumCategory.General.toString();
+                case EnableFluidMerge:
                     return EnumCategory.General.toString();
                 case ListRecipeBlackList:
                     return EnumCategory.General.toString();
@@ -60,6 +89,8 @@ public class JECConfig {
             switch (this) {
                 case EnableInventoryCheck:
                     return EnumType.Boolean;
+                case EnableFluidMerge:
+                    return EnumType.Boolean;
                 case ListRecipeBlackList:
                     return EnumType.ListString;
                 case ListRecipeCategory:
@@ -72,6 +103,8 @@ public class JECConfig {
             switch (this) {
                 case EnableInventoryCheck:
                     return true;
+                case EnableFluidMerge:
+                    return false;
                 case ListRecipeBlackList:
                     return new String[0];
                 case ListRecipeCategory:
@@ -114,29 +147,5 @@ public class JECConfig {
     }
 
     public enum EnumType {Boolean, ListString, Error}
-
-    public static Object empty;
-
-    public static void preInit(FMLPreInitializationEvent event) {
-        config = new Configuration(new File(event.getModConfigurationDirectory(), "JustEnoughCalculation" + ".cfg"), JustEnoughCalculation.Reference.VERSION);
-        config.load();
-        handleFormerVersion();
-        handleInit();
-        config.save();
-    }
-
-    public static void handleFormerVersion() {
-        config.getCategory("general").remove("RecipeTypeSupport");
-    }
-
-    public static void handleInit() {
-        for (EnumItems item : EnumItems.values()) {
-            item.init();
-        }
-    }
-
-    public static void save() {
-        config.save();
-    }
 }
 

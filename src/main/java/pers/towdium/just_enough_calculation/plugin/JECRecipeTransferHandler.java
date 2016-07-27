@@ -9,6 +9,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
+import pers.towdium.just_enough_calculation.JECConfig;
 import pers.towdium.just_enough_calculation.gui.guis.GuiEditor;
 import pers.towdium.just_enough_calculation.util.ItemStackHelper;
 import pers.towdium.just_enough_calculation.util.function.TriConsumer;
@@ -51,7 +52,7 @@ public class JECRecipeTransferHandler implements IRecipeTransferHandler {
             BiConsumer<List<ItemStack>, ItemStack> merger = (itemStacks, stack) -> {
                 Singleton<Boolean> flag = new Singleton<>(false);
                 itemStacks.forEach(itemStack ->
-                        flag.value = flag.value || ItemStackHelper.mergeStack(itemStack, stack, true, false) != null
+                        flag.value = flag.value || ItemStackHelper.mergeStack(itemStack, stack, true, false, JECConfig.EnumItems.EnableFluidMerge.getProperty().getBoolean()) != null
                 );
                 if (!flag.value)
                     itemStacks.add(stack);

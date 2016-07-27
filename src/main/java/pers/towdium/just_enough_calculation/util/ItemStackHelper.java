@@ -42,7 +42,7 @@ public class ItemStackHelper {
     }
 
     @Nullable
-    public static ItemStack mergeStack(ItemStack stack1, ItemStack stack2, boolean positive, boolean newStack) {
+    public static ItemStack mergeStack(ItemStack stack1, ItemStack stack2, boolean positive, boolean newStack, boolean mregeFluid) {
         if (!isItemEqual(stack1, stack2)) {
             return null;
         }
@@ -72,7 +72,10 @@ public class ItemStackHelper {
             case FLUID:
                 switch (NBT.getType(stack2)) {
                     case FLUID:
-                        return merger.apply(buffer, stack2, EnumStackAmountType.FLUID);
+                        if (mregeFluid && NBT.getFluid(stack1) == NBT.getFluid(stack2))
+                            return merger.apply(buffer, stack2, EnumStackAmountType.FLUID);
+                        else
+                            return null;
                     default:
                         return null;
                 }
@@ -194,6 +197,7 @@ public class ItemStackHelper {
         }
 
         public static ItemStack setData(ItemStack itemStack, FluidStack stack) {
+            setType(itemStack, EnumStackAmountType.FLUID);
             setFluid(itemStack, stack.getFluid());
             return setAmount(itemStack, stack.amount);
         }
