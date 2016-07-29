@@ -20,8 +20,6 @@ public abstract class JECContainer extends Container {
     InventoryBasic inventory;
     List<int[]> slotBuffer = new ArrayList<>();
 
-    public enum EnumSlotType {SELECT, AMOUNT, DISABLED}
-
     public JECContainer() {
         addSlots();
         int count = 0;
@@ -83,4 +81,6 @@ public abstract class JECContainer extends Container {
     protected abstract void addSlots();
 
     public abstract EnumSlotType getSlotType(int index);
+
+    public enum EnumSlotType {SELECT, AMOUNT, DISABLED, PICKER}
 }

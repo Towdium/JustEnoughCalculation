@@ -22,8 +22,8 @@ import pers.towdium.just_enough_calculation.util.Utilities;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.BiFunction;
-import java.util.function.Supplier;
 
 /**
  * Author:  Towdium
@@ -102,7 +102,7 @@ public abstract class JECGuiContainer extends GuiContainer {
     }
 
     @SuppressWarnings("ConstantConditions")
-    public boolean handleMouseEvent(int mouseX, int mouseY) {
+    public boolean handleMouseEvent() {
         if (Mouse.getEventButton() == 0 && Mouse.getEventButtonState()) {
             if (activeSlot == -1) {
                 Slot slot = getSlotUnderMouse();
@@ -120,6 +120,11 @@ public abstract class JECGuiContainer extends GuiContainer {
                                 mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
                             }
                             break;
+                        case PICKER:
+                            if (slot.getHasStack()) {
+                                onItemStackPick(slot.getStack());
+                                mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
+                            }
                     }
                 }
                 return false;
@@ -194,6 +199,13 @@ public abstract class JECGuiContainer extends GuiContainer {
         fontRendererIn.drawString(text, x - fontRendererIn.getStringWidth(text) / 2, y, color);
     }
 
+    protected void putStacks(int start, int end, List<ItemStack> stacks, int index) {
+        for (int i = start; i <= end; i++) {
+            int pos = index + i - start;
+            inventorySlots.getSlot(i).putStack(stacks.size() > pos ? stacks.get(pos) : null);
+        }
+    }
+
     // Methods to be overridden
     @Nullable
     protected abstract String getButtonTooltip(int buttonId);
@@ -206,14 +218,10 @@ public abstract class JECGuiContainer extends GuiContainer {
     protected void updateLayout() {
     }
 
-    protected BiFunction<Long, ItemStackHelper.EnumStackAmountType, String> getFormer() {
-        return (aLong, type) -> type.getStringEditor(aLong);
+    protected void onItemStackPick(ItemStack itemStack) {
     }
 
-    static class RenderItemSupplier implements Supplier<RenderItem> {
-        @Override
-        public RenderItem get() {
-            return null;
-        }
+    protected BiFunction<Long, ItemStackHelper.EnumStackAmountType, String> getFormer() {
+        return (aLong, type) -> type.getStringEditor(aLong);
     }
 }

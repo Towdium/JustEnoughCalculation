@@ -22,11 +22,11 @@ import java.util.function.Function;
  * Author:  Towdium
  * Created: 2016/6/15.
  */
-public class GuiRecipeSearch extends GuiRecipeList {
+public class GuiListSearch extends GuiList {
     GuiButton buttonMode;
     EnumMode mode = EnumMode.OUT;
 
-    public GuiRecipeSearch(GuiScreen parent, ItemStack itemStack) {
+    public GuiListSearch(GuiScreen parent, ItemStack itemStack) {
         super(new JECContainer() {
             @Override
             protected void addSlots() {
@@ -82,7 +82,7 @@ public class GuiRecipeSearch extends GuiRecipeList {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID, "textures/gui/guiRecipeSearch.png"));
+        this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID, "textures/gui/guiListSearch.png"));
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
     }
 

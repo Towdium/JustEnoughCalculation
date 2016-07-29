@@ -14,9 +14,9 @@ import java.util.List;
  * Author: Towdium
  * Date:   2016/6/29.
  */
-public class GuiRecipeViewer extends GuiRecipeList {
+public class GuiListViewer extends GuiList {
 
-    public GuiRecipeViewer(GuiScreen parent) {
+    public GuiListViewer(GuiScreen parent) {
         super(new JECContainer() {
             @Override
             protected void addSlots() {
@@ -39,7 +39,7 @@ public class GuiRecipeViewer extends GuiRecipeList {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID, "textures/gui/guiRecipeViewer.png"));
+        this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID, "textures/gui/guiListViewer.png"));
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
     }
 

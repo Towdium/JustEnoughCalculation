@@ -20,7 +20,7 @@ import java.util.List;
  * Author:  Towdium
  * Created: 2016/6/15.
  */
-public abstract class GuiRecipeList extends JECGuiContainer {
+public abstract class GuiList extends JECGuiContainer {
     int row;
     int top;
     int page = 1;
@@ -29,7 +29,7 @@ public abstract class GuiRecipeList extends JECGuiContainer {
     List<GuiButton> buttons;
     List<Pair<String, Integer>> result;
 
-    public GuiRecipeList(Container inventorySlotsIn, GuiScreen parent, int row, int top) {
+    public GuiList(Container inventorySlotsIn, GuiScreen parent, int row, int top) {
         super(inventorySlotsIn, parent);
         this.row = row;
         this.top = top;

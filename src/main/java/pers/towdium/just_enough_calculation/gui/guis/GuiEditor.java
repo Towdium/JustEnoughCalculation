@@ -131,17 +131,23 @@ public class GuiEditor extends JECGuiContainer {
     protected void actionPerformed(GuiButton button) throws IOException {
         if (button.id < 40) {
             Slot slot = inventorySlots.getSlot(button.id / 2);
+            ItemStack stack = slot.getStack();
             if (button.id % 2 == 0) {
                 switch (button.displayString) {
                     case "#":
-                        slot.putStack(ItemStackHelper.toItemStackOfType(ItemStackHelper.EnumStackAmountType.PERCENTAGE, slot.getStack()));
+                        slot.putStack(stack == null ? null : ItemStackHelper.toItemStackOfType(ItemStackHelper.EnumStackAmountType.PERCENTAGE, stack));
                         button.displayString = "%";
                         break;
                     case "%":
-                        slot.putStack(ItemStackHelper.toItemStackOfType(ItemStackHelper.EnumStackAmountType.NUMBER, slot.getStack()));
+                        slot.putStack(stack == null ? null : ItemStackHelper.toItemStackOfType(ItemStackHelper.EnumStackAmountType.NUMBER, stack));
                         button.displayString = "#";
                         break;
                 }
+            } else {
+                mc.displayGuiScreen(new GuiPickerFluid(itemStack -> {
+                    mc.displayGuiScreen(this);
+                    slot.putStack(itemStack);
+                }, this));
             }
         } else {
             switch (button.id) {

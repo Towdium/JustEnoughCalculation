@@ -4,7 +4,6 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import org.lwjgl.input.Mouse;
 import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
 
 /**
@@ -16,9 +15,9 @@ public class MouseEventHandler {
     public void onMouseClick(GuiScreenEvent.MouseInputEvent.Pre event) {
         if (event.getGui() instanceof JECGuiContainer) {
             GuiScreen gui = event.getGui();
-            int y = gui.height - Mouse.getEventY() * gui.height / gui.mc.displayHeight - 1;
-            int x = Mouse.getEventX() * gui.width / gui.mc.displayWidth;
-            event.setCanceled(((JECGuiContainer) gui).handleMouseEvent(x, y));
+            //int y = gui.height - Mouse.getEventY() * gui.height / gui.mc.displayHeight - 1;
+            //int x = Mouse.getEventX() * gui.width / gui.mc.displayWidth;
+            event.setCanceled(((JECGuiContainer) gui).handleMouseEvent());
         }
     }
 }

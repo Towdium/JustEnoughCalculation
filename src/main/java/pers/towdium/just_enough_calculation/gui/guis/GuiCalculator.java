@@ -80,13 +80,13 @@ public class GuiCalculator extends JECGuiContainer {
     protected void actionPerformed(GuiButton button) throws IOException {
         switch (button.id) {
             case 1:
-                mc.displayGuiScreen(new GuiRecipeSearch(this, inventorySlots.getSlot(0).getStack()));
+                mc.displayGuiScreen(new GuiListSearch(this, inventorySlots.getSlot(0).getStack()));
                 return;
             case 2:
                 mc.displayGuiScreen(new GuiEditor(this, null));
                 return;
             case 3:
-                mc.displayGuiScreen(new GuiRecipeViewer(this));
+                mc.displayGuiScreen(new GuiListViewer(this));
         }
     }
 

@@ -6,7 +6,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import pers.towdium.just_enough_calculation.gui.guis.GuiCalculator;
 import pers.towdium.just_enough_calculation.gui.guis.GuiEditor;
-import pers.towdium.just_enough_calculation.gui.guis.GuiRecipeSearch;
+import pers.towdium.just_enough_calculation.gui.guis.GuiListSearch;
 
 /**
  * Author:  Towdium
@@ -24,7 +24,7 @@ public class GuiHandler implements IGuiHandler {
             case GuiId.CALCULATOR:
                 return new GuiCalculator(null);
             case GuiId.RECIPE_SEARCH:
-                return new GuiRecipeSearch(Minecraft.getMinecraft().currentScreen, null);
+                return new GuiListSearch(Minecraft.getMinecraft().currentScreen, null);
             case GuiId.EDITOR:
                 return new GuiEditor(null, null);
         }
