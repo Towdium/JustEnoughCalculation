@@ -33,7 +33,7 @@ public class GuiPickerFluid extends GuiPicker {
         super(new JECContainer() {
             @Override
             protected void addSlots() {
-                addSlotGroup(8, 72, 18, 18, 4, 9);
+                addSlotGroup(8, 70, 18, 18, 4, 9);
                 addSlotSingle(9, 9);
             }
 
@@ -78,13 +78,13 @@ public class GuiPickerFluid extends GuiPicker {
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
         fieldAmount.drawTextBox();
         drawCenteredStringWithoutShadow(fontRendererObj, "mb", guiLeft + 107, guiTop + 13, 4210752);
-        fontRendererObj.drawString("Search:", guiLeft + 7, guiTop + 53, 4210752);
+        fontRendererObj.drawString("Search:", guiLeft + 7, guiTop + 51, 4210752);
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
     }
 
     @Override
     GuiTextField getSearchField(FontRenderer renderer) {
-        return new GuiTextField(0, renderer, guiLeft + 52, guiTop + 48, 75, 18);
+        return new GuiTextField(0, renderer, guiLeft + 52, guiTop + 46, 75, 18);
     }
 
     @Override

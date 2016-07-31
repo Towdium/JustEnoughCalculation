@@ -59,4 +59,8 @@ public class PlayerRecordHelper {
     public static ItemStack getOreDictPref(List<ItemStack> stacks) {
         return playerHandler.getOreDictPref(stacks);
     }
+
+    public static void addOreDictPref(ItemStack stack) {
+        playerHandler.addOreDictPref(stack);
+    }
 }

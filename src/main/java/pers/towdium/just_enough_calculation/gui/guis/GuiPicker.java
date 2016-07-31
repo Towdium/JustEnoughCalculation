@@ -73,16 +73,16 @@ public abstract class GuiPicker extends JECGuiContainer {
         });
         searchField.setTextColor(buffer.size() == 0 ? 0xFF0000 : 0xFFFFFF);
         total = (buffer.size() + (9 * row) - 1) / (9 * row);
-        page = page > total ? total : page;
-        putStacks(0, row * 9 - 1, buffer, row * 9 * (page - 1));
+        page = page > total ? total : page == 0 && total != 0 ? 1 : page;
+        putStacks(0, row * 9 - 1, buffer, page != 0 ? row * 9 * (page - 1) : 0);
     }
 
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
         if (button.id == 0)
-            page = page == total ? 1 : page + 1;
+            page = total == 0 ? 0 : page == total ? 1 : page + 1;
         else
-            page = page == 1 ? total : page - 1;
+            page = total == 0 ? 0 : page == 1 ? total : page - 1;
         updateLayout();
     }
 

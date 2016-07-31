@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import pers.towdium.just_enough_calculation.JECConfig;
 import pers.towdium.just_enough_calculation.core.Recipe;
 import pers.towdium.just_enough_calculation.gui.guis.GuiEditor;
+import pers.towdium.just_enough_calculation.gui.guis.GuiPickerOreDict;
 import pers.towdium.just_enough_calculation.util.ItemStackHelper;
 import pers.towdium.just_enough_calculation.util.PlayerRecordHelper;
 import pers.towdium.just_enough_calculation.util.function.TriConsumer;
@@ -39,30 +40,25 @@ public class JECRecipeTransferHandler implements IRecipeTransferHandler {
     }
 
     @SuppressWarnings("unchecked")
-    static void checkTemp() {
+    static void checkTemp(GuiEditor editor) {
         Singleton<Boolean> flag = new Singleton<>(false);
         for (Recipe.EnumStackIOType type : Recipe.EnumStackIOType.values()) {
             tempList.get(type).stream().filter(o -> o.value instanceof List).forEach(o -> {
                 flag.value = true;
                 ItemStack buffer = PlayerRecordHelper.getOreDictPref((List<ItemStack>) o.value);
                 if (buffer == null) {
-                    // TODO
-                    o.value = ((List) o.value).get(0);
-                    checkTemp();
+                    Minecraft.getMinecraft().displayGuiScreen(new GuiPickerOreDict(editor, (List<ItemStack>) o.value, itemStack -> {
+                        o.value = itemStack;
+                        PlayerRecordHelper.addOreDictPref(itemStack);
+                        checkTemp(editor);
+                    }));
                 } else {
                     o.value = buffer;
+                    checkTemp(editor);
                 }
             });
         }
         if (!flag.value) {
-            Minecraft mc = Minecraft.getMinecraft();
-            RecipesGui gui = (RecipesGui) mc.currentScreen;
-            if (gui == null) {
-                return;
-            }
-            GuiScreen parent = gui.getParentScreen();
-            GuiEditor editor = parent instanceof GuiEditor ? (GuiEditor) parent : new GuiEditor(parent, null);
-
             BiConsumer<List<ItemStack>, ItemStack> merger = (itemStacks, stack) -> {
                 Singleton<Boolean> flag1 = new Singleton<>(false);
                 itemStacks.forEach(itemStack ->
@@ -82,7 +78,7 @@ public class JECRecipeTransferHandler implements IRecipeTransferHandler {
                 }
             };
 
-            mc.displayGuiScreen(editor);
+            Minecraft.getMinecraft().displayGuiScreen(editor);
             arranger.accept(0, 3, tempList.get(Recipe.EnumStackIOType.OUTPUT));
             arranger.accept(8, 19, tempList.get(Recipe.EnumStackIOType.INPUT));
             arranger.accept(4, 7, tempList.get(Recipe.EnumStackIOType.CATALYST));
@@ -132,7 +128,14 @@ public class JECRecipeTransferHandler implements IRecipeTransferHandler {
             tempList.get(Recipe.EnumStackIOType.CATALYST).
                     add(buffer.size() == 1 ? new Singleton<>(buffer.get(0)) : new Singleton<>(buffer));
             // check temp data
-            checkTemp();
+            Minecraft mc = Minecraft.getMinecraft();
+            RecipesGui gui = (RecipesGui) mc.currentScreen;
+            if (gui == null) {
+                return null;
+            }
+            GuiScreen parent = gui.getParentScreen();
+            GuiEditor editor = parent instanceof GuiEditor ? (GuiEditor) parent : new GuiEditor(parent, null);
+            checkTemp(editor);
         }
         return null;
     }
