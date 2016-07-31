@@ -1,6 +1,7 @@
 package pers.towdium.just_enough_calculation.core;
 
 import net.minecraft.item.ItemStack;
+import pers.towdium.just_enough_calculation.util.ItemStackHelper;
 import pers.towdium.just_enough_calculation.util.wrappers.Pair;
 import pers.towdium.just_enough_calculation.util.wrappers.Singleton;
 import pers.towdium.just_enough_calculation.util.wrappers.Trio;
@@ -151,5 +152,33 @@ public class PlayerHandlerSP {
             }
         }
         return -1;
+    }
+
+    @Nullable
+    public ItemStack getOreDictPref(List<ItemStack> stacks) {
+        Singleton<ItemStack> buffer = new Singleton<>(null);
+        stacks.forEach(itemStack -> {
+            if (buffer.value == null)
+                oreDictPref.forEach(pref -> {
+                    if (buffer.value == null && ItemStackHelper.isItemEqual(itemStack, pref))
+                        buffer.value = itemStack.copy();
+                });
+        });
+        return buffer.value;
+    }
+
+    public void addOreDictPref(ItemStack stack) {
+        Singleton<Boolean> flag = new Singleton<>(false);
+        oreDictPref.forEach(itemStack -> {
+            if (!flag.value && ItemStackHelper.isItemEqual(stack, itemStack))
+                flag.value = true;
+        });
+        if (!flag.value) {
+            oreDictPref.add(ItemStackHelper.NBT.setAmount(stack.copy(), 0));
+        }
+    }
+
+    public void removeOreDictPref(int index) {
+        oreDictPref.remove(index);
     }
 }

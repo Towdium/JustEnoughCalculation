@@ -124,7 +124,6 @@ public class GuiPickerFluid extends GuiPicker {
             }
             callback.accept(ItemStackHelper.NBT.setAmount(inventorySlots.getSlot(36).getStack(), amount));
         }
-
         super.actionPerformed(button);
     }
 }

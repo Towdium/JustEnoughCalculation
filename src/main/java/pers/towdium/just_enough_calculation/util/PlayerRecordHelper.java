@@ -55,4 +55,8 @@ public class PlayerRecordHelper {
     public static int getIndexGroup(String s) {
         return playerHandler.getIndexGroup(s);
     }
+
+    public static ItemStack getOreDictPref(List<ItemStack> stacks) {
+        return playerHandler.getOreDictPref(stacks);
+    }
 }

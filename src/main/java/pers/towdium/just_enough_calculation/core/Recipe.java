@@ -109,7 +109,7 @@ public class Recipe {
         return buffer;
     }
 
-    enum EnumStackIOType {
+    public enum EnumStackIOType {
         OUTPUT, CATALYST, INPUT;
 
         public int getLength() {

@@ -32,8 +32,8 @@ import java.util.function.BiFunction;
  * Created: 2016/6/21.
  */
 public class GuiEditor extends JECGuiContainer {
-    public boolean newGroup = false;
     public ArrayList<GuiButton> buttonMode;
+    boolean newGroup = false;
     GuiButton buttonLeft;
     GuiButton buttonRight;
     GuiButton buttonNew;
@@ -45,6 +45,7 @@ public class GuiEditor extends JECGuiContainer {
     String customName;
     Pair<String, Integer> dest;
     boolean initialized = false;
+
 
     public GuiEditor(GuiScreen parent, Pair<String, Integer> index) {
         super(new ContainerEditor(), parent);
