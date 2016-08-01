@@ -1,13 +1,8 @@
 package pers.towdium.just_enough_calculation.util;
 
-import com.google.common.primitives.Ints;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.EnumFacing;
 import pers.towdium.just_enough_calculation.util.function.TriFunction;
 
-import java.awt.*;
 import java.lang.reflect.Field;
 
 /**
@@ -51,8 +46,9 @@ public class Utilities {
 
     public static String cutFloat(float f, int size) {
         TriFunction<Float, Integer, Integer, String> form = (fl, len, max) -> {
-            int scale = len - 1 - String.valueOf(fl.intValue()).length();
-            return String.format("%." + (scale > max ? max : scale) + 'f', fl);
+            int scale = len - 2 - String.valueOf(fl.intValue()).length();
+            int cut = scale > max ? max : scale;
+            return String.format("%." + (cut < 0 ? 0 : cut) + 'f', fl);
         };
         int scale = (int) Math.log10(f) / 3;
         switch (scale) {
@@ -83,94 +79,6 @@ public class Utilities {
         return fontRenderer.getStringWidth(s) <= length ? s : fontRenderer.trimStringToWidth(s, length - 6) + "...";
     }
 
-    // FOR MODEL CALCULATING
-
-    public static int[] vertexToInts(float x, float y, float z, int color, TextureAtlasSprite texture, float u, float v) {
-        return new int[]{
-                Float.floatToRawIntBits(x),
-                Float.floatToRawIntBits(y),
-                Float.floatToRawIntBits(z),
-                color,
-                Float.floatToRawIntBits(texture.getInterpolatedU(u)),
-                Float.floatToRawIntBits(texture.getInterpolatedV(v)),
-                0
-        };
-    }
-
-    public static BakedQuad createBakedQuadForFace(float centreLR, float width, float centreUD, float height, float forwardDisplacement,
-                                                   int itemRenderLayer, TextureAtlasSprite texture, EnumFacing face) {
-        float x1, x2, x3, x4;
-        float y1, y2, y3, y4;
-        float z1, z2, z3, z4;
-        final float CUBE_MIN = 0.0F;
-        final float CUBE_MAX = 1.0F;
-        final float u1 = (centreLR - width / 2.0f) * 16.0f;
-        final float u2 = (centreLR + width / 2.0f) * 16.0f;
-        final float v1 = (centreUD - height / 2.0f) * 16.0f;
-        final float v2 = (centreUD + height / 2.0f) * 16.0f;
-
-        switch (face) {
-            case UP: {
-                x1 = x2 = centreLR + width / 2.0F;
-                x3 = x4 = centreLR - width / 2.0F;
-                z1 = z4 = centreUD + height / 2.0F;
-                z2 = z3 = centreUD - height / 2.0F;
-                y1 = y2 = y3 = y4 = CUBE_MAX + forwardDisplacement;
-                break;
-            }
-            case DOWN: {
-                x1 = x2 = centreLR + width / 2.0F;
-                x3 = x4 = centreLR - width / 2.0F;
-                z1 = z4 = centreUD - height / 2.0F;
-                z2 = z3 = centreUD + height / 2.0F;
-                y1 = y2 = y3 = y4 = CUBE_MIN - forwardDisplacement;
-                break;
-            }
-            case WEST: {
-                z1 = z2 = centreLR + width / 2.0F;
-                z3 = z4 = centreLR - width / 2.0F;
-                y1 = y4 = centreUD - height / 2.0F;
-                y2 = y3 = centreUD + height / 2.0F;
-                x1 = x2 = x3 = x4 = CUBE_MIN - forwardDisplacement;
-                break;
-            }
-            case EAST: {
-                z1 = z2 = centreLR - width / 2.0F;
-                z3 = z4 = centreLR + width / 2.0F;
-                y1 = y4 = centreUD - height / 2.0F;
-                y2 = y3 = centreUD + height / 2.0F;
-                x1 = x2 = x3 = x4 = CUBE_MAX + forwardDisplacement;
-                break;
-            }
-            case NORTH: {
-                x1 = x2 = centreLR - width / 2.0F;
-                x3 = x4 = centreLR + width / 2.0F;
-                y1 = y4 = centreUD - height / 2.0F;
-                y2 = y3 = centreUD + height / 2.0F;
-                z1 = z2 = z3 = z4 = CUBE_MIN - forwardDisplacement;
-                break;
-            }
-            case SOUTH: {
-                x1 = x2 = centreLR + width / 2.0F;
-                x3 = x4 = centreLR - width / 2.0F;
-                y1 = y4 = centreUD - height / 2.0F;
-                y2 = y3 = centreUD + height / 2.0F;
-                z1 = z2 = z3 = z4 = CUBE_MAX + forwardDisplacement;
-                break;
-            }
-            default: {
-                assert false : "Unexpected facing in createBakedQuadForFace:" + face;
-                return null;
-            }
-        }
-
-        return new BakedQuad(Ints.concat(vertexToInts(x1, y1, z1, Color.WHITE.getRGB(), texture, u2, v2),
-                vertexToInts(x2, y2, z2, Color.WHITE.getRGB(), texture, u2, v1),
-                vertexToInts(x3, y3, z3, Color.WHITE.getRGB(), texture, u1, v1),
-                vertexToInts(x4, y4, z4, Color.WHITE.getRGB(), texture, u1, v2)),
-                itemRenderLayer, face, texture, true, net.minecraft.client.renderer.vertex.DefaultVertexFormats.ITEM);
-    }
-
     // REFLECTION
 
     public static Object getField(Class c, Object o, String... names) throws ReflectiveOperationException {
@@ -193,5 +101,19 @@ public class Utilities {
         f.setAccessible(true);
         o = f.get(o);
         return o;
+    }
+
+    public static int circulate(int current, int total, boolean forward) {
+        if (forward) {
+            if (current == total - 1)
+                return 0;
+            else
+                return current + 1;
+        } else {
+            if (current == 0)
+                return total - 1;
+            else
+                return current - 1;
+        }
     }
 }

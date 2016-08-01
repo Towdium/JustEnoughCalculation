@@ -4,6 +4,7 @@ import net.minecraft.item.ItemStack;
 import pers.towdium.just_enough_calculation.util.ItemStackHelper;
 import pers.towdium.just_enough_calculation.util.ItemStackHelper.EnumStackAmountType;
 import pers.towdium.just_enough_calculation.util.ItemStackHelper.NBT;
+import pers.towdium.just_enough_calculation.util.exception.IllegalPositionException;
 import pers.towdium.just_enough_calculation.util.wrappers.Singleton;
 
 import java.util.ArrayList;
@@ -25,67 +26,62 @@ public class CostList {
         long amount = NBT.getAmount(itemStack);
         items = new ArrayList<>();
         catalyst = new LinkedList<>();
-        catalyst.add(NBT.setAmount(itemStack.copy(), -amount));
+        catalyst.add(itemStack.copy());
         items.add(NBT.setAmount(itemStack.copy(), -amount));
     }
 
     public CostList(Recipe recipe) {
         items = new ArrayList<>();
         catalyst = new LinkedList<>();
-        merge(true, false, items, recipe.output);
-        merge(true, false, catalyst, recipe.catalyst);
-        merge(true, false, catalyst, recipe.input);
-        merge(false, false, items, recipe.input);
+        merge(EnumMergeType.NORMAL_MERGE, items, recipe.output);
+        merge(EnumMergeType.NORMAL_MERGE, catalyst, recipe.catalyst);
+        merge(EnumMergeType.NORMAL_MERGE, catalyst, recipe.input);
+        merge(EnumMergeType.NORMAL_CANCEL, items, recipe.input);
     }
 
     public CostList(Recipe recipe, long amount) {
-        items = new ArrayList<>();
-        catalyst = new LinkedList<>();
-        merge(true, false, items, recipe.output);
-        merge(true, false, catalyst, recipe.catalyst);
-        merge(true, false, catalyst, recipe.input);
-        merge(false, false, items, recipe.input);
+        this(recipe);
         items.forEach(itemStack -> NBT.setAmount(itemStack, NBT.getAmount(itemStack) * amount));
-        catalyst.forEach(itemStack -> NBT.setAmount(itemStack, NBT.getAmount(itemStack) * amount));
     }
 
     public CostList(CostList caller, CostList callee) {
         items = new ArrayList<>();
         catalyst = new LinkedList<>();
-        merge(true, false, items, caller.items);
-        merge(true, false, catalyst, caller.catalyst);
-        merge(true, false, items, callee.items);
-        merge(true, false, catalyst, callee.catalyst);
-        merge(false, true, catalyst, callee.items);
+        merge(EnumMergeType.NORMAL_MERGE, items, caller.items);
+        merge(EnumMergeType.NORMAL_MERGE, catalyst, caller.catalyst);
+        merge(EnumMergeType.NORMAL_MERGE, items, callee.items);
+        merge(EnumMergeType.NORMAL_CANCEL, catalyst, callee.catalyst);
+        merge(EnumMergeType.NORMAL_MERGE, catalyst, callee.catalyst);
+        merge(EnumMergeType.CATALYST_CANCEL, catalyst, callee.items);
     }
 
-    public static void merge(boolean add, boolean positiveOnly, List<ItemStack> container, List<ItemStack> itemStacks) {
-        itemStacks.forEach(itemStack -> merge(add, positiveOnly, container, itemStack));
+    public static void merge(EnumMergeType type, List<ItemStack> container, List<ItemStack> itemStacks) {
+        itemStacks.forEach(itemStack -> merge(type, container, itemStack));
     }
 
-    public static void merge(boolean add, boolean positiveOnly, List<ItemStack> container, ItemStack[] itemStacks) {
-        for (ItemStack itemStackExternal : itemStacks) {
-            if (itemStackExternal != null)
-                merge(add, positiveOnly, container, itemStackExternal);
+    public static void merge(EnumMergeType type, List<ItemStack> container, ItemStack[] itemStacks) {
+        for (ItemStack itemStack : itemStacks) {
+            merge(type, container, itemStack);
         }
     }
 
-    static void merge(boolean add, boolean positiveOnly, List<ItemStack> container, ItemStack itemStack) {
+    public static void merge(EnumMergeType type, List<ItemStack> container, ItemStack itemStack) {
+        if (itemStack == null) {
+            return;
+        }
         for (ItemStack itemStackInternal : container) {
-            if (merge(itemStackInternal, itemStack, positiveOnly ? ((i, j) -> j > i ? 0 : j > 0 ? i - j : i) : add ? ((i, j) -> i + j) : ((i, j) -> i - j)))
+            if (merge(itemStackInternal, itemStack, type.getFunc()))
                 return;
         }
         ItemStack stack = itemStack.copy();
-        if (!add) {
-            NBT.setAmount(stack, -NBT.getAmount(stack));
-        }
+        NBT.setAmount(stack, type.getFunc().apply(0L, NBT.getAmount(stack)));
         container.add(stack);
     }
 
     static boolean merge(ItemStack stackInternal, ItemStack stackExternal, BiFunction<Long, Long, Long> func) {
         if (ItemStackHelper.isItemEqual(stackExternal, stackInternal)) {
             if (NBT.getType(stackExternal) == NBT.getType(stackInternal)) {
-                NBT.setData(stackInternal, NBT.getType(stackInternal), func.apply(NBT.getAmount(stackExternal), NBT.getAmount(stackInternal)));
+                NBT.setData(stackInternal, NBT.getType(stackInternal), func.apply(NBT.getAmount(stackInternal), NBT.getAmount(stackExternal)));
                 return true;
             } else if (NBT.getType(stackExternal) == EnumStackAmountType.FLUID || NBT.getType(stackInternal) == EnumStackAmountType.FLUID) {
                 return false;
@@ -127,5 +123,22 @@ public class CostList {
         List<ItemStack> buffer = new ArrayList<>();
         items.stream().filter(itemStack -> ItemStackHelper.NBT.getAmount(itemStack) < 0).forEach(buffer::add);
         return buffer;
+    }
+
+    enum EnumMergeType {
+        NORMAL_MERGE, NORMAL_CANCEL, CATALYST_CANCEL;
+
+        BiFunction<Long, Long, Long> getFunc() {
+            switch (this) {
+                case NORMAL_MERGE:
+                    return (i, j) -> i + j;
+                case NORMAL_CANCEL:
+                    return (i, j) -> i - j;
+                case CATALYST_CANCEL:
+                    return (i, j) -> j > i ? 0 : j > 0 ? i - j : i;
+                default:
+                    throw new IllegalPositionException();
+            }
+        }
     }
 }

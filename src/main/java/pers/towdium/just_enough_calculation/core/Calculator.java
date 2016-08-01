@@ -2,10 +2,14 @@ package pers.towdium.just_enough_calculation.core;
 
 import net.minecraft.item.ItemStack;
 import pers.towdium.just_enough_calculation.util.ItemStackHelper;
+import pers.towdium.just_enough_calculation.util.ItemStackHelper.NBT;
 import pers.towdium.just_enough_calculation.util.PlayerRecordHelper;
+import pers.towdium.just_enough_calculation.util.wrappers.Singleton;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Author: Towdium
@@ -16,11 +20,16 @@ public class Calculator {
     List<CostList> costLists;
 
     public Calculator(ItemStack itemStack, long amount) {
+        int count = 0;
         costLists = new ArrayList<>();
-        costLists.add(new CostList(ItemStackHelper.NBT.setData(itemStack.copy(), ItemStackHelper.EnumStackAmountType.NUMBER, amount)));
+        costLists.add(new CostList(NBT.setData(itemStack.copy(), ItemStackHelper.EnumStackAmountType.NUMBER, amount)));
         List<ItemStack> cancellableItems = costLists.get(0).getValidItems();
         LOOP2:
         while (cancellableItems.size() != 0) {
+            ++count;
+            if (count > 10000) {
+                throw new RuntimeException("JEC core circulates too many times for the operation. May be caused by number overflow or too complex recursion relations");
+            }
             // all the items possible tp cancel
             for (ItemStack stack : cancellableItems) {
                 // all the recipes for one item
@@ -41,13 +50,32 @@ public class Calculator {
         }
     }
 
-    public CostList getCost() {
-        return costLists.get(costLists.size() - 1);
+    public List<ItemStack> getInput() {
+        return getList(itemStack -> NBT.getAmount(itemStack) < 0, costList -> costList.items, itemStack -> NBT.setAmount(itemStack, -NBT.getAmount(itemStack)));
+    }
+
+    public List<ItemStack> getOutput() {
+        return getList(itemStack -> NBT.getAmount(itemStack) > 0, costList -> costList.items, itemStack -> itemStack);
+    }
+
+    public List<ItemStack> getCatalyst() {
+        List<ItemStack> input = getInput();
+        return getList(itemStack -> {
+            Singleton<Boolean> flag = new Singleton<>(false);
+            input.forEach(stack -> flag.value = flag.value || (ItemStackHelper.isItemEqual(itemStack, stack) && NBT.getAmountInternal(stack) >= NBT.getAmountInternal(stack)));
+            return !flag.value && NBT.getAmount(itemStack) > 0;
+        }, costList -> costList.catalyst, itemStack -> itemStack);
+    }
+
+    List<ItemStack> getList(Predicate<ItemStack> filter, Function<CostList, List<ItemStack>> getter, Function<ItemStack, ItemStack> modifier) {
+        List<ItemStack> buffer = new ArrayList<>();
+        getter.apply(costLists.get(costLists.size() - 1)).stream().filter(filter).forEach(itemStack -> CostList.merge(CostList.EnumMergeType.NORMAL_MERGE, buffer, modifier.apply(itemStack.copy())));
+        return buffer;
     }
 
     protected long getCount(ItemStack itemStack, Recipe recipe) {
         long a = recipe.getAmountOutput(itemStack);
-        return (long) Math.ceil(ItemStackHelper.NBT.getAmountInternal(itemStack) / (double) -a);
+        return (-ItemStackHelper.NBT.getAmountInternal(itemStack) + a - 1) / a;
     }
 }
 

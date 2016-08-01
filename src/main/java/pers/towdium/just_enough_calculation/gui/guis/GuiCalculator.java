@@ -4,16 +4,21 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextComponentString;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.core.Calculator;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
 import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
 import pers.towdium.just_enough_calculation.util.ItemStackHelper;
+import pers.towdium.just_enough_calculation.util.Utilities;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.BiFunction;
 
 /**
@@ -36,6 +41,8 @@ public class GuiCalculator extends JECGuiContainer {
     int total = 0;
     EnumMode mode = EnumMode.INPUT;
 
+    Calculator calculator;
+
     public GuiCalculator(GuiScreen parent) {
         super(new ContainerCalculator(), parent);
     }
@@ -49,7 +56,7 @@ public class GuiCalculator extends JECGuiContainer {
         buttonSettings = new GuiButton(4, guiLeft + 119, guiTop + 53, 50, 20, "Settings");
         buttonLeft = new GuiButton(5, guiLeft + 7, guiTop + 139, 14, 20, "<");
         buttonRight = new GuiButton(6, guiLeft + 45, guiTop + 139, 14, 20, ">");
-        buttonMode = new GuiButton(7, guiLeft + 63, guiTop + 139, 52, 20, "Catalyst");
+        buttonMode = new GuiButton(7, guiLeft + 63, guiTop + 139, 52, 20, "");
         buttonStock = new GuiButton(8, guiLeft + 119, guiTop + 139, 50, 20, "Stock");
         buttonList.add(buttonSearch);
         buttonList.add(buttonAdd);
@@ -60,6 +67,8 @@ public class GuiCalculator extends JECGuiContainer {
         buttonList.add(buttonMode);
         buttonList.add(buttonStock);
         textFieldAmount = new GuiTextField(0, fontRendererObj, guiLeft + 39, guiTop + 8, 75, 18);
+        textFieldAmount.setMaxStringLength(10);
+        updateLayout();
     }
 
     @Override
@@ -89,6 +98,18 @@ public class GuiCalculator extends JECGuiContainer {
                 return;
             case 3:
                 mc.displayGuiScreen(new GuiListViewer(this));
+                return;
+            case 5:
+                ++page;
+                updateLayout();
+                return;
+            case 6:
+                --page;
+                updateLayout();
+                return;
+            case 7:
+                mode = EnumMode.values()[Utilities.circulate(mode.ordinal(), 4, true)];
+                updateLayout();
         }
     }
 
@@ -115,7 +136,27 @@ public class GuiCalculator extends JECGuiContainer {
 
     @Override
     public void onItemStackSet(int index) {
-        Calculator calculator = new Calculator(inventorySlots.getSlot(0).getStack(), 10);
+        updateResult();
+    }
+
+    @Override
+    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+        if (!textFieldAmount.textboxKeyTyped(typedChar, keyCode)) {
+            super.keyTyped(typedChar, keyCode);
+        } else {
+            updateResult();
+        }
+    }
+
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        textFieldAmount.mouseClicked(mouseX, mouseY, mouseButton);
+        if (buttonMode.isMouseOver() && mouseButton == 1) {
+            mode = EnumMode.values()[Utilities.circulate(mode.ordinal(), 4, false)];
+            updateLayout();
+            mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
+        }
+        super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
     @Override
@@ -124,36 +165,59 @@ public class GuiCalculator extends JECGuiContainer {
         onItemStackSet(0);
     }
 
+    @Override
+    protected void updateLayout() {
+        if (calculator != null) {
+            List<ItemStack> buffer = mode == EnumMode.INPUT ? calculator.getInput() : mode == EnumMode.OUTPUT ? calculator.getOutput() : calculator.getCatalyst();
+            total = (buffer.size() + 26) / 27;
+            page = total == 0 ? 0 : page > total ? total : page < 1 ? 1 : page;
+            putStacks(7, 33, buffer, total == 0 ? 0 : (page - 1) * 27);
+        } else {
+            page = 0;
+            total = 0;
+            putStacks(7, 33, new ArrayList<>(), 0);
+        }
+        buttonMode.displayString = mode.getDisplay();
+    }
+
+    void updateResult() {
+        long amount;
+        try {
+            amount = Long.parseLong(textFieldAmount.getText());
+            textFieldAmount.setTextColor(0xFFFFFF);
+        } catch (NumberFormatException e) {
+            textFieldAmount.setTextColor(0xFF0000);
+            amount = 0;
+        }
+        if (inventorySlots.getSlot(0).getHasStack() && amount != 0) {
+            try {
+                calculator = new Calculator(inventorySlots.getSlot(0).getStack(), amount);
+            } catch (RuntimeException e) {
+                mc.thePlayer.addChatMessage(new TextComponentString("Sorry, an exception is caught during the calculation."));
+                mc.thePlayer.addChatMessage(new TextComponentString("If you are using the latest version, you can report this issue to the author"));
+                e.printStackTrace();
+            }
+        } else {
+            calculator = null;
+        }
+        updateLayout();
+    }
+
     public enum EnumMode {
         INPUT, PROCEDURE, OUTPUT, CATALYST;
 
-        static EnumMode fromInt(int i) {
-            switch (i) {
-                case 1:
-                    return INPUT;
-                case 2:
-                    return PROCEDURE;
-                case 3:
-                    return OUTPUT;
-                case 4:
-                    return CATALYST;
-                default:
-                    return INPUT;
-            }
-        }
-
-        int toInt() {
+        public String getDisplay() {
             switch (this) {
                 case INPUT:
-                    return 1;
+                    return "Input";
                 case PROCEDURE:
-                    return 2;
+                    return "Procedure";
                 case OUTPUT:
-                    return 3;
+                    return "Output";
                 case CATALYST:
-                    return 4;
+                    return "Catalyst";
                 default:
-                    return 1;
+                    return "";
             }
         }
     }
