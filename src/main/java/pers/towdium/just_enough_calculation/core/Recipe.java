@@ -50,6 +50,11 @@ public class Recipe {
         this.input = copyArray.apply(input);
     }
 
+    public long getAmountOutput(ItemStack itemStack) {
+        int index = getIndexOutput(itemStack);
+        return index == -1 ? 0 : ItemStackHelper.NBT.getAmountInternal(output[index]);
+    }
+
     public int getIndexInput(ItemStack itemStack) {
         return getIndex(input, itemStack);
     }

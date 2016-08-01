@@ -4,8 +4,10 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
+import pers.towdium.just_enough_calculation.core.Calculator;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
 import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
 import pers.towdium.just_enough_calculation.util.ItemStackHelper;
@@ -111,6 +113,17 @@ public class GuiCalculator extends JECGuiContainer {
         return (aLong, type) -> type.getStringResult(aLong);
     }
 
+    @Override
+    public void onItemStackSet(int index) {
+        Calculator calculator = new Calculator(inventorySlots.getSlot(0).getStack(), 10);
+    }
+
+    @Override
+    protected void onItemStackPick(ItemStack itemStack) {
+        inventorySlots.getSlot(0).putStack(itemStack);
+        onItemStackSet(0);
+    }
+
     public enum EnumMode {
         INPUT, PROCEDURE, OUTPUT, CATALYST;
 
@@ -155,7 +168,7 @@ public class GuiCalculator extends JECGuiContainer {
 
         @Override
         public EnumSlotType getSlotType(int index) {
-            return index == 0 ? EnumSlotType.SELECT : EnumSlotType.DISABLED;
+            return index == 0 ? EnumSlotType.SELECT : index <= 6 ? EnumSlotType.PICKER : EnumSlotType.DISABLED;
         }
     }
 }

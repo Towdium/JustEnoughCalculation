@@ -103,6 +103,12 @@ public class PlayerHandlerSP {
         return recipes.get(p.one).get(p.two);
     }
 
+    public List<Recipe> getAllRecipeOutput(ItemStack itemStack) {
+        List<Recipe> buffer = new ArrayList<>();
+        getIndexOutput(itemStack).forEach(pair -> buffer.add(getRecipe(pair.one, pair.two)));
+        return buffer;
+    }
+
     public List<Pair<String, Integer>> getIndexOutput(ItemStack itemStack) {
         return getIndex(recipe -> recipe.getIndexOutput(itemStack));
     }

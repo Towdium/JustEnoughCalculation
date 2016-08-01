@@ -63,4 +63,8 @@ public class PlayerRecordHelper {
     public static void addOreDictPref(ItemStack stack) {
         playerHandler.addOreDictPref(stack);
     }
+
+    public static List<Recipe> getAllRecipeOutput(ItemStack itemStack) {
+        return playerHandler.getAllRecipeOutput(itemStack);
+    }
 }
