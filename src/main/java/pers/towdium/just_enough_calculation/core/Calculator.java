@@ -8,6 +8,7 @@ import pers.towdium.just_enough_calculation.util.wrappers.Singleton;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -35,7 +36,7 @@ public class Calculator {
                 // all the recipes for one item
                 LOOP1:
                 for (Recipe recipe : PlayerRecordHelper.getAllRecipeOutput(stack)) {
-                    CostList record = new CostList(costLists.get(costLists.size() - 1), new CostList(recipe, getCount(stack, recipe)));
+                    CostList record = new CostList(costLists.get(costLists.size() - 1), new CostList(recipe, NBT.setAmount(stack.copy(), -NBT.getAmount(stack)), getCount(stack, recipe)));
                     for (CostList costList : costLists) {
                         if (costList.equals(record)) {
                             continue LOOP1;
@@ -65,6 +66,16 @@ public class Calculator {
             input.forEach(stack -> flag.value = flag.value || (ItemStackHelper.isItemEqual(itemStack, stack) && NBT.getAmountInternal(stack) >= NBT.getAmountInternal(stack)));
             return !flag.value && NBT.getAmount(itemStack) > 0;
         }, costList -> costList.catalyst, itemStack -> itemStack);
+    }
+
+    public List<ItemStack> getProcedure() {
+        List<ItemStack> procedure = costLists.get(costLists.size() - 1).procedure;
+        ListIterator<ItemStack> iterator = procedure.listIterator(procedure.size());
+        List<ItemStack> buffer = new ArrayList<>();
+        while (iterator.hasPrevious()) {
+            CostList.merge(CostList.EnumMergeType.NORMAL_MERGE, buffer, iterator.previous());
+        }
+        return buffer;
     }
 
     List<ItemStack> getList(Predicate<ItemStack> filter, Function<CostList, List<ItemStack>> getter, Function<ItemStack, ItemStack> modifier) {

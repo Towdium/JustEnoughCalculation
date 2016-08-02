@@ -8,7 +8,6 @@ import pers.towdium.just_enough_calculation.util.exception.IllegalPositionExcept
 import pers.towdium.just_enough_calculation.util.wrappers.Singleton;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -19,40 +18,38 @@ import java.util.function.BiPredicate;
  * Date:   2016/6/27.
  */
 public class CostList {
-    List<ItemStack> items;
-    List<ItemStack> catalyst;
+    List<ItemStack> items = new ArrayList<>();
+    List<ItemStack> catalyst = new ArrayList<>();
+    List<ItemStack> procedure = new ArrayList<>();
 
     public CostList(ItemStack itemStack) {
         long amount = NBT.getAmount(itemStack);
-        items = new ArrayList<>();
-        catalyst = new LinkedList<>();
         catalyst.add(itemStack.copy());
         items.add(NBT.setAmount(itemStack.copy(), -amount));
     }
 
-    public CostList(Recipe recipe) {
-        items = new ArrayList<>();
-        catalyst = new LinkedList<>();
+    public CostList(Recipe recipe, ItemStack dest) {
         merge(EnumMergeType.NORMAL_MERGE, items, recipe.output);
         merge(EnumMergeType.NORMAL_MERGE, catalyst, recipe.catalyst);
         merge(EnumMergeType.NORMAL_MERGE, catalyst, recipe.input);
         merge(EnumMergeType.NORMAL_CANCEL, items, recipe.input);
+        procedure.add(dest.copy());
     }
 
-    public CostList(Recipe recipe, long amount) {
-        this(recipe);
+    public CostList(Recipe recipe, ItemStack dest, long amount) {
+        this(recipe, dest);
         items.forEach(itemStack -> NBT.setAmount(itemStack, NBT.getAmount(itemStack) * amount));
     }
 
     public CostList(CostList caller, CostList callee) {
-        items = new ArrayList<>();
-        catalyst = new LinkedList<>();
         merge(EnumMergeType.NORMAL_MERGE, items, caller.items);
         merge(EnumMergeType.NORMAL_MERGE, catalyst, caller.catalyst);
         merge(EnumMergeType.NORMAL_MERGE, items, callee.items);
-        merge(EnumMergeType.NORMAL_CANCEL, catalyst, callee.catalyst);
+        merge(EnumMergeType.CATALYST_CANCEL, catalyst, callee.catalyst);
         merge(EnumMergeType.NORMAL_MERGE, catalyst, callee.catalyst);
         merge(EnumMergeType.CATALYST_CANCEL, catalyst, callee.items);
+        caller.procedure.stream().forEachOrdered(itemStack -> procedure.add(itemStack.copy()));
+        callee.procedure.stream().forEachOrdered(itemStack -> procedure.add(itemStack.copy()));
     }
 
     public static void merge(EnumMergeType type, List<ItemStack> container, List<ItemStack> itemStacks) {

@@ -1,7 +1,10 @@
 package pers.towdium.just_enough_calculation.plugin;
 
 import com.google.common.collect.ImmutableList;
-import mezz.jei.api.*;
+import mezz.jei.api.IJeiRuntime;
+import mezz.jei.api.IModPlugin;
+import mezz.jei.api.IModRegistry;
+import mezz.jei.api.IRecipeRegistry;
 import mezz.jei.api.recipe.IRecipeCategory;
 import pers.towdium.just_enough_calculation.JECConfig;
 import pers.towdium.just_enough_calculation.gui.guis.GuiCalculator;
@@ -10,6 +13,7 @@ import pers.towdium.just_enough_calculation.gui.guis.GuiEditor;
 import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Towdium
@@ -40,9 +44,7 @@ public class JEIPlugin implements IModPlugin {
         runtime = jeiRuntime;
         recipeRegistry = jeiRuntime.getRecipeRegistry();
         identifiers.addAll(ImmutableList.copyOf(JECConfig.EnumItems.ListRecipeCategory.getProperty().getStringList()));
-        for (IRecipeCategory category : recipeRegistry.getRecipeCategories()) {
-            identifiers.add(category.getUid());
-        }
+        identifiers.addAll(recipeRegistry.getRecipeCategories().stream().map(IRecipeCategory::getUid).collect(Collectors.toList()));
         int size = identifiers.size();
         String[] buffer = new String[size];
         for (String s : identifiers) {

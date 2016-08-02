@@ -1,5 +1,6 @@
 package pers.towdium.just_enough_calculation.gui.guis;
 
+import com.sun.istack.internal.NotNull;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
@@ -14,6 +15,7 @@ import pers.towdium.just_enough_calculation.gui.JECContainer;
 import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
 import pers.towdium.just_enough_calculation.util.ItemStackHelper;
 import pers.towdium.just_enough_calculation.util.Utilities;
+import pers.towdium.just_enough_calculation.util.exception.IllegalPositionException;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -66,7 +68,9 @@ public class GuiCalculator extends JECGuiContainer {
         buttonList.add(buttonRight);
         buttonList.add(buttonMode);
         buttonList.add(buttonStock);
+        String temp = textFieldAmount == null ? "" : textFieldAmount.getText();
         textFieldAmount = new GuiTextField(0, fontRendererObj, guiLeft + 39, guiTop + 8, 75, 18);
+        textFieldAmount.setText(temp);
         textFieldAmount.setMaxStringLength(10);
         updateLayout();
     }
@@ -137,6 +141,17 @@ public class GuiCalculator extends JECGuiContainer {
     @Override
     public void onItemStackSet(int index) {
         updateResult();
+        if (inventorySlots.getSlot(0).getHasStack()) {
+            int indexFound = 6;
+            ItemStack stack = inventorySlots.getSlot(0).getStack();
+            for (int i = 6; i > 0 && indexFound == 6; i--) {
+                if (inventorySlots.getSlot(i).getHasStack() && ItemStackHelper.isItemEqual(stack, inventorySlots.getSlot(i).getStack()))
+                    indexFound = i;
+            }
+            for (int i = indexFound; i > 0; i--) {
+                inventorySlots.getSlot(i).putStack(inventorySlots.getSlot(i - 1).getStack());
+            }
+        }
     }
 
     @Override
@@ -168,7 +183,7 @@ public class GuiCalculator extends JECGuiContainer {
     @Override
     protected void updateLayout() {
         if (calculator != null) {
-            List<ItemStack> buffer = mode == EnumMode.INPUT ? calculator.getInput() : mode == EnumMode.OUTPUT ? calculator.getOutput() : calculator.getCatalyst();
+            List<ItemStack> buffer = mode.getList(calculator);
             total = (buffer.size() + 26) / 27;
             page = total == 0 ? 0 : page > total ? total : page < 1 ? 1 : page;
             putStacks(7, 33, buffer, total == 0 ? 0 : (page - 1) * 27);
@@ -217,7 +232,22 @@ public class GuiCalculator extends JECGuiContainer {
                 case CATALYST:
                     return "Catalyst";
                 default:
-                    return "";
+                    throw new IllegalPositionException();
+            }
+        }
+
+        public List<ItemStack> getList(@NotNull Calculator calculator) {
+            switch (this) {
+                case INPUT:
+                    return calculator.getInput();
+                case PROCEDURE:
+                    return calculator.getProcedure();
+                case OUTPUT:
+                    return calculator.getOutput();
+                case CATALYST:
+                    return calculator.getCatalyst();
+                default:
+                    throw new IllegalPositionException();
             }
         }
     }

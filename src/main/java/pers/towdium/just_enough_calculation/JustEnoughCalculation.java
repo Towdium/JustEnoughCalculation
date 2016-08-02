@@ -11,7 +11,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import pers.towdium.just_enough_calculation.gui.GuiHandler;
 import pers.towdium.just_enough_calculation.item.ItemCalculator;
 import pers.towdium.just_enough_calculation.item.ItemFluidContainer;
 import pers.towdium.just_enough_calculation.network.IProxy;
@@ -43,7 +42,7 @@ public class JustEnoughCalculation {
 
     @Mod.EventHandler
     public static void init(FMLInitializationEvent event) {
-        NetworkRegistry.INSTANCE.registerGuiHandler(JustEnoughCalculation.instance, new GuiHandler());
+        //NetworkRegistry.INSTANCE.registerGuiHandler(JustEnoughCalculation.instance, new GuiHandler());
         proxy.init();
     }
 
