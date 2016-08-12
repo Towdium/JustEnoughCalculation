@@ -42,7 +42,7 @@ public class ItemStackHelper {
     }
 
     @Nullable
-    public static ItemStack mergeStack(ItemStack stack1, ItemStack stack2, boolean positive, boolean newStack, boolean mregeFluid) {
+    public static ItemStack mergeStack(ItemStack stack1, ItemStack stack2, boolean positive, boolean newStack, boolean mergeFluid) {
         if (!isItemEqual(stack1, stack2)) {
             return null;
         }
@@ -72,7 +72,7 @@ public class ItemStackHelper {
             case FLUID:
                 switch (NBT.getType(stack2)) {
                     case FLUID:
-                        if (mregeFluid && NBT.getFluid(stack1) == NBT.getFluid(stack2))
+                        if (mergeFluid && NBT.getFluid(stack1) == NBT.getFluid(stack2))
                             return merger.apply(buffer, stack2, EnumStackAmountType.FLUID);
                         else
                             return null;
@@ -132,6 +132,15 @@ public class ItemStackHelper {
 
     public static ItemStack toItemStackJEC(FluidStack stack) {
         return NBT.setData(new ItemStack(JustEnoughCalculation.itemFluidContainer), stack);
+    }
+
+    public static NBTTagCompound writeToNBT(@Nullable ItemStack stack) {
+        return stack == null ? new NBTTagCompound() : stack.serializeNBT();
+    }
+
+    @Nullable
+    public static ItemStack readFromNBT(NBTTagCompound tag) {
+        return tag.hasNoTags() ? null : ItemStack.loadItemStackFromNBT(tag);
     }
 
     public enum EnumStackAmountType {

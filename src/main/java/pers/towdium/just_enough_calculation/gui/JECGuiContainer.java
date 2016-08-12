@@ -91,7 +91,7 @@ public abstract class JECGuiContainer extends GuiContainer {
                 setActiveSlot(-1);
                 mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
             } else {
-                mc.displayGuiScreen(parent);
+                Utilities.openGui(parent);
             }
         }
     }
@@ -215,7 +215,7 @@ public abstract class JECGuiContainer extends GuiContainer {
     public void onItemStackSet(int index) {
     }
 
-    protected void updateLayout() {
+    public void updateLayout() {
     }
 
     protected void onItemStackPick(ItemStack itemStack) {

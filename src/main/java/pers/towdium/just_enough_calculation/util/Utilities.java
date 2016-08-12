@@ -1,6 +1,10 @@
 package pers.towdium.just_enough_calculation.util;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiScreen;
+import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
+import pers.towdium.just_enough_calculation.gui.guis.GuiCalculator;
 import pers.towdium.just_enough_calculation.util.function.TriFunction;
 
 import java.lang.reflect.Field;
@@ -12,37 +16,6 @@ import java.lang.reflect.Field;
 public class Utilities {
 
     // FOR STRING FORMATTING
-
-    @SuppressWarnings("unchecked")
-    public static <T, C> T getField(C o, String... names) {
-        Field field = null;
-        boolean flag = false;
-        for (String name : names) {
-            try {
-                field = o.getClass().getDeclaredField(name);
-            } catch (NoSuchFieldException e) {
-                continue;
-            }
-            flag = true;
-            break;
-        }
-        if (!flag) {
-            String buffer = "Field not found in class " + o.getClass().getCanonicalName() + ":";
-            for (String s : names) {
-                buffer += " ";
-                buffer += s;
-            }
-            throw new NoSuchFieldError(buffer);
-        } else {
-            field.setAccessible(true);
-            try {
-                Object temp = field.get(o);
-                return (T) temp;
-            } catch (IllegalAccessException e) {
-                return null;
-            }
-        }
-    }
 
     public static String cutFloat(float f, int size) {
         TriFunction<Float, Integer, Integer, String> form = (fl, len, max) -> {
@@ -81,6 +54,37 @@ public class Utilities {
 
     // REFLECTION
 
+    @SuppressWarnings("unchecked")
+    public static <T, C> T getField(C o, String... names) {
+        Field field = null;
+        boolean flag = false;
+        for (String name : names) {
+            try {
+                field = o.getClass().getDeclaredField(name);
+            } catch (NoSuchFieldException e) {
+                continue;
+            }
+            flag = true;
+            break;
+        }
+        if (!flag) {
+            String buffer = "Field not found in class " + o.getClass().getCanonicalName() + ":";
+            for (String s : names) {
+                buffer += " ";
+                buffer += s;
+            }
+            throw new NoSuchFieldError(buffer);
+        } else {
+            field.setAccessible(true);
+            try {
+                Object temp = field.get(o);
+                return (T) temp;
+            } catch (IllegalAccessException e) {
+                return null;
+            }
+        }
+    }
+
     public static Object getField(Class c, Object o, String... names) throws ReflectiveOperationException {
         Field f = null;
         for (String name : names) {
@@ -103,6 +107,8 @@ public class Utilities {
         return o;
     }
 
+    // CIRCULATE STRUCTURE
+
     public static int circulate(int current, int total, boolean forward) {
         if (forward) {
             if (current == total - 1)
@@ -114,6 +120,18 @@ public class Utilities {
                 return total - 1;
             else
                 return current - 1;
+        }
+    }
+
+    // GUI
+
+    public static void openGui(GuiScreen gui) {
+        Minecraft.getMinecraft().displayGuiScreen(gui);
+        if (gui instanceof JECGuiContainer) {
+            if (gui instanceof GuiCalculator) {
+                ((GuiCalculator) gui).updateResult();
+            }
+            ((JECGuiContainer) gui).updateLayout();
         }
     }
 }

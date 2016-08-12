@@ -1,12 +1,20 @@
-package pers.towdium.just_enough_calculation.core;
+package pers.towdium.just_enough_calculation.network;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import pers.towdium.just_enough_calculation.JustEnoughCalculation;
+import pers.towdium.just_enough_calculation.core.Recipe;
 import pers.towdium.just_enough_calculation.util.ItemStackHelper;
 import pers.towdium.just_enough_calculation.util.wrappers.Pair;
 import pers.towdium.just_enough_calculation.util.wrappers.Singleton;
 import pers.towdium.just_enough_calculation.util.wrappers.Trio;
 
 import javax.annotation.Nullable;
+import java.io.*;
 import java.util.*;
 import java.util.function.Function;
 
@@ -15,7 +23,7 @@ import java.util.function.Function;
  * Date:   2016/6/28.
  */
 
-public class PlayerHandlerSP {
+public class PlayerHandlerSP implements IProxy.IPlayerHandler {
     List<ItemStack> oreDictPref = new ArrayList<>();
     LinkedHashMap<String, List<Recipe>> recipes = new LinkedHashMap<>();
 
@@ -186,5 +194,75 @@ public class PlayerHandlerSP {
 
     public void removeOreDictPref(int index) {
         oreDictPref.remove(index);
+    }
+
+    @Override
+    public void handleLogin(PlayerEvent.LoadFromFile event) {
+        oreDictPref = new ArrayList<>();
+        recipes = new LinkedHashMap<>();
+        try {
+            FileInputStream stream = new FileInputStream(event.getPlayerFile("jec"));
+            NBTTagCompound tagCompound = CompressedStreamTools.readCompressed(stream);
+            readFromNBT(tagCompound);
+        } catch (FileNotFoundException e) {
+            JustEnoughCalculation.log.info("Record not found for " + event.getEntityPlayer().getDisplayNameString());
+        } catch (IOException | IllegalArgumentException e) {
+            JustEnoughCalculation.log.warn("Fail to load records for " + event.getEntityPlayer().getDisplayNameString());
+        }
+    }
+
+    @Override
+    public void handleSave(PlayerEvent.SaveToFile event) {
+        try {
+            File file = event.getPlayerFile("jec");
+            NBTTagCompound compound = writeToNBT();
+            FileOutputStream fileoutputstream = new FileOutputStream(file);
+            CompressedStreamTools.writeCompressed(compound, fileoutputstream);
+        } catch (Exception e) {
+            JustEnoughCalculation.log.warn("Fail to save records for " + event.getEntityPlayer().getDisplayNameString());
+        }
+    }
+
+    @Override
+    public void handleJoin(EntityJoinWorldEvent event) {
+    }
+
+    public void readFromNBT(NBTTagCompound tag) throws IllegalArgumentException {
+        NBTTagList recipes = tag.getTagList("recipes", 10);
+        for (int i = 0; i < recipes.tagCount(); i++) {
+            NBTTagCompound group = recipes.getCompoundTagAt(i);
+            String name = group.getString("name");
+            NBTTagList content = group.getTagList("content", 10);
+            for (int j = 0; j < content.tagCount(); j++) {
+                addRecipe(new Recipe(new ItemStack[4], new ItemStack[4], new ItemStack[12]).readFromNBT(content.getCompoundTagAt(j)), name);
+            }
+        }
+        NBTTagList oreDictPref = tag.getTagList("oreDictPref", 10);
+        for (int i = 0; i < oreDictPref.tagCount(); i++) {
+            NBTTagCompound stack = oreDictPref.getCompoundTagAt(i);
+            addOreDictPref(ItemStack.loadItemStackFromNBT(stack));
+        }
+    }
+
+    public NBTTagCompound writeToNBT() {
+        NBTTagList recipes = new NBTTagList();
+        for (Map.Entry<String, List<Recipe>> entry : this.recipes.entrySet()) {
+            NBTTagList buffer = new NBTTagList();
+            for (Recipe r : entry.getValue()) {
+                buffer.appendTag(r.writeToNbt());
+            }
+            NBTTagCompound group = new NBTTagCompound();
+            group.setString("name", entry.getKey());
+            group.setTag("content", buffer);
+            recipes.appendTag(group);
+        }
+        NBTTagList oreDictPref = new NBTTagList();
+        for (ItemStack stack : this.oreDictPref) {
+            oreDictPref.appendTag(stack.serializeNBT());
+        }
+        NBTTagCompound ret = new NBTTagCompound();
+        ret.setTag("recipes", recipes);
+        ret.setTag("oreDictPref", oreDictPref);
+        return ret;
     }
 }

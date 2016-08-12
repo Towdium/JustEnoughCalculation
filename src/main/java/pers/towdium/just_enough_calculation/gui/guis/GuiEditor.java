@@ -17,6 +17,7 @@ import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
 import pers.towdium.just_enough_calculation.util.ItemStackHelper;
 import pers.towdium.just_enough_calculation.util.LocalizationHelper;
 import pers.towdium.just_enough_calculation.util.PlayerRecordHelper;
+import pers.towdium.just_enough_calculation.util.Utilities;
 import pers.towdium.just_enough_calculation.util.wrappers.Pair;
 import pers.towdium.just_enough_calculation.util.wrappers.Singleton;
 
@@ -145,8 +146,8 @@ public class GuiEditor extends JECGuiContainer {
                         break;
                 }
             } else {
-                mc.displayGuiScreen(new GuiPickerFluid(itemStack -> {
-                    mc.displayGuiScreen(this);
+                Utilities.openGui(new GuiPickerFluid(itemStack -> {
+                    Utilities.openGui(this);
                     slot.putStack(itemStack);
                 }, this));
             }
@@ -207,7 +208,7 @@ public class GuiEditor extends JECGuiContainer {
                         PlayerRecordHelper.setRecipe(getGroup(), dest.one, dest.two, toRecipe());
                     }
 
-                    mc.displayGuiScreen(parent);
+                    Utilities.openGui(parent);
             }
         }
     }

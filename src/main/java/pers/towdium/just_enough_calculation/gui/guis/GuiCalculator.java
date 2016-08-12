@@ -95,13 +95,13 @@ public class GuiCalculator extends JECGuiContainer {
     protected void actionPerformed(GuiButton button) throws IOException {
         switch (button.id) {
             case 1:
-                mc.displayGuiScreen(new GuiListSearch(this, inventorySlots.getSlot(0).getStack()));
+                Utilities.openGui(new GuiListSearch(this, inventorySlots.getSlot(0).getStack()));
                 return;
             case 2:
-                mc.displayGuiScreen(new GuiEditor(this, null));
+                Utilities.openGui(new GuiEditor(this, null));
                 return;
             case 3:
-                mc.displayGuiScreen(new GuiListViewer(this));
+                Utilities.openGui(new GuiListViewer(this));
                 return;
             case 5:
                 ++page;
@@ -181,7 +181,7 @@ public class GuiCalculator extends JECGuiContainer {
     }
 
     @Override
-    protected void updateLayout() {
+    public void updateLayout() {
         if (calculator != null) {
             List<ItemStack> buffer = mode.getList(calculator);
             total = (buffer.size() + 26) / 27;
@@ -195,7 +195,7 @@ public class GuiCalculator extends JECGuiContainer {
         buttonMode.displayString = mode.getDisplay();
     }
 
-    void updateResult() {
+    public void updateResult() {
         long amount;
         try {
             amount = Long.parseLong(textFieldAmount.getText());

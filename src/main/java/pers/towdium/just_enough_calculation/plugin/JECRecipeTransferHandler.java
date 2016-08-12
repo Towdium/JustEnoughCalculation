@@ -15,6 +15,7 @@ import pers.towdium.just_enough_calculation.gui.guis.GuiEditor;
 import pers.towdium.just_enough_calculation.gui.guis.GuiPickerOreDict;
 import pers.towdium.just_enough_calculation.util.ItemStackHelper;
 import pers.towdium.just_enough_calculation.util.PlayerRecordHelper;
+import pers.towdium.just_enough_calculation.util.Utilities;
 import pers.towdium.just_enough_calculation.util.function.TriConsumer;
 import pers.towdium.just_enough_calculation.util.wrappers.Singleton;
 
@@ -47,7 +48,7 @@ public class JECRecipeTransferHandler implements IRecipeTransferHandler {
                 flag.value = true;
                 ItemStack buffer = PlayerRecordHelper.getOreDictPref((List<ItemStack>) o.value);
                 if (buffer == null) {
-                    Minecraft.getMinecraft().displayGuiScreen(new GuiPickerOreDict(editor, (List<ItemStack>) o.value, itemStack -> {
+                    Utilities.openGui(new GuiPickerOreDict(editor, (List<ItemStack>) o.value, itemStack -> {
                         o.value = itemStack;
                         PlayerRecordHelper.addOreDictPref(itemStack);
                         checkTemp(editor);
@@ -78,7 +79,7 @@ public class JECRecipeTransferHandler implements IRecipeTransferHandler {
                 }
             };
 
-            Minecraft.getMinecraft().displayGuiScreen(editor);
+            Utilities.openGui(editor);
             arranger.accept(0, 3, tempList.get(Recipe.EnumStackIOType.OUTPUT));
             arranger.accept(8, 19, tempList.get(Recipe.EnumStackIOType.INPUT));
             arranger.accept(4, 7, tempList.get(Recipe.EnumStackIOType.CATALYST));

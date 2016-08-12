@@ -9,6 +9,7 @@ import pers.towdium.just_enough_calculation.core.Recipe;
 import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
 import pers.towdium.just_enough_calculation.util.LocalizationHelper;
 import pers.towdium.just_enough_calculation.util.PlayerRecordHelper;
+import pers.towdium.just_enough_calculation.util.Utilities;
 import pers.towdium.just_enough_calculation.util.wrappers.Pair;
 
 import javax.annotation.Nullable;
@@ -91,7 +92,7 @@ public abstract class GuiList extends JECGuiContainer {
                 PlayerRecordHelper.removeRecipe(pair.one, pair.two);
                 updateLayout();
             } else {
-                mc.displayGuiScreen(new GuiEditor(this, pair));
+                Utilities.openGui(new GuiEditor(this, pair));
             }
         }
     }
@@ -110,7 +111,7 @@ public abstract class GuiList extends JECGuiContainer {
     }
 
     @Override
-    protected void updateLayout() {
+    public void updateLayout() {
         if (group > PlayerRecordHelper.getSizeGroup() - 1) {
             group = 0;
         } else if (group < 0) {

@@ -1,11 +1,9 @@
 package pers.towdium.just_enough_calculation.core;
 
-import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraft.nbt.NBTTagList;
 import pers.towdium.just_enough_calculation.util.ItemStackHelper;
-import pers.towdium.just_enough_calculation.util.function.TriConsumer;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,7 +11,6 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * Author: Towdium
@@ -114,6 +111,35 @@ public class Recipe {
         return buffer;
     }
 
+    public NBTTagCompound writeToNbt() {
+        Function<ItemStack[], NBTTagList> former = itemStacks -> {
+            NBTTagList ret = new NBTTagList();
+            for (ItemStack stack : itemStacks) {
+                ret.appendTag(ItemStackHelper.writeToNBT(stack));
+            }
+            return ret;
+        };
+        NBTTagCompound ret = new NBTTagCompound();
+        ret.setTag("output", former.apply(output));
+        ret.setTag("catalyst", former.apply(catalyst));
+        ret.setTag("input", former.apply(input));
+        return ret;
+    }
+
+    public Recipe readFromNBT(NBTTagCompound tag) throws IllegalArgumentException {
+        BiConsumer<ItemStack[], NBTTagList> writer = (itemStacks, nbtTagList) -> {
+            if (itemStacks.length != nbtTagList.tagCount())
+                throw new IllegalArgumentException("Length not match");
+            for (int i = 0; i < nbtTagList.tagCount(); i++) {
+                itemStacks[i] = ItemStackHelper.readFromNBT(nbtTagList.getCompoundTagAt(i));
+            }
+        };
+        writer.accept(output, tag.getTagList("output", 10));
+        writer.accept(catalyst, tag.getTagList("catalyst", 10));
+        writer.accept(input, tag.getTagList("input", 10));
+        return this;
+    }
+
     public enum EnumStackIOType {
         OUTPUT, CATALYST, INPUT;
 
@@ -131,7 +157,7 @@ public class Recipe {
         }
     }
 
-    public static class IOUtl {
+    /*public static class IOUtl {
         public static Recipe fromByte(ByteBuf buf) {
             return fromContainer((enumStackIOType, integer) -> ByteBufUtils.readItemStack(buf), () -> ByteBufUtils.readUTF8String(buf));
         }
@@ -148,7 +174,7 @@ public class Recipe {
             toContainer((enumStackIOType, integer, itemStack) -> ByteBufUtils.writeItemStack(buf, itemStack), recipe);
         }
 
-        public static void toNbt(Recipe recipe) {
+        public static NBTTagCompound toNbt(Recipe recipe) {
             NBTTagCompound tagCompound = new NBTTagCompound();
             toContainer((enumStackIOType, integer, itemStack) -> {
                 NBTTagCompound stackInfo = new NBTTagCompound();
@@ -159,6 +185,7 @@ public class Recipe {
                 }
                 tagCompound.getCompoundTag(temp).setTag(String.valueOf(integer), stackInfo);
             }, recipe);
+            return tagCompound;
         }
 
         static Recipe fromContainer(BiFunction<EnumStackIOType, Integer, ItemStack> funcStack, Supplier<String> funcGroup) {
@@ -185,5 +212,5 @@ public class Recipe {
             writeArray.accept(EnumStackIOType.CATALYST, recipe.catalyst);
             writeArray.accept(EnumStackIOType.INPUT, recipe.input);
         }
-    }
+    }*/
 }

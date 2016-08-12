@@ -66,7 +66,7 @@ public abstract class GuiPicker extends JECGuiContainer {
     }
 
     @Override
-    protected void updateLayout() {
+    public void updateLayout() {
         List<ItemStack> buffer = new ArrayList<>();
         stacks.forEach(itemStack -> {
             if (itemStack.getDisplayName().toLowerCase().contains(searchField.getText())) buffer.add(itemStack);

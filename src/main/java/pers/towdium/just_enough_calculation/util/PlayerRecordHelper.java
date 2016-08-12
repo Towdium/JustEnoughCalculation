@@ -1,10 +1,10 @@
 package pers.towdium.just_enough_calculation.util;
 
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import pers.towdium.just_enough_calculation.core.PlayerHandlerSP;
+import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.core.Recipe;
+import pers.towdium.just_enough_calculation.network.PlayerHandlerSP;
+import pers.towdium.just_enough_calculation.network.packets.PacketRecordModify;
 
 import java.util.List;
 
@@ -12,9 +12,8 @@ import java.util.List;
  * Author: Towdium
  * Date:   2016/6/28.
  */
-@SideOnly(Side.CLIENT)
 public class PlayerRecordHelper {
-    static PlayerHandlerSP playerHandler = new PlayerHandlerSP();
+    static PlayerHandlerSP playerHandler = ((PlayerHandlerSP) JustEnoughCalculation.proxy.getPlayerHandler());
 
     public static String getGroupName(int index) {
         return playerHandler.getGroupName(index);
@@ -22,6 +21,7 @@ public class PlayerRecordHelper {
 
     public static void addRecipe(Recipe recipe, String string) {
         playerHandler.addRecipe(recipe, string);
+        JustEnoughCalculation.networkWrapper.sendToServer(new PacketRecordModify(-1, string, "", recipe));
     }
 
     public static Recipe getRecipe(String string, int index) {
@@ -30,10 +30,12 @@ public class PlayerRecordHelper {
 
     public static void removeRecipe(String string, int index) {
         playerHandler.removeRecipe(string, index);
+        JustEnoughCalculation.networkWrapper.sendToServer(new PacketRecordModify(index, string, "", null));
     }
 
     public static void setRecipe(String group, String groupOld, int index, Recipe recipe) {
         playerHandler.setRecipe(group, groupOld, index, recipe);
+        JustEnoughCalculation.networkWrapper.sendToServer(new PacketRecordModify(index, group, groupOld, recipe));
     }
 
     public static Recipe getRecipeOutput(ItemStack itemStack) {
@@ -66,5 +68,9 @@ public class PlayerRecordHelper {
 
     public static List<Recipe> getAllRecipeOutput(ItemStack itemStack) {
         return playerHandler.getAllRecipeOutput(itemStack);
+    }
+
+    public static void setPlayerHandler(PlayerHandlerSP handler) {
+        playerHandler = handler;
     }
 }
