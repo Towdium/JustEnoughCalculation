@@ -1,17 +1,17 @@
 package pers.towdium.just_enough_calculation.network;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.event.DataEventHandler;
 import pers.towdium.just_enough_calculation.event.ModelEventHandler;
 import pers.towdium.just_enough_calculation.event.MouseEventHandler;
-import pers.towdium.just_enough_calculation.gui.guis.GuiCalculator;
+import pers.towdium.just_enough_calculation.gui.JECGuiHandler;
 
 /**
  * @author Towdium
@@ -32,6 +32,7 @@ public class ProxyClient implements IProxy {
         MinecraftForge.EVENT_BUS.register(new MouseEventHandler());
         MinecraftForge.EVENT_BUS.register(new ModelEventHandler());
         MinecraftForge.EVENT_BUS.register(new DataEventHandler());
+        NetworkRegistry.INSTANCE.registerGuiHandler(JustEnoughCalculation.instance, new JECGuiHandler());
     }
 
     @Override
@@ -43,10 +44,5 @@ public class ProxyClient implements IProxy {
     @Override
     public IPlayerHandler getPlayerHandler() {
         return playerHandler;
-    }
-
-    @Override
-    public void openGui(int i) {
-        Minecraft.getMinecraft().displayGuiScreen(new GuiCalculator(null));
     }
 }

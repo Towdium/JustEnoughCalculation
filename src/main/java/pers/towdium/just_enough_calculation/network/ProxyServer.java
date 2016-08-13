@@ -22,8 +22,4 @@ public class ProxyServer implements IProxy {
     public IPlayerHandler getPlayerHandler() {
         return playerHandler;
     }
-
-    @Override
-    public void openGui(int i) {
-    }
 }

@@ -14,8 +14,6 @@ public interface IProxy {
 
     IPlayerHandler getPlayerHandler();
 
-    void openGui(int i);
-
     interface IPlayerHandler {
         void handleLogin(PlayerEvent.LoadFromFile event);
 
