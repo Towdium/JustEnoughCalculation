@@ -39,6 +39,7 @@ public class GuiListSearch extends GuiList {
                 return index == 20 ? EnumSlotType.SELECT : EnumSlotType.DISABLED;
             }
         }, parent, 5, 31);
+        inventorySlots.getSlot(20).putStack(itemStack);
     }
 
     @Override
@@ -46,6 +47,7 @@ public class GuiListSearch extends GuiList {
         super.initGui();
         buttonMode = new GuiButton(12, 117 + guiLeft, 7 + guiTop, 52, 20, "mode...");
         buttonList.add(buttonMode);
+        updateLayout();
     }
 
     @Override

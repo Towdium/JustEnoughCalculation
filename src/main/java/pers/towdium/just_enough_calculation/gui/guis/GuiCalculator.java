@@ -7,12 +7,15 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.core.Calculator;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
 import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
+import pers.towdium.just_enough_calculation.network.packets.PacketSyncCalculator;
 import pers.towdium.just_enough_calculation.util.ItemStackHelper;
 import pers.towdium.just_enough_calculation.util.Utilities;
 import pers.towdium.just_enough_calculation.util.exception.IllegalPositionException;
@@ -28,8 +31,12 @@ import java.util.function.BiFunction;
  * Created: 2016/6/13.
  */
 public class GuiCalculator extends JECGuiContainer {
-    GuiTextField textFieldAmount;
+    static final String keyRecipe = "recipe";
+    static final String keyAmount = "amount";
+    static final String keyRecent = "current";
+    static final String keyMode = "mode";
 
+    GuiTextField textFieldAmount;
     GuiButton buttonSearch;
     GuiButton buttonAdd;
     GuiButton buttonView;
@@ -72,7 +79,7 @@ public class GuiCalculator extends JECGuiContainer {
         textFieldAmount = new GuiTextField(0, fontRendererObj, guiLeft + 39, guiTop + 8, 75, 18);
         textFieldAmount.setText(temp);
         textFieldAmount.setMaxStringLength(10);
-        updateLayout();
+        updateGuiFromItem();
     }
 
     @Override
@@ -114,6 +121,7 @@ public class GuiCalculator extends JECGuiContainer {
             case 7:
                 mode = EnumMode.values()[Utilities.circulate(mode.ordinal(), 4, true)];
                 updateLayout();
+                //updateItemFromGui();
         }
     }
 
@@ -152,6 +160,7 @@ public class GuiCalculator extends JECGuiContainer {
                 inventorySlots.getSlot(i).putStack(inventorySlots.getSlot(i - 1).getStack());
             }
         }
+        //updateItemFromGui();
     }
 
     @Override
@@ -160,6 +169,7 @@ public class GuiCalculator extends JECGuiContainer {
             super.keyTyped(typedChar, keyCode);
         } else {
             updateResult();
+            //updateItemFromGui();
         }
     }
 
@@ -169,6 +179,7 @@ public class GuiCalculator extends JECGuiContainer {
         if (buttonMode.isMouseOver() && mouseButton == 1) {
             mode = EnumMode.values()[Utilities.circulate(mode.ordinal(), 4, false)];
             updateLayout();
+            //updateItemFromGui();
             mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
         }
         super.mouseClicked(mouseX, mouseY, mouseButton);
@@ -178,6 +189,7 @@ public class GuiCalculator extends JECGuiContainer {
     protected void onItemStackPick(ItemStack itemStack) {
         inventorySlots.getSlot(0).putStack(itemStack);
         onItemStackSet(0);
+        //updateItemFromGui();
     }
 
     @Override
@@ -193,6 +205,12 @@ public class GuiCalculator extends JECGuiContainer {
             putStacks(7, 33, new ArrayList<>(), 0);
         }
         buttonMode.displayString = mode.getDisplay();
+    }
+
+    @Override
+    public void onGuiClosed() {
+        updateItemFromGui();
+        super.onGuiClosed();
     }
 
     public void updateResult() {
@@ -216,6 +234,42 @@ public class GuiCalculator extends JECGuiContainer {
             calculator = null;
         }
         updateLayout();
+    }
+
+    void updateItemFromGui() {
+        ItemStack stack = mc.thePlayer.inventory.getCurrentItem();
+        if (stack != null && stack.getItem() == JustEnoughCalculation.itemCalculator) {
+            NBTTagCompound tag = stack.getSubCompound(keyRecipe, true);
+            tag.setString(keyAmount, textFieldAmount.getText());
+            NBTTagList buffer = new NBTTagList();
+            for (int i = 1; i <= 6; i++) {
+                ItemStack s = inventorySlots.getSlot(i).getStack();
+                if (s == null)
+                    break;
+                else
+                    buffer.appendTag(s.serializeNBT());
+            }
+            tag.setTag(keyRecent, buffer);
+            tag.setInteger(keyMode, mode.ordinal());
+        }
+        JustEnoughCalculation.networkWrapper.sendToServer(new PacketSyncCalculator(stack));
+    }
+
+    void updateGuiFromItem() {
+        ItemStack stack = mc.thePlayer.inventory.getCurrentItem();
+        if (stack != null && stack.getItem() == JustEnoughCalculation.itemCalculator) {
+            NBTTagCompound tag = stack.getSubCompound(keyRecipe, true);
+            textFieldAmount.setText(tag.getString(keyAmount));
+            List<ItemStack> buffer = new ArrayList<>();
+            NBTTagList recent = tag.getTagList(keyRecent, 10);
+            for (int i = 0; i < recent.tagCount(); i++) {
+                buffer.add(ItemStack.loadItemStackFromNBT(recent.getCompoundTagAt(i)));
+            }
+            putStacks(1, 6, buffer, 0);
+            inventorySlots.getSlot(0).putStack(buffer.size() > 0 ? buffer.get(0) : null);
+            mode = EnumMode.values()[tag.getInteger(keyMode)];
+        }
+        updateResult();
     }
 
     public enum EnumMode {
