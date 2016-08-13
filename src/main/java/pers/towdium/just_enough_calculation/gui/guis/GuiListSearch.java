@@ -3,6 +3,7 @@ package pers.towdium.just_enough_calculation.gui.guis;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
@@ -10,9 +11,11 @@ import pers.towdium.just_enough_calculation.core.Recipe;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
 import pers.towdium.just_enough_calculation.util.PlayerRecordHelper;
 import pers.towdium.just_enough_calculation.util.Utilities;
+import pers.towdium.just_enough_calculation.util.exception.IllegalPositionException;
 import pers.towdium.just_enough_calculation.util.wrappers.Pair;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -43,11 +46,9 @@ public class GuiListSearch extends GuiList {
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
-        buttonMode = new GuiButton(12, 117 + guiLeft, 7 + guiTop, 52, 20, "mode...");
+    public void init() {
+        buttonMode = new GuiButton(14, 117 + guiLeft, 7 + guiTop, 52, 20, "");
         buttonList.add(buttonMode);
-        updateLayout();
     }
 
     @Override
@@ -62,9 +63,14 @@ public class GuiListSearch extends GuiList {
             case OUT:
                 func = recipe -> recipe.getIndexOutput(itemStack) != -1;
                 break;
-            default:
-                func = recipe -> recipe.getIndexInput(itemStack) != -1 || recipe.getIndexOutput(itemStack) != -1;
+            case CAT:
+                func = recipe -> recipe.getIndexCatalyst(itemStack) != -1;
                 break;
+            case ALL:
+                func = recipe -> recipe.getIndexCatalyst(itemStack) != -1 || recipe.getIndexOutput(itemStack) != -1 || recipe.getIndexInput(itemStack) != -1;
+                break;
+            default:
+                throw new IllegalPositionException();
         }
         Consumer<Pair<String, Integer>> operator = (pair) -> {
             Recipe recipe = PlayerRecordHelper.getRecipe(pair.one, pair.two);
@@ -108,32 +114,46 @@ public class GuiListSearch extends GuiList {
         updateLayout();
     }
 
-    enum EnumMode {
-        IN, OUT, IO;
+    @Override
+    public void updateLayout() {
+        super.updateLayout();
+        buttonMode.displayString = mode.getDisplayString();
+    }
 
-        EnumMode next() {
-            switch (this) {
-                case OUT:
-                    return IN;
-                case IN:
-                    return IO;
-                case IO:
-                    return OUT;
-                default:
-                    return OUT;
-            }
+    @Override
+    protected void actionPerformed(GuiButton button) throws IOException {
+        if (button.id == 14) {
+            mode = EnumMode.values()[Utilities.circulate(mode.ordinal(), 4, true)];
+            updateLayout();
+        } else
+            super.actionPerformed(button);
+    }
+
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        if (buttonMode.isMouseOver() && mouseButton == 1) {
+            mode = EnumMode.values()[Utilities.circulate(mode.ordinal(), 4, false)];
+            updateLayout();
+            mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
         }
+        super.mouseClicked(mouseX, mouseY, mouseButton);
+    }
 
-        EnumMode last() {
+    enum EnumMode {
+        IN, OUT, CAT, ALL;
+
+        public String getDisplayString() {
             switch (this) {
-                case OUT:
-                    return IO;
                 case IN:
-                    return OUT;
-                case IO:
-                    return IN;
+                    return "Input";
+                case OUT:
+                    return "Output";
+                case CAT:
+                    return "Catalyst";
+                case ALL:
+                    return "All";
                 default:
-                    return OUT;
+                    throw new IllegalPositionException();
             }
         }
     }

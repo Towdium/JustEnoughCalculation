@@ -160,7 +160,6 @@ public class GuiCalculator extends JECGuiContainer {
                 inventorySlots.getSlot(i).putStack(inventorySlots.getSlot(i - 1).getStack());
             }
         }
-        //updateItemFromGui();
     }
 
     @Override
@@ -169,7 +168,6 @@ public class GuiCalculator extends JECGuiContainer {
             super.keyTyped(typedChar, keyCode);
         } else {
             updateResult();
-            //updateItemFromGui();
         }
     }
 
@@ -179,7 +177,6 @@ public class GuiCalculator extends JECGuiContainer {
         if (buttonMode.isMouseOver() && mouseButton == 1) {
             mode = EnumMode.values()[Utilities.circulate(mode.ordinal(), 4, false)];
             updateLayout();
-            //updateItemFromGui();
             mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
         }
         super.mouseClicked(mouseX, mouseY, mouseButton);

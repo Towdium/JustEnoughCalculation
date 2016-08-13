@@ -54,6 +54,7 @@ public abstract class GuiList extends JECGuiContainer {
             buttons.add(new GuiButtonExt(1 + 2 * i + 4, guiLeft + 128, guiTop + top + 20 * i, 41, 18, "delete"));
         }
         buttonList.addAll(buttons);
+        init();
         updateLayout();
     }
 
@@ -154,4 +155,7 @@ public abstract class GuiList extends JECGuiContainer {
     }
 
     protected abstract List<Pair<String, Integer>> getSuitableRecipeIndex(List<Pair<String, Integer>> recipeList);
+
+    protected void init() {
+    }
 }
