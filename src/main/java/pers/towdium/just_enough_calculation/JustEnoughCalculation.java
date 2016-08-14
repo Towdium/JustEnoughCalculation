@@ -23,7 +23,7 @@ import pers.towdium.just_enough_calculation.network.packets.PacketSyncCalculator
  * @author Towdium
  */
 @Mod(modid = JustEnoughCalculation.Reference.MODID, name = JustEnoughCalculation.Reference.MODNAME, version = JustEnoughCalculation.Reference.VERSION,
-        dependencies = "required-after:JEI")
+        dependencies = "required-after:JEI", guiFactory = "pers.towdium.just_enough_calculation.gui.JECGuiFactory")
 public class JustEnoughCalculation {
     @Mod.Instance(JustEnoughCalculation.Reference.MODID)
     public static JustEnoughCalculation instance;

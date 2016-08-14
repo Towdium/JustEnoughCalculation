@@ -121,7 +121,6 @@ public class GuiCalculator extends JECGuiContainer {
             case 7:
                 mode = EnumMode.values()[Utilities.circulate(mode.ordinal(), 4, true)];
                 updateLayout();
-                //updateItemFromGui();
         }
     }
 
@@ -186,7 +185,6 @@ public class GuiCalculator extends JECGuiContainer {
     protected void onItemStackPick(ItemStack itemStack) {
         inventorySlots.getSlot(0).putStack(itemStack);
         onItemStackSet(0);
-        //updateItemFromGui();
     }
 
     @Override
