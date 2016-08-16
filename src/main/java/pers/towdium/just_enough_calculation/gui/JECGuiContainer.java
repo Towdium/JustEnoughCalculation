@@ -50,6 +50,13 @@ public abstract class JECGuiContainer extends GuiContainer {
     }
 
     @Override
+    public void initGui() {
+        super.initGui();
+        init();
+        updateLayout();
+    }
+
+    @Override
     public void setWorldAndResolution(Minecraft mc, int width, int height) {
         super.setWorldAndResolution(mc, width, height);
         ModelManager tempMM = Utilities.getField(mc, "modelManager", "field_175617_aL");
@@ -211,6 +218,8 @@ public abstract class JECGuiContainer extends GuiContainer {
     protected abstract String getButtonTooltip(int buttonId);
 
     protected abstract int getSizeSlot(int index);
+
+    protected abstract void init();
 
     public void onItemStackSet(int index) {
     }

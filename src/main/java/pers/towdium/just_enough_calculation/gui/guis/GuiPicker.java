@@ -31,12 +31,10 @@ public abstract class GuiPicker extends JECGuiContainer {
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
+    public void init() {
         buttonList.add(new GuiButtonExt(0, guiLeft + 7, guiTop + 147, 13, 12, "<"));
         buttonList.add(new GuiButtonExt(1, guiLeft + 156, guiTop + 147, 13, 12, ">"));
         searchField = getSearchField(fontRendererObj);
-        updateLayout();
     }
 
     @Override

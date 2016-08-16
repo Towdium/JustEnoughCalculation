@@ -3,8 +3,6 @@ package pers.towdium.just_enough_calculation.util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
-import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
-import pers.towdium.just_enough_calculation.gui.guis.GuiCalculator;
 import pers.towdium.just_enough_calculation.util.function.TriFunction;
 
 import java.lang.reflect.Field;
@@ -127,11 +125,11 @@ public class Utilities {
 
     public static void openGui(GuiScreen gui) {
         Minecraft.getMinecraft().displayGuiScreen(gui);
-        if (gui instanceof JECGuiContainer) {
+        /*if (gui instanceof JECGuiContainer) {
             if (gui instanceof GuiCalculator) {
-                ((GuiCalculator) gui).updateResult();
+                ((GuiCalculator) gui).updateLayout();
             }
             ((JECGuiContainer) gui).updateLayout();
-        }
+        }*/
     }
 }

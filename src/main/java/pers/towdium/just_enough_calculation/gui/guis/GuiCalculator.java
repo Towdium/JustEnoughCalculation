@@ -57,8 +57,7 @@ public class GuiCalculator extends JECGuiContainer {
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
+    public void init() {
         buttonSearch = new GuiButton(1, guiLeft + 119, guiTop + 7, 50, 20, "search");
         buttonAdd = new GuiButton(2, guiLeft + 7, guiTop + 53, 52, 20, "Add");
         buttonView = new GuiButton(3, guiLeft + 63, guiTop + 53, 52, 20, "Records");
@@ -112,15 +111,15 @@ public class GuiCalculator extends JECGuiContainer {
                 return;
             case 5:
                 ++page;
-                updateLayout();
+                updateContent();
                 return;
             case 6:
                 --page;
-                updateLayout();
+                updateContent();
                 return;
             case 7:
                 mode = EnumMode.values()[Utilities.circulate(mode.ordinal(), 4, true)];
-                updateLayout();
+                updateContent();
         }
     }
 
@@ -147,7 +146,7 @@ public class GuiCalculator extends JECGuiContainer {
 
     @Override
     public void onItemStackSet(int index) {
-        updateResult();
+        updateLayout();
         if (inventorySlots.getSlot(0).getHasStack()) {
             int indexFound = 6;
             ItemStack stack = inventorySlots.getSlot(0).getStack();
@@ -166,7 +165,7 @@ public class GuiCalculator extends JECGuiContainer {
         if (!textFieldAmount.textboxKeyTyped(typedChar, keyCode)) {
             super.keyTyped(typedChar, keyCode);
         } else {
-            updateResult();
+            updateLayout();
         }
     }
 
@@ -175,7 +174,7 @@ public class GuiCalculator extends JECGuiContainer {
         textFieldAmount.mouseClicked(mouseX, mouseY, mouseButton);
         if (buttonMode.isMouseOver() && mouseButton == 1) {
             mode = EnumMode.values()[Utilities.circulate(mode.ordinal(), 4, false)];
-            updateLayout();
+            updateContent();
             mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
         }
         super.mouseClicked(mouseX, mouseY, mouseButton);
@@ -187,8 +186,7 @@ public class GuiCalculator extends JECGuiContainer {
         onItemStackSet(0);
     }
 
-    @Override
-    public void updateLayout() {
+    public void updateContent() {
         if (calculator != null) {
             List<ItemStack> buffer = mode.getList(calculator);
             total = (buffer.size() + 26) / 27;
@@ -208,7 +206,8 @@ public class GuiCalculator extends JECGuiContainer {
         super.onGuiClosed();
     }
 
-    public void updateResult() {
+    @Override
+    public void updateLayout() {
         long amount;
         try {
             amount = Long.parseLong(textFieldAmount.getText());
@@ -228,7 +227,7 @@ public class GuiCalculator extends JECGuiContainer {
         } else {
             calculator = null;
         }
-        updateLayout();
+        updateContent();
     }
 
     void updateItemFromGui() {
@@ -264,7 +263,7 @@ public class GuiCalculator extends JECGuiContainer {
             inventorySlots.getSlot(0).putStack(buffer.size() > 0 ? buffer.get(0) : null);
             mode = EnumMode.values()[tag.getInteger(keyMode)];
         }
-        updateResult();
+        updateLayout();
     }
 
     public enum EnumMode {

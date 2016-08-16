@@ -1,6 +1,5 @@
 package pers.towdium.just_enough_calculation.gui.guis;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
@@ -18,6 +17,8 @@ import pers.towdium.just_enough_calculation.util.ItemStackHelper;
 import pers.towdium.just_enough_calculation.util.LocalizationHelper;
 import pers.towdium.just_enough_calculation.util.PlayerRecordHelper;
 import pers.towdium.just_enough_calculation.util.Utilities;
+import pers.towdium.just_enough_calculation.util.exception.IllegalPositionException;
+import pers.towdium.just_enough_calculation.util.function.QuaConsumer;
 import pers.towdium.just_enough_calculation.util.wrappers.Pair;
 import pers.towdium.just_enough_calculation.util.wrappers.Singleton;
 
@@ -47,7 +48,6 @@ public class GuiEditor extends JECGuiContainer {
     Pair<String, Integer> dest;
     boolean initialized = false;
 
-
     public GuiEditor(GuiScreen parent, Pair<String, Integer> index) {
         super(new ContainerEditor(), parent);
         this.dest = index;
@@ -56,8 +56,7 @@ public class GuiEditor extends JECGuiContainer {
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
+    public void init() {
         buttonMode = new ArrayList<>();
         int count = -1;
         for (int i = 0; i < 2; i++) {
@@ -72,8 +71,8 @@ public class GuiEditor extends JECGuiContainer {
                 buttonMode.add(new GuiButtonExt(++count, 54 + j * 21 + guiLeft, 117 + i * 32 + guiTop, 10, 10, "I"));
             }
         }
-        buttonLeft = new GuiButtonNew(40, guiLeft + 7, guiTop + 7, 14, 20, "<");
-        buttonRight = new GuiButtonNew(41, guiLeft + 90, guiTop + 7, 14, 20, ">");
+        buttonLeft = new GuiButtonExt(40, guiLeft + 7, guiTop + 7, 14, 20, "<");
+        buttonRight = new GuiButtonExt(41, guiLeft + 90, guiTop + 7, 14, 20, ">");
         buttonNew = new GuiButtonExt(42, guiLeft + 108, guiTop + 7, 61, 20, LocalizationHelper.format("gui.editor.newGroup"));
         buttonHelp = new GuiButtonExt(43, guiLeft + 131, guiTop + 75, 38, 18, LocalizationHelper.format("gui.editor.help"));
         buttonSave = new GuiButtonExt(44, guiLeft + 131, guiTop + 31, 38, 18, LocalizationHelper.format("gui.editor.save"));
@@ -89,11 +88,10 @@ public class GuiEditor extends JECGuiContainer {
         if (customName == null && PlayerRecordHelper.getSizeGroup() == 0) {
             customName = "Default";
         }
-        buttonRight.enabled = !newGroup;
-        buttonRight.enabled = !newGroup;
         if (!initialized && dest != null) {
             putRecipe(PlayerRecordHelper.getRecipe(dest.one, dest.two));
             group = PlayerRecordHelper.getIndexGroup(dest.one);
+            initialized = true;
         }
     }
 
@@ -149,7 +147,8 @@ public class GuiEditor extends JECGuiContainer {
                 Utilities.openGui(new GuiPickerFluid(itemStack -> {
                     Utilities.openGui(this);
                     slot.putStack(itemStack);
-                }, this));
+                    updateLayout();
+                }, this, stack));
             }
         } else {
             switch (button.id) {
@@ -191,12 +190,12 @@ public class GuiEditor extends JECGuiContainer {
                         group = 0;
                         textGroup.setText("");
                         newGroup = false;
-                        buttonLeft.enabled = true;
-                        buttonRight.enabled = true;
+                        buttonLeft.visible = true;
+                        buttonRight.visible = true;
                         buttonNew.displayString = LocalizationHelper.format("gui.editor.newGroup");
                     } else {
-                        buttonLeft.enabled = false;
-                        buttonRight.enabled = false;
+                        buttonLeft.visible = false;
+                        buttonRight.visible = false;
                         newGroup = true;
                         buttonNew.displayString = LocalizationHelper.format("gui.editor.confirm");
                     }
@@ -236,13 +235,41 @@ public class GuiEditor extends JECGuiContainer {
 
     @Override
     public void onItemStackSet(int index) {
-        ItemStack stack = inventorySlots.getSlot(index).getStack();
-        boolean fluid = stack != null && ItemStackHelper.NBT.getType(stack) == ItemStackHelper.EnumStackAmountType.FLUID;
-        GuiButton button = buttonMode.get(2 * index);
-        button.enabled = !fluid;
-        button.displayString = "#";
-        button = buttonMode.get(2 * index + 1);
-        button.displayString = fluid ? "F" : "I";
+        updateLayout();
+    }
+
+    @Override
+    public void updateLayout() {
+        buttonLeft.visible = !newGroup;
+        buttonRight.visible = !newGroup;
+        for (int i = 0; i < 20; i++) {
+            ItemStack stack = inventorySlots.getSlot(i).getStack();
+            GuiButton amount = buttonMode.get(2 * i);
+            GuiButton type = buttonMode.get(2 * i + 1);
+            QuaConsumer<String, Boolean, String, Boolean> setter = (s1, b1, s2, b2) -> {
+                amount.displayString = s1;
+                amount.enabled = b1;
+                type.displayString = s2;
+                type.enabled = b2;
+            };
+            if (stack == null) {
+                setter.accept("#", false, "I", true);
+            } else {
+                switch (ItemStackHelper.NBT.getType(stack)) {
+                    case NUMBER:
+                        setter.accept("#", true, "I", false);
+                        break;
+                    case PERCENTAGE:
+                        setter.accept("%", true, "I", false);
+                        break;
+                    case FLUID:
+                        setter.accept("#", false, "F", true);
+                        break;
+                    default:
+                        throw new IllegalPositionException();
+                }
+            }
+        }
     }
 
     public void putRecipe(Recipe recipe) {
@@ -287,20 +314,6 @@ public class GuiEditor extends JECGuiContainer {
         @Override
         public EnumSlotType getSlotType(int index) {
             return EnumSlotType.AMOUNT;
-        }
-    }
-
-    class GuiButtonNew extends GuiButtonExt {
-        public GuiButtonNew(int id, int xPos, int yPos, int width, int height, String displayString) {
-            super(id, xPos, yPos, width, height, displayString);
-        }
-
-        @SuppressWarnings("NullableProblems")
-        @Override
-        public void drawButton(Minecraft mc, int mouseX, int mouseY) {
-            if (enabled) {
-                super.drawButton(mc, mouseX, mouseY);
-            }
         }
     }
 }

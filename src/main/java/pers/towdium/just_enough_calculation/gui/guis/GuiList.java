@@ -42,8 +42,7 @@ public abstract class GuiList extends JECGuiContainer {
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
+    public void init() {
         buttonList.add(new GuiButtonExt(0, guiLeft + 7, guiTop + 133, 13, 12, "<"));
         buttonList.add(new GuiButtonExt(1, guiLeft + 156, guiTop + 133, 13, 12, ">"));
         buttonList.add(new GuiButtonExt(2, guiLeft + 7, guiTop + 147, 13, 12, "<"));
@@ -54,8 +53,6 @@ public abstract class GuiList extends JECGuiContainer {
             buttons.add(new GuiButtonExt(1 + 2 * i + 4, guiLeft + 128, guiTop + top + 20 * i, 41, 18, "delete"));
         }
         buttonList.addAll(buttons);
-        init();
-        updateLayout();
     }
 
     @Override
@@ -155,7 +152,4 @@ public abstract class GuiList extends JECGuiContainer {
     }
 
     protected abstract List<Pair<String, Integer>> getSuitableRecipeIndex(List<Pair<String, Integer>> recipeList);
-
-    protected void init() {
-    }
 }

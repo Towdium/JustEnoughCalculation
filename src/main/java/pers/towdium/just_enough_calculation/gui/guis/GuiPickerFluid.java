@@ -29,7 +29,7 @@ public class GuiPickerFluid extends GuiPicker {
     GuiTextField fieldAmount;
     GuiButton buttonConfirm;
 
-    public GuiPickerFluid(Consumer<ItemStack> callback, GuiScreen parent) {
+    public GuiPickerFluid(Consumer<ItemStack> callback, GuiScreen parent, ItemStack stack) {
         super(new JECContainer() {
             @Override
             protected void addSlots() {
@@ -43,6 +43,7 @@ public class GuiPickerFluid extends GuiPicker {
             }
         }, parent, 4, getRegistryStacks());
         this.callback = callback;
+        inventorySlots.getSlot(36).putStack(stack);
     }
 
     private static List<ItemStack> getRegistryStacks() {
@@ -52,11 +53,12 @@ public class GuiPickerFluid extends GuiPicker {
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
+    public void init() {
+        super.init();
         fieldAmount = new GuiTextField(0, fontRendererObj, guiLeft + 39, guiTop + 8, 58, 18);
+        fieldAmount.setText(inventorySlots.getSlot(36).getStack() == null ? "" : String.valueOf(ItemStackHelper.NBT.getAmount(inventorySlots.getSlot(36).getStack())));
         buttonConfirm = new GuiButton(2, guiLeft + 119, guiTop + 7, 50, 20, "confirm");
-        buttonConfirm.enabled = false;
+        buttonConfirm.enabled = inventorySlots.getSlot(36).getHasStack();
         buttonList.add(buttonConfirm);
     }
 
@@ -108,8 +110,15 @@ public class GuiPickerFluid extends GuiPicker {
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         if (!fieldAmount.textboxKeyTyped(typedChar, keyCode))
             super.keyTyped(typedChar, keyCode);
-        else
-            fieldAmount.setTextColor(0xFFFFFF);
+        else {
+            try {
+                //noinspection ResultOfMethodCallIgnored
+                Long.parseLong(fieldAmount.getText());
+                fieldAmount.setTextColor(0xFFFFFF);
+            } catch (NumberFormatException e) {
+                fieldAmount.setTextColor(0xFF0000);
+            }
+        }
     }
 
     @Override

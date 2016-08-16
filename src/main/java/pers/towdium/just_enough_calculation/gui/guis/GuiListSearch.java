@@ -47,6 +47,7 @@ public class GuiListSearch extends GuiList {
 
     @Override
     public void init() {
+        super.init();
         buttonMode = new GuiButton(14, 117 + guiLeft, 7 + guiTop, 52, 20, "");
         buttonList.add(buttonMode);
     }
