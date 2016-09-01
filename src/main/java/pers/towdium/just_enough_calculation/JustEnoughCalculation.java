@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 import pers.towdium.just_enough_calculation.item.ItemCalculator;
 import pers.towdium.just_enough_calculation.item.ItemFluidContainer;
 import pers.towdium.just_enough_calculation.network.IProxy;
+import pers.towdium.just_enough_calculation.network.packets.PacketOredictModify;
 import pers.towdium.just_enough_calculation.network.packets.PacketRecordModify;
 import pers.towdium.just_enough_calculation.network.packets.PacketRecordSync;
 import pers.towdium.just_enough_calculation.network.packets.PacketSyncCalculator;
@@ -44,6 +45,7 @@ public class JustEnoughCalculation {
         networkWrapper.registerMessage(PacketRecordModify.class, PacketRecordModify.class, 0, Side.SERVER);
         networkWrapper.registerMessage(PacketRecordSync.class, PacketRecordSync.class, 1, Side.CLIENT);
         networkWrapper.registerMessage(PacketSyncCalculator.class, PacketSyncCalculator.class, 2, Side.SERVER);
+        networkWrapper.registerMessage(PacketOredictModify.class, PacketOredictModify.class, 3, Side.SERVER);
         proxy.preInit();
     }
 

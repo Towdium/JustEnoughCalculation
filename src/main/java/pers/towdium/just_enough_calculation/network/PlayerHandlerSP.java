@@ -181,6 +181,12 @@ public class PlayerHandlerSP implements IProxy.IPlayerHandler {
         return buffer.value;
     }
 
+    public List<ItemStack> getOreDictPref() {
+        List<ItemStack> ret = new ArrayList<>();
+        oreDictPref.forEach(stack -> ret.add(stack.copy()));
+        return ret;
+    }
+
     public void addOreDictPref(ItemStack stack) {
         Singleton<Boolean> flag = new Singleton<>(false);
         oreDictPref.forEach(itemStack -> {
@@ -192,8 +198,8 @@ public class PlayerHandlerSP implements IProxy.IPlayerHandler {
         }
     }
 
-    public void removeOreDictPref(int index) {
-        oreDictPref.remove(index);
+    public void removeOreDictPref(ItemStack stack) {
+        oreDictPref.removeIf(aStack -> ItemStackHelper.isItemEqual(aStack, stack));
     }
 
     @Override

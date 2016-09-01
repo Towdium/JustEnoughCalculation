@@ -145,6 +145,7 @@ public abstract class JECGuiContainer extends GuiContainer {
             }
         } else if (activeSlot != -1) {
             ItemStack stack = JEIPlugin.runtime.getItemListOverlay().getStackUnderMouse();
+            stack = stack == null ? (getSlotUnderMouse() != null ? getSlotUnderMouse().getStack() : null) : stack;
             inventorySlots.getSlot(activeSlot).putStack(stack == null ? null :
                     ((JECContainer) inventorySlots).getSlotType(activeSlot) == JECContainer.EnumSlotType.AMOUNT ?
                             ItemStackHelper.toItemStackJEC(stack.copy()) : stack.copy());

@@ -17,7 +17,6 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 /**
@@ -81,6 +80,7 @@ public class GuiPickerFluid extends GuiPicker {
         fieldAmount.drawTextBox();
         drawCenteredStringWithoutShadow(fontRendererObj, "mb", guiLeft + 107, guiTop + 13, 4210752);
         fontRendererObj.drawString("Search:", guiLeft + 7, guiTop + 51, 4210752);
+        fontRendererObj.drawString("x", 30, 13, 4210752);
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
     }
 
@@ -93,11 +93,6 @@ public class GuiPickerFluid extends GuiPicker {
     protected void onItemStackPick(ItemStack itemStack) {
         inventorySlots.getSlot(36).putStack(itemStack);
         buttonConfirm.enabled = true;
-    }
-
-    @Override
-    protected BiFunction<Long, ItemStackHelper.EnumStackAmountType, String> getFormer() {
-        return (aLong, type) -> "";
     }
 
     @Override

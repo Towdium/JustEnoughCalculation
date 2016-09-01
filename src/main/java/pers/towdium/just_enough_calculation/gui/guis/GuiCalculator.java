@@ -109,6 +109,8 @@ public class GuiCalculator extends JECGuiContainer {
             case 3:
                 Utilities.openGui(new GuiListViewer(this));
                 return;
+            case 4:
+                Utilities.openGui(new GuiOreDict(this));
             case 5:
                 ++page;
                 updateContent();

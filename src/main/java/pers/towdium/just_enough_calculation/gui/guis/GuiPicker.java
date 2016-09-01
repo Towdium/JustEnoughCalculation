@@ -8,10 +8,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
 import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
+import pers.towdium.just_enough_calculation.util.ItemStackHelper;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
 
 /**
  * Author: Towdium
@@ -82,6 +84,11 @@ public abstract class GuiPicker extends JECGuiContainer {
         else
             page = total == 0 ? 0 : page == 1 ? total : page - 1;
         updateLayout();
+    }
+
+    @Override
+    protected BiFunction<Long, ItemStackHelper.EnumStackAmountType, String> getFormer() {
+        return (aLong, type) -> "";
     }
 
     abstract GuiTextField getSearchField(FontRenderer renderer);

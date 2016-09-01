@@ -1,6 +1,7 @@
 package pers.towdium.just_enough_calculation.network;
 
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
@@ -35,6 +36,14 @@ public class PlayerHandlerMP implements IProxy.IPlayerHandler {
 
     public void removeRecipe(UUID uuid, String group, int index) {
         getData(uuid).removeRecipe(group, index);
+    }
+
+    public void addOredictPref(UUID uuid, ItemStack stack) {
+        getData(uuid).addOreDictPref(stack);
+    }
+
+    public void removeOredictPref(UUID uuid, ItemStack stack) {
+        getData(uuid).removeOreDictPref(stack);
     }
 
     @Override

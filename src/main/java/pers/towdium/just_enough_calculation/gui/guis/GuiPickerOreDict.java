@@ -31,7 +31,7 @@ public class GuiPickerOreDict extends GuiPicker {
             public EnumSlotType getSlotType(int index) {
                 return EnumSlotType.PICKER;
             }
-        }, parent, 4, stacks);
+        }, parent, 6, stacks);
         this.callback = callback;
     }
 

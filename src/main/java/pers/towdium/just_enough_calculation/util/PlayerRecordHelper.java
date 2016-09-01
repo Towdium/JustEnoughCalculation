@@ -4,6 +4,7 @@ import net.minecraft.item.ItemStack;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.core.Recipe;
 import pers.towdium.just_enough_calculation.network.PlayerHandlerSP;
+import pers.towdium.just_enough_calculation.network.packets.PacketOredictModify;
 import pers.towdium.just_enough_calculation.network.packets.PacketRecordModify;
 
 import java.util.List;
@@ -62,8 +63,18 @@ public class PlayerRecordHelper {
         return playerHandler.getOreDictPref(stacks);
     }
 
+    public static List<ItemStack> getOreDictPref() {
+        return playerHandler.getOreDictPref();
+    }
+
+    public static void removeOreDictPref(ItemStack stack) {
+        playerHandler.removeOreDictPref(stack);
+        JustEnoughCalculation.networkWrapper.sendToServer(new PacketOredictModify(true, stack));
+    }
+
     public static void addOreDictPref(ItemStack stack) {
         playerHandler.addOreDictPref(stack);
+        JustEnoughCalculation.networkWrapper.sendToServer(new PacketOredictModify(false, stack));
     }
 
     public static List<Recipe> getAllRecipeOutput(ItemStack itemStack) {
