@@ -9,6 +9,7 @@ import net.minecraftforge.fml.client.config.GuiButtonExt;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
 import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
 import pers.towdium.just_enough_calculation.util.ItemStackHelper;
+import pers.towdium.just_enough_calculation.util.Utilities;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -68,9 +69,18 @@ public abstract class GuiPicker extends JECGuiContainer {
     @Override
     public void updateLayout() {
         List<ItemStack> buffer = new ArrayList<>();
-        stacks.forEach(itemStack -> {
-            if (itemStack.getDisplayName().toLowerCase().contains(searchField.getText())) buffer.add(itemStack);
-        });
+        String text = searchField.getText().toLowerCase();
+        if (text.length() != 0 && text.charAt(0) == '@') {
+            String textAlt = text.substring(1);
+            stacks.forEach(itemStack -> {
+                String name = Utilities.getModName(itemStack);
+                if (name != null && name.toLowerCase().contains(textAlt)) buffer.add(itemStack);
+            });
+        } else {
+            stacks.forEach(itemStack -> {
+                if (itemStack.getDisplayName().toLowerCase().contains(text)) buffer.add(itemStack);
+            });
+        }
         searchField.setTextColor(buffer.size() == 0 ? 0xFF0000 : 0xFFFFFF);
         total = (buffer.size() + (9 * row) - 1) / (9 * row);
         page = page > total ? total : page == 0 && total != 0 ? 1 : page;

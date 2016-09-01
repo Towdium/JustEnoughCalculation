@@ -29,18 +29,7 @@ public class GuiPickerFluid extends GuiPicker {
     GuiButton buttonConfirm;
 
     public GuiPickerFluid(Consumer<ItemStack> callback, GuiScreen parent, ItemStack stack) {
-        super(new JECContainer() {
-            @Override
-            protected void addSlots() {
-                addSlotGroup(8, 70, 18, 18, 4, 9);
-                addSlotSingle(9, 9);
-            }
-
-            @Override
-            public EnumSlotType getSlotType(int index) {
-                return index == 36 ? EnumSlotType.DISABLED : EnumSlotType.PICKER;
-            }
-        }, parent, 4, getRegistryStacks());
+        super(new ContainerPickerFluid(), parent, 4, getRegistryStacks());
         this.callback = callback;
         inventorySlots.getSlot(36).putStack(stack);
     }
@@ -129,5 +118,18 @@ public class GuiPickerFluid extends GuiPicker {
             callback.accept(ItemStackHelper.NBT.setAmount(inventorySlots.getSlot(36).getStack(), amount));
         }
         super.actionPerformed(button);
+    }
+
+    public static class ContainerPickerFluid extends JECContainer {
+        @Override
+        protected void addSlots() {
+            addSlotGroup(8, 70, 18, 18, 4, 9);
+            addSlotSingle(9, 9);
+        }
+
+        @Override
+        public EnumSlotType getSlotType(int index) {
+            return index == 36 ? EnumSlotType.DISABLED : EnumSlotType.PICKER;
+        }
     }
 }

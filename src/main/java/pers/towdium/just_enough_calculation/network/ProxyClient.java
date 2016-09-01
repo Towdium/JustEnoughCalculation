@@ -11,6 +11,7 @@ import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.event.DataEventHandler;
 import pers.towdium.just_enough_calculation.event.ModelEventHandler;
 import pers.towdium.just_enough_calculation.event.MouseEventHandler;
+import pers.towdium.just_enough_calculation.event.TooltipEventHandler;
 import pers.towdium.just_enough_calculation.gui.JECGuiHandler;
 
 /**
@@ -32,6 +33,7 @@ public class ProxyClient implements IProxy {
         MinecraftForge.EVENT_BUS.register(new MouseEventHandler());
         MinecraftForge.EVENT_BUS.register(new ModelEventHandler());
         MinecraftForge.EVENT_BUS.register(new DataEventHandler());
+        MinecraftForge.EVENT_BUS.register(new TooltipEventHandler());
         NetworkRegistry.INSTANCE.registerGuiHandler(JustEnoughCalculation.instance, new JECGuiHandler());
     }
 

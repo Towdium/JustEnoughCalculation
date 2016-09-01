@@ -3,15 +3,33 @@ package pers.towdium.just_enough_calculation.util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
+import pers.towdium.just_enough_calculation.item.ItemFluidContainer;
 import pers.towdium.just_enough_calculation.util.function.TriFunction;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Author: Towdium
  * Date:   2016/6/25.
  */
 public class Utilities {
+    static Map<String, String> dictionary = new HashMap<>();
+
+    static {
+        Map<String, ModContainer> modMap = Loader.instance().getIndexedModList();
+        for (Map.Entry<String, ModContainer> modEntry : modMap.entrySet()) {
+            String lowercaseId = modEntry.getKey().toLowerCase(Locale.ENGLISH);
+            String modName = modEntry.getValue().getName();
+            dictionary.put(lowercaseId, modName);
+        }
+    }
 
     // FOR STRING FORMATTING
 
@@ -125,11 +143,23 @@ public class Utilities {
 
     public static void openGui(GuiScreen gui) {
         Minecraft.getMinecraft().displayGuiScreen(gui);
-        /*if (gui instanceof JECGuiContainer) {
-            if (gui instanceof GuiCalculator) {
-                ((GuiCalculator) gui).updateLayout();
+    }
+
+    // MOD NAME
+
+    public static String getModName(ItemStack stack) {
+        String ret;
+        if (stack.getItem() instanceof ItemFluidContainer) {
+            Fluid fluid = ItemStackHelper.NBT.getFluid(stack);
+            String name = fluid.getName();
+            if (name.equals("lava") || name.equals("water")) {
+                ret = "Minecraft";
+            } else {
+                ret = dictionary.get(ItemStackHelper.NBT.getFluid(stack).getStill().toString().split(":")[0]);
             }
-            ((JECGuiContainer) gui).updateLayout();
-        }*/
+        } else {
+            ret = stack.getUnlocalizedName().split(":")[0];
+        }
+        return ret;
     }
 }
