@@ -58,14 +58,14 @@ public class GuiCalculator extends JECGuiContainer {
 
     @Override
     public void init() {
-        buttonSearch = new GuiButton(1, guiLeft + 119, guiTop + 7, 50, 20, "search");
-        buttonAdd = new GuiButton(2, guiLeft + 7, guiTop + 53, 52, 20, "Add");
-        buttonView = new GuiButton(3, guiLeft + 63, guiTop + 53, 52, 20, "Records");
-        buttonSettings = new GuiButton(4, guiLeft + 119, guiTop + 53, 50, 20, "Settings");
+        buttonSearch = new GuiButton(1, guiLeft + 119, guiTop + 7, 50, 20, localization("search"));
+        buttonAdd = new GuiButton(2, guiLeft + 7, guiTop + 53, 52, 20, localization("add"));
+        buttonView = new GuiButton(3, guiLeft + 63, guiTop + 53, 52, 20, localization("records"));
+        buttonSettings = new GuiButton(4, guiLeft + 119, guiTop + 53, 50, 20, localization("oreDict"));
         buttonLeft = new GuiButton(5, guiLeft + 7, guiTop + 139, 14, 20, "<");
         buttonRight = new GuiButton(6, guiLeft + 45, guiTop + 139, 14, 20, ">");
         buttonMode = new GuiButton(7, guiLeft + 63, guiTop + 139, 52, 20, "");
-        buttonStock = new GuiButton(8, guiLeft + 119, guiTop + 139, 50, 20, "Stock");
+        buttonStock = new GuiButton(8, guiLeft + 119, guiTop + 139, 50, 20, "");
         buttonList.add(buttonSearch);
         buttonList.add(buttonAdd);
         buttonList.add(buttonView);
@@ -93,7 +93,7 @@ public class GuiCalculator extends JECGuiContainer {
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
         fontRendererObj.drawString("x", 30, 13, 4210752);
-        drawCenteredStringWithoutShadow(fontRendererObj, "Recent", 144, 36, 4210752);
+        drawCenteredString(fontRendererObj, localization("recent"), 144, 36, 0xFFFFFF);
         drawCenteredString(fontRendererObj, page + "/" + total, 33, 145, 0xFFFFFF);
     }
 
@@ -128,12 +128,7 @@ public class GuiCalculator extends JECGuiContainer {
     @Nullable
     @Override
     protected String getButtonTooltip(int buttonId) {
-        switch (buttonId) {
-            case 4:
-                return "Hello\nWorld";
-            default:
-                return null;
-        }
+        return null;
     }
 
     @Override
@@ -222,8 +217,7 @@ public class GuiCalculator extends JECGuiContainer {
             try {
                 calculator = new Calculator(inventorySlots.getSlot(0).getStack(), amount);
             } catch (RuntimeException e) {
-                mc.thePlayer.addChatMessage(new TextComponentString("Sorry, an exception is caught during the calculation."));
-                mc.thePlayer.addChatMessage(new TextComponentString("If you are using the latest version, you can report this issue to the author"));
+                mc.thePlayer.addChatMessage(new TextComponentString(localization("error")));
                 e.printStackTrace();
             }
         } else {
@@ -274,13 +268,13 @@ public class GuiCalculator extends JECGuiContainer {
         public String getDisplay() {
             switch (this) {
                 case INPUT:
-                    return "Input";
+                    return JECGuiContainer.localization(GuiCalculator.class, "input");
                 case PROCEDURE:
-                    return "Procedure";
+                    return JECGuiContainer.localization(GuiCalculator.class, "procedure");
                 case OUTPUT:
-                    return "Output";
+                    return JECGuiContainer.localization(GuiCalculator.class, "output");
                 case CATALYST:
-                    return "Catalyst";
+                    return JECGuiContainer.localization(GuiCalculator.class, "catalyst");
                 default:
                     throw new IllegalPositionException();
             }

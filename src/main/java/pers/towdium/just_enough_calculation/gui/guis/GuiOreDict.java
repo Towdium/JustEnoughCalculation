@@ -57,7 +57,7 @@ public class GuiOreDict extends JECGuiContainer {
     public void init() {
         buttonList.add(new GuiButtonExt(0, guiLeft + 7, guiTop + 147, 13, 12, "<"));
         buttonList.add(new GuiButtonExt(1, guiLeft + 156, guiTop + 147, 13, 12, ">"));
-        buttonAdd = new GuiButton(2, 117 + guiLeft, 7 + guiTop, 52, 20, "Add");
+        buttonAdd = new GuiButton(2, 117 + guiLeft, 7 + guiTop, 52, 20, localization("add"));
         buttonList.add(buttonAdd);
         onItemStackSet(54);
     }

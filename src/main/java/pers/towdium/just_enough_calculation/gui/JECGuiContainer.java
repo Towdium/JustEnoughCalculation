@@ -17,12 +17,15 @@ import org.lwjgl.input.Mouse;
 import pers.towdium.just_enough_calculation.plugin.JEIPlugin;
 import pers.towdium.just_enough_calculation.util.ItemStackHelper;
 import pers.towdium.just_enough_calculation.util.ItemStackHelper.NBT;
+import pers.towdium.just_enough_calculation.util.LocalizationHelper;
 import pers.towdium.just_enough_calculation.util.Utilities;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiFunction;
 
 /**
@@ -30,6 +33,8 @@ import java.util.function.BiFunction;
  * Created: 2016/6/13.
  */
 public abstract class JECGuiContainer extends GuiContainer {
+    static final String PREFIX = "gui.";
+    static Map<String, Map<String, String>> keyCache = new HashMap<>();
     protected GuiScreen parent;
     protected int activeSlot = -1;
     protected ItemStack temp;
@@ -38,6 +43,24 @@ public abstract class JECGuiContainer extends GuiContainer {
     public JECGuiContainer(Container inventorySlotsIn, GuiScreen parent) {
         super(inventorySlotsIn);
         this.parent = parent;
+    }
+
+    public static String localization(Class c, String translateKey, Object... parameters) {
+        String name = c.getName();
+        Map<String, String> map = keyCache.get(name);
+        String key = map != null ? map.get(translateKey) : null;
+        if (key == null) {
+            StringBuilder builder = new StringBuilder(c.getName());
+            builder.delete(0, builder.lastIndexOf(".") + 4).setCharAt(0, Character.toLowerCase(builder.charAt(0)));
+            builder.insert(0, PREFIX).append('.').append(translateKey);
+            key = builder.toString();
+            if (map == null) {
+                map = new HashMap<>();
+                keyCache.put(name, map);
+            }
+            map.put(translateKey, key);
+        }
+        return LocalizationHelper.format(key, parameters);
     }
 
     public boolean setActiveSlot(int id) {
@@ -233,5 +256,9 @@ public abstract class JECGuiContainer extends GuiContainer {
 
     protected BiFunction<Long, ItemStackHelper.EnumStackAmountType, String> getFormer() {
         return (aLong, type) -> type.getStringEditor(aLong);
+    }
+
+    public String localization(String translateKey, Object... parameters) {
+        return localization(this.getClass(), translateKey, parameters);
     }
 }

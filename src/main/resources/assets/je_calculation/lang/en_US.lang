@@ -1,12 +1,33 @@
-gui.editor.output=Output
+gui.calculator.search=Search
+gui.calculator.add=Add
+gui.calculator.records=Records
+gui.calculator.oreDict=OreDict
+gui.calculator.recent=Recent
+gui.calculator.input=Input
+gui.calculator.procedure=Procedure
+gui.calculator.output=Output
+gui.calculator.catalyst=Catalyst
+gui.calculator.error=Sorry, an exception is caught during the calculation. This might be thrown to avoid lag when the procedure is too complex. You can report this issue to the author if you are using the latest version.
+
 gui.editor.catalyst=Cata-\nlyst
 gui.editor.input=Input
+gui.editor.output=Output
 gui.editor.newGroup=New Group
 gui.editor.save=Save
 gui.editor.clear=Clear
-gui.editor.help=Help
-gui.editor.noRecord=No Record
 gui.editor.confirm=Confirm
-item.itemCalculator.name=Calculator
+
+gui.list.edit=Edit
+gui.list.delete=Delete
+gui.list.noRecord=No Record
+gui.listSearch.input=Input
+gui.listSearch.output=Output
+gui.listSearch.catalyst=Catalyst
+gui.listSearch.all=All
+
+gui.oreDict.add=Add
+
+gui.picker.search=Search:
+
+item.itemCalculator.name=Crafting Calculator
 item.itemFluidContainer.name=Fluid Container
-item.itemFluidContainer.tooltip=Amount: %dmb

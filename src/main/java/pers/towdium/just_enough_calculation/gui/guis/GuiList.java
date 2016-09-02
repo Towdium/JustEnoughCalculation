@@ -7,7 +7,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
 import pers.towdium.just_enough_calculation.core.Recipe;
 import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
-import pers.towdium.just_enough_calculation.util.LocalizationHelper;
 import pers.towdium.just_enough_calculation.util.PlayerRecordHelper;
 import pers.towdium.just_enough_calculation.util.Utilities;
 import pers.towdium.just_enough_calculation.util.wrappers.Pair;
@@ -49,8 +48,8 @@ public abstract class GuiList extends JECGuiContainer {
         buttonList.add(new GuiButtonExt(3, guiLeft + 156, guiTop + 147, 13, 12, ">"));
         buttons = new ArrayList<>(row * 2);
         for (int i = 0; i < row; i++) {
-            buttons.add(new GuiButtonExt(2 * i + 4, guiLeft + 83, guiTop + top + 20 * i, 41, 18, "edit"));
-            buttons.add(new GuiButtonExt(1 + 2 * i + 4, guiLeft + 128, guiTop + top + 20 * i, 41, 18, "delete"));
+            buttons.add(new GuiButtonExt(2 * i + 4, guiLeft + 83, guiTop + top + 20 * i, 41, 18, localization(GuiList.class, "edit")));
+            buttons.add(new GuiButtonExt(1 + 2 * i + 4, guiLeft + 128, guiTop + top + 20 * i, 41, 18, localization(GuiList.class, "delete")));
         }
         buttonList.addAll(buttons);
     }
@@ -60,7 +59,7 @@ public abstract class GuiList extends JECGuiContainer {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
         drawCenteredStringMultiLine(fontRendererObj,
                 PlayerRecordHelper.getSizeGroup() > group ? PlayerRecordHelper.getGroupName(group) :
-                        LocalizationHelper.format("gui.editor.noRecord"), 7, 169, 133, 145, 0xFFFFFF);
+                        localization(GuiList.class, "noRecord"), 7, 169, 133, 145, 0xFFFFFF);
         drawCenteredStringMultiLine(fontRendererObj, page + "/" + total, 7, 169, 147, 159, 0xFFFFFF);
     }
 

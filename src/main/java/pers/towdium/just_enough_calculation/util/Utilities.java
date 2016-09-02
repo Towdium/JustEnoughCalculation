@@ -158,7 +158,13 @@ public class Utilities {
                 ret = dictionary.get(ItemStackHelper.NBT.getFluid(stack).getStill().toString().split(":")[0]);
             }
         } else {
-            ret = stack.getUnlocalizedName().split(":")[0];
+            String name = stack.getItem().getRegistryName().toString();
+            name = name.substring(0, name.indexOf(":"));
+            if (name.equals("minecraft")) {
+                ret = "Minecraft";
+            } else {
+                ret = dictionary.get(name);
+            }
         }
         return ret;
     }

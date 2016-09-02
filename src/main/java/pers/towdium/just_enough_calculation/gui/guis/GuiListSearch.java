@@ -9,6 +9,7 @@ import net.minecraft.util.ResourceLocation;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.core.Recipe;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
+import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
 import pers.towdium.just_enough_calculation.util.PlayerRecordHelper;
 import pers.towdium.just_enough_calculation.util.Utilities;
 import pers.towdium.just_enough_calculation.util.exception.IllegalPositionException;
@@ -146,13 +147,13 @@ public class GuiListSearch extends GuiList {
         public String getDisplayString() {
             switch (this) {
                 case IN:
-                    return "Input";
+                    return JECGuiContainer.localization(GuiListSearch.class, "input");
                 case OUT:
-                    return "Output";
+                    return JECGuiContainer.localization(GuiListSearch.class, "output");
                 case CAT:
-                    return "Catalyst";
+                    return JECGuiContainer.localization(GuiListSearch.class, "catalyst");
                 case ALL:
-                    return "All";
+                    return JECGuiContainer.localization(GuiListSearch.class, "all");
                 default:
                     throw new IllegalPositionException();
             }

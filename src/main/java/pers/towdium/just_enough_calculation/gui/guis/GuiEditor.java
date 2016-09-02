@@ -14,7 +14,6 @@ import pers.towdium.just_enough_calculation.core.Recipe;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
 import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
 import pers.towdium.just_enough_calculation.util.ItemStackHelper;
-import pers.towdium.just_enough_calculation.util.LocalizationHelper;
 import pers.towdium.just_enough_calculation.util.PlayerRecordHelper;
 import pers.towdium.just_enough_calculation.util.Utilities;
 import pers.towdium.just_enough_calculation.util.exception.IllegalPositionException;
@@ -73,15 +72,15 @@ public class GuiEditor extends JECGuiContainer {
         }
         buttonLeft = new GuiButtonExt(40, guiLeft + 7, guiTop + 7, 14, 20, "<");
         buttonRight = new GuiButtonExt(41, guiLeft + 90, guiTop + 7, 14, 20, ">");
-        buttonNew = new GuiButtonExt(42, guiLeft + 108, guiTop + 7, 61, 20, LocalizationHelper.format("gui.editor.newGroup"));
-        buttonHelp = new GuiButtonExt(43, guiLeft + 131, guiTop + 75, 38, 18, LocalizationHelper.format("gui.editor.help"));
-        buttonSave = new GuiButtonExt(44, guiLeft + 131, guiTop + 31, 38, 18, LocalizationHelper.format("gui.editor.save"));
-        buttonClear = new GuiButtonExt(45, guiLeft + 131, guiTop + 53, 38, 18, LocalizationHelper.format("gui.editor.clear"));
+        buttonNew = new GuiButtonExt(42, guiLeft + 108, guiTop + 7, 61, 20, localization("newGroup"));
+        //buttonHelp = new GuiButtonExt(43, guiLeft + 131, guiTop + 75, 38, 18, localization("help"));
+        buttonSave = new GuiButtonExt(43, guiLeft + 131, guiTop + 31, 38, 18, localization("save"));
+        buttonClear = new GuiButtonExt(44, guiLeft + 131, guiTop + 53, 38, 18, localization("clear"));
         buttonList.addAll(buttonMode);
         buttonList.add(buttonLeft);
         buttonList.add(buttonRight);
         buttonList.add(buttonNew);
-        buttonList.add(buttonHelp);
+        //buttonList.add(buttonHelp);
         buttonList.add(buttonSave);
         buttonList.add(buttonClear);
         textGroup = new GuiTextField(0, fontRendererObj, guiLeft + 8, guiTop + 8, 95, 18);
@@ -98,9 +97,9 @@ public class GuiEditor extends JECGuiContainer {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        drawCenteredStringMultiLine(fontRendererObj, LocalizationHelper.format("gui.editor.output"), 7, 44, 31, 61, 0xFFFFFF);
-        drawCenteredStringMultiLine(fontRendererObj, LocalizationHelper.format("gui.editor.catalyst"), 7, 44, 64, 94, 0xFFFFFF);
-        drawCenteredStringMultiLine(fontRendererObj, LocalizationHelper.format("gui.editor.input"), 7, 44, 97, 159, 0xFFFFFF);
+        drawCenteredStringMultiLine(fontRendererObj, localization("output"), 7, 44, 31, 61, 0xFFFFFF);
+        drawCenteredStringMultiLine(fontRendererObj, localization("catalyst"), 7, 44, 64, 94, 0xFFFFFF);
+        drawCenteredStringMultiLine(fontRendererObj, localization("input"), 7, 44, 97, 159, 0xFFFFFF);
         if (!newGroup) {
             drawCenteredStringMultiLine(fontRendererObj, getGroup(), 7, 104, 7, 27, 0xFFFFFF);
         }
@@ -192,22 +191,27 @@ public class GuiEditor extends JECGuiContainer {
                         newGroup = false;
                         buttonLeft.visible = true;
                         buttonRight.visible = true;
-                        buttonNew.displayString = LocalizationHelper.format("gui.editor.newGroup");
+                        buttonNew.displayString = localization("newGroup");
                     } else {
                         buttonLeft.visible = false;
                         buttonRight.visible = false;
                         newGroup = true;
-                        buttonNew.displayString = LocalizationHelper.format("gui.editor.confirm");
+                        buttonNew.displayString = localization("confirm");
                     }
                     break;
-                case 44:
+                case 43:
                     if (dest == null) {
                         PlayerRecordHelper.addRecipe(toRecipe(), getGroup());
                     } else {
                         PlayerRecordHelper.setRecipe(getGroup(), dest.one, dest.two, toRecipe());
                     }
-
                     Utilities.openGui(parent);
+                    break;
+                case 44:
+                    for (int i = 0; i < 20; i++) {
+                        inventorySlots.getSlot(i).putStack(null);
+                    }
+                    updateLayout();
             }
         }
     }

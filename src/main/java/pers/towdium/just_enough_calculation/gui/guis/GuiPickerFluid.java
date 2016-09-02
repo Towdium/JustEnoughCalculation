@@ -68,7 +68,7 @@ public class GuiPickerFluid extends GuiPicker {
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
         fieldAmount.drawTextBox();
         drawCenteredStringWithoutShadow(fontRendererObj, "mb", guiLeft + 107, guiTop + 13, 4210752);
-        fontRendererObj.drawString("Search:", guiLeft + 7, guiTop + 51, 4210752);
+        fontRendererObj.drawString(localization(GuiPicker.class, "search"), guiLeft + 7, guiTop + 51, 4210752);
         fontRendererObj.drawString("x", 30, 13, 4210752);
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
     }

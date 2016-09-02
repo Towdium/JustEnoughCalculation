@@ -40,7 +40,7 @@ public class GuiPickerOreDict extends GuiPicker {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID, "textures/gui/guiPickerOreDict.png"));
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
-        fontRendererObj.drawString("Search:", guiLeft + 7, guiTop + 13, 4210752);
+        fontRendererObj.drawString(localization(GuiPicker.class, "search"), guiLeft + 7, guiTop + 13, 4210752);
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
     }
 
