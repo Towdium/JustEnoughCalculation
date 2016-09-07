@@ -13,6 +13,7 @@ import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import pers.towdium.just_enough_calculation.plugin.JEIPlugin;
 import pers.towdium.just_enough_calculation.util.ItemStackHelper;
@@ -129,11 +130,32 @@ public abstract class JECGuiContainer extends GuiContainer {
     @SuppressWarnings("NullableProblems")
     protected void handleMouseClick(Slot slotIn, int slotId, int mouseButton, ClickType type) {
         inventorySlots.slotClick(slotIn == null ? slotId : slotIn.slotNumber, mouseButton, type, mc.thePlayer);
+        onItemStackSet(slotId);
     }
 
     @SuppressWarnings("ConstantConditions")
     public boolean handleMouseEvent() {
-        if (Mouse.getEventButton() == 0 && Mouse.getEventButtonState()) {
+        if (Mouse.getEventDWheel() != 0) {
+            Slot slot = getSlotUnderMouse();
+            if (slot != null && ((JECContainer) inventorySlots).getSlotType(slot.getSlotIndex()) == JECContainer.EnumSlotType.AMOUNT) {
+                ItemStack stack = null;
+                boolean up = Mouse.getEventDWheel() > 0;
+                boolean shift = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
+                if (up && shift) {
+                    stack = ItemStackHelper.Click.leftShift(slot.getStack());
+                } else if (up && !shift) {
+                    stack = ItemStackHelper.Click.leftClick(slot.getStack());
+                } else if (!up && shift) {
+                    stack = ItemStackHelper.Click.rightShift(slot.getStack());
+                } else if (!up && !shift) {
+                    stack = ItemStackHelper.Click.rightClick(slot.getStack());
+                }
+                if (stack == null) {
+                    slot.putStack(null);
+                }
+                onItemStackSet(slot.getSlotIndex());
+            }
+        } else if (Mouse.getEventButton() == 0 && Mouse.getEventButtonState()) {
             if (activeSlot == -1) {
                 Slot slot = getSlotUnderMouse();
                 if (slot != null) {

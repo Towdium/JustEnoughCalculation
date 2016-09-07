@@ -4,7 +4,6 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -229,12 +228,6 @@ public class GuiEditor extends JECGuiContainer {
         if (!(newGroup && textGroup.textboxKeyTyped(typedChar, keyCode))) {
             super.keyTyped(typedChar, keyCode);
         }
-    }
-
-    @Override
-    protected void handleMouseClick(Slot slotIn, int slotId, int mouseButton, ClickType type) {
-        super.handleMouseClick(slotIn, slotId, mouseButton, type);
-        onItemStackSet(slotId);
     }
 
     @Override

@@ -266,7 +266,6 @@ public class GuiCalculator extends JECGuiContainer {
             inventorySlots.getSlot(0).putStack(buffer.size() > 0 ? buffer.get(0) : null);
             mode = EnumMode.values()[tag.getInteger(keyMode)];
         }
-        updateLayout();
     }
 
     public enum EnumMode {
