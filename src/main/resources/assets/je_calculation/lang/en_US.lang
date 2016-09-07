@@ -3,11 +3,13 @@ gui.calculator.add=Add
 gui.calculator.records=Records
 gui.calculator.oreDict=OreDict
 gui.calculator.recent=Recent
-gui.calculator.input=Input
+gui.calculator.input=Overall cost
+gui.calculator.missing=Missing
 gui.calculator.procedure=Procedure
-gui.calculator.output=Output
+gui.calculator.output=Extra output
 gui.calculator.catalyst=Catalyst
-gui.calculator.error=Sorry, an exception is caught during the calculation. This might be thrown to avoid lag when the procedure is too complex. You can report this issue to the author if you are using the latest version.
+gui.calculator.errorCore=Sorry, an exception is caught during the calculation. This might be thrown to avoid lag when the procedure is too complex. You can report this issue to the author if you are using the latest version.
+gui.calculator.errorUnknown=Sorry, an unexpected exception is caught during the calculation. You can report this issue to the author if you are using the latest version.
 
 gui.editor.catalyst=Cata-\nlyst
 gui.editor.input=Input

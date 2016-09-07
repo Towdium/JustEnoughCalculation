@@ -3,11 +3,13 @@ gui.calculator.add=添加
 gui.calculator.records=所有记录
 gui.calculator.oreDict=矿物辞典
 gui.calculator.recent=近期记录
-gui.calculator.input=输入
+gui.calculator.input=总消耗
+gui.calculator.missing=缺少材料
 gui.calculator.procedure=步骤
-gui.calculator.output=输出
-gui.calculator.catalyst=催化
-gui.calculator.error=抱歉，在合成过程中发生了一个异常。这可能是为了避免计算操作而造成的卡顿而引发的。如果你正在使用最新版本的话，你可以把这个问题报告给作者。
+gui.calculator.output=额外产物
+gui.calculator.catalyst=催化材料
+gui.calculator.errorCore=抱歉，在计算过程中发生了一个异常。这可能是为了避免计算操作而造成的卡顿而引发的。如果你正在使用最新版本的话，你可以把这个问题报告给作者。
+gui.calculator.errorUnknown=抱歉，在计算过程中发生了一个未知异常。如果你正在使用最新版本的话，你可以把这个问题报告给作者。
 
 gui.editor.catalyst=催化剂
 gui.editor.input=输入

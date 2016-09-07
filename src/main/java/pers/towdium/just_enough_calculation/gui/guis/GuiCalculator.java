@@ -11,6 +11,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.fml.client.config.GuiButtonExt;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.core.Calculator;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
@@ -23,6 +24,7 @@ import pers.towdium.just_enough_calculation.util.exception.IllegalPositionExcept
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
 
@@ -50,7 +52,8 @@ public class GuiCalculator extends JECGuiContainer {
     int total = 0;
     EnumMode mode = EnumMode.INPUT;
 
-    Calculator calculator;
+    Calculator calculatorNormal;
+    Calculator calculatorInventory;
 
     public GuiCalculator(GuiScreen parent) {
         super(new ContainerCalculator(), parent);
@@ -63,9 +66,8 @@ public class GuiCalculator extends JECGuiContainer {
         buttonView = new GuiButton(3, guiLeft + 63, guiTop + 53, 52, 20, localization("records"));
         buttonSettings = new GuiButton(4, guiLeft + 119, guiTop + 53, 50, 20, localization("oreDict"));
         buttonLeft = new GuiButton(5, guiLeft + 7, guiTop + 139, 14, 20, "<");
-        buttonRight = new GuiButton(6, guiLeft + 45, guiTop + 139, 14, 20, ">");
-        buttonMode = new GuiButton(7, guiLeft + 63, guiTop + 139, 52, 20, "");
-        buttonStock = new GuiButton(8, guiLeft + 119, guiTop + 139, 50, 20, "");
+        buttonRight = new GuiButton(6, guiLeft + 72, guiTop + 139, 14, 20, ">");
+        buttonMode = new GuiButtonExt(7, guiLeft + 90, guiTop + 139, 79, 20, "");
         buttonList.add(buttonSearch);
         buttonList.add(buttonAdd);
         buttonList.add(buttonView);
@@ -73,7 +75,6 @@ public class GuiCalculator extends JECGuiContainer {
         buttonList.add(buttonLeft);
         buttonList.add(buttonRight);
         buttonList.add(buttonMode);
-        buttonList.add(buttonStock);
         String temp = textFieldAmount == null ? "" : textFieldAmount.getText();
         textFieldAmount = new GuiTextField(0, fontRendererObj, guiLeft + 39, guiTop + 8, 75, 18);
         textFieldAmount.setText(temp);
@@ -94,7 +95,7 @@ public class GuiCalculator extends JECGuiContainer {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
         fontRendererObj.drawString("x", 30, 13, 4210752);
         drawCenteredString(fontRendererObj, localization("recent"), 144, 36, 0xFFFFFF);
-        drawCenteredString(fontRendererObj, page + "/" + total, 33, 145, 0xFFFFFF);
+        drawCenteredString(fontRendererObj, page + "/" + total, 47, 145, 0xFFFFFF);
     }
 
     @Override
@@ -120,7 +121,7 @@ public class GuiCalculator extends JECGuiContainer {
                 updateContent();
                 return;
             case 7:
-                mode = EnumMode.values()[Utilities.circulate(mode.ordinal(), 4, true)];
+                mode = EnumMode.values()[Utilities.circulate(mode.ordinal(), EnumMode.values().length, true)];
                 updateContent();
         }
     }
@@ -184,8 +185,8 @@ public class GuiCalculator extends JECGuiContainer {
     }
 
     public void updateContent() {
-        if (calculator != null) {
-            List<ItemStack> buffer = mode.getList(calculator);
+        if (calculatorNormal != null && calculatorInventory != null) {
+            List<ItemStack> buffer = mode.getList(calculatorNormal, calculatorInventory);
             total = (buffer.size() + 26) / 27;
             page = total == 0 ? 0 : page > total ? total : page < 1 ? 1 : page;
             putStacks(7, 33, buffer, total == 0 ? 0 : (page - 1) * 27);
@@ -215,13 +216,19 @@ public class GuiCalculator extends JECGuiContainer {
         }
         if (inventorySlots.getSlot(0).getHasStack() && amount != 0) {
             try {
-                calculator = new Calculator(inventorySlots.getSlot(0).getStack(), amount);
+                calculatorNormal = new Calculator(inventorySlots.getSlot(0).getStack(), amount);
+                calculatorInventory = new Calculator(
+                        Arrays.asList(mc.thePlayer.inventory.mainInventory), inventorySlots.getSlot(0).getStack(), amount);
+            } catch (Calculator.JECCalculatingCoreException e) {
+                mc.thePlayer.addChatMessage(new TextComponentString(localization("errorCore")));
+                e.printStackTrace();
             } catch (RuntimeException e) {
-                mc.thePlayer.addChatMessage(new TextComponentString(localization("error")));
+                mc.thePlayer.addChatMessage(new TextComponentString(localization("errorUnknown")));
                 e.printStackTrace();
             }
         } else {
-            calculator = null;
+            calculatorNormal = null;
+            calculatorInventory = null;
         }
         updateContent();
     }
@@ -263,12 +270,14 @@ public class GuiCalculator extends JECGuiContainer {
     }
 
     public enum EnumMode {
-        INPUT, PROCEDURE, OUTPUT, CATALYST;
+        MISSING, PROCEDURE, OUTPUT, INPUT, CATALYST;
 
         public String getDisplay() {
             switch (this) {
                 case INPUT:
                     return JECGuiContainer.localization(GuiCalculator.class, "input");
+                case MISSING:
+                    return JECGuiContainer.localization(GuiCalculator.class, "missing");
                 case PROCEDURE:
                     return JECGuiContainer.localization(GuiCalculator.class, "procedure");
                 case OUTPUT:
@@ -280,16 +289,18 @@ public class GuiCalculator extends JECGuiContainer {
             }
         }
 
-        public List<ItemStack> getList(@NotNull Calculator calculator) {
+        public List<ItemStack> getList(@NotNull Calculator calculatorN, Calculator calculatorI) {
             switch (this) {
                 case INPUT:
-                    return calculator.getInput();
+                    return calculatorN.getInput();
+                case MISSING:
+                    return calculatorI.getInput();
                 case PROCEDURE:
-                    return calculator.getProcedure();
+                    return calculatorI.getProcedure();
                 case OUTPUT:
-                    return calculator.getOutput();
+                    return calculatorI.getOutput();
                 case CATALYST:
-                    return calculator.getCatalyst();
+                    return calculatorI.getCatalyst();
                 default:
                     throw new IllegalPositionException();
             }

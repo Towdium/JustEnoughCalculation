@@ -24,15 +24,24 @@ public class Calculator {
     List<CostList> costLists;
 
     public Calculator(ItemStack itemStack, long amount) {
+        this(new CostList(NBT.setData(itemStack.copy(), ItemStackHelper.EnumStackAmountType.NUMBER, amount)));
+    }
+
+    public Calculator(List<ItemStack> itemStacks, ItemStack stack, long amount) {
+        this(new CostList(new CostList(NBT.setData(stack.copy(), ItemStackHelper.EnumStackAmountType.NUMBER, amount)), new CostList(itemStacks)));
+        costLists.add(new CostList(costLists.get(costLists.size() - 1), new CostList(itemStacks), true));
+    }
+
+    public Calculator(CostList cost) {
         int count = 0;
         costLists = new ArrayList<>();
-        costLists.add(new CostList(NBT.setData(itemStack.copy(), ItemStackHelper.EnumStackAmountType.NUMBER, amount)));
+        costLists.add(cost);
         List<ItemStack> cancellableItems = costLists.get(0).getValidItems();
         LOOP2:
         while (cancellableItems.size() != 0) {
             ++count;
             if (count > 10000) {
-                throw new RuntimeException("JEC core circulates too many times for the operation. May be caused by number overflow or too complex recursion relations");
+                throw new JECCalculatingCoreException();
             }
             // all the items possible tp cancel
             for (ItemStack stack : cancellableItems) {
@@ -52,6 +61,7 @@ public class Calculator {
             }
             break;
         }
+        costLists.get(costLists.size() - 1).finalise();
     }
 
     public List<ItemStack> getInput() {
@@ -63,12 +73,7 @@ public class Calculator {
     }
 
     public List<ItemStack> getCatalyst() {
-        List<ItemStack> input = getInput();
-        return getList(itemStack -> {
-            Singleton<Boolean> flag = new Singleton<>(false);
-            input.forEach(stack -> flag.value = flag.value || (ItemStackHelper.isItemEqual(itemStack, stack) && NBT.getAmountInternal(stack) >= NBT.getAmountInternal(stack)));
-            return !flag.value && NBT.getAmount(itemStack) > 0;
-        }, costList -> costList.catalyst, itemStack -> itemStack);
+        return getList(itemStack -> NBT.getAmount(itemStack) > 0, costList -> costList.catalyst, itemStack -> itemStack);
     }
 
     public List<ItemStack> getProcedure() {
@@ -97,34 +102,47 @@ public class Calculator {
         List<ItemStack> catalyst = new ArrayList<>();
         List<ItemStack> procedure = new ArrayList<>();
 
+        public CostList(List<ItemStack> inventory) {
+            inventory.stream().filter(stack -> stack != null).forEach(stack -> items.add(ItemStackHelper.toItemStackJEC(stack.copy())));
+        }
+
         public CostList(ItemStack itemStack) {
             long amount = NBT.getAmount(itemStack);
             catalyst.add(itemStack.copy());
             items.add(NBT.setAmount(itemStack.copy(), -amount));
         }
 
-        public CostList(Recipe recipe, ItemStack dest) {
+        public CostList(Recipe recipe, ItemStack dest, long amount) {
             merge(EnumMergeType.NORMAL_MERGE, items, recipe.output);
-            merge(EnumMergeType.NORMAL_MERGE, catalyst, recipe.catalyst);
             merge(EnumMergeType.NORMAL_MERGE, catalyst, recipe.input);
+            catalyst.forEach(itemStack -> NBT.setAmount(itemStack, NBT.getAmount(itemStack) * amount));
+            merge(EnumMergeType.NORMAL_MERGE, catalyst, recipe.catalyst);
             merge(EnumMergeType.NORMAL_CANCEL, items, recipe.input);
+            items.forEach(itemStack -> NBT.setAmount(itemStack, NBT.getAmount(itemStack) * amount));
             procedure.add(dest.copy());
         }
 
-        public CostList(Recipe recipe, ItemStack dest, long amount) {
-            this(recipe, dest);
-            items.forEach(itemStack -> NBT.setAmount(itemStack, NBT.getAmount(itemStack) * amount));
+        public CostList(CostList caller, CostList callee) {
+            this(caller, callee, false);
         }
 
-        public CostList(CostList caller, CostList callee) {
-            merge(EnumMergeType.NORMAL_MERGE, items, caller.items);
-            merge(EnumMergeType.NORMAL_MERGE, catalyst, caller.catalyst);
-            merge(EnumMergeType.NORMAL_MERGE, items, callee.items);
-            merge(EnumMergeType.CATALYST_CANCEL, catalyst, callee.catalyst);
-            merge(EnumMergeType.NORMAL_MERGE, catalyst, callee.catalyst);
-            merge(EnumMergeType.CATALYST_CANCEL, catalyst, callee.items);
-            caller.procedure.stream().forEachOrdered(itemStack -> procedure.add(itemStack.copy()));
-            callee.procedure.stream().forEachOrdered(itemStack -> procedure.add(itemStack.copy()));
+        public CostList(CostList caller, CostList callee, boolean inventoryCancel) {
+            if (inventoryCancel) {
+                merge(EnumMergeType.NORMAL_MERGE, items, caller.items);
+                merge(EnumMergeType.NORMAL_MERGE, catalyst, caller.catalyst);
+                merge(EnumMergeType.CATALYST_CANCEL, items, callee.items);
+                merge(EnumMergeType.CATALYST_CANCEL, catalyst, callee.items);
+                caller.procedure.stream().forEachOrdered(itemStack -> procedure.add(itemStack.copy()));
+            } else {
+                merge(EnumMergeType.NORMAL_MERGE, items, caller.items);
+                merge(EnumMergeType.NORMAL_MERGE, catalyst, caller.catalyst);
+                merge(EnumMergeType.NORMAL_MERGE, items, callee.items);
+                merge(EnumMergeType.CATALYST_CANCEL, catalyst, callee.catalyst);
+                merge(EnumMergeType.NORMAL_MERGE, catalyst, callee.catalyst);
+                merge(EnumMergeType.CATALYST_CANCEL, catalyst, callee.items);
+                caller.procedure.stream().forEachOrdered(itemStack -> procedure.add(itemStack.copy()));
+                callee.procedure.stream().forEachOrdered(itemStack -> procedure.add(itemStack.copy()));
+            }
         }
 
         public static void merge(EnumMergeType type, List<ItemStack> container, List<ItemStack> itemStacks) {
@@ -191,6 +209,10 @@ public class Calculator {
             }
         }
 
+        public void finalise() {
+            merge(EnumMergeType.CATALYST_MERGE, catalyst, items);
+        }
+
         public List<ItemStack> getValidItems() {
             List<ItemStack> buffer = new ArrayList<>();
             items.stream().filter(itemStack -> ItemStackHelper.NBT.getAmount(itemStack) < 0).forEach(buffer::add);
@@ -198,7 +220,7 @@ public class Calculator {
         }
 
         enum EnumMergeType {
-            NORMAL_MERGE, NORMAL_CANCEL, CATALYST_CANCEL;
+            NORMAL_MERGE, NORMAL_CANCEL, CATALYST_CANCEL, CATALYST_MERGE;
 
             BiFunction<Long, Long, Long> getFunc() {
                 switch (this) {
@@ -207,12 +229,17 @@ public class Calculator {
                     case NORMAL_CANCEL:
                         return (i, j) -> i - j;
                     case CATALYST_CANCEL:
-                        return (i, j) -> j > i ? 0 : j > 0 ? i - j : i;
+                        return (i, j) -> j > i ? (i > 0 ? 0 : i) : j > 0 ? i - j : i;
+                    case CATALYST_MERGE:
+                        return (i, j) -> -j > i ? 0 : j < 0 ? i + j : i;
                     default:
                         throw new IllegalPositionException();
                 }
             }
         }
+    }
+
+    public static class JECCalculatingCoreException extends RuntimeException {
     }
 }
 
