@@ -98,6 +98,10 @@ public class Calculator {
     }
 
     static class CostList {
+        static final BiFunction<Long, Long, Long> NORMAL_MERGE = (i, j) -> i + j;
+        static final BiFunction<Long, Long, Long> NORMAL_CANCEL = (i, j) -> i - j;
+        static final BiFunction<Long, Long, Long> CATALYST_CANCEL = (i, j) -> j > i ? (i > 0 ? 0 : i) : j > 0 ? i - j : i;
+        static final BiFunction<Long, Long, Long> CATALYST_MERGE = (i, j) -> -j > i ? 0 : j < 0 ? i + j : i;
         List<ItemStack> items = new ArrayList<>();
         List<ItemStack> catalyst = new ArrayList<>();
         List<ItemStack> procedure = new ArrayList<>();
@@ -225,13 +229,13 @@ public class Calculator {
             BiFunction<Long, Long, Long> getFunc() {
                 switch (this) {
                     case NORMAL_MERGE:
-                        return (i, j) -> i + j;
+                        return CostList.NORMAL_MERGE;
                     case NORMAL_CANCEL:
-                        return (i, j) -> i - j;
+                        return CostList.NORMAL_CANCEL;
                     case CATALYST_CANCEL:
-                        return (i, j) -> j > i ? (i > 0 ? 0 : i) : j > 0 ? i - j : i;
+                        return CostList.CATALYST_CANCEL;
                     case CATALYST_MERGE:
-                        return (i, j) -> -j > i ? 0 : j < 0 ? i + j : i;
+                        return CostList.CATALYST_MERGE;
                     default:
                         throw new IllegalPositionException();
                 }

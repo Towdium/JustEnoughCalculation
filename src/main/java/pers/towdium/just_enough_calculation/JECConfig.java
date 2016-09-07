@@ -49,10 +49,11 @@ public class JECConfig {
                 case EnableFluidMerge:
                     return "Set to true to enable fluid merging when quick transfer recipes";
                 case ListRecipeBlackList:
-                    return "Add string identifier here to disable quick transfer of this type recipe\n" +
+                    return "Add string identifier here to disable quick transfer of certain categories of recipe\n" +
                             "Names can be found in ListRecipeCategory";
                 case ListRecipeCategory:
-                    return "List of categories, this is maintained by the mod automatically";
+                    return "List of recipe categories for reference, this is maintained by the mod automatically\n" +
+                            "Editing the text here will have no effect";
             }
             return "";
         }

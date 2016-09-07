@@ -20,7 +20,7 @@ plugins {
     id "net.minecraftforge.gradle.forge" version "2.0.2"
 }
 */
-version = "1.9.4-0.0.1"
+version = "1.9.4-2.0.0"
 group= "pers.towdium.justEnoughCalulation" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "je_calculation"
 sourceCompatibility = 1.8
@@ -71,6 +71,11 @@ dependencies {
     // for more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
+
+    // compile against the JEI API /
+    deobfCompile "mezz.jei:jei_1.9.4:3.6.8.225"
+    // at runtime, use the full JEI jar
+    runtime "mezz.jei:jei_1.9.4:3.6.8.225"
 }
 
 processResources

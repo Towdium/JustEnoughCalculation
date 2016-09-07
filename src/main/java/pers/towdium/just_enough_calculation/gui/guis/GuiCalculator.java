@@ -1,6 +1,5 @@
 package pers.towdium.just_enough_calculation.gui.guis;
 
-import com.sun.istack.internal.NotNull;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
@@ -12,6 +11,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
+import pers.towdium.just_enough_calculation.JECConfig;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.core.Calculator;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
@@ -46,7 +46,6 @@ public class GuiCalculator extends JECGuiContainer {
     GuiButton buttonLeft;
     GuiButton buttonRight;
     GuiButton buttonMode;
-    GuiButton buttonStock;
 
     int page = 1;
     int total = 0;
@@ -217,8 +216,8 @@ public class GuiCalculator extends JECGuiContainer {
         if (inventorySlots.getSlot(0).getHasStack() && amount != 0) {
             try {
                 calculatorNormal = new Calculator(inventorySlots.getSlot(0).getStack(), amount);
-                calculatorInventory = new Calculator(
-                        Arrays.asList(mc.thePlayer.inventory.mainInventory), inventorySlots.getSlot(0).getStack(), amount);
+                calculatorInventory = new Calculator(JECConfig.EnumItems.EnableInventoryCheck.getProperty().getBoolean() ?
+                        Arrays.asList(mc.thePlayer.inventory.mainInventory) : new ArrayList<>(), inventorySlots.getSlot(0).getStack(), amount);
             } catch (Calculator.JECCalculatingCoreException e) {
                 mc.thePlayer.addChatMessage(new TextComponentString(localization("errorCore")));
                 e.printStackTrace();
@@ -288,7 +287,7 @@ public class GuiCalculator extends JECGuiContainer {
             }
         }
 
-        public List<ItemStack> getList(@NotNull Calculator calculatorN, Calculator calculatorI) {
+        public List<ItemStack> getList(Calculator calculatorN, Calculator calculatorI) {
             switch (this) {
                 case INPUT:
                     return calculatorN.getInput();

@@ -1,6 +1,7 @@
 package pers.towdium.just_enough_calculation;
 
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -10,6 +11,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pers.towdium.just_enough_calculation.item.ItemCalculator;
@@ -51,6 +53,7 @@ public class JustEnoughCalculation {
 
     @Mod.EventHandler
     public static void init(FMLInitializationEvent event) {
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(itemCalculator), "SIS", "SRS", "SOS", 'S', "stone", 'I', "dyeBlack", 'R', "dustRedstone", 'O', "ingotIron"));
         proxy.init();
     }
 
@@ -62,6 +65,6 @@ public class JustEnoughCalculation {
     public static class Reference {
         public static final String MODID = "je_calculation";
         public static final String MODNAME = "Just Enough Calculation";
-        public static final String VERSION = "1.9.4-0.0.1";
+        public static final String VERSION = "1.9.4-2.0.0";
     }
 }

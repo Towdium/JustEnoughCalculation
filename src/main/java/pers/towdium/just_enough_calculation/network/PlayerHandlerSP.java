@@ -207,7 +207,7 @@ public class PlayerHandlerSP implements IProxy.IPlayerHandler {
         oreDictPref = new ArrayList<>();
         recipes = new LinkedHashMap<>();
         try {
-            FileInputStream stream = new FileInputStream(event.getPlayerFile("jec"));
+            FileInputStream stream = new FileInputStream(event.getPlayerFile("jeca"));
             NBTTagCompound tagCompound = CompressedStreamTools.readCompressed(stream);
             readFromNBT(tagCompound);
         } catch (FileNotFoundException e) {
@@ -220,7 +220,7 @@ public class PlayerHandlerSP implements IProxy.IPlayerHandler {
     @Override
     public void handleSave(PlayerEvent.SaveToFile event) {
         try {
-            File file = event.getPlayerFile("jec");
+            File file = event.getPlayerFile("jeca");
             NBTTagCompound compound = writeToNBT();
             FileOutputStream fileoutputstream = new FileOutputStream(file);
             CompressedStreamTools.writeCompressed(compound, fileoutputstream);
