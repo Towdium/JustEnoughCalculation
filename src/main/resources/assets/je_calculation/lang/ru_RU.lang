@@ -1,0 +1,35 @@
+gui.calculator.search=Поиск
+gui.calculator.add=Добавить
+gui.calculator.records=Записи
+gui.calculator.oreDict=OreDict
+gui.calculator.recent=Последнее
+gui.calculator.input=Общ. стоимость
+gui.calculator.missing=Отсутствующее
+gui.calculator.procedure=Производство
+gui.calculator.output=Доп. выход
+gui.calculator.catalyst=Катализатор
+gui.calculator.errorCore=К сожалению, поймано исключение при расчёте. Это могло произойти во избежание задержки при слишком сложном производстве. Вы можете сообщить об этой проблеме автору, если вы используете последнюю версию мода.
+gui.calculator.errorUnknown=К сожалению, поймано неожиданное исключение при расчёте. Вы можете сообщить об этой проблеме автору, если вы используете последнюю версию мода.
+
+gui.editor.catalyst=Катали-\nзатор
+gui.editor.input=Вход
+gui.editor.output=Выход
+gui.editor.newGroup=Новая группа
+gui.editor.save=Сохранить
+gui.editor.clear=Очистить
+gui.editor.confirm=Подтвердить
+
+gui.list.edit=Изменить
+gui.list.delete=Удалить
+gui.list.noRecord=Нет записей
+gui.listSearch.input=Вход
+gui.listSearch.output=Выход
+gui.listSearch.catalyst=Катализатор
+gui.listSearch.all=Всё
+
+gui.oreDict.add=Добавить
+
+gui.picker.search=Поиск:
+
+item.itemCalculator.name=Калькулятор создания
+item.itemFluidContainer.name=Жидкостный резервуар
