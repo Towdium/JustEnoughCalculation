@@ -157,9 +157,8 @@ public class PlayerHandlerSP implements IProxy.IPlayerHandler {
 
     public int getIndexGroup(String s) {
         int i = 0;
-        Map.Entry<String, List<Recipe>> temp = null;
-        for (Iterator<Map.Entry<String, List<Recipe>>> it = recipes.entrySet().iterator(); it.hasNext(); temp = it.next()) {
-            if (temp != null && s.equals(temp.getKey())) {
+        for (Map.Entry<String, List<Recipe>> stringListEntry : recipes.entrySet()) {
+            if (stringListEntry != null && s.equals(stringListEntry.getKey())) {
                 return i;
             } else {
                 ++i;

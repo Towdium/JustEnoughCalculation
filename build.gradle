@@ -20,7 +20,7 @@ plugins {
     id "net.minecraftforge.gradle.forge" version "2.0.2"
 }
 */
-version = "1.9.4-2.0.0"
+version = "1.10.2-2.0.0"
 group= "pers.towdium.justEnoughCalulation" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "je_calculation"
 sourceCompatibility = 1.8
@@ -37,10 +37,9 @@ repositories {
 }
 
 minecraft {
-    version = "1.9.4-12.17.0.1969"
+    version = "1.10.2-12.18.1.2076"
     runDir = "run"
-    useDepAts = true
-    
+
     // the mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   snapshot are built nightly.
     // stable_#            stables are built at the discretion of the MCP team.
@@ -55,7 +54,7 @@ dependencies {
     // or you may define them like so..
     //compile "some.group:artifact:version:classifier"
     //compile "some.group:artifact:version"
-      
+
     // real examples
     //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
     //compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
@@ -73,9 +72,9 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
     // compile against the JEI API /
-    deobfCompile "mezz.jei:jei_1.9.4:3.6.8.225"
+    deobfCompile "mezz.jei:jei_1.10.2:3.9.0.244"
     // at runtime, use the full JEI jar
-    runtime "mezz.jei:jei_1.9.4:3.6.8.225"
+    runtime "mezz.jei:jei_1.10.2:3.9.0.244"
 }
 
 processResources
@@ -87,11 +86,11 @@ processResources
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
-                
+
         // replace version and mcversion
         expand 'version':project.version, 'mcversion':project.minecraft.version
     }
-        
+
     // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'

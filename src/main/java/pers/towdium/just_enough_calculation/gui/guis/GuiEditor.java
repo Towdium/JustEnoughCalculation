@@ -37,7 +37,7 @@ public class GuiEditor extends JECGuiContainer {
     GuiButton buttonLeft;
     GuiButton buttonRight;
     GuiButton buttonNew;
-    GuiButton buttonHelp;
+    //GuiButton buttonHelp;
     GuiButton buttonSave;
     GuiButton buttonClear;
     GuiTextField textGroup;

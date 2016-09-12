@@ -74,6 +74,13 @@ public class GuiPickerFluid extends GuiPicker {
     }
 
     @Override
+    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+        fontRendererObj.drawString("x", 30, 13, 4210752);
+
+    }
+
+    @Override
     GuiTextField getSearchField(FontRenderer renderer) {
         return new GuiTextField(0, renderer, guiLeft + 52, guiTop + 46, 75, 18);
     }
