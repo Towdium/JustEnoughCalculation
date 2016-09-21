@@ -2,9 +2,11 @@ package pers.towdium.just_enough_calculation;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -38,6 +40,8 @@ public class JustEnoughCalculation {
     public static Item itemCalculator = new ItemCalculator().setUnlocalizedName("itemCalculator").setRegistryName("itemCalculator");
     public static Item itemFluidContainer = new ItemFluidContainer().setUnlocalizedName("itemFluidContainer").setRegistryName("itemFluidContainer");
 
+    public static boolean withNEI;
+
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent event) {
         JECConfig.preInit(event);
@@ -58,6 +62,11 @@ public class JustEnoughCalculation {
     }
 
     @Mod.EventHandler
+    public void postInit(FMLPostInitializationEvent event) {
+        withNEI = Loader.isModLoaded("NotEnoughItems");
+    }
+
+    @Mod.EventHandler
     public void onServerStart(FMLServerStartingEvent event) {
         event.registerServerCommand(new JECCommand());
     }
@@ -65,6 +74,6 @@ public class JustEnoughCalculation {
     public static class Reference {
         public static final String MODID = "je_calculation";
         public static final String MODNAME = "Just Enough Calculation";
-        public static final String VERSION = "1.10.2-2.0.0";
+        public static final String VERSION = "1.10.2-2.0.1";
     }
 }

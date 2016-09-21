@@ -20,7 +20,7 @@ plugins {
     id "net.minecraftforge.gradle.forge" version "2.0.2"
 }
 */
-version = "1.10.2-2.0.0"
+version = "1.10.2-2.0.2"
 group= "pers.towdium.justEnoughCalulation" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "je_calculation"
 sourceCompatibility = 1.8
@@ -33,6 +33,11 @@ tasks.withType(JavaCompile) {
 repositories {
     maven {
         url "http://dvs1.progwml6.com/files/maven"
+    }
+
+    maven {
+        name 'CB Repo'
+        url "http://chickenbones.net/maven/"
     }
 }
 
@@ -75,6 +80,8 @@ dependencies {
     deobfCompile "mezz.jei:jei_1.10.2:3.9.0.244"
     // at runtime, use the full JEI jar
     runtime "mezz.jei:jei_1.10.2:3.9.0.244"
+
+    compile "codechicken:NotEnoughItems:1.10.2-2.1.1.147:universal"
 }
 
 processResources

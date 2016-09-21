@@ -8,6 +8,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.block.model.ModelManager;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
@@ -15,10 +16,12 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.plugin.JEIPlugin;
 import pers.towdium.just_enough_calculation.util.ItemStackHelper;
 import pers.towdium.just_enough_calculation.util.ItemStackHelper.NBT;
 import pers.towdium.just_enough_calculation.util.LocalizationHelper;
+import pers.towdium.just_enough_calculation.util.NEIHelper;
 import pers.towdium.just_enough_calculation.util.Utilities;
 
 import javax.annotation.Nullable;
@@ -40,6 +43,22 @@ public abstract class JECGuiContainer extends GuiContainer {
     protected int activeSlot = -1;
     protected ItemStack temp;
     long timeStart = 0;
+    protected RenderItem renderItem;
+
+    {
+        ModelManager tempMM = Utilities.getField(Minecraft.getMinecraft(), "modelManager", "field_175617_aL");
+        if (tempMM != null) {
+            renderItem = new RenderItem(Minecraft.getMinecraft().getTextureManager(), tempMM, Minecraft.getMinecraft().getItemColors()) {
+                @Override
+                public void renderItemOverlayIntoGUI(@SuppressWarnings("NullableProblems") FontRenderer fr, ItemStack stack, int xPosition, int yPosition, String text) {
+                    boolean b = fr.getUnicodeFlag();
+                    fr.setUnicodeFlag(true);
+                    super.renderItemOverlayIntoGUI(fr, stack, xPosition, yPosition, stack == null ? "" : getFormer().apply(NBT.getAmount(stack), NBT.getType(stack)));
+                    fr.setUnicodeFlag(b);
+                }
+            };
+        }
+    }
 
     public JECGuiContainer(Container inventorySlotsIn, GuiScreen parent) {
         super(inventorySlotsIn);
@@ -98,11 +117,21 @@ public abstract class JECGuiContainer extends GuiContainer {
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        super.drawScreen(mouseX, mouseY, partialTicks);
-        RenderHelper.disableStandardItemLighting();
+    public void drawScreen(int p_73863_1_, int p_73863_2_, float p_73863_3_) {
+        RenderItem buffer1 = itemRender;
+        RenderItem buffer2 = JustEnoughCalculation.withNEI ? NEIHelper.getRenderer() : null;
+        itemRender = renderItem;
+        if(JustEnoughCalculation.withNEI) {
+            NEIHelper.setRenderer(renderItem);
+        }
+        super.drawScreen(p_73863_1_, p_73863_2_, p_73863_3_);
+        itemRender = buffer1;
+        if(JustEnoughCalculation.withNEI) {
+            NEIHelper.setRenderer(buffer2);
+        }
 
-        drawTooltipScreen(mouseX, mouseY);
+        RenderHelper.disableStandardItemLighting();
+        drawTooltipScreen(p_73863_1_, p_73863_2_);
         RenderHelper.enableStandardItemLighting();
     }
 
