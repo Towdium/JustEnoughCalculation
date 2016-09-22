@@ -3,7 +3,9 @@ package pers.towdium.just_enough_calculation.core;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import pers.towdium.just_enough_calculation.util.ItemStackHelper;
+import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper;
+import pers.towdium.just_enough_calculation.util.function.TriFunction;
+import pers.towdium.just_enough_calculation.util.wrappers.Singleton;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,15 +24,16 @@ public class Recipe {
     ItemStack[] input;
 
     public Recipe(ItemStack[] output, ItemStack[] catalyst, ItemStack[] input) {
-        BiFunction<ItemStack[], Integer, Boolean> checkArray = (itemStackIn, amount) -> {
+        TriFunction<ItemStack[], Integer, String, String> checkArray = (itemStackIn, amount, type) -> {
             if (itemStackIn.length != amount)
-                return false;
+                return "Inspection for " + type + " failed: " + "length not match: expected - " + amount + ", actual - " + itemStackIn.length;
             for (ItemStack itemStack : itemStackIn) {
                 if (!ItemStackHelper.isItemStackJEC(itemStack))
-                    return false;
+                    return "Inspection for " + type + " failed: " + "itemStack illegal: " + itemStack;
             }
-            return true;
+            return null;
         };
+
         Function<ItemStack[], ItemStack[]> copyArray = itemStacks -> {
             ItemStack[] buffer = new ItemStack[itemStacks.length];
             int count = -1;
@@ -39,9 +42,12 @@ public class Recipe {
             }
             return buffer;
         };
-        if (!checkArray.apply(output, 4) || !checkArray.apply(catalyst, 4) || !checkArray.apply(input, 12)) {
-            throw new IllegalArgumentException();
-        }
+        Singleton<String> result = new Singleton<>(null);
+        result.push(checkArray.apply(output, 4, "output"));
+        result.push(checkArray.apply(catalyst, 4, "catalyst"));
+        result.push(checkArray.apply(input, 12, "input"));
+        if (result.value != null)
+            throw new IllegalArgumentException(result.value);
         this.output = copyArray.apply(output);
         this.catalyst = copyArray.apply(catalyst);
         this.input = copyArray.apply(input);

@@ -6,7 +6,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import pers.towdium.just_enough_calculation.util.ItemStackHelper;
+import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -19,6 +19,11 @@ import java.util.List;
 public abstract class JECContainer extends Container {
     InventoryBasic inventory;
     List<int[]> slotBuffer = new ArrayList<>();
+    static boolean reported = false;
+
+    {
+        windowId = 100;
+    }
 
     public JECContainer() {
         addSlots();

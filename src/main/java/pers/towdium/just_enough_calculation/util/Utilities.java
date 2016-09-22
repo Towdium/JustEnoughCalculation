@@ -9,6 +9,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import pers.towdium.just_enough_calculation.item.ItemFluidContainer;
 import pers.towdium.just_enough_calculation.util.function.TriFunction;
+import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;

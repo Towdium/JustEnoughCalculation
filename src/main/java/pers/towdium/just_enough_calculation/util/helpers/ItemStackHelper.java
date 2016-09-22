@@ -1,4 +1,4 @@
-package pers.towdium.just_enough_calculation.util;
+package pers.towdium.just_enough_calculation.util.helpers;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -6,6 +6,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
+import pers.towdium.just_enough_calculation.util.Utilities;
 import pers.towdium.just_enough_calculation.util.function.TriFunction;
 
 import javax.annotation.Nonnull;
@@ -180,9 +181,9 @@ public class ItemStackHelper {
             } else if (a == null || b == null) {
                 return false;
             } else {
-                NBTTagCompound aNew = ((NBTTagCompound) a.copy());
+                NBTTagCompound aNew = a.copy();
                 aNew.removeTag(JustEnoughCalculation.Reference.MODID);
-                NBTTagCompound bNew = ((NBTTagCompound) b.copy());
+                NBTTagCompound bNew = b.copy();
                 bNew.removeTag(JustEnoughCalculation.Reference.MODID);
                 return aNew.equals(bNew);
             }

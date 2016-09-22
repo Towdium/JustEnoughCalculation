@@ -1,4 +1,4 @@
-package pers.towdium.just_enough_calculation.util;
+package pers.towdium.just_enough_calculation.util.helpers;
 
 import codechicken.nei.guihook.GuiContainerManager;
 import net.minecraft.client.renderer.RenderItem;

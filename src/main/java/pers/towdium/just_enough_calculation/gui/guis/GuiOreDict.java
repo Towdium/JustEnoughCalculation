@@ -9,8 +9,8 @@ import net.minecraftforge.fml.client.config.GuiButtonExt;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
 import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
-import pers.towdium.just_enough_calculation.util.ItemStackHelper;
-import pers.towdium.just_enough_calculation.util.PlayerRecordHelper;
+import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper;
+import pers.towdium.just_enough_calculation.util.helpers.PlayerRecordHelper;
 import pers.towdium.just_enough_calculation.util.Utilities;
 
 import javax.annotation.Nullable;

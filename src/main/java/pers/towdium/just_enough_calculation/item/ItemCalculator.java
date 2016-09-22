@@ -23,8 +23,7 @@ public class ItemCalculator extends Item {
     @SuppressWarnings("NullableProblems")
     @Override
     public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
-        if (playerIn instanceof EntityPlayerSP)
-            playerIn.openGui(JustEnoughCalculation.instance, JECGuiHandler.GuiId.CALCULATOR, worldIn, 0, 0, 0);
+        playerIn.openGui(JustEnoughCalculation.instance, JECGuiHandler.GuiId.CALCULATOR, worldIn, 0, 0, 0);
         return ActionResult.newResult(EnumActionResult.SUCCESS, itemStackIn);
     }
 }

@@ -1,4 +1,4 @@
-package pers.towdium.just_enough_calculation.util;
+package pers.towdium.just_enough_calculation.util.helpers;
 
 import net.minecraft.item.ItemStack;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;

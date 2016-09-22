@@ -8,7 +8,6 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.block.model.ModelManager;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
@@ -18,10 +17,10 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.plugin.JEIPlugin;
-import pers.towdium.just_enough_calculation.util.ItemStackHelper;
-import pers.towdium.just_enough_calculation.util.ItemStackHelper.NBT;
-import pers.towdium.just_enough_calculation.util.LocalizationHelper;
-import pers.towdium.just_enough_calculation.util.NEIHelper;
+import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper;
+import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper.NBT;
+import pers.towdium.just_enough_calculation.util.helpers.LocalizationHelper;
+import pers.towdium.just_enough_calculation.util.helpers.NEIHelper;
 import pers.towdium.just_enough_calculation.util.Utilities;
 
 import javax.annotation.Nullable;
@@ -97,23 +96,6 @@ public abstract class JECGuiContainer extends GuiContainer {
         super.initGui();
         init();
         updateLayout();
-    }
-
-    @Override
-    public void setWorldAndResolution(Minecraft mc, int width, int height) {
-        super.setWorldAndResolution(mc, width, height);
-        ModelManager tempMM = Utilities.getField(mc, "modelManager", "field_175617_aL");
-        if (tempMM != null) {
-            itemRender = new RenderItem(mc.getTextureManager(), tempMM, mc.getItemColors()) {
-                @Override
-                public void renderItemOverlayIntoGUI(@SuppressWarnings("NullableProblems") FontRenderer fr, ItemStack stack, int xPosition, int yPosition, String text) {
-                    boolean b = fr.getUnicodeFlag();
-                    fr.setUnicodeFlag(true);
-                    super.renderItemOverlayIntoGUI(fr, stack, xPosition, yPosition, stack == null ? "" : getFormer().apply(NBT.getAmount(stack), NBT.getType(stack)));
-                    fr.setUnicodeFlag(b);
-                }
-            };
-        }
     }
 
     @Override

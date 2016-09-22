@@ -1,4 +1,4 @@
-package pers.towdium.just_enough_calculation.util;
+package pers.towdium.just_enough_calculation.util.helpers;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.relauncher.Side;
