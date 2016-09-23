@@ -5,14 +5,21 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.block.model.ModelManager;
+import net.minecraft.client.renderer.color.ItemColors;
+import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
@@ -42,22 +49,8 @@ public abstract class JECGuiContainer extends GuiContainer {
     protected int activeSlot = -1;
     protected ItemStack temp;
     long timeStart = 0;
+    static ModelManager tempMM = Utilities.getField(Minecraft.getMinecraft(), "modelManager", "field_175617_aL");
     protected RenderItem renderItem;
-
-    {
-        ModelManager tempMM = Utilities.getField(Minecraft.getMinecraft(), "modelManager", "field_175617_aL");
-        if (tempMM != null) {
-            renderItem = new RenderItem(Minecraft.getMinecraft().getTextureManager(), tempMM, Minecraft.getMinecraft().getItemColors()) {
-                @Override
-                public void renderItemOverlayIntoGUI(@SuppressWarnings("NullableProblems") FontRenderer fr, ItemStack stack, int xPosition, int yPosition, String text) {
-                    boolean b = fr.getUnicodeFlag();
-                    fr.setUnicodeFlag(true);
-                    super.renderItemOverlayIntoGUI(fr, stack, xPosition, yPosition, stack == null ? "" : getFormer().apply(NBT.getAmount(stack), NBT.getType(stack)));
-                    fr.setUnicodeFlag(b);
-                }
-            };
-        }
-    }
 
     public JECGuiContainer(Container inventorySlotsIn, GuiScreen parent) {
         super(inventorySlotsIn);
@@ -100,6 +93,8 @@ public abstract class JECGuiContainer extends GuiContainer {
 
     @Override
     public void drawScreen(int p_73863_1_, int p_73863_2_, float p_73863_3_) {
+        if(renderItem == null)
+            renderItem = new MyRenderer(itemRender);
         RenderItem buffer1 = itemRender;
         RenderItem buffer2 = JustEnoughCalculation.withNEI ? NEIHelper.getRenderer() : null;
         itemRender = renderItem;
@@ -293,5 +288,22 @@ public abstract class JECGuiContainer extends GuiContainer {
 
     public String localization(String translateKey, Object... parameters) {
         return localization(this.getClass(), translateKey, parameters);
+    }
+
+    class MyRenderer extends RenderItem {
+        public MyRenderer(RenderItem r) {
+            super(Minecraft.getMinecraft().getTextureManager(), tempMM, Minecraft.getMinecraft().getItemColors());
+            Utilities.setField(RenderItem.class, this, Utilities.getField(RenderItem.class, r, "field_175059_m", "itemModelMesher"), "field_175059_m", "itemModelMesher");
+            Utilities.setField(RenderItem.class, this, Utilities.getField(RenderItem.class, r, "field_175057_n", "textureManager"), "field_175057_n", "textureManager");
+            Utilities.setField(RenderItem.class, this, Utilities.getField(RenderItem.class, r, "field_184395_f", "itemColors"), "field_184395_f", "itemColors");
+        }
+
+        @Override
+        public void renderItemOverlayIntoGUI(@SuppressWarnings("NullableProblems") FontRenderer fr, ItemStack stack, int xPosition, int yPosition, String text) {
+            boolean b = fr.getUnicodeFlag();
+            fr.setUnicodeFlag(true);
+            super.renderItemOverlayIntoGUI(fr, stack, xPosition, yPosition, stack == null ? "" : getFormer().apply(NBT.getAmount(stack), NBT.getType(stack)));
+            fr.setUnicodeFlag(b);
+        }
     }
 }

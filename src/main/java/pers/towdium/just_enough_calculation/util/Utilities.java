@@ -10,8 +10,10 @@ import net.minecraftforge.fml.common.ModContainer;
 import pers.towdium.just_enough_calculation.item.ItemFluidContainer;
 import pers.towdium.just_enough_calculation.util.function.TriFunction;
 import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper;
+import pers.towdium.just_enough_calculation.util.wrappers.Singleton;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -102,7 +104,7 @@ public class Utilities {
         }
     }
 
-    public static Object getField(Class c, Object o, String... names) throws ReflectiveOperationException {
+    public static Object getField(Class c, Object o, String... names) {
         Field f = null;
         for (String name : names) {
             try {
@@ -117,13 +119,48 @@ public class Utilities {
                 s += name;
                 s += "\",";
             }
-            throw new NoSuchFieldException(s.substring(0, s.length() - 1) + " not found in class " + c.getName());
+            throw new NoSuchFieldError(s.substring(0, s.length() - 1) + " not found in class " + c.getName());
         }
         f.setAccessible(true);
-        o = f.get(o);
+        try {
+            o = f.get(o);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
         return o;
     }
 
+    public static <D, S> void setField(D dest, S source, String... name) {
+        setField(dest.getClass(), dest, source, name);
+    }
+
+    public static void setField(Class c, Object dest, Object source, String... name) {
+        Singleton<Field> f = new Singleton<>(null);
+        for(String s : name) {
+            try {
+                f.push(c.getDeclaredField(s));
+            } catch (NoSuchFieldException ignored) {}
+        }
+        Field field = f.value;
+        if (field == null) {
+            String buffer = "Field not found in class " + dest.getClass().getCanonicalName() + ":";
+            for (String s : name) {
+                buffer += " ";
+                buffer += s;
+            }
+            throw new NoSuchFieldError(buffer);
+        }
+        field.setAccessible(true);
+        Field modifiersField;
+        try {
+            modifiersField = Field.class.getDeclaredField("modifiers");
+            modifiersField.setAccessible(true);
+            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+            field.set(dest, source);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
     // CIRCULATE STRUCTURE
 
     public static int circulate(int current, int total, boolean forward) {
