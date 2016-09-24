@@ -4,6 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import pers.towdium.just_enough_calculation.gui.guis.GuiCalculator;
+import pers.towdium.just_enough_calculation.gui.guis.GuiMathCalculator;
 
 /**
  * Author: Towdium
@@ -20,7 +21,7 @@ public class JECGuiHandler implements IGuiHandler {
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         switch (ID) {
             case GuiId.CALCULATOR:
-                return new GuiCalculator(null);
+                return new GuiMathCalculator(null);
         }
         return null;
     }
