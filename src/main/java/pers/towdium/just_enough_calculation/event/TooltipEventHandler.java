@@ -21,7 +21,7 @@ public class TooltipEventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onTooltip(ItemTooltipEvent event) {
-        if (event.getEntityPlayer().openContainer instanceof GuiPickerFluid.ContainerPickerFluid) {
+        if (event.getEntityPlayer() != null && event.getEntityPlayer().openContainer instanceof GuiPickerFluid.ContainerPickerFluid) {
             Iterator<String> i = event.getToolTip().iterator();
             String str;
             Matcher matcher = null;
