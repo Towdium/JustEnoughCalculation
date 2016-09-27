@@ -14,6 +14,8 @@ import pers.towdium.just_enough_calculation.util.exception.IllegalPositionExcept
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Stack;
@@ -141,7 +143,8 @@ public class GuiMathCalculator extends JECGuiContainer {
     }
 
     void updateResult() {
-        current = new NumBigDec((record == null ? enumSign.NONE : sign).getOperator().apply(record, current.toBigDec()));
+        if(current instanceof NumStack)
+            current = new NumBigDec((record == null ? enumSign.NONE : sign).getOperator().apply(record, current.toBigDec()));
         record = current.toBigDec();
     }
 
@@ -290,12 +293,14 @@ public class GuiMathCalculator extends JECGuiContainer {
     enum enumSign{
         PLUS, MINUS, PRODUCT, DIVIDE, NONE;
 
+        static final MathContext mc = new MathContext(10, RoundingMode.HALF_UP);
+
         public BiFunction<BigDecimal, BigDecimal, BigDecimal> getOperator() {
             switch (this) {
                 case PLUS: return BigDecimal::add;
                 case MINUS: return  BigDecimal::subtract;
                 case PRODUCT: return BigDecimal::multiply;
-                case DIVIDE: return BigDecimal::divide;
+                case DIVIDE: return (a, b) -> a.divide(b, mc);
                 case NONE: return (a, b) -> b;
             }
             throw new IllegalPositionException();
@@ -369,33 +374,39 @@ public class GuiMathCalculator extends JECGuiContainer {
 
         void updateCache() {
             System.arraycopy(DEFAULT, 0, cacheChar, 0, 7);
-            String s = value.toString();
+            String s = value.stripTrailingZeros().toPlainString();
             int i = s.indexOf('.');
             if (i != -1)
                 s = s.substring(0, i) + s.substring(i + 1);
             char[] buffer = s.toCharArray();
-            if (buffer.length <= 7) {
+            boolean pos = value.signum() != -1;
+            int len = pos ? 7 : 6;
+            if (buffer.length <= 7 || (i <= 7 && i != -1 && (buffer[0] == '-' ? buffer[1] != '0' : buffer[0] != '0')) ||
+                    (buffer[0] != '-' && buffer[0] == '0' && !(buffer[1] == '0' && buffer[2] == '0')) ||
+                    (buffer[0] == '-' && buffer[1] == '0' && !(buffer[2] == '0' && buffer[3] == '0'))) {
                 char[] ret = new char[7];
-                int index = buffer.length;
+                int index = buffer.length > 7 ? 7 : buffer.length;
+                cacheDot = i == -1 ? -1 : index - i;
                 for(char c : buffer) {
-                    ret[--index] = c;
+                    if(index > 0)
+                        ret[--index] = c;
                 }
                 cacheChar = ret;
-                cacheDot = i == -1 ? -1 : s.length() - i;
             } else {
-                boolean pos = value.signum() != -1;
-                int len = pos ? 7 : 6;
-                int scale = value.scale();
+                value = value.stripTrailingZeros();
+                int scale = value.precision() - (value.scale() == -1 ? 0 : value.scale());
                 if(Utilities.scaleOfInt(scale) > len - 2) {
                     System.arraycopy(ERROR, 0, cacheChar, 0, 7);
                     cacheDot = DOT_NONE;
                 } else {
-                    format.setMaximumFractionDigits(len - Utilities.scaleOfInt(value.scale()) - 3);
+                    int dec = len - Utilities.scaleOfInt(scale) - 2;
+                    format.setMaximumFractionDigits(dec);
+                    format.setMinimumFractionDigits(value.precision() > dec ? dec : 0);
                     s = format.format(value);
                     i = s.indexOf('.');
                     if (i != -1)
                         s = s.substring(0, i) + s.substring(i + 1);
-                    for(int j = 0; j < 6 && s.length() - j > 0; j++) {
+                    for(int j = 0; j < 7 && s.length() - j > 0; j++) {
                         cacheChar[j] = s.charAt(s.length() - 1 - j);
                     }
                     cacheDot = i == -1 ? DOT_NONE : s.length() - i;
