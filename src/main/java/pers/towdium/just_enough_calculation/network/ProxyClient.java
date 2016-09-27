@@ -10,7 +10,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.event.DataEventHandler;
 import pers.towdium.just_enough_calculation.event.ModelEventHandler;
-import pers.towdium.just_enough_calculation.event.MouseEventHandler;
+import pers.towdium.just_enough_calculation.event.InputEventHandler;
 import pers.towdium.just_enough_calculation.event.TooltipEventHandler;
 import pers.towdium.just_enough_calculation.gui.JECGuiHandler;
 
@@ -22,15 +22,19 @@ import pers.towdium.just_enough_calculation.gui.JECGuiHandler;
 public class ProxyClient implements IProxy {
     static PlayerHandlerSP playerHandler = new PlayerHandlerSP();
 
-    static void setModelLocation(Item item) {
-        ModelLoader.setCustomModelResourceLocation(item, 0,
+    static void setModelLocation(Item item, int meta, String id) {
+        ModelLoader.setCustomModelResourceLocation(item, meta,
                 new ModelResourceLocation(JustEnoughCalculation.Reference.MODID + ":" +
-                        item.getUnlocalizedName().substring(5), "inventory"));
+                        id, "inventory"));
+    }
+
+    static void setModelLocation(Item item, int meta) {
+        setModelLocation(item, meta, item.getUnlocalizedName().substring(5));
     }
 
     @Override
     public void init() {
-        MinecraftForge.EVENT_BUS.register(new MouseEventHandler());
+        MinecraftForge.EVENT_BUS.register(new InputEventHandler());
         MinecraftForge.EVENT_BUS.register(new ModelEventHandler());
         MinecraftForge.EVENT_BUS.register(new DataEventHandler());
         MinecraftForge.EVENT_BUS.register(new TooltipEventHandler());
@@ -39,8 +43,9 @@ public class ProxyClient implements IProxy {
 
     @Override
     public void preInit() {
-        setModelLocation(JustEnoughCalculation.itemCalculator);
-        setModelLocation(JustEnoughCalculation.itemFluidContainer);
+        setModelLocation(JustEnoughCalculation.itemCalculator, 0);
+        setModelLocation(JustEnoughCalculation.itemFluidContainer, 0);
+        setModelLocation(JustEnoughCalculation.itemCalculator, 1, "itemMathCalculator");
     }
 
     @Override

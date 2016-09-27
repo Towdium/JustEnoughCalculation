@@ -20,13 +20,16 @@ public class JECGuiHandler implements IGuiHandler {
     @Override
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         switch (ID) {
-            case GuiId.CALCULATOR:
+            case GuiId.CRAFTING_CALCULATOR:
+                return new GuiCalculator(null);
+            case GuiId.MATH_CALCULATOR:
                 return new GuiMathCalculator(null);
         }
         return null;
     }
 
     public static final class GuiId {
-        public static final int CALCULATOR = 0;
+        public static final int CRAFTING_CALCULATOR = 0;
+        public static final int MATH_CALCULATOR = 1;
     }
 }

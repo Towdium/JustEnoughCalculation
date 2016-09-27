@@ -20,6 +20,7 @@ import pers.towdium.just_enough_calculation.network.packets.PacketSyncCalculator
 import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper;
 import pers.towdium.just_enough_calculation.util.Utilities;
 import pers.towdium.just_enough_calculation.util.exception.IllegalPositionException;
+import pers.towdium.just_enough_calculation.util.wrappers.Singleton;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -54,6 +55,8 @@ public class GuiCalculator extends JECGuiContainer {
     Calculator calculatorNormal;
     Calculator calculatorInventory;
 
+    boolean initialized = false;
+
     public GuiCalculator(GuiScreen parent) {
         super(new ContainerCalculator(), parent);
     }
@@ -78,7 +81,10 @@ public class GuiCalculator extends JECGuiContainer {
         textFieldAmount = new GuiTextField(0, fontRendererObj, guiLeft + 39, guiTop + 8, 75, 18);
         textFieldAmount.setText(temp);
         textFieldAmount.setMaxStringLength(10);
-        updateGuiFromItem();
+        if (!initialized) {
+            updateGuiFromItem();
+            initialized = true;
+        }
     }
 
     @Override
@@ -233,9 +239,12 @@ public class GuiCalculator extends JECGuiContainer {
     }
 
     void updateItemFromGui() {
-        ItemStack stack = mc.thePlayer.inventory.getCurrentItem();
-        if (stack != null && stack.getItem() == JustEnoughCalculation.itemCalculator) {
-            NBTTagCompound tag = stack.getSubCompound(keyRecipe, true);
+        Singleton<ItemStack> calc = new Singleton<>(null);
+        calc.predicate = stack -> stack.getItem() == JustEnoughCalculation.itemCalculator;
+        calc.push(mc.thePlayer.inventory.getCurrentItem());
+        calc.push(mc.thePlayer.inventory.offHandInventory[0]);
+        if (calc.value != null) {
+            NBTTagCompound tag = calc.value.getSubCompound(keyRecipe, true);
             tag.setString(keyAmount, textFieldAmount.getText());
             NBTTagList buffer = new NBTTagList();
             for (int i = 1; i <= 6; i++) {
@@ -247,14 +256,17 @@ public class GuiCalculator extends JECGuiContainer {
             }
             tag.setTag(keyRecent, buffer);
             tag.setInteger(keyMode, mode.ordinal());
+            JustEnoughCalculation.networkWrapper.sendToServer(new PacketSyncCalculator(calc.value));
         }
-        JustEnoughCalculation.networkWrapper.sendToServer(new PacketSyncCalculator(stack));
     }
 
     void updateGuiFromItem() {
-        ItemStack stack = mc.thePlayer.inventory.getCurrentItem();
-        if (stack != null && stack.getItem() == JustEnoughCalculation.itemCalculator) {
-            NBTTagCompound tag = stack.getSubCompound(keyRecipe, true);
+        Singleton<ItemStack> calc = new Singleton<>(null);
+        calc.predicate = stack -> stack.getItem() == JustEnoughCalculation.itemCalculator;
+        calc.push(mc.thePlayer.inventory.getCurrentItem());
+        calc.push(mc.thePlayer.inventory.offHandInventory[0]);
+        if (calc.value != null) {
+            NBTTagCompound tag = calc.value.getSubCompound(keyRecipe, true);
             textFieldAmount.setText(tag.getString(keyAmount));
             List<ItemStack> buffer = new ArrayList<>();
             NBTTagList recent = tag.getTagList(keyRecent, 10);

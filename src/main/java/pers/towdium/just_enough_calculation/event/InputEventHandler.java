@@ -10,7 +10,7 @@ import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
  * Author:  Towdium
  * Created: 2016/6/14.
  */
-public class MouseEventHandler {
+public class InputEventHandler {
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onMouseClick(GuiScreenEvent.MouseInputEvent.Pre event) {
         if (event.getGui() instanceof JECGuiContainer) {

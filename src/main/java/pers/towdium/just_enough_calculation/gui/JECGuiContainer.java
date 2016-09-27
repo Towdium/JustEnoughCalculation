@@ -131,6 +131,7 @@ public abstract class JECGuiContainer extends GuiContainer {
                 Utilities.openGui(parent);
             }
         }
+        //JustEnoughCalculation.log.info(typedChar + " " + keyCode);
     }
 
     @SuppressWarnings("NullableProblems")

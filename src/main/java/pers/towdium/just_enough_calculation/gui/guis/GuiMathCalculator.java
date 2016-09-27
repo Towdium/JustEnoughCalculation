@@ -1,15 +1,21 @@
 package pers.towdium.just_enough_calculation.gui.guis;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
+import org.lwjgl.input.Keyboard;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
 import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
+import pers.towdium.just_enough_calculation.network.packets.PacketSyncCalculator;
 import pers.towdium.just_enough_calculation.util.Utilities;
 import pers.towdium.just_enough_calculation.util.exception.IllegalPositionException;
+import pers.towdium.just_enough_calculation.util.wrappers.Singleton;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -30,6 +36,13 @@ public class GuiMathCalculator extends JECGuiContainer {
     NumContainer current = new NumStack();
     BigDecimal record = null;
     enumSign sign = enumSign.NONE;
+    static final String KEY_MATH = "math";
+    static final String KEY_RECORD = "record";
+    static final String KEY_SIGN = "sign";
+    static final String KEY_CURRENT = "current";
+    static final String KEY_TYPE = "type";
+
+    boolean initialized;
 
     public GuiMathCalculator(GuiScreen parent) {
         super(new JECContainer() {
@@ -56,25 +69,29 @@ public class GuiMathCalculator extends JECGuiContainer {
 
     @Override
     protected void init() {
-        buttonList.add(new GuiButton(7, guiLeft + 7, guiTop + 67, 28, 20, "7"));
-        buttonList.add(new GuiButton(8, guiLeft + 39, guiTop + 67, 28, 20, "8"));
-        buttonList.add(new GuiButton(9, guiLeft + 71, guiTop + 67, 28, 20, "9"));
-        buttonList.add(new GuiButton(4, guiLeft + 7, guiTop + 91, 28, 20, "4"));
-        buttonList.add(new GuiButton(5, guiLeft + 39, guiTop + 91, 28, 20, "5"));
-        buttonList.add(new GuiButton(6, guiLeft + 71, guiTop + 91, 28, 20, "6"));
-        buttonList.add(new GuiButton(3, guiLeft + 7, guiTop + 115, 28, 20, "3"));
-        buttonList.add(new GuiButton(2, guiLeft + 39, guiTop + 115, 28, 20, "2"));
-        buttonList.add(new GuiButton(1, guiLeft + 71, guiTop + 115, 28, 20, "1"));
-        buttonList.add(new GuiButton(0, guiLeft + 7, guiTop + 139, 28, 20, "0"));
-        buttonList.add(new GuiButton(10, guiLeft + 39, guiTop + 139, 28, 20, "00"));
-        buttonList.add(new GuiButton(11, guiLeft + 71, guiTop + 139, 28, 20, "."));
-        buttonList.add(new GuiButton(12, guiLeft + 109, guiTop + 67, 28, 20, "◄"));
-        buttonList.add(new GuiButton(13, guiLeft + 141, guiTop + 67, 28, 20, "+"));
-        buttonList.add(new GuiButton(14, guiLeft + 109, guiTop + 91, 28, 20, "C"));
-        buttonList.add(new GuiButton(15, guiLeft + 141, guiTop + 91, 28, 20, "-"));
-        buttonList.add(new GuiButtonExt(16, guiLeft + 109, guiTop + 115, 28, 44, "="));
-        buttonList.add(new GuiButton(17, guiLeft + 141, guiTop + 115, 28, 20, "×"));
-        buttonList.add(new GuiButton(18, guiLeft + 141, guiTop + 139, 28, 20, "÷"));
+        buttonList.add(new MyButton(7, guiLeft + 7, guiTop + 67, 28, 20, "7"));
+        buttonList.add(new MyButton(8, guiLeft + 39, guiTop + 67, 28, 20, "8"));
+        buttonList.add(new MyButton(9, guiLeft + 71, guiTop + 67, 28, 20, "9"));
+        buttonList.add(new MyButton(4, guiLeft + 7, guiTop + 91, 28, 20, "4"));
+        buttonList.add(new MyButton(5, guiLeft + 39, guiTop + 91, 28, 20, "5"));
+        buttonList.add(new MyButton(6, guiLeft + 71, guiTop + 91, 28, 20, "6"));
+        buttonList.add(new MyButton(1, guiLeft + 7, guiTop + 115, 28, 20, "1"));
+        buttonList.add(new MyButton(2, guiLeft + 39, guiTop + 115, 28, 20, "2"));
+        buttonList.add(new MyButton(3, guiLeft + 71, guiTop + 115, 28, 20, "3"));
+        buttonList.add(new MyButton(0, guiLeft + 7, guiTop + 139, 28, 20, "0"));
+        buttonList.add(new MyButton(10, guiLeft + 39, guiTop + 139, 28, 20, "00"));
+        buttonList.add(new MyButton(11, guiLeft + 71, guiTop + 139, 28, 20, "."));
+        buttonList.add(new MyButton(12, guiLeft + 109, guiTop + 67, 28, 20, "◄"));
+        buttonList.add(new MyButton(13, guiLeft + 141, guiTop + 67, 28, 20, "+"));
+        buttonList.add(new MyButton(14, guiLeft + 109, guiTop + 91, 28, 20, "C"));
+        buttonList.add(new MyButton(15, guiLeft + 141, guiTop + 91, 28, 20, "-"));
+        buttonList.add(new MyButton(16, guiLeft + 109, guiTop + 115, 28, 44, "="));
+        buttonList.add(new MyButton(17, guiLeft + 141, guiTop + 115, 28, 20, "*"));
+        buttonList.add(new MyButton(18, guiLeft + 141, guiTop + 139, 28, 20, "/"));
+        if (!initialized) {
+            updateGuiFromItem();
+            initialized = true;
+        }
     }
 
     @Override
@@ -87,21 +104,23 @@ public class GuiMathCalculator extends JECGuiContainer {
 
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
-        if (button.id < 10) {
-            updateValue();
-            current = current.appendChar((char)('0' + button.id));
-        } else if (button.id == 10) {
-            updateValue();
+        actionPerformed(button.id);
+    }
+
+    void actionPerformed(int i) {
+        if (i == -1)
+            return;
+        if (i < 10) {
+            current = current.appendChar((char)('0' + i));
+        } else if (i == 10) {
             current = current.appendChar('0');
             current = current.appendChar('0');
         } else {
-            switch (button.id) {
+            switch (i) {
                 case 11:
-                    updateValue();
                     current = current.appendChar('.');
                     break;
                 case 12:
-                    updateValue();
                     current = current.removeChar();
                     break;
                 case 13:
@@ -135,17 +154,87 @@ public class GuiMathCalculator extends JECGuiContainer {
         }
     }
 
-    void updateValue() {
-        /*if (sign != enumSign.NONE) {
-            record = current.toBigDec();
-            current = new NumStack();
-        }*/
+    @Override
+    public void onGuiClosed() {
+        super.onGuiClosed();
+        updateItemFromGui();
+    }
+
+    @Override
+    public void handleKeyboardInput() throws IOException {
+        super.handleKeyboardInput();
+        actionPerformed(getButton());
+    }
+
+    int getButton() {
+        if (!Keyboard.getEventKeyState())
+            return -1;
+        char c = Keyboard.getEventCharacter();
+        int code = Keyboard.getEventKey();
+        if (c >= '0' && c <= '9') {
+            return c - '0';
+        } else {
+            switch (c) {
+                case '/': return 18;
+                case '*': return 17;
+                case '+': return 13;
+                case '-': return 15;
+                case '=': return 16;
+                case '.': return 11;
+            }
+            switch (code) {
+                case 28: return 16;
+                case 14: return 12;
+                case 211: return 14;
+                default: return -1;
+            }
+        }
     }
 
     void updateResult() {
         if(current instanceof NumStack)
             current = new NumBigDec((record == null ? enumSign.NONE : sign).getOperator().apply(record, current.toBigDec()));
         record = current.toBigDec();
+    }
+
+    void updateItemFromGui() {
+        Singleton<ItemStack> calc = new Singleton<>(null);
+        calc.predicate = stack -> stack.getItem() == JustEnoughCalculation.itemCalculator;
+        calc.push(mc.thePlayer.inventory.getCurrentItem());
+        calc.push(mc.thePlayer.inventory.offHandInventory[0]);
+        if (calc.value != null) {
+            NBTTagCompound tag = calc.value.getSubCompound(KEY_MATH, true);
+            tag.setString(KEY_RECORD, record == null ? "" : record.toString());
+            tag.setInteger(KEY_SIGN, sign.ordinal());
+            tag.setString(KEY_CURRENT, current.toString());
+            tag.setInteger(KEY_TYPE, current.getType().ordinal());
+            JustEnoughCalculation.networkWrapper.sendToServer(new PacketSyncCalculator(calc.value));
+        }
+
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    void updateGuiFromItem() {
+        Singleton<ItemStack> calc = new Singleton<>(null);
+        calc.predicate = stack -> stack.getItem() == JustEnoughCalculation.itemCalculator;
+        calc.push(mc.thePlayer.inventory.getCurrentItem());
+        calc.push(mc.thePlayer.inventory.offHandInventory[0]);
+        if (calc.value != null) {
+            NBTTagCompound tag = calc.value.getSubCompound(KEY_MATH, false);
+            if(tag != null) {
+                String str = tag.getString(KEY_RECORD);
+                record = str.equals("") ? null : new BigDecimal(tag.getString(KEY_RECORD));
+                sign = enumSign.values()[tag.getInteger(KEY_SIGN)];
+                switch (NumContainer.enumType.values()[tag.getInteger(KEY_TYPE)]) {
+                    case BIG_DEC:
+                        current = new NumBigDec(tag.getString(KEY_CURRENT));
+                        break;
+                    case STACK:
+                        current = new NumStack(tag.getString(KEY_CURRENT));
+                        break;
+                }
+            }
+        }
     }
 
     // GRAPHICS
@@ -322,6 +411,8 @@ public class GuiMathCalculator extends JECGuiContainer {
 
         int getDot();
 
+        enumType getType();
+
         NumContainer appendChar(char c);
 
         NumContainer removeChar();
@@ -358,6 +449,11 @@ public class GuiMathCalculator extends JECGuiContainer {
         }
 
         @Override
+        public enumType getType() {
+            return enumType.BIG_DEC;
+        }
+
+        @Override
         public NumContainer appendChar(char c) {
             return new NumStack().appendChar(c);
         }
@@ -370,6 +466,11 @@ public class GuiMathCalculator extends JECGuiContainer {
         @Override
         public BigDecimal toBigDec() {
             return value;
+        }
+
+        @Override
+        public String toString() {
+            return value.toString();
         }
 
         void updateCache() {
@@ -395,11 +496,14 @@ public class GuiMathCalculator extends JECGuiContainer {
             } else {
                 value = value.stripTrailingZeros();
                 int scale = value.precision() - (value.scale() == -1 ? 0 : value.scale());
-                if(Utilities.scaleOfInt(scale) > len - 2) {
+                int scaleLen = Utilities.scaleOfInt(scale);
+                if(scale < 0)
+                    ++scaleLen;
+                if(scaleLen > len - 2) {
                     System.arraycopy(ERROR, 0, cacheChar, 0, 7);
                     cacheDot = DOT_NONE;
                 } else {
-                    int dec = len - Utilities.scaleOfInt(scale) - 2;
+                    int dec = len - scaleLen - 2;
                     format.setMaximumFractionDigits(dec);
                     format.setMinimumFractionDigits(value.precision() > dec ? dec : 0);
                     s = format.format(value);
@@ -425,12 +529,10 @@ public class GuiMathCalculator extends JECGuiContainer {
         }
 
         public NumStack(String s) {
-            for(int i = 0; i < s.length(); i++) {
-                char c = s.charAt(i);
-                if (c != '.')
-                    chars.push(c);
+            for(int i = 0; s.charAt(i) != ' '; i++) {
+                chars.push(s.charAt(i));
             }
-            posDot = s.indexOf('.');
+            posDot =  Integer.parseInt(s.substring(s.indexOf(' ') + 1));
             updateCache();
         }
 
@@ -442,6 +544,11 @@ public class GuiMathCalculator extends JECGuiContainer {
         @Override
         public int getDot() {
             return posDot;
+        }
+
+        @Override
+        public enumType getType() {
+            return enumType.STACK;
         }
 
         @Override
@@ -495,6 +602,15 @@ public class GuiMathCalculator extends JECGuiContainer {
             return new BigDecimal(sb.toString());
         }
 
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            chars.stream().filter(character -> character != '\0').forEachOrdered(sb::append);
+            sb.append(' ');
+            sb.append(posDot);
+            return sb.toString();
+        }
+
         void updateCache() {
             int index = chars.size() - 1;
             for(int i = 6; i > index; i--) {
@@ -519,6 +635,20 @@ public class GuiMathCalculator extends JECGuiContainer {
                     --posDot;
                 }
             }
+        }
+    }
+
+    class MyButton extends GuiButtonExt{
+        public MyButton(int id, int xPos, int yPos, int width, int height, String displayString) {
+            super(id, xPos, yPos, width, height, displayString);
+        }
+
+        @Override
+        public void drawButton(Minecraft mc, int mouseX, int mouseY) {
+            if(getButton() == id)
+                super.drawButton(mc, xPosition, yPosition);
+            else
+                super.drawButton(mc, mouseX, mouseY);
         }
     }
 }

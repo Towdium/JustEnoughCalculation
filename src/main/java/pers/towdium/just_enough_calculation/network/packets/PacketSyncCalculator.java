@@ -39,6 +39,11 @@ public class PacketSyncCalculator implements IMessage, IMessageHandler<PacketSyn
         ItemStack calculator = inventory.getCurrentItem();
         if (calculator != null && calculator.getItem() == JustEnoughCalculation.itemCalculator) {
             inventory.setInventorySlotContents(inventory.currentItem, message.stack);
+        } else {
+            calculator = inventory.offHandInventory[0];
+            if (calculator != null && calculator.getItem() == JustEnoughCalculation.itemCalculator) {
+                inventory.offHandInventory[0] = message.stack;
+            }
         }
         return null;
     }

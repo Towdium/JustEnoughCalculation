@@ -32,4 +32,5 @@ gui.oreDict.add=添加
 gui.picker.search=搜索：
 
 item.itemCalculator.name=合成计算器
+item.itemMathCalculator.name=数学计算器
 item.itemFluidContainer.name=流体容器

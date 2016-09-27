@@ -32,4 +32,5 @@ gui.oreDict.add=Add
 gui.picker.search=Search:
 
 item.itemCalculator.name=Crafting Calculator
+item.itemMathCalculator.name=Math Calculator
 item.itemFluidContainer.name=Fluid Container
