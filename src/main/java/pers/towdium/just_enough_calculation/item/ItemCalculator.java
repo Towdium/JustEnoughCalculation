@@ -1,6 +1,7 @@
 package pers.towdium.just_enough_calculation.item;
 
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -8,6 +9,8 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.gui.JECGuiHandler;
@@ -16,13 +19,17 @@ import pers.towdium.just_enough_calculation.network.packets.PacketSyncCalculator
 import pers.towdium.just_enough_calculation.util.Utilities;
 import pers.towdium.just_enough_calculation.util.exception.IllegalPositionException;
 
+import java.util.List;
+
 /**
  * @author Towdium
  */
 public class ItemCalculator extends Item {
 
     public ItemCalculator() {
+        setHasSubtypes(true);
         setMaxStackSize(1);
+        setCreativeTab(CreativeTabs.MISC);
     }
 
     @SuppressWarnings("NullableProblems")
@@ -54,5 +61,13 @@ public class ItemCalculator extends Item {
             case 1: return "item.itemMathCalculator";
             default: throw new IllegalPositionException();
         }
+    }
+
+    @SuppressWarnings("NullableProblems")
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems) {
+        subItems.add(new ItemStack(itemIn, 1, 0));
+        subItems.add(new ItemStack(itemIn, 1, 1));
     }
 }

@@ -58,6 +58,7 @@ public class JustEnoughCalculation {
     @Mod.EventHandler
     public static void init(FMLInitializationEvent event) {
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(itemCalculator), "SIS", "SRS", "SOS", 'S', "stone", 'I', "dyeBlack", 'R', "dustRedstone", 'O', "ingotIron"));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(itemCalculator, 1, 1), "SIS", "SOS", "SRS", 'S', "stone", 'I', "dyeBlack", 'R', "dustRedstone", 'O', "ingotIron"));
         proxy.init();
     }
 
@@ -74,6 +75,6 @@ public class JustEnoughCalculation {
     public static class Reference {
         public static final String MODID = "je_calculation";
         public static final String MODNAME = "Just Enough Calculation";
-        public static final String VERSION = "1.10.2-2.0.4";
+        public static final String VERSION = "1.10.2-2.1.1";
     }
 }
