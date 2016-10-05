@@ -577,7 +577,9 @@ public class GuiMathCalculator extends JECGuiContainer {
 
         @Override
         public NumContainer removeChar() {
-            if (posDot == 0) {
+            if (chars.isEmpty())
+                return this;
+            else if (posDot == 0) {
                 posDot = DOT_DEFAULT;
                 if (chars.size() == 1 && chars.peek() == '0')
                     chars.pop();
