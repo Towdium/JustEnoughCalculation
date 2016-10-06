@@ -32,4 +32,5 @@ gui.oreDict.add=Добавить
 gui.picker.search=Поиск:
 
 item.itemCalculator.name=Калькулятор создания
+item.itemMathCalculator.name=Математический калькулятор
 item.itemFluidContainer.name=Жидкостный резервуар
