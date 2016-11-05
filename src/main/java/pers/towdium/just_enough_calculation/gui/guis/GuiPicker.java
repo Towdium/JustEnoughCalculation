@@ -8,8 +8,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
 import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
-import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper;
 import pers.towdium.just_enough_calculation.util.Utilities;
+import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper;
 
 import java.io.IOException;
 import java.util.ArrayList;

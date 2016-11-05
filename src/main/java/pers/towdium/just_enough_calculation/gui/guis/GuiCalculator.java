@@ -17,9 +17,9 @@ import pers.towdium.just_enough_calculation.core.Calculator;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
 import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
 import pers.towdium.just_enough_calculation.network.packets.PacketSyncCalculator;
-import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper;
 import pers.towdium.just_enough_calculation.util.Utilities;
 import pers.towdium.just_enough_calculation.util.exception.IllegalPositionException;
+import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper;
 import pers.towdium.just_enough_calculation.util.wrappers.Singleton;
 
 import javax.annotation.Nullable;
@@ -105,6 +105,7 @@ public class GuiCalculator extends JECGuiContainer {
 
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
+
         switch (button.id) {
             case 1:
                 Utilities.openGui(new GuiListSearch(this, inventorySlots.getSlot(0).getStack()));

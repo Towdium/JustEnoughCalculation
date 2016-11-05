@@ -13,8 +13,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
-import pers.towdium.just_enough_calculation.gui.JECGuiHandler;
-import pers.towdium.just_enough_calculation.network.PlayerHandlerSP;
 import pers.towdium.just_enough_calculation.network.packets.PacketSyncCalculator;
 import pers.towdium.just_enough_calculation.util.Utilities;
 import pers.towdium.just_enough_calculation.util.exception.IllegalPositionException;

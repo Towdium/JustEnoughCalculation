@@ -1,10 +1,10 @@
 package pers.towdium.just_enough_calculation.core;
 
 import net.minecraft.item.ItemStack;
+import pers.towdium.just_enough_calculation.util.exception.IllegalPositionException;
 import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper;
 import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper.NBT;
 import pers.towdium.just_enough_calculation.util.helpers.PlayerRecordHelper;
-import pers.towdium.just_enough_calculation.util.exception.IllegalPositionException;
 import pers.towdium.just_enough_calculation.util.wrappers.Singleton;
 
 import java.util.ArrayList;

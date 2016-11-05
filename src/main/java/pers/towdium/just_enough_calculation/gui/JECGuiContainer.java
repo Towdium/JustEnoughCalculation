@@ -5,30 +5,23 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.block.model.ModelManager;
-import net.minecraft.client.renderer.color.ItemColors;
-import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.plugin.JEIPlugin;
+import pers.towdium.just_enough_calculation.util.Utilities;
 import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper;
 import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper.NBT;
 import pers.towdium.just_enough_calculation.util.helpers.LocalizationHelper;
 import pers.towdium.just_enough_calculation.util.helpers.NEIHelper;
-import pers.towdium.just_enough_calculation.util.Utilities;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -44,13 +37,14 @@ import java.util.function.BiFunction;
  */
 public abstract class JECGuiContainer extends GuiContainer {
     static final String PREFIX = "gui.";
+    public static GuiScreen lastGui;
     static Map<String, Map<String, String>> keyCache = new HashMap<>();
+    static ModelManager tempMM = Utilities.getField(Minecraft.getMinecraft(), "modelManager", "field_175617_aL");
     protected GuiScreen parent;
     protected int activeSlot = -1;
     protected ItemStack temp;
-    long timeStart = 0;
-    static ModelManager tempMM = Utilities.getField(Minecraft.getMinecraft(), "modelManager", "field_175617_aL");
     protected RenderItem renderItem;
+    long timeStart = 0;
 
     public JECGuiContainer(Container inventorySlotsIn, GuiScreen parent) {
         super(inventorySlotsIn);
@@ -88,6 +82,7 @@ public abstract class JECGuiContainer extends GuiContainer {
     public void initGui() {
         super.initGui();
         init();
+        lastGui = this;
         updateLayout();
     }
 
@@ -128,6 +123,7 @@ public abstract class JECGuiContainer extends GuiContainer {
                 setActiveSlot(-1);
                 mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
             } else {
+                lastGui = parent;
                 Utilities.openGui(parent);
             }
         }

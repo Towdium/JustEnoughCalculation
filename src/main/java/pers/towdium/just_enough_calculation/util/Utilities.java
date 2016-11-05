@@ -23,7 +23,10 @@ import java.util.Map;
  * Date:   2016/6/25.
  */
 public class Utilities {
+    final static int[] scaleTable = {9, 99, 999, 9999, 99999, 999999, 9999999, 99999999, 999999999, Integer.MAX_VALUE};
     static Map<String, String> dictionary = new HashMap<>();
+
+    // FOR STRING FORMATTING
 
     static {
         Map<String, ModContainer> modMap = Loader.instance().getIndexedModList();
@@ -33,8 +36,6 @@ public class Utilities {
             dictionary.put(lowercaseId, modName);
         }
     }
-
-    // FOR STRING FORMATTING
 
     public static String cutFloat(float f, int size) {
         TriFunction<Float, Integer, Integer, String> form = (fl, len, max) -> {
@@ -67,11 +68,11 @@ public class Utilities {
         }
     }
 
+    // REFLECTION
+
     public static String cutString(String s, int length, FontRenderer fontRenderer) {
         return fontRenderer.getStringWidth(s) <= length ? s : fontRenderer.trimStringToWidth(s, length - 6) + "...";
     }
-
-    // REFLECTION
 
     @SuppressWarnings("unchecked")
     public static <T, C> T getField(C o, String... names) {
@@ -133,6 +134,7 @@ public class Utilities {
     public static <D, S> void setField(D dest, S source, String... name) {
         setField(dest.getClass(), dest, source, name);
     }
+    // CIRCULATE STRUCTURE
 
     public static void setField(Class c, Object dest, Object source, String... name) {
         Singleton<Field> f = new Singleton<>(null);
@@ -161,7 +163,8 @@ public class Utilities {
             e.printStackTrace();
         }
     }
-    // CIRCULATE STRUCTURE
+
+    // GUI
 
     public static int circulate(int current, int total, boolean forward) {
         if (forward) {
@@ -177,13 +180,13 @@ public class Utilities {
         }
     }
 
-    // GUI
+    // MOD NAME
 
     public static void openGui(GuiScreen gui) {
         Minecraft.getMinecraft().displayGuiScreen(gui);
     }
 
-    // MOD NAME
+    // MATH
 
     public static String getModName(ItemStack stack) {
         String ret;
@@ -206,10 +209,6 @@ public class Utilities {
         }
         return ret;
     }
-
-    // MATH
-
-    final static int[] scaleTable = { 9, 99, 999, 9999, 99999, 999999, 9999999, 99999999, 999999999, Integer.MAX_VALUE };
 
     public static int scaleOfInt(int x) {
         for (int i = 0;; i++)

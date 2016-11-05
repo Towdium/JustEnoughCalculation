@@ -1,22 +1,22 @@
 package pers.towdium.just_enough_calculation.plugin;
 
 import mezz.jei.api.gui.IRecipeLayout;
+import mezz.jei.api.recipe.IFocus;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
-import mezz.jei.gui.RecipesGui;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import pers.towdium.just_enough_calculation.JECConfig;
 import pers.towdium.just_enough_calculation.core.Recipe;
+import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
 import pers.towdium.just_enough_calculation.gui.guis.GuiEditor;
 import pers.towdium.just_enough_calculation.gui.guis.GuiPickerOreDict;
-import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper;
-import pers.towdium.just_enough_calculation.util.helpers.PlayerRecordHelper;
 import pers.towdium.just_enough_calculation.util.Utilities;
 import pers.towdium.just_enough_calculation.util.function.TriConsumer;
+import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper;
+import pers.towdium.just_enough_calculation.util.helpers.PlayerRecordHelper;
 import pers.towdium.just_enough_calculation.util.wrappers.Singleton;
 
 import javax.annotation.Nonnull;
@@ -87,11 +87,13 @@ public class JECRecipeTransferHandler implements IRecipeTransferHandler {
     }
 
     @Override
+    @Nonnull
     public Class<? extends Container> getContainerClass() {
         return container;
     }
 
     @Override
+    @Nonnull
     public String getRecipeCategoryUid() {
         return recipeUID;
     }
@@ -124,17 +126,12 @@ public class JECRecipeTransferHandler implements IRecipeTransferHandler {
             });
             List<ItemStack> buffer = new ArrayList<>();
             JEIPlugin.recipeRegistry.getCraftingItems(
-                    JEIPlugin.recipeRegistry.getRecipeCategories(Collections.singletonList(recipeUID)).get(0)
+                    JEIPlugin.recipeRegistry.getRecipeCategories(Collections.singletonList(recipeUID)).get(0),
+                    JEIPlugin.recipeRegistry.createFocus(IFocus.Mode.NONE, null)
             ).forEach(itemStack -> buffer.add(ItemStackHelper.toItemStackJEC(itemStack.copy())));
             tempList.get(Recipe.EnumStackIOType.CATALYST).
                     add(buffer.size() == 1 ? new Singleton<>(buffer.get(0)) : new Singleton<>(buffer));
-            // check temp data
-            Minecraft mc = Minecraft.getMinecraft();
-            RecipesGui gui = (RecipesGui) mc.currentScreen;
-            if (gui == null) {
-                return null;
-            }
-            GuiScreen parent = gui.getParentScreen();
+            GuiScreen parent = JECGuiContainer.lastGui;
             GuiEditor editor = parent instanceof GuiEditor ? (GuiEditor) parent : new GuiEditor(parent, null);
             checkTemp(editor);
         }

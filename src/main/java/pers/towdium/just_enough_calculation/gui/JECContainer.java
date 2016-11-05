@@ -17,9 +17,9 @@ import java.util.List;
  * Created: 2016/6/13.
  */
 public abstract class JECContainer extends Container {
+    static boolean reported = false;
     InventoryBasic inventory;
     List<int[]> slotBuffer = new ArrayList<>();
-    static boolean reported = false;
 
     {
         windowId = 100;

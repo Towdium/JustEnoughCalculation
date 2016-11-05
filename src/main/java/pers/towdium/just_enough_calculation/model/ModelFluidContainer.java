@@ -17,8 +17,8 @@ import net.minecraftforge.client.model.ItemTextureQuadConverter;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fluids.Fluid;
 import org.apache.commons.lang3.tuple.Pair;
-import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper;
 import pers.towdium.just_enough_calculation.util.Utilities;
+import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper;
 
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
@@ -103,7 +103,6 @@ public class ModelFluidContainer implements IPerspectiveAwareModel {
 
     @Override
     public ItemCameraTransforms getItemCameraTransforms() {
-        //noinspection deprecation
         return originalModel.getItemCameraTransforms();
     }
 

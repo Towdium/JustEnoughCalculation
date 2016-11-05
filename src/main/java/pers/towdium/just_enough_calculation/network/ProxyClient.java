@@ -9,8 +9,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.event.DataEventHandler;
-import pers.towdium.just_enough_calculation.event.ModelEventHandler;
 import pers.towdium.just_enough_calculation.event.InputEventHandler;
+import pers.towdium.just_enough_calculation.event.ModelEventHandler;
 import pers.towdium.just_enough_calculation.event.TooltipEventHandler;
 import pers.towdium.just_enough_calculation.gui.JECGuiHandler;
 

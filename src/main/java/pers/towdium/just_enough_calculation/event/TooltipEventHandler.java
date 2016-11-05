@@ -1,6 +1,5 @@
 package pers.towdium.just_enough_calculation.event;
 
-import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -17,7 +16,6 @@ import java.util.regex.Pattern;
  */
 public class TooltipEventHandler {
     static Pattern pattern = Pattern.compile("Just Enough Calculation");
-    static String format = TextFormatting.BLUE.toString() + TextFormatting.ITALIC.toString();
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onTooltip(ItemTooltipEvent event) {

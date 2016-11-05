@@ -18,7 +18,6 @@ import java.util.Set;
 public class JECGuiFactory implements IModGuiFactory {
     @Override
     public void initialize(Minecraft minecraftInstance) {
-
     }
 
     @Override

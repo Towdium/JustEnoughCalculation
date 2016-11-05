@@ -1,10 +1,8 @@
 package pers.towdium.just_enough_calculation.plugin;
 
 import com.google.common.collect.ImmutableList;
-import mezz.jei.api.IJeiRuntime;
-import mezz.jei.api.IModPlugin;
-import mezz.jei.api.IModRegistry;
-import mezz.jei.api.IRecipeRegistry;
+import mezz.jei.api.*;
+import mezz.jei.api.ingredients.IModIngredientRegistration;
 import mezz.jei.api.recipe.IRecipeCategory;
 import pers.towdium.just_enough_calculation.JECConfig;
 import pers.towdium.just_enough_calculation.gui.guis.GuiCalculator;
@@ -22,9 +20,19 @@ import java.util.stream.Collectors;
 public class JEIPlugin implements IModPlugin {
     public static IJeiRuntime runtime;
     public static IRecipeRegistry recipeRegistry;
+    public static IModRegistry registry;
+
+    @Override
+    public void registerItemSubtypes(@Nonnull ISubtypeRegistry iSubtypeRegistry) {
+    }
+
+    @Override
+    public void registerIngredients(@Nonnull IModIngredientRegistration iModIngredientRegistration) {
+    }
 
     @Override
     public void register(@Nonnull IModRegistry registry) {
+        JEIPlugin.registry = registry;
         String[] blackList = JECConfig.EnumItems.ListRecipeBlackList.getProperty().getStringList();
         LOOP:
         for (String s : JECConfig.EnumItems.ListRecipeCategory.getProperty().getStringList()) {
@@ -33,8 +41,8 @@ public class JEIPlugin implements IModPlugin {
                     continue LOOP;
                 }
             }
-            registry.getRecipeTransferRegistry().addRecipeTransferHandler(new JECRecipeTransferHandler(s, GuiEditor.ContainerEditor.class));
-            registry.getRecipeTransferRegistry().addRecipeTransferHandler(new JECRecipeTransferHandler(s, GuiCalculator.ContainerCalculator.class));
+            registry.getRecipeTransferRegistry().addRecipeTransferHandler(new JECRecipeTransferHandler(s, GuiEditor.ContainerEditor.class), s);
+            registry.getRecipeTransferRegistry().addRecipeTransferHandler(new JECRecipeTransferHandler(s, GuiCalculator.ContainerCalculator.class), s);
         }
     }
 

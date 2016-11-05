@@ -26,22 +26,20 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Stack;
 import java.util.function.BiFunction;
-import java.util.function.IntBinaryOperator;
 
 /**
  * Author: Towdium
  * Date:   2016/9/24.
  */
 public class GuiMathCalculator extends JECGuiContainer {
-    NumContainer current = new NumStack();
-    BigDecimal record = null;
-    enumSign sign = enumSign.NONE;
     static final String KEY_MATH = "math";
     static final String KEY_RECORD = "record";
     static final String KEY_SIGN = "sign";
     static final String KEY_CURRENT = "current";
     static final String KEY_TYPE = "type";
-
+    NumContainer current = new NumStack();
+    BigDecimal record = null;
+    enumSign sign = enumSign.NONE;
     boolean initialized;
 
     public GuiMathCalculator(GuiScreen parent) {
@@ -342,23 +340,6 @@ public class GuiMathCalculator extends JECGuiContainer {
         }
     }
 
-    static class Shapes{
-        static boolean[] ZERO = {true, true, true, true, true, true, false};
-        static boolean[] ONE = {false, true, true, false, false, false, false};
-        static boolean[] TWO = {true, true, false, true, true, false, true};
-        static boolean[] THREE = {true, true, true, true, false, false, true};
-        static boolean[] FOUR = {false, true, true, false, false, true, true};
-        static boolean[] FIVE = {true, false, true, true, false, true, true};
-        static boolean[] SIX = {true, false, true, true, true, true, true};
-        static boolean[] SEVEN = {true, true, true, false, false, false, false};
-        static boolean[] EIGHT = {true, true, true, true, true, true, true};
-        static boolean[] NINE = {true, true, true, true, false, true, true};
-        static boolean[] CHAR_E = {true, false, false, true, true, true, true};
-        static boolean[] CHAR_r = {false, false, false, false, true, false, true};
-        static boolean[] CHAR_o = {false, false, true, true, true, false, true};
-        static boolean[] MINUS = {false, false, false, false, false, false, true};
-    }
-
     protected boolean[] getShape(char c) {
         switch (c) {
             case '0': return Shapes.ZERO;
@@ -396,16 +377,11 @@ public class GuiMathCalculator extends JECGuiContainer {
         }
     }
 
-    // GUI MATH
-
     interface NumContainer {
         char[] ERROR = {'r', 'o', 'r', 'r', 'E', '\0', '\0'};
         char[] DEFAULT = {'0', '\0', '\0', '\0', '\0', '\0', '\0'};
         int DOT_DEFAULT = -1;
         int DOT_NONE = -2;
-        enum enumType {
-            BIG_DEC, STACK
-        }
 
         char[] getChars();
 
@@ -418,15 +394,38 @@ public class GuiMathCalculator extends JECGuiContainer {
         NumContainer removeChar();
 
         BigDecimal toBigDec();
+
+        enum enumType {
+            BIG_DEC, STACK
+        }
+    }
+
+    // GUI MATH
+
+    static class Shapes {
+        static boolean[] ZERO = {true, true, true, true, true, true, false};
+        static boolean[] ONE = {false, true, true, false, false, false, false};
+        static boolean[] TWO = {true, true, false, true, true, false, true};
+        static boolean[] THREE = {true, true, true, true, false, false, true};
+        static boolean[] FOUR = {false, true, true, false, false, true, true};
+        static boolean[] FIVE = {true, false, true, true, false, true, true};
+        static boolean[] SIX = {true, false, true, true, true, true, true};
+        static boolean[] SEVEN = {true, true, true, false, false, false, false};
+        static boolean[] EIGHT = {true, true, true, true, true, true, true};
+        static boolean[] NINE = {true, true, true, true, false, true, true};
+        static boolean[] CHAR_E = {true, false, false, true, true, true, true};
+        static boolean[] CHAR_r = {false, false, false, false, true, false, true};
+        static boolean[] CHAR_o = {false, false, true, true, true, false, true};
+        static boolean[] MINUS = {false, false, false, false, false, false, true};
     }
 
     static class NumBigDec implements NumContainer{
-        BigDecimal value;
-        char[] cacheChar = new char[7];
-        int cacheDot = DOT_DEFAULT;
         static NumberFormat format = new DecimalFormat("0.0E0"){
             {setMinimumFractionDigits(0);}
         };
+        BigDecimal value;
+        char[] cacheChar = new char[7];
+        int cacheDot = DOT_DEFAULT;
 
         public NumBigDec(BigDecimal decimal) {
             value = decimal;
