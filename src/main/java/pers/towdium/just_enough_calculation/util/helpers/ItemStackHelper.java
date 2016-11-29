@@ -154,7 +154,7 @@ public class ItemStackHelper {
                 case PERCENTAGE:
                     return "≈" + Utilities.cutFloat(l / 100.0f, 4);
                 case FLUID:
-                    return l > 1000 ? Utilities.cutFloat(l / 1000.0f, 4) + 'b' : String.valueOf(l) + "mb";
+                    return l >= 1000 ? Utilities.cutFloat(l / 1000.0f, 4) + 'b' : String.valueOf(l) + "mb";
                 default:
                     return "";
             }
@@ -167,7 +167,7 @@ public class ItemStackHelper {
                 case PERCENTAGE:
                     return String.valueOf(l) + "%";
                 case FLUID:
-                    return l > 1000 ? Utilities.cutFloat(l / 1000.0f, 4) + 'b' : String.valueOf(l) + "mb";
+                    return l >= 1000 ? Utilities.cutFloat(l / 1000.0f, 4) + 'b' : String.valueOf(l) + "mb";
                 default:
                     return "";
             }

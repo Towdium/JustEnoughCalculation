@@ -20,7 +20,7 @@ repositories {
     }
 }
 
-version = "1.10.2-2.1.4"
+version = "${mc_version}-${proj_version}"
 group = "pers.towdium.justEnoughCalulation" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "je_calculation"
 
@@ -32,29 +32,24 @@ compileJava {
 minecraft {
     version = "1.10.2-12.18.2.2166"
     runDir = "run"
-
-    // the mappings can be changed at any time, and must be in the following format.
-    // snapshot_YYYYMMDD   snapshot are built nightly.
-    // stable_#            stables are built at the discretion of the MCP team.
-    // Use non-default mappings at your own risk. they may not allways work.
-    // simply re-run your setup task after changing the mappings to update your workspace.
     mappings = "snapshot_20161111"
-    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
+
+    replace '@VERSION@', project.version
 }
 
 dependencies {
     runtime "mezz.jei:jei_${mc_version}:${jei_version}"
     deobfCompile "mezz.jei:jei_${mc_version}:${jei_version}:api"
-    compile "codechicken:CodeChickenCore:${mc_version}-${ccc_version}:deobf"
-    compile "codechicken:CodeChickenLib:${mc_version}-${ccl_version}:deobf"
-    compile "codechicken:NotEnoughItems:${mc_version}-${nei_version}:deobf"
+    //compile "codechicken:CodeChickenCore:${mc_version}-${ccc_version}:deobf"
+    //compile "codechicken:CodeChickenLib:${mc_version}-${ccl_version}:deobf"
+    //compile "codechicken:NotEnoughItems:${mc_version}-${nei_version}:deobf"
 }
 
 processResources
 {
     // this will ensure that this task is redone when the versions change.
     inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
+    inputs.property "mc_version", project.minecraft.version
 
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {

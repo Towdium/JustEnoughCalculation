@@ -5,8 +5,8 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.block.model.ModelManager;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.ClickType;
@@ -15,13 +15,11 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.plugin.JEIPlugin;
 import pers.towdium.just_enough_calculation.util.Utilities;
 import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper;
 import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper.NBT;
 import pers.towdium.just_enough_calculation.util.helpers.LocalizationHelper;
-import pers.towdium.just_enough_calculation.util.helpers.NEIHelper;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -43,7 +41,6 @@ public abstract class JECGuiContainer extends GuiContainer {
     protected GuiScreen parent;
     protected int activeSlot = -1;
     protected ItemStack temp;
-    protected RenderItem renderItem;
     long timeStart = 0;
 
     public JECGuiContainer(Container inventorySlotsIn, GuiScreen parent) {
@@ -88,20 +85,7 @@ public abstract class JECGuiContainer extends GuiContainer {
 
     @Override
     public void drawScreen(int p_73863_1_, int p_73863_2_, float p_73863_3_) {
-        if(renderItem == null)
-            renderItem = new MyRenderer(itemRender);
-        RenderItem buffer1 = itemRender;
-        RenderItem buffer2 = JustEnoughCalculation.withNEI ? NEIHelper.getRenderer() : null;
-        itemRender = renderItem;
-        if(JustEnoughCalculation.withNEI) {
-            NEIHelper.setRenderer(renderItem);
-        }
         super.drawScreen(p_73863_1_, p_73863_2_, p_73863_3_);
-        itemRender = buffer1;
-        if(JustEnoughCalculation.withNEI) {
-            NEIHelper.setRenderer(buffer2);
-        }
-
         RenderHelper.disableStandardItemLighting();
         drawTooltipScreen(p_73863_1_, p_73863_2_);
         RenderHelper.enableStandardItemLighting();
@@ -113,6 +97,14 @@ public abstract class JECGuiContainer extends GuiContainer {
             drawSlotOverlay(activeSlot, 0x60aeff00);
         }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+        inventorySlots.inventorySlots.forEach(slot -> {
+            ItemStack s = slot.getStack();
+            if (s != null)
+                drawQuantity(
+                        slot.xDisplayPosition, slot.yDisplayPosition,
+                        getFormer().apply(NBT.getAmount(s), NBT.getType(s))
+                );
+        });
     }
 
     @Override
@@ -262,6 +254,29 @@ public abstract class JECGuiContainer extends GuiContainer {
         }
     }
 
+    // Code get from source code of Refined Storage
+    public void drawQuantity(int x, int y, String qty) {
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(x, y, 1);
+        if (!fontRendererObj.getUnicodeFlag()) {
+            GlStateManager.scale(0.5f, 0.5f, 1);
+        }
+        GlStateManager.disableRescaleNormal();
+        GlStateManager.depthMask(false);
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(770, 771);
+        GlStateManager.disableDepth();
+        fontRendererObj.drawStringWithShadow(
+                qty, (fontRendererObj.getUnicodeFlag() ? 16 : 30) - fontRendererObj.getStringWidth(qty),
+                fontRendererObj.getUnicodeFlag() ? 8 : 22, 16777215
+        );
+        GlStateManager.enableDepth();
+        GlStateManager.enableTexture2D();
+        GlStateManager.depthMask(true);
+        GlStateManager.disableBlend();
+        GlStateManager.popMatrix();
+    }
+
     // Methods to be overridden
     @Nullable
     protected abstract String getButtonTooltip(int buttonId);
@@ -285,22 +300,5 @@ public abstract class JECGuiContainer extends GuiContainer {
 
     public String localization(String translateKey, Object... parameters) {
         return localization(this.getClass(), translateKey, parameters);
-    }
-
-    class MyRenderer extends RenderItem {
-        public MyRenderer(RenderItem r) {
-            super(Minecraft.getMinecraft().getTextureManager(), tempMM, Minecraft.getMinecraft().getItemColors());
-            Utilities.setField(RenderItem.class, this, Utilities.getField(RenderItem.class, r, "field_175059_m", "itemModelMesher"), "field_175059_m", "itemModelMesher");
-            Utilities.setField(RenderItem.class, this, Utilities.getField(RenderItem.class, r, "field_175057_n", "textureManager"), "field_175057_n", "textureManager");
-            Utilities.setField(RenderItem.class, this, Utilities.getField(RenderItem.class, r, "field_184395_f", "itemColors"), "field_184395_f", "itemColors");
-        }
-
-        @Override
-        public void renderItemOverlayIntoGUI(@SuppressWarnings("NullableProblems") FontRenderer fr, ItemStack stack, int xPosition, int yPosition, String text) {
-            boolean b = fr.getUnicodeFlag();
-            fr.setUnicodeFlag(true);
-            super.renderItemOverlayIntoGUI(fr, stack, xPosition, yPosition, stack == null ? "" : getFormer().apply(NBT.getAmount(stack), NBT.getType(stack)));
-            fr.setUnicodeFlag(b);
-        }
     }
 }
