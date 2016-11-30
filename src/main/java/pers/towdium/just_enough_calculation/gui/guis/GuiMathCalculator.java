@@ -181,6 +181,8 @@ public class GuiMathCalculator extends JECGuiContainer {
                 case '.': return 11;
             }
             switch (code) {
+                case 156:
+                    return 16;
                 case 28: return 16;
                 case 14: return 12;
                 case 211: return 14;
@@ -190,8 +192,13 @@ public class GuiMathCalculator extends JECGuiContainer {
     }
 
     void updateResult() {
-        if(current instanceof NumStack)
-            current = new NumBigDec((record == null ? enumSign.NONE : sign).getOperator().apply(record, current.toBigDec()));
+        if (current instanceof NumStack) {
+            try {
+                current = new NumBigDec((record == null ? enumSign.NONE : sign).getOperator().apply(record, current.toBigDec()));
+            } catch (ArithmeticException e) {
+                current = new NumBigDec();
+            }
+        }
         record = current.toBigDec();
     }
 
@@ -435,6 +442,12 @@ public class GuiMathCalculator extends JECGuiContainer {
         public NumBigDec(String s) {
             value = new BigDecimal(s);
             updateCache();
+        }
+
+        public NumBigDec() {
+            value = BigDecimal.ZERO;
+            System.arraycopy(ERROR, 0, cacheChar, 0, 7);
+            cacheDot = DOT_NONE;
         }
 
         @Override
