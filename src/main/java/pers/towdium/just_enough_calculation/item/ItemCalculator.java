@@ -1,6 +1,5 @@
 package pers.towdium.just_enough_calculation.item;
 
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -33,7 +32,7 @@ public class ItemCalculator extends Item {
     @SuppressWarnings("NullableProblems")
     @Override
     public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
-        if(playerIn instanceof EntityPlayerSP) {
+        if (worldIn.isRemote) {
             if((Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))){
                 Utilities.setField(itemStackIn, Utilities.circulate(itemStackIn.getMetadata(), 2, true), "field_77991_e", "itemDamage");
                 JustEnoughCalculation.networkWrapper.sendToServer(new PacketSyncCalculator(itemStackIn));
