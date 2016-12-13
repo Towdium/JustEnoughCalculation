@@ -18,6 +18,8 @@ gui.editor.newGroup=新分组
 gui.editor.save=储存
 gui.editor.clear=清空
 gui.editor.confirm=确认
+gui.editor.dup=另存
+gui.editor.tooltip.dup=存储为新的合成表
 
 gui.list.edit=编辑
 gui.list.delete=删除

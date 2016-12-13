@@ -1,5 +1,6 @@
 package pers.towdium.just_enough_calculation.plugin;
 
+import mezz.jei.api.gui.IGuiIngredient;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.IFocus;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
@@ -8,6 +9,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
 import pers.towdium.just_enough_calculation.JECConfig;
 import pers.towdium.just_enough_calculation.core.Recipe;
 import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
@@ -21,11 +23,9 @@ import pers.towdium.just_enough_calculation.util.wrappers.Singleton;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.List;
+import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * @author Towdium
@@ -108,22 +108,27 @@ public class JECRecipeTransferHandler implements IRecipeTransferHandler {
                 tempList.put(type, new ArrayList<>(type.getLength()));
             }
             // store into temp
-            iRecipeLayout.getItemStacks().getGuiIngredients().values().forEach(ingredient -> {
-                if (ingredient.getAllIngredients().size() != 0) {
-                    List<ItemStack> buffer = new ArrayList<>();
-                    ingredient.getAllIngredients().forEach(itemStack -> buffer.add(ItemStackHelper.toItemStackJEC(itemStack.copy())));
-                    tempList.get(ingredient.isInput() ? Recipe.EnumStackIOType.INPUT : Recipe.EnumStackIOType.OUTPUT)
-                            .add(buffer.size() == 1 ? new Singleton<>(buffer.get(0)) : new Singleton<>(buffer));
-                }
-            });
-            iRecipeLayout.getFluidStacks().getGuiIngredients().values().forEach(ingredient -> {
-                if (ingredient.getAllIngredients().size() != 0) {
-                    List<ItemStack> buffer = new ArrayList<>();
-                    ingredient.getAllIngredients().forEach(fluidStack -> buffer.add(ItemStackHelper.toItemStackJEC(fluidStack.copy())));
-                    tempList.get(ingredient.isInput() ? Recipe.EnumStackIOType.INPUT : Recipe.EnumStackIOType.OUTPUT)
-                            .add(buffer.size() == 1 ? new Singleton<>(buffer.get(0)) : new Singleton<>(buffer));
-                }
-            });
+            Consumer<Map<Integer, ? extends IGuiIngredient>> mover = (ing) ->
+                    ing.values().forEach(ingredient -> {
+                        if (ingredient.getAllIngredients().size() != 0) {
+                            List<ItemStack> buffer = new ArrayList<>();
+                            //noinspection unchecked
+                            ingredient.getAllIngredients().forEach(stack -> {
+                                if (stack != null) {
+                                    if (stack instanceof ItemStack) {
+                                        //noinspection ConstantConditions
+                                        buffer.add(ItemStackHelper.toItemStackJEC((ItemStack) stack).copy());
+                                    } else if (stack instanceof FluidStack) {
+                                        buffer.add(ItemStackHelper.toItemStackJEC((FluidStack) stack).copy());
+                                    }
+                                }
+                            });
+                            tempList.get(ingredient.isInput() ? Recipe.EnumStackIOType.INPUT : Recipe.EnumStackIOType.OUTPUT)
+                                    .add(buffer.size() == 1 ? new Singleton<>(buffer.get(0)) : new Singleton<>(buffer));
+                        }
+                    });
+            mover.accept(iRecipeLayout.getItemStacks().getGuiIngredients());
+            mover.accept(iRecipeLayout.getFluidStacks().getGuiIngredients());
             List<ItemStack> buffer = new ArrayList<>();
             JEIPlugin.recipeRegistry.getCraftingItems(
                     JEIPlugin.recipeRegistry.getRecipeCategories(Collections.singletonList(recipeUID)).get(0),

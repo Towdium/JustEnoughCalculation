@@ -37,7 +37,7 @@ public class GuiEditor extends JECGuiContainer {
     GuiButton buttonLeft;
     GuiButton buttonRight;
     GuiButton buttonNew;
-    //GuiButton buttonHelp;
+    GuiButton buttonDup;
     GuiButton buttonSave;
     GuiButton buttonClear;
     GuiTextField textGroup;
@@ -72,16 +72,18 @@ public class GuiEditor extends JECGuiContainer {
         buttonLeft = new GuiButtonExt(40, guiLeft + 7, guiTop + 7, 14, 20, "<");
         buttonRight = new GuiButtonExt(41, guiLeft + 90, guiTop + 7, 14, 20, ">");
         buttonNew = new GuiButtonExt(42, guiLeft + 108, guiTop + 7, 61, 20, localization("newGroup"));
-        //buttonHelp = new GuiButtonExt(43, guiLeft + 131, guiTop + 75, 38, 18, localization("help"));
         buttonSave = new GuiButtonExt(43, guiLeft + 131, guiTop + 31, 38, 18, localization("save"));
         buttonClear = new GuiButtonExt(44, guiLeft + 131, guiTop + 53, 38, 18, localization("clear"));
         buttonList.addAll(buttonMode);
         buttonList.add(buttonLeft);
         buttonList.add(buttonRight);
         buttonList.add(buttonNew);
-        //buttonList.add(buttonHelp);
         buttonList.add(buttonSave);
         buttonList.add(buttonClear);
+        if (dest != null) {
+            buttonDup = new GuiButtonExt(45, guiLeft + 131, guiTop + 75, 38, 18, localization("dup"));
+            buttonList.add(buttonDup);
+        }
         textGroup = new GuiTextField(0, fontRendererObj, guiLeft + 8, guiTop + 8, 95, 18);
         if (customName == null && PlayerRecordHelper.getSizeGroup() == 0) {
             customName = "Default";
@@ -91,6 +93,7 @@ public class GuiEditor extends JECGuiContainer {
             group = PlayerRecordHelper.getIndexGroup(dest.one);
             initialized = true;
         }
+
     }
 
     @Override
@@ -107,7 +110,11 @@ public class GuiEditor extends JECGuiContainer {
     @Nullable
     @Override
     protected String getButtonTooltip(int buttonId) {
-        return null;
+        if (buttonId == 45) {
+            return localizationToolTip("dup");
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -211,6 +218,10 @@ public class GuiEditor extends JECGuiContainer {
                         inventorySlots.getSlot(i).putStack(null);
                     }
                     updateLayout();
+                    break;
+                case 45:
+                    PlayerRecordHelper.addRecipe(toRecipe(), getGroup());
+                    Utilities.openGui(parent);
             }
         }
     }

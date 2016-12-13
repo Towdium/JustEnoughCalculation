@@ -1,13 +1,10 @@
 package pers.towdium.just_enough_calculation.gui;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.block.model.ModelManager;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
@@ -37,11 +34,11 @@ public abstract class JECGuiContainer extends GuiContainer {
     static final String PREFIX = "gui.";
     public static GuiScreen lastGui;
     static Map<String, Map<String, String>> keyCache = new HashMap<>();
-    static ModelManager tempMM = Utilities.getField(Minecraft.getMinecraft(), "modelManager", "field_175617_aL");
     protected GuiScreen parent;
     protected int activeSlot = -1;
     protected ItemStack temp;
     long timeStart = 0;
+    List<String> tooltip = null;
 
     public JECGuiContainer(Container inventorySlotsIn, GuiScreen parent) {
         super(inventorySlotsIn);
@@ -66,6 +63,18 @@ public abstract class JECGuiContainer extends GuiContainer {
         return LocalizationHelper.format(key, parameters);
     }
 
+    public String localization(String translateKey, Object... parameters) {
+        return localization(this.getClass(), translateKey, parameters);
+    }
+
+    public String localizationToolTip(Class c, String translateKey, Object... parameters) {
+        return localization(c, "tooltip." + translateKey, parameters);
+    }
+
+    public String localizationToolTip(String translateKey, Object... parameters) {
+        return localizationToolTip(this.getClass(), translateKey, parameters);
+    }
+
     public boolean setActiveSlot(int id) {
         if (id == -1 || ((JECContainer) inventorySlots).getSlotType(id) != JECContainer.EnumSlotType.DISABLED) {
             activeSlot = id;
@@ -84,14 +93,6 @@ public abstract class JECGuiContainer extends GuiContainer {
     }
 
     @Override
-    public void drawScreen(int p_73863_1_, int p_73863_2_, float p_73863_3_) {
-        super.drawScreen(p_73863_1_, p_73863_2_, p_73863_3_);
-        RenderHelper.disableStandardItemLighting();
-        drawTooltipScreen(p_73863_1_, p_73863_2_);
-        RenderHelper.enableStandardItemLighting();
-    }
-
-    @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         if (activeSlot != -1) {
             drawSlotOverlay(activeSlot, 0x60aeff00);
@@ -105,6 +106,7 @@ public abstract class JECGuiContainer extends GuiContainer {
                         getFormer().apply(NBT.getAmount(s), NBT.getType(s))
                 );
         });
+        drawTooltipScreen(mouseX, mouseY);
     }
 
     @Override
@@ -119,7 +121,13 @@ public abstract class JECGuiContainer extends GuiContainer {
                 Utilities.openGui(parent);
             }
         }
-        //JustEnoughCalculation.log.info(typedChar + " " + keyCode);
+    }
+
+    @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        super.drawScreen(mouseX, mouseY, partialTicks);
+        if (tooltip != null)
+            drawHoveringText(tooltip, mouseX, mouseY);
     }
 
     @SuppressWarnings("NullableProblems")
@@ -176,8 +184,6 @@ public abstract class JECGuiContainer extends GuiContainer {
                 }
                 return false;
             } else {
-                //Slot active = inventorySlots.getSlot(activeSlot);
-                //active.putStack(ItemStackHelper.toItemStackJEC(active.getStack()));
                 onItemStackSet(activeSlot);
                 activeSlot = -1;
                 mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
@@ -195,28 +201,27 @@ public abstract class JECGuiContainer extends GuiContainer {
     }
 
     protected void drawTooltipScreen(int mouseX, int mouseY) {
-        boolean flagUnicode = mc.fontRendererObj.getUnicodeFlag();
         boolean flagOver = false;
-        mc.fontRendererObj.setUnicodeFlag(true);
+        this.tooltip = null;
         for (GuiButton button : buttonList) {
             String tooltip = getButtonTooltip(button.id);
             if (tooltip != null) {
-                mc.fontRendererObj.drawStringWithShadow("?", button.xPosition + button.getButtonWidth() - 7, button.yPosition + 1, 14737632);
+                int drawX = button.xPosition + button.getButtonWidth() - 6 - guiLeft;
+                int drawY = button.yPosition + 3 - guiTop;
+                drawInHalfSize(drawX, drawY, () -> drawString(fontRendererObj, "?", 0, 0, 14737632));
                 if (isMouseOver(button, mouseX, mouseY)) {
                     flagOver = true;
-                    mc.fontRendererObj.drawStringWithShadow("\247b?", button.xPosition + button.getButtonWidth() - 7, button.yPosition + 1, 16777215);
-                    mc.fontRendererObj.setUnicodeFlag(flagUnicode);
+                    drawInHalfSize(drawX, drawY, () -> drawString(fontRendererObj, "\247b?", 0, 0, 16777215));
                     if (timeStart == 0) {
                         timeStart = System.currentTimeMillis();
                     } else if (System.currentTimeMillis() - timeStart > 1000) {
-                        drawHoveringText(Arrays.asList(tooltip.split("\\n")), mouseX, mouseY);
+                        this.tooltip = Arrays.asList(tooltip.split("\\n"));
                     }
                 }
             }
         }
         if (!flagOver) {
             timeStart = 0;
-            mc.fontRendererObj.setUnicodeFlag(flagUnicode);
         }
     }
 
@@ -225,6 +230,26 @@ public abstract class JECGuiContainer extends GuiContainer {
         int size = getSizeSlot(index);
         int move = (size - 16) / 2;
         drawRect(slot.xDisplayPosition - move, slot.yDisplayPosition - move, slot.xDisplayPosition + size - move, slot.yDisplayPosition + size - move, color);
+    }
+
+    protected void drawInHalfSize(int x, int y, Runnable r) {
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(x, y, 1);
+        if (!fontRendererObj.getUnicodeFlag()) {
+            GlStateManager.scale(0.5f, 0.5f, 1);
+        }
+        GlStateManager.disableRescaleNormal();
+        GlStateManager.depthMask(false);
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(770, 771);
+        GlStateManager.disableDepth();
+        GlStateManager.disableLighting();
+        r.run();
+        GlStateManager.enableDepth();
+        GlStateManager.enableTexture2D();
+        GlStateManager.depthMask(true);
+        GlStateManager.disableBlend();
+        GlStateManager.popMatrix();
     }
 
     public void drawCenteredStringMultiLine(FontRenderer fontRendererIn, String text, int x1, int x2, int y1, int y2, int color) {
@@ -256,25 +281,12 @@ public abstract class JECGuiContainer extends GuiContainer {
 
     // Code get from source code of Refined Storage
     public void drawQuantity(int x, int y, String qty) {
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(x, y, 1);
-        if (!fontRendererObj.getUnicodeFlag()) {
-            GlStateManager.scale(0.5f, 0.5f, 1);
-        }
-        GlStateManager.disableRescaleNormal();
-        GlStateManager.depthMask(false);
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(770, 771);
-        GlStateManager.disableDepth();
-        fontRendererObj.drawStringWithShadow(
-                qty, (fontRendererObj.getUnicodeFlag() ? 16 : 30) - fontRendererObj.getStringWidth(qty),
-                fontRendererObj.getUnicodeFlag() ? 8 : 22, 16777215
+        drawInHalfSize(x, y, () ->
+                fontRendererObj.drawStringWithShadow(
+                        qty, (fontRendererObj.getUnicodeFlag() ? 16 : 30) - fontRendererObj.getStringWidth(qty),
+                        fontRendererObj.getUnicodeFlag() ? 8 : 22, 16777215
+                )
         );
-        GlStateManager.enableDepth();
-        GlStateManager.enableTexture2D();
-        GlStateManager.depthMask(true);
-        GlStateManager.disableBlend();
-        GlStateManager.popMatrix();
     }
 
     // Methods to be overridden
@@ -296,9 +308,5 @@ public abstract class JECGuiContainer extends GuiContainer {
 
     protected BiFunction<Long, ItemStackHelper.EnumStackAmountType, String> getFormer() {
         return (aLong, type) -> type.getStringEditor(aLong);
-    }
-
-    public String localization(String translateKey, Object... parameters) {
-        return localization(this.getClass(), translateKey, parameters);
     }
 }

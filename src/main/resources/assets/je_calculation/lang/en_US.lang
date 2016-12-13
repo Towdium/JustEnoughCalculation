@@ -18,6 +18,8 @@ gui.editor.newGroup=New Group
 gui.editor.save=Save
 gui.editor.clear=Clear
 gui.editor.confirm=Confirm
+gui.editor.dup=Dup
+gui.editor.tooltip.dup=Save the recipe as a new one
 
 gui.list.edit=Edit
 gui.list.delete=Delete
