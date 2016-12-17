@@ -117,9 +117,9 @@ public class JECRecipeTransferHandler implements IRecipeTransferHandler {
                                 if (stack != null) {
                                     if (stack instanceof ItemStack) {
                                         //noinspection ConstantConditions
-                                        buffer.add(ItemStackHelper.toItemStackJEC((ItemStack) stack).copy());
+                                        buffer.add(ItemStackHelper.toItemStackJEC(((ItemStack) stack).copy()));
                                     } else if (stack instanceof FluidStack) {
-                                        buffer.add(ItemStackHelper.toItemStackJEC((FluidStack) stack).copy());
+                                        buffer.add(ItemStackHelper.toItemStackJEC(((FluidStack) stack).copy()));
                                     }
                                 }
                             });
