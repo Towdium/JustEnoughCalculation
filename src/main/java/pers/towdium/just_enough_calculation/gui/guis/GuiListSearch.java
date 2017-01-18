@@ -9,13 +9,12 @@ import net.minecraft.util.ResourceLocation;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.core.Recipe;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
-import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
+import pers.towdium.just_enough_calculation.gui.JECGuiButton;
 import pers.towdium.just_enough_calculation.util.Utilities;
 import pers.towdium.just_enough_calculation.util.exception.IllegalPositionException;
 import pers.towdium.just_enough_calculation.util.helpers.PlayerRecordHelper;
 import pers.towdium.just_enough_calculation.util.wrappers.Pair;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +26,7 @@ import java.util.function.Function;
  * Created: 2016/6/15.
  */
 public class GuiListSearch extends GuiList {
-    GuiButton buttonMode;
+    JECGuiButton buttonMode;
     EnumMode mode = EnumMode.OUT;
 
     public GuiListSearch(GuiScreen parent, ItemStack itemStack) {
@@ -49,7 +48,7 @@ public class GuiListSearch extends GuiList {
     @Override
     public void init() {
         super.init();
-        buttonMode = new GuiButton(14, 117 + guiLeft, 7 + guiTop, 52, 20, "");
+        buttonMode = new JECGuiButton(14, 117 + guiLeft, 7 + guiTop, 52, 20, "", this, false, false);
         buttonList.add(buttonMode);
     }
 
@@ -83,12 +82,6 @@ public class GuiListSearch extends GuiList {
         return buffer;
     }
 
-    @Nullable
-    @Override
-    protected String getButtonTooltip(int buttonId) {
-        return null;
-    }
-
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
@@ -119,7 +112,7 @@ public class GuiListSearch extends GuiList {
     @Override
     public void updateLayout() {
         super.updateLayout();
-        buttonMode.displayString = mode.getDisplayString();
+        buttonMode.displayString = localization(mode.toString().toLowerCase());
     }
 
     @Override
@@ -142,21 +135,6 @@ public class GuiListSearch extends GuiList {
     }
 
     enum EnumMode {
-        IN, OUT, CAT, ALL;
-
-        public String getDisplayString() {
-            switch (this) {
-                case IN:
-                    return JECGuiContainer.localization(GuiListSearch.class, "input");
-                case OUT:
-                    return JECGuiContainer.localization(GuiListSearch.class, "output");
-                case CAT:
-                    return JECGuiContainer.localization(GuiListSearch.class, "catalyst");
-                case ALL:
-                    return JECGuiContainer.localization(GuiListSearch.class, "all");
-                default:
-                    throw new IllegalPositionException();
-            }
-        }
+        IN, OUT, CAT, ALL
     }
 }

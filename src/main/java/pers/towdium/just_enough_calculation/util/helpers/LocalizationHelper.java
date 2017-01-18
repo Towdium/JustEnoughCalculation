@@ -4,6 +4,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.StringEscapeUtils;
+import pers.towdium.just_enough_calculation.util.wrappers.Pair;
 
 /**
  * Author:  Towdium
@@ -11,9 +12,25 @@ import org.apache.commons.lang3.StringEscapeUtils;
  */
 @SideOnly(Side.CLIENT)
 public class LocalizationHelper {
-    public static String format(String translateKey, Object... parameters) {
+
+    public static Pair<String, Boolean> format(String translateKey, Object... parameters) {
+        Pair<String, Boolean> ret = new Pair<>(null, null);
         String buffer = I18n.format(translateKey, parameters);
+        ret.two = !buffer.equals(translateKey);
         buffer = StringEscapeUtils.unescapeJava(buffer);
-        return buffer.replace("\t", "    ");
+        ret.one = buffer.replace("\t", "    ");
+        return ret;
+    }
+
+    public static Pair<String, Boolean> localization(Class c, String prefix, String translateKey, Object... parameters) {
+        StringBuilder builder = new StringBuilder(c.getName());
+        builder.delete(0, builder.lastIndexOf(".") + 1).setCharAt(0, Character.toLowerCase(builder.charAt(0)));
+        builder.insert(0, prefix).append('.').append(translateKey);
+        String key = builder.toString();
+        Pair<String, Boolean> ret = LocalizationHelper.format(key, parameters);
+        if (!ret.two && !c.equals(Object.class)) {
+            ret = localization(c.getSuperclass(), prefix, translateKey, parameters);
+        }
+        return ret;
     }
 }

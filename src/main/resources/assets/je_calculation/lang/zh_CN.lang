@@ -1,37 +1,37 @@
-gui.calculator.search=搜索
-gui.calculator.add=添加
-gui.calculator.records=所有记录
-gui.calculator.oreDict=矿物辞典
-gui.calculator.recent=近期记录
-gui.calculator.input=总消耗
-gui.calculator.missing=缺少材料
-gui.calculator.procedure=步骤
-gui.calculator.output=额外产物
-gui.calculator.catalyst=催化材料
-gui.calculator.errorCore=抱歉，在计算过程中发生了一个异常。这可能是为了避免计算操作而造成的卡顿而引发的。如果你正在使用最新版本的话，你可以把这个问题报告给作者。
-gui.calculator.errorUnknown=抱歉，在计算过程中发生了一个未知异常。如果你正在使用最新版本的话，你可以把这个问题报告给作者。
+gui.guiCalculator.search=搜索
+gui.guiCalculator.add=添加
+gui.guiCalculator.records=所有记录
+gui.guiCalculator.oreDict=矿物辞典
+gui.guiCalculator.recent=近期记录
+gui.guiCalculator.input=总消耗
+gui.guiCalculator.missing=缺少材料
+gui.guiCalculator.procedure=步骤
+gui.guiCalculator.output=额外产物
+gui.guiCalculator.catalyst=催化材料
+gui.guiCalculator.errorCore=抱歉，在计算过程中发生了一个异常。这可能是为了避免计算操作而造成的卡顿而引发的。如果你正在使用最新版本的话，你可以把这个问题报告给作者。
+gui.guiCalculator.errorUnknown=抱歉，在计算过程中发生了一个未知异常。如果你正在使用最新版本的话，你可以把这个问题报告给作者。
 
-gui.editor.catalyst=催化剂
-gui.editor.input=输入
-gui.editor.output=输出
-gui.editor.newGroup=新分组
-gui.editor.save=储存
-gui.editor.clear=清空
-gui.editor.confirm=确认
-gui.editor.dup=另存
-gui.editor.tooltip.dup=存储为新的合成表
+gui.guiEditor.catalyst=催化剂
+gui.guiEditor.input=输入
+gui.guiEditor.output=输出
+gui.guiEditor.newGroup=新分组
+gui.guiEditor.save=储存
+gui.guiEditor.clear=清空
+gui.guiEditor.confirm=确认
+gui.guiEditor.dup=另存
+gui.guiEditor.tooltip.dup=存储为新的合成表
 
-gui.list.edit=编辑
-gui.list.delete=删除
-gui.list.noRecord=无记录
-gui.listSearch.input=输入
-gui.listSearch.output=输出
-gui.listSearch.catalyst=催化剂
-gui.listSearch.all=所有
+gui.guiList.edit=编辑
+gui.guiList.delete=删除
+gui.guiList.noRecord=无记录
+gui.guiListSearch.input=输入
+gui.guiListSearch.output=输出
+gui.guiListSearch.catalyst=催化剂
+gui.guiListSearch.all=所有
 
-gui.oreDict.add=添加
+gui.guiOreDict.add=添加
 
-gui.picker.search=搜索：
+gui.guiPicker.search=搜索：
 
 item.itemCalculator.name=合成计算器
 item.itemMathCalculator.name=数学计算器

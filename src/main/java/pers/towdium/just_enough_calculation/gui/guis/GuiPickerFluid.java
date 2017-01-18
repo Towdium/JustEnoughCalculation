@@ -11,9 +11,9 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
+import pers.towdium.just_enough_calculation.gui.JECGuiButton;
 import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,7 @@ import java.util.function.Consumer;
 public class GuiPickerFluid extends GuiPicker {
     Consumer<ItemStack> callback;
     GuiTextField fieldAmount;
-    GuiButton buttonConfirm;
+    JECGuiButton buttonConfirm;
 
     public GuiPickerFluid(Consumer<ItemStack> callback, GuiScreen parent, ItemStack stack) {
         super(new ContainerPickerFluid(), parent, 4, getRegistryStacks());
@@ -45,15 +45,9 @@ public class GuiPickerFluid extends GuiPicker {
         super.init();
         fieldAmount = new GuiTextField(0, fontRendererObj, guiLeft + 39, guiTop + 8, 58, 18);
         fieldAmount.setText(inventorySlots.getSlot(36).getStack() == null ? "" : String.valueOf(ItemStackHelper.NBT.getAmount(inventorySlots.getSlot(36).getStack())));
-        buttonConfirm = new GuiButton(2, guiLeft + 119, guiTop + 7, 50, 20, "confirm");
+        buttonConfirm = new JECGuiButton(2, guiLeft + 119, guiTop + 7, 50, 20, "confirm", this);
         buttonConfirm.enabled = inventorySlots.getSlot(36).getHasStack();
         buttonList.add(buttonConfirm);
-    }
-
-    @Nullable
-    @Override
-    protected String getButtonTooltip(int buttonId) {
-        return null;
     }
 
     @Override
@@ -68,7 +62,7 @@ public class GuiPickerFluid extends GuiPicker {
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
         fieldAmount.drawTextBox();
         drawCenteredStringWithoutShadow(fontRendererObj, "mb", guiLeft + 107, guiTop + 13, 4210752);
-        fontRendererObj.drawString(localization(GuiPicker.class, "search"), guiLeft + 7, guiTop + 51, 4210752);
+        fontRendererObj.drawString(localization("search"), guiLeft + 7, guiTop + 51, 4210752);
         fontRendererObj.drawString("x", 30, 13, 4210752);
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
     }

@@ -7,17 +7,16 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.client.config.GuiButtonExt;
 import org.lwjgl.input.Keyboard;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
+import pers.towdium.just_enough_calculation.gui.JECGuiButton;
 import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
 import pers.towdium.just_enough_calculation.network.packets.PacketSyncCalculator;
 import pers.towdium.just_enough_calculation.util.Utilities;
 import pers.towdium.just_enough_calculation.util.exception.IllegalPositionException;
 import pers.towdium.just_enough_calculation.util.wrappers.Singleton;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -52,12 +51,6 @@ public class GuiMathCalculator extends JECGuiContainer {
                 return EnumSlotType.DISABLED;
             }
         }, parent);
-    }
-
-    @Nullable
-    @Override
-    protected String getButtonTooltip(int buttonId) {
-        return null;
     }
 
     @Override
@@ -652,9 +645,9 @@ public class GuiMathCalculator extends JECGuiContainer {
         }
     }
 
-    class MyButton extends GuiButtonExt{
+    class MyButton extends JECGuiButton {
         public MyButton(int id, int xPos, int yPos, int width, int height, String displayString) {
-            super(id, xPos, yPos, width, height, displayString);
+            super(id, xPos, yPos, width, height, displayString, GuiMathCalculator.this, false, false);
         }
 
         @Override

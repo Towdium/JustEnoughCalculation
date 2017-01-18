@@ -5,15 +5,14 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.client.config.GuiButtonExt;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
+import pers.towdium.just_enough_calculation.gui.JECGuiButton;
 import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
 import pers.towdium.just_enough_calculation.util.Utilities;
 import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper;
 import pers.towdium.just_enough_calculation.util.helpers.PlayerRecordHelper;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -25,7 +24,7 @@ import java.util.function.BiFunction;
 public class GuiOreDict extends JECGuiContainer {
     int page = 1;
     int total;
-    GuiButton buttonAdd;
+    JECGuiButton buttonAdd;
 
     public GuiOreDict(GuiScreen parent) {
         super(new JECContainer() {
@@ -42,12 +41,6 @@ public class GuiOreDict extends JECGuiContainer {
         }, parent);
     }
 
-    @Nullable
-    @Override
-    protected String getButtonTooltip(int buttonId) {
-        return null;
-    }
-
     @Override
     protected int getSizeSlot(int index) {
         return 18;
@@ -55,9 +48,9 @@ public class GuiOreDict extends JECGuiContainer {
 
     @Override
     public void init() {
-        buttonList.add(new GuiButtonExt(0, guiLeft + 7, guiTop + 147, 13, 12, "<"));
-        buttonList.add(new GuiButtonExt(1, guiLeft + 156, guiTop + 147, 13, 12, ">"));
-        buttonAdd = new GuiButton(2, 117 + guiLeft, 7 + guiTop, 52, 20, localization("add"));
+        buttonList.add(new JECGuiButton(0, guiLeft + 7, guiTop + 147, 13, 12, "<", this, false, false));
+        buttonList.add(new JECGuiButton(1, guiLeft + 156, guiTop + 147, 13, 12, ">", this, false, false));
+        buttonAdd = new JECGuiButton(2, 117 + guiLeft, 7 + guiTop, 52, 20, "add", this, false, false);
         buttonList.add(buttonAdd);
         onItemStackSet(54);
     }

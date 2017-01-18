@@ -1,7 +1,9 @@
 package pers.towdium.just_enough_calculation.gui;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiLabel;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -18,12 +20,8 @@ import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper;
 import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper.NBT;
 import pers.towdium.just_enough_calculation.util.helpers.LocalizationHelper;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.BiFunction;
 
 /**
@@ -33,46 +31,23 @@ import java.util.function.BiFunction;
 public abstract class JECGuiContainer extends GuiContainer {
     static final String PREFIX = "gui.";
     public static GuiScreen lastGui;
-    static Map<String, Map<String, String>> keyCache = new HashMap<>();
+
     protected GuiScreen parent;
     protected int activeSlot = -1;
     protected ItemStack temp;
-    long timeStart = 0;
-    List<String> tooltip = null;
 
     public JECGuiContainer(Container inventorySlotsIn, GuiScreen parent) {
         super(inventorySlotsIn);
         this.parent = parent;
-    }
-
-    public static String localization(Class c, String translateKey, Object... parameters) {
-        String name = c.getName();
-        Map<String, String> map = keyCache.get(name);
-        String key = map != null ? map.get(translateKey) : null;
-        if (key == null) {
-            StringBuilder builder = new StringBuilder(c.getName());
-            builder.delete(0, builder.lastIndexOf(".") + 4).setCharAt(0, Character.toLowerCase(builder.charAt(0)));
-            builder.insert(0, PREFIX).append('.').append(translateKey);
-            key = builder.toString();
-            if (map == null) {
-                map = new HashMap<>();
-                keyCache.put(name, map);
-            }
-            map.put(translateKey, key);
-        }
-        return LocalizationHelper.format(key, parameters);
+        labelList.add(new MyLabel(fontRendererObj));
     }
 
     public String localization(String translateKey, Object... parameters) {
-        return localization(this.getClass(), translateKey, parameters);
-    }
-
-    public String localizationToolTip(Class c, String translateKey, Object... parameters) {
-        return localization(c, "tooltip." + translateKey, parameters);
+        return LocalizationHelper.localization(this.getClass(), PREFIX, translateKey, parameters).one;
     }
 
     public String localizationToolTip(String translateKey, Object... parameters) {
-        return localizationToolTip(this.getClass(), translateKey, parameters);
+        return localization("tooltip." + translateKey, parameters);
     }
 
     public boolean setActiveSlot(int id) {
@@ -126,8 +101,21 @@ public abstract class JECGuiContainer extends GuiContainer {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
-        if (tooltip != null)
-            drawHoveringText(tooltip, mouseX, mouseY);
+        buttonList.forEach((button -> JECGuiButton.toJECGuiButton(button, this).drawToolTip(mouseX, mouseY)));
+    }
+
+    @SuppressWarnings("NullableProblems")
+    @Override
+    public void drawHoveringText(List<String> textLines, int x, int y) {
+        super.drawHoveringText(textLines, x, y);
+    }
+
+    public int getGuiLeft() {
+        return guiLeft;
+    }
+
+    public int getGuiTop() {
+        return guiTop;
     }
 
     @SuppressWarnings("NullableProblems")
@@ -201,27 +189,17 @@ public abstract class JECGuiContainer extends GuiContainer {
     }
 
     protected void drawTooltipScreen(int mouseX, int mouseY) {
-        boolean flagOver = false;
-        this.tooltip = null;
         for (GuiButton button : buttonList) {
-            String tooltip = getButtonTooltip(button.id);
-            if (tooltip != null) {
-                int drawX = button.xPosition + button.getButtonWidth() - 6 - guiLeft;
-                int drawY = button.yPosition + 3 - guiTop;
-                drawInHalfSize(drawX, drawY, () -> drawString(fontRendererObj, "?", 0, 0, 14737632));
-                if (isMouseOver(button, mouseX, mouseY)) {
-                    flagOver = true;
+            JECGuiButton b = JECGuiButton.toJECGuiButton(button, this);
+            if (b.hasTooltip()) {
+                int drawX = b.xPosition + b.getButtonWidth() - 6 - guiLeft;
+                int drawY = b.yPosition + 3 - guiTop;
+                if (b.isMouseOverQuestion(mouseX, mouseY)) {
                     drawInHalfSize(drawX, drawY, () -> drawString(fontRendererObj, "\247b?", 0, 0, 16777215));
-                    if (timeStart == 0) {
-                        timeStart = System.currentTimeMillis();
-                    } else if (System.currentTimeMillis() - timeStart > 1000) {
-                        this.tooltip = Arrays.asList(tooltip.split("\\n"));
-                    }
+                } else {
+                    drawInHalfSize(drawX, drawY, () -> drawString(fontRendererObj, "?", 0, 0, 14737632));
                 }
             }
-        }
-        if (!flagOver) {
-            timeStart = 0;
         }
     }
 
@@ -261,13 +239,6 @@ public abstract class JECGuiContainer extends GuiContainer {
         }
     }
 
-    protected boolean isMouseOver(GuiButton button, int mouseX, int mouseY) {
-        return mouseX >= button.xPosition + button.getButtonWidth() - 10
-                && mouseX <= button.xPosition + button.getButtonWidth()
-                && mouseY >= button.yPosition
-                && mouseY <= button.yPosition + 10;
-    }
-
     protected void drawCenteredStringWithoutShadow(FontRenderer fontRendererIn, String text, int x, int y, int color) {
         fontRendererIn.drawString(text, x - fontRendererIn.getStringWidth(text) / 2, y, color);
     }
@@ -289,10 +260,6 @@ public abstract class JECGuiContainer extends GuiContainer {
         );
     }
 
-    // Methods to be overridden
-    @Nullable
-    protected abstract String getButtonTooltip(int buttonId);
-
     protected abstract int getSizeSlot(int index);
 
     protected abstract void init();
@@ -308,5 +275,17 @@ public abstract class JECGuiContainer extends GuiContainer {
 
     protected BiFunction<Long, ItemStackHelper.EnumStackAmountType, String> getFormer() {
         return (aLong, type) -> type.getStringEditor(aLong);
+    }
+
+    class MyLabel extends GuiLabel {
+
+        public MyLabel(FontRenderer fontRendererObj) {
+            super(fontRendererObj, 0, 0, 0, 0, 0, 0);
+        }
+
+        @Override
+        public void drawLabel(Minecraft mc, int mouseX, int mouseY) {
+            JECGuiContainer.this.buttonList.forEach((button -> JECGuiButton.toJECGuiButton(button, JECGuiContainer.this).drawOverlay(mc, mouseX, mouseY)));
+        }
     }
 }

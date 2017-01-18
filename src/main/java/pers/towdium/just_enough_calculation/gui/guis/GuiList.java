@@ -4,8 +4,8 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.client.config.GuiButtonExt;
 import pers.towdium.just_enough_calculation.core.Recipe;
+import pers.towdium.just_enough_calculation.gui.JECGuiButton;
 import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
 import pers.towdium.just_enough_calculation.util.Utilities;
 import pers.towdium.just_enough_calculation.util.helpers.PlayerRecordHelper;
@@ -42,14 +42,14 @@ public abstract class GuiList extends JECGuiContainer {
 
     @Override
     public void init() {
-        buttonList.add(new GuiButtonExt(0, guiLeft + 7, guiTop + 133, 13, 12, "<"));
-        buttonList.add(new GuiButtonExt(1, guiLeft + 156, guiTop + 133, 13, 12, ">"));
-        buttonList.add(new GuiButtonExt(2, guiLeft + 7, guiTop + 147, 13, 12, "<"));
-        buttonList.add(new GuiButtonExt(3, guiLeft + 156, guiTop + 147, 13, 12, ">"));
+        buttonList.add(new JECGuiButton(0, guiLeft + 7, guiTop + 133, 13, 12, "<", this, false, false));
+        buttonList.add(new JECGuiButton(1, guiLeft + 156, guiTop + 133, 13, 12, ">", this, false, false));
+        buttonList.add(new JECGuiButton(2, guiLeft + 7, guiTop + 147, 13, 12, "<", this, false, false));
+        buttonList.add(new JECGuiButton(3, guiLeft + 156, guiTop + 147, 13, 12, ">", this, false, false));
         buttons = new ArrayList<>(row * 2);
         for (int i = 0; i < row; i++) {
-            buttons.add(new GuiButtonExt(2 * i + 4, guiLeft + 83, guiTop + top + 20 * i, 41, 18, localization(GuiList.class, "edit")));
-            buttons.add(new GuiButtonExt(1 + 2 * i + 4, guiLeft + 128, guiTop + top + 20 * i, 41, 18, localization(GuiList.class, "delete")));
+            buttons.add(new JECGuiButton(2 * i + 4, guiLeft + 83, guiTop + top + 20 * i, 41, 18, "edit", this));
+            buttons.add(new JECGuiButton(1 + 2 * i + 4, guiLeft + 128, guiTop + top + 20 * i, 41, 18, "delete", this));
         }
         buttonList.addAll(buttons);
     }
@@ -59,7 +59,7 @@ public abstract class GuiList extends JECGuiContainer {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
         drawCenteredStringMultiLine(fontRendererObj,
                 PlayerRecordHelper.getSizeGroup() > group ? PlayerRecordHelper.getGroupName(group) :
-                        localization(GuiList.class, "noRecord"), 7, 169, 133, 145, 0xFFFFFF);
+                        localization("noRecord"), 7, 169, 133, 145, 0xFFFFFF);
         drawCenteredStringMultiLine(fontRendererObj, page + "/" + total, 7, 169, 147, 159, 0xFFFFFF);
     }
 

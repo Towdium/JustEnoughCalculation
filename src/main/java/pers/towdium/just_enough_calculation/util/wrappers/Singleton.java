@@ -15,10 +15,9 @@ public class Singleton<T> {
         this.value = value;
     }
 
-    public T push(@Nullable T value) {
-        T ret = this.value;
+    public Singleton<T> push(@Nullable T value) {
         if(value != null && predicate.test(value))
             this.value = value;
-        return ret;
+        return this;
     }
 }

@@ -5,8 +5,8 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.client.config.GuiButtonExt;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
+import pers.towdium.just_enough_calculation.gui.JECGuiButton;
 import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
 import pers.towdium.just_enough_calculation.util.Utilities;
 import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper;
@@ -35,8 +35,8 @@ public abstract class GuiPicker extends JECGuiContainer {
 
     @Override
     public void init() {
-        buttonList.add(new GuiButtonExt(0, guiLeft + 7, guiTop + 147, 13, 12, "<"));
-        buttonList.add(new GuiButtonExt(1, guiLeft + 156, guiTop + 147, 13, 12, ">"));
+        buttonList.add(new JECGuiButton(0, guiLeft + 7, guiTop + 147, 13, 12, "<", this, false, false));
+        buttonList.add(new JECGuiButton(1, guiLeft + 156, guiTop + 147, 13, 12, ">", this, false, false));
         searchField = getSearchField(fontRendererObj);
     }
 

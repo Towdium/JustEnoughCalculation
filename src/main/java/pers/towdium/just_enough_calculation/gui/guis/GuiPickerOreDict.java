@@ -9,7 +9,6 @@ import net.minecraft.util.ResourceLocation;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -40,19 +39,13 @@ public class GuiPickerOreDict extends GuiPicker {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID, "textures/gui/guiPickerOreDict.png"));
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
-        fontRendererObj.drawString(localization(GuiPicker.class, "search"), guiLeft + 7, guiTop + 13, 4210752);
+        fontRendererObj.drawString(localization("search"), guiLeft + 7, guiTop + 13, 4210752);
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
     }
 
     @Override
     GuiTextField getSearchField(FontRenderer renderer) {
         return new GuiTextField(0, renderer, guiLeft + 52, guiTop + 8, 75, 18);
-    }
-
-    @Nullable
-    @Override
-    protected String getButtonTooltip(int buttonId) {
-        return null;
     }
 
     @Override

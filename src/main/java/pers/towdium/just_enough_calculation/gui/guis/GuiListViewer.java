@@ -7,7 +7,6 @@ import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
 import pers.towdium.just_enough_calculation.util.wrappers.Pair;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -28,12 +27,6 @@ public class GuiListViewer extends GuiList {
                 return EnumSlotType.DISABLED;
             }
         }, parent, 6, 7);
-    }
-
-    @Nullable
-    @Override
-    protected String getButtonTooltip(int buttonId) {
-        return null;
     }
 
     @Override

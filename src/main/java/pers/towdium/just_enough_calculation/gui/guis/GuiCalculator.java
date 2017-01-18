@@ -10,11 +10,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraftforge.fml.client.config.GuiButtonExt;
 import pers.towdium.just_enough_calculation.JECConfig;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.core.Calculator;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
+import pers.towdium.just_enough_calculation.gui.JECGuiButton;
 import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
 import pers.towdium.just_enough_calculation.network.packets.PacketSyncCalculator;
 import pers.towdium.just_enough_calculation.util.Utilities;
@@ -22,7 +22,6 @@ import pers.towdium.just_enough_calculation.util.exception.IllegalPositionExcept
 import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper;
 import pers.towdium.just_enough_calculation.util.wrappers.Singleton;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,13 +39,13 @@ public class GuiCalculator extends JECGuiContainer {
     static final String keyMode = "mode";
 
     GuiTextField textFieldAmount;
-    GuiButton buttonSearch;
-    GuiButton buttonAdd;
-    GuiButton buttonView;
-    GuiButton buttonSettings;
-    GuiButton buttonLeft;
-    GuiButton buttonRight;
-    GuiButton buttonMode;
+    JECGuiButton buttonSearch;
+    JECGuiButton buttonAdd;
+    JECGuiButton buttonView;
+    JECGuiButton buttonSettings;
+    JECGuiButton buttonLeft;
+    JECGuiButton buttonRight;
+    JECGuiButton buttonMode;
 
     int page = 1;
     int total = 0;
@@ -63,13 +62,13 @@ public class GuiCalculator extends JECGuiContainer {
 
     @Override
     public void init() {
-        buttonSearch = new GuiButton(1, guiLeft + 119, guiTop + 7, 50, 20, localization("search"));
-        buttonAdd = new GuiButton(2, guiLeft + 7, guiTop + 53, 52, 20, localization("add"));
-        buttonView = new GuiButton(3, guiLeft + 63, guiTop + 53, 52, 20, localization("records"));
-        buttonSettings = new GuiButton(4, guiLeft + 119, guiTop + 53, 50, 20, localization("oreDict"));
-        buttonLeft = new GuiButton(5, guiLeft + 7, guiTop + 139, 14, 20, "<");
-        buttonRight = new GuiButton(6, guiLeft + 72, guiTop + 139, 14, 20, ">");
-        buttonMode = new GuiButtonExt(7, guiLeft + 90, guiTop + 139, 79, 20, "");
+        buttonSearch = new JECGuiButton(1, guiLeft + 119, guiTop + 7, 50, 20, "search", this);
+        buttonAdd = new JECGuiButton(2, guiLeft + 7, guiTop + 53, 52, 20, "add", this);
+        buttonView = new JECGuiButton(3, guiLeft + 63, guiTop + 53, 52, 20, "records", this);
+        buttonSettings = new JECGuiButton(4, guiLeft + 119, guiTop + 53, 50, 20, "oreDict", this);
+        buttonLeft = new JECGuiButton(5, guiLeft + 7, guiTop + 139, 14, 20, "<", this, false, false);
+        buttonRight = new JECGuiButton(6, guiLeft + 72, guiTop + 139, 14, 20, ">", this, false, false);
+        buttonMode = new JECGuiButton(7, guiLeft + 90, guiTop + 139, 79, 20, "", this, false, false);
         buttonList.add(buttonSearch);
         buttonList.add(buttonAdd);
         buttonList.add(buttonView);
@@ -130,12 +129,6 @@ public class GuiCalculator extends JECGuiContainer {
                 mode = EnumMode.values()[Utilities.circulate(mode.ordinal(), EnumMode.values().length, true)];
                 updateContent();
         }
-    }
-
-    @Nullable
-    @Override
-    protected String getButtonTooltip(int buttonId) {
-        return null;
     }
 
     @Override
@@ -201,7 +194,7 @@ public class GuiCalculator extends JECGuiContainer {
             total = 0;
             putStacks(7, 33, new ArrayList<>(), 0);
         }
-        buttonMode.displayString = mode.getDisplay();
+        buttonMode.displayString = localization(mode.toString().toLowerCase());
     }
 
     @Override
@@ -282,23 +275,6 @@ public class GuiCalculator extends JECGuiContainer {
 
     public enum EnumMode {
         MISSING, PROCEDURE, OUTPUT, INPUT, CATALYST;
-
-        public String getDisplay() {
-            switch (this) {
-                case INPUT:
-                    return JECGuiContainer.localization(GuiCalculator.class, "input");
-                case MISSING:
-                    return JECGuiContainer.localization(GuiCalculator.class, "missing");
-                case PROCEDURE:
-                    return JECGuiContainer.localization(GuiCalculator.class, "procedure");
-                case OUTPUT:
-                    return JECGuiContainer.localization(GuiCalculator.class, "output");
-                case CATALYST:
-                    return JECGuiContainer.localization(GuiCalculator.class, "catalyst");
-                default:
-                    throw new IllegalPositionException();
-            }
-        }
 
         public List<ItemStack> getList(Calculator calculatorN, Calculator calculatorI) {
             switch (this) {

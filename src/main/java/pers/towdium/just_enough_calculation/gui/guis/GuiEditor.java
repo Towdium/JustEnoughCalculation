@@ -7,10 +7,10 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.client.config.GuiButtonExt;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.core.Recipe;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
+import pers.towdium.just_enough_calculation.gui.JECGuiButton;
 import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
 import pers.towdium.just_enough_calculation.util.Utilities;
 import pers.towdium.just_enough_calculation.util.exception.IllegalPositionException;
@@ -20,7 +20,6 @@ import pers.towdium.just_enough_calculation.util.helpers.PlayerRecordHelper;
 import pers.towdium.just_enough_calculation.util.wrappers.Pair;
 import pers.towdium.just_enough_calculation.util.wrappers.Singleton;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,12 +33,12 @@ import java.util.function.BiFunction;
 public class GuiEditor extends JECGuiContainer {
     public ArrayList<GuiButton> buttonMode;
     boolean newGroup = false;
-    GuiButton buttonLeft;
-    GuiButton buttonRight;
-    GuiButton buttonNew;
-    GuiButton buttonDup;
-    GuiButton buttonSave;
-    GuiButton buttonClear;
+    JECGuiButton buttonLeft;
+    JECGuiButton buttonRight;
+    JECGuiButton buttonNew;
+    JECGuiButton buttonDup;
+    JECGuiButton buttonSave;
+    JECGuiButton buttonClear;
     GuiTextField textGroup;
     int group;
     String customName;
@@ -59,21 +58,21 @@ public class GuiEditor extends JECGuiContainer {
         int count = -1;
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 4; j++) {
-                buttonMode.add(new GuiButtonExt(++count, 44 + j * 21 + guiLeft, 51 + i * 33 + guiTop, 10, 10, "#"));
-                buttonMode.add(new GuiButtonExt(++count, 54 + j * 21 + guiLeft, 51 + i * 33 + guiTop, 10, 10, "I"));
+                buttonMode.add(new JECGuiButton(++count, 44 + j * 21 + guiLeft, 51 + i * 33 + guiTop, 10, 10, "#", this, false, false));
+                buttonMode.add(new JECGuiButton(++count, 54 + j * 21 + guiLeft, 51 + i * 33 + guiTop, 10, 10, "I", this, false, false));
             }
         }
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 6; j++) {
-                buttonMode.add(new GuiButtonExt(++count, 44 + j * 21 + guiLeft, 117 + i * 32 + guiTop, 10, 10, "#"));
-                buttonMode.add(new GuiButtonExt(++count, 54 + j * 21 + guiLeft, 117 + i * 32 + guiTop, 10, 10, "I"));
+                buttonMode.add(new JECGuiButton(++count, 44 + j * 21 + guiLeft, 117 + i * 32 + guiTop, 10, 10, "#", this, false, false));
+                buttonMode.add(new JECGuiButton(++count, 54 + j * 21 + guiLeft, 117 + i * 32 + guiTop, 10, 10, "I", this, false, false));
             }
         }
-        buttonLeft = new GuiButtonExt(40, guiLeft + 7, guiTop + 7, 14, 20, "<");
-        buttonRight = new GuiButtonExt(41, guiLeft + 90, guiTop + 7, 14, 20, ">");
-        buttonNew = new GuiButtonExt(42, guiLeft + 108, guiTop + 7, 61, 20, localization("newGroup"));
-        buttonSave = new GuiButtonExt(43, guiLeft + 131, guiTop + 31, 38, 18, localization("save"));
-        buttonClear = new GuiButtonExt(44, guiLeft + 131, guiTop + 53, 38, 18, localization("clear"));
+        buttonLeft = new JECGuiButton(40, guiLeft + 7, guiTop + 7, 14, 20, "<", this, false, false);
+        buttonRight = new JECGuiButton(41, guiLeft + 90, guiTop + 7, 14, 20, ">", this, false, false);
+        buttonNew = new JECGuiButton(42, guiLeft + 108, guiTop + 7, 61, 20, "newGroup", this);
+        buttonSave = new JECGuiButton(43, guiLeft + 131, guiTop + 31, 38, 18, "save", this);
+        buttonClear = new JECGuiButton(44, guiLeft + 131, guiTop + 53, 38, 18, "clear", this);
         buttonList.addAll(buttonMode);
         buttonList.add(buttonLeft);
         buttonList.add(buttonRight);
@@ -81,7 +80,7 @@ public class GuiEditor extends JECGuiContainer {
         buttonList.add(buttonSave);
         buttonList.add(buttonClear);
         if (dest != null) {
-            buttonDup = new GuiButtonExt(45, guiLeft + 131, guiTop + 75, 38, 18, localization("dup"));
+            buttonDup = new JECGuiButton(45, guiLeft + 131, guiTop + 75, 38, 18, "dup", this, true, true);
             buttonList.add(buttonDup);
         }
         textGroup = new GuiTextField(0, fontRendererObj, guiLeft + 8, guiTop + 8, 95, 18);
@@ -104,16 +103,6 @@ public class GuiEditor extends JECGuiContainer {
         drawCenteredStringMultiLine(fontRendererObj, localization("input"), 7, 44, 97, 159, 0xFFFFFF);
         if (!newGroup) {
             drawCenteredStringMultiLine(fontRendererObj, getGroup(), 7, 104, 7, 27, 0xFFFFFF);
-        }
-    }
-
-    @Nullable
-    @Override
-    protected String getButtonTooltip(int buttonId) {
-        if (buttonId == 45) {
-            return localizationToolTip("dup");
-        } else {
-            return null;
         }
     }
 

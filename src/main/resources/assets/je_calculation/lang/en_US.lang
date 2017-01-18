@@ -1,37 +1,37 @@
-gui.calculator.search=Search
-gui.calculator.add=Add
-gui.calculator.records=Records
-gui.calculator.oreDict=OreDict
-gui.calculator.recent=Recent
-gui.calculator.input=Overall cost
-gui.calculator.missing=Missing
-gui.calculator.procedure=Procedure
-gui.calculator.output=Extra output
-gui.calculator.catalyst=Catalyst
-gui.calculator.errorCore=Sorry, an exception is caught during the calculation. This might be thrown to avoid lag when the procedure is too complex. You can report this issue to the author if you are using the latest version.
-gui.calculator.errorUnknown=Sorry, an unexpected exception is caught during the calculation. You can report this issue to the author if you are using the latest version.
+gui.guiCalculator.search=Search
+gui.guiCalculator.add=Add
+gui.guiCalculator.records=Records
+gui.guiCalculator.oreDict=OreDict
+gui.guiCalculator.recent=Recent
+gui.guiCalculator.input=Overall cost
+gui.guiCalculator.missing=Missing
+gui.guiCalculator.procedure=Procedure
+gui.guiCalculator.output=Extra output
+gui.guiCalculator.catalyst=Catalyst
+gui.guiCalculator.errorCore=Sorry, an exception is caught during the calculation. This might be thrown to avoid lag when the procedure is too complex. You can report this issue to the author if you are using the latest version.
+gui.guiCalculator.errorUnknown=Sorry, an unexpected exception is caught during the calculation. You can report this issue to the author if you are using the latest version.
 
-gui.editor.catalyst=Cata-\nlyst
-gui.editor.input=Input
-gui.editor.output=Output
-gui.editor.newGroup=New Group
-gui.editor.save=Save
-gui.editor.clear=Clear
-gui.editor.confirm=Confirm
-gui.editor.dup=Dup
-gui.editor.tooltip.dup=Save the recipe as a new one
+gui.guiEditor.catalyst=Cata-\nlyst
+gui.guiEditor.input=Input
+gui.guiEditor.output=Output
+gui.guiEditor.newGroup=New Group
+gui.guiEditor.save=Save
+gui.guiEditor.clear=Clear
+gui.guiEditor.confirm=Confirm
+gui.guiEditor.dup=Dup
+gui.guiEditor.tooltip.dup=Save the recipe as a new one
 
-gui.list.edit=Edit
-gui.list.delete=Delete
-gui.list.noRecord=No Record
-gui.listSearch.input=Input
-gui.listSearch.output=Output
-gui.listSearch.catalyst=Catalyst
-gui.listSearch.all=All
+gui.guiList.edit=Edit
+gui.guiList.delete=Delete
+gui.guiList.noRecord=No Record
+gui.guiListSearch.input=Input
+gui.guiListSearch.output=Output
+gui.guiListSearch.catalyst=Catalyst
+gui.guiListSearch.all=All
 
-gui.oreDict.add=Add
+gui.gioOreDict.add=Add
 
-gui.picker.search=Search:
+gui.guiPicker.search=Search:
 
 item.itemCalculator.name=Crafting Calculator
 item.itemMathCalculator.name=Math Calculator
