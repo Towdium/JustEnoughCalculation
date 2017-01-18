@@ -1,37 +1,37 @@
-gui.calculator.search=Suchen
-gui.calculator.add=Hinzufügen
-gui.calculator.records=Aufzeichnungen
-gui.calculator.oreDict=OreDict
-gui.calculator.recent=Kürzlich
-gui.calculator.input=Gesamtkosten
-gui.calculator.missing=Fehlend
-gui.calculator.procedure=Prozedur
-gui.calculator.output=Zusatzertrag
-gui.calculator.catalyst=Katalysator
-gui.calculator.errorCore=Während der Berechnung wurde eine Ausnahmesituation ermittelt. Dies kann aufgetreten sein, um Verzögerungen zu vermeiden, wenn das Verfahren zu komplex ist. Du kannst dieses Problem dem Autor melden, wenn du die neueste Version verwendest.
-gui.calculator.errorUnknown=Während der Berechnung wurde eine Ausnahmesituation ermittelt. Du kannst dieses Problem dem Autor melden, wenn du die neueste Version verwendest.
+gui.guiCalculator.search=Suchen
+gui.guiCalculator.add=Hinzufügen
+gui.guiCalculator.records=Aufzeichnungen
+gui.guiCalculator.oreDict=OreDict
+gui.guiCalculator.recent=Kürzlich
+gui.guiCalculator.input=Gesamtkosten
+gui.guiCalculator.missing=Fehlend
+gui.guiCalculator.procedure=Prozedur
+gui.guiCalculator.output=Zusatzertrag
+gui.guiCalculator.catalyst=Katalysator
+gui.guiCalculator.errorCore=Während der Berechnung wurde eine Ausnahmesituation ermittelt. Dies kann aufgetreten sein, um Verzögerungen zu vermeiden, wenn das Verfahren zu komplex ist. Du kannst dieses Problem dem Autor melden, wenn du die neueste Version verwendest.
+gui.guiCalculator.errorUnknown=Während der Berechnung wurde eine Ausnahmesituation ermittelt. Du kannst dieses Problem dem Autor melden, wenn du die neueste Version verwendest.
 
-gui.editor.catalyst=Kata-\nlysator
-gui.editor.input=Input
-gui.editor.output=Output
-gui.editor.newGroup=Neue Gruppe
-gui.editor.save=Speichern
-gui.editor.clear=Leeren
-gui.editor.confirm=Bestätigen
-gui.editor.dup=Dup
-gui.editor.tooltip.dup=Speichere das Rezept als neuen Eintrag
+gui.guiEditor.catalyst=Kata-\nlysator
+gui.guiEditor.input=Input
+gui.guiEditor.output=Output
+gui.guiEditor.newGroup=Neue Gruppe
+gui.guiEditor.save=Speichern
+gui.guiEditor.clear=Leeren
+gui.guiEditor.confirm=Bestätigen
+gui.guiEditor.dup=Dup
+gui.guiEditor.tooltip.dup=Speichere das Rezept als neuen Eintrag
 
-gui.list.edit=Bearbeiten
-gui.list.delete=Löschen
-gui.list.noRecord=Keine Aufzeichnung
-gui.listSearch.input=Input
-gui.listSearch.output=Output
-gui.listSearch.catalyst=Katalysator
-gui.listSearch.all=Alle
+gui.guiList.edit=Bearbeiten
+gui.guiList.delete=Löschen
+gui.guiList.noRecord=Keine Aufzeichnung
+gui.guiListSearch.input=Input
+gui.guiListSearch.output=Output
+gui.guiListSearch.catalyst=Katalysator
+gui.guiListSearch.all=Alle
 
-gui.oreDict.add=Hinzufügen
+gui.guiOreDict.add=Hinzufügen
 
-gui.picker.search=Suche:
+gui.guiPicker.search=Suche:
 
 item.itemCalculator.name=Herstellungsrechner
 item.itemMathCalculator.name=Mathematischer Rechner
