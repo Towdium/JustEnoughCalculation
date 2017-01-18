@@ -27,7 +27,7 @@ import java.util.function.Function;
  */
 public class GuiListSearch extends GuiList {
     JECGuiButton buttonMode;
-    EnumMode mode = EnumMode.OUT;
+    EnumMode mode = EnumMode.OUTPUT;
 
     public GuiListSearch(GuiScreen parent, ItemStack itemStack) {
         super(new JECContainer() {
@@ -58,13 +58,13 @@ public class GuiListSearch extends GuiList {
         Function<Recipe, Boolean> func;
         ItemStack itemStack = inventorySlots.getSlot(20).getStack();
         switch (mode) {
-            case IN:
+            case INPUT:
                 func = recipe -> recipe.getIndexInput(itemStack) != -1;
                 break;
-            case OUT:
+            case OUTPUT:
                 func = recipe -> recipe.getIndexOutput(itemStack) != -1;
                 break;
-            case CAT:
+            case CATALYST:
                 func = recipe -> recipe.getIndexCatalyst(itemStack) != -1;
                 break;
             case ALL:
@@ -135,6 +135,6 @@ public class GuiListSearch extends GuiList {
     }
 
     enum EnumMode {
-        IN, OUT, CAT, ALL
+        INPUT, OUTPUT, CATALYST, ALL
     }
 }

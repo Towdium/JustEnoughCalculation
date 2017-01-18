@@ -42,7 +42,6 @@ public abstract class JECContainer extends Container {
         }
     }
 
-    @SuppressWarnings("NullableProblems")
     @Override
     public boolean canInteractWith(EntityPlayer playerIn) {
         return true;

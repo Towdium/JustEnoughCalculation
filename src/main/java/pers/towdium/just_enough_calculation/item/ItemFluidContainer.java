@@ -17,7 +17,6 @@ public class ItemFluidContainer extends Item {
         super.addInformation(stack, playerIn, tooltip, advanced);
     }*/
 
-    @SuppressWarnings("NullableProblems")
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
         Fluid f = ItemStackHelper.NBT.getFluid(stack);

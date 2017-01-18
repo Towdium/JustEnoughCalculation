@@ -40,7 +40,6 @@ public class JECRecipeTransferHandler implements IRecipeTransferHandler {
         this.container = container;
     }
 
-    @SuppressWarnings("unchecked")
     static void checkTemp(GuiEditor editor) {
         Singleton<Boolean> flag = new Singleton<>(false);
         for (Recipe.EnumStackIOType type : Recipe.EnumStackIOType.values()) {

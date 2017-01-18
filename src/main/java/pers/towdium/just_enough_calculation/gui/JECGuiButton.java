@@ -16,6 +16,7 @@ public class JECGuiButton extends GuiButtonExt {
     String name;
     boolean hasTooltip;
     long timeStartToolTip = 0;
+    long timeStartButton = 0;
 
     public JECGuiButton(int id, int xPos, int yPos, int width, int height, String name, JECGuiContainer gui) {
         this(id, xPos, yPos, width, height, name, gui, false, true);
@@ -37,6 +38,13 @@ public class JECGuiButton extends GuiButtonExt {
     @Override
     public void drawButton(Minecraft mc, int mouseX, int mouseY) {
         super.drawButton(mc, mouseX, mouseY);
+        if (hovered && !isMouseOverQuestion(mouseX, mouseY)) {
+            if (timeStartButton == 0) {
+                timeStartButton = System.currentTimeMillis();
+            }
+        } else {
+            timeStartButton = 0;
+        }
         if (isMouseOverQuestion(mouseX, mouseY)) {
             if (timeStartToolTip == 0) {
                 timeStartToolTip = System.currentTimeMillis();
@@ -47,14 +55,16 @@ public class JECGuiButton extends GuiButtonExt {
     }
 
     public void drawToolTip(int mouseX, int mouseY) {
-        if (hasTooltip && timeStartToolTip != 0 && System.currentTimeMillis() - timeStartToolTip > 1000) {
+        if (hasTooltip && timeStartToolTip != 0 && System.currentTimeMillis() - timeStartToolTip > 600) {
             gui.drawHoveringText(Arrays.asList(gui.localizationToolTip(name).split("\\n")), mouseX, mouseY);
         }
     }
 
-    public void drawOverlay(Minecraft mc, int mouseX, int mouseY) {
-        int strWidth = mc.fontRendererObj.getStringWidth(displayString);
-        int ellipsisWidth = mc.fontRendererObj.getStringWidth("...");
+    public void drawOverlay(Minecraft mc) {
+        if (!shouldDrawOverlay()) {
+            return;
+        }
+
         int color = 14737632;
         if (packedFGColour != 0) {
             color = packedFGColour;
@@ -63,11 +73,9 @@ public class JECGuiButton extends GuiButtonExt {
         } else if (this.hovered) {
             color = 16777120;
         }
-
-        if (strWidth > width - 6 && strWidth > ellipsisWidth && hovered) {
-            GuiUtils.drawContinuousTexturedBox(BUTTON_TEXTURES, this.xPosition - (strWidth + 10 - width) / 2, this.yPosition, 0, 46 + getHoverState(true) * 20, strWidth + 10, this.height, 200, 20, 2, 3, 2, 2, this.zLevel);
-            drawCenteredString(mc.fontRendererObj, displayString, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, color);
-        }
+        int strWidth = gui.getFontRenderer().getStringWidth(displayString);
+        GuiUtils.drawContinuousTexturedBox(BUTTON_TEXTURES, this.xPosition - (strWidth + 10 - width) / 2, this.yPosition, 0, 46 + getHoverState(true) * 20, strWidth + 10, this.height, 200, 20, 2, 3, 2, 2, this.zLevel);
+        drawCenteredString(mc.fontRendererObj, displayString, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, color);
     }
 
     public boolean isMouseOverQuestion(int mouseX, int mouseY) {
@@ -75,7 +83,13 @@ public class JECGuiButton extends GuiButtonExt {
                 && mouseY >= yPosition && mouseY <= yPosition + 10;
     }
 
-    public boolean hasTooltip() {
-        return hasTooltip;
+    public boolean shouldDrawQuestion() {
+        return !shouldDrawOverlay() && hasTooltip;
+    }
+
+    public boolean shouldDrawOverlay() {
+        int strWidth = gui.getFontRenderer().getStringWidth(displayString);
+        int ellipsisWidth = gui.getFontRenderer().getStringWidth("...");
+        return strWidth > width - 6 && strWidth > ellipsisWidth && hovered && timeStartButton != 0 && System.currentTimeMillis() - timeStartButton > 600;
     }
 }

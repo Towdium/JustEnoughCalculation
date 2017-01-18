@@ -211,7 +211,6 @@ public class GuiMathCalculator extends JECGuiContainer {
 
     }
 
-    @SuppressWarnings("ConstantConditions")
     void updateGuiFromItem() {
         Singleton<ItemStack> calc = new Singleton<>(null);
         calc.predicate = stack -> stack.getItem() == JustEnoughCalculation.itemCalculator;

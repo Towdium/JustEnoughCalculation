@@ -29,7 +29,6 @@ public class ItemCalculator extends Item {
         setCreativeTab(CreativeTabs.MISC);
     }
 
-    @SuppressWarnings("NullableProblems")
     @Override
     public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
         if (worldIn.isRemote) {
@@ -50,7 +49,6 @@ public class ItemCalculator extends Item {
         return damage;
     }
 
-    @SuppressWarnings("NullableProblems")
     @Override
     public String getUnlocalizedName(ItemStack stack) {
         switch (stack.getMetadata()) {

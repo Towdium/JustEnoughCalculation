@@ -296,7 +296,6 @@ public class ItemStackHelper {
             return getTag(itemStack, isolate).getString(key);
         }
 
-        @SuppressWarnings("TrivialFunctionalExpressionUsage")
         static NBTTagCompound getTag(@Nonnull ItemStack itemStack, boolean isolate) {
             return isolate ? itemStack.getSubCompound(JustEnoughCalculation.Reference.MODID, true) :
                     itemStack.hasTagCompound() ? itemStack.getTagCompound() : ((Supplier<NBTTagCompound>) () -> {

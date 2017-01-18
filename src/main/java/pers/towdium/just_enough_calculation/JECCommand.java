@@ -15,7 +15,6 @@ import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper;
  * Author: Towdium
  * Date:   2016/7/22.
  */
-@SuppressWarnings("NullableProblems")
 public class JECCommand extends CommandBase {
 
     @Override

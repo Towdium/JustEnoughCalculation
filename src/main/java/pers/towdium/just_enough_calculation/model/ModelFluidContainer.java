@@ -32,7 +32,6 @@ import java.util.Map;
  * Date:   2016/7/22.
  */
 
-@SuppressWarnings("NullableProblems")
 public class ModelFluidContainer implements IPerspectiveAwareModel {
     public static final ModelResourceLocation modelResourceLocation = new ModelResourceLocation("je_calculation:itemFluidContainer", "inventory");
     public static final ResourceLocation liquidResourceLocation = new ResourceLocation("je_calculation:items/itemFluidContainer_liquid");

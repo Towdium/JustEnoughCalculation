@@ -104,7 +104,6 @@ public abstract class JECGuiContainer extends GuiContainer {
         buttonList.forEach((button -> JECGuiButton.toJECGuiButton(button, this).drawToolTip(mouseX, mouseY)));
     }
 
-    @SuppressWarnings("NullableProblems")
     @Override
     public void drawHoveringText(List<String> textLines, int x, int y) {
         super.drawHoveringText(textLines, x, y);
@@ -118,13 +117,11 @@ public abstract class JECGuiContainer extends GuiContainer {
         return guiTop;
     }
 
-    @SuppressWarnings("NullableProblems")
     protected void handleMouseClick(Slot slotIn, int slotId, int mouseButton, ClickType type) {
         inventorySlots.slotClick(slotIn == null ? slotId : slotIn.slotNumber, mouseButton, type, mc.thePlayer);
         onItemStackSet(slotId);
     }
 
-    @SuppressWarnings("ConstantConditions")
     public boolean handleMouseEvent() {
         if (Mouse.getEventDWheel() != 0) {
             Slot slot = getSlotUnderMouse();
@@ -191,7 +188,7 @@ public abstract class JECGuiContainer extends GuiContainer {
     protected void drawTooltipScreen(int mouseX, int mouseY) {
         for (GuiButton button : buttonList) {
             JECGuiButton b = JECGuiButton.toJECGuiButton(button, this);
-            if (b.hasTooltip()) {
+            if (b.shouldDrawQuestion()) {
                 int drawX = b.xPosition + b.getButtonWidth() - 6 - guiLeft;
                 int drawY = b.yPosition + 3 - guiTop;
                 if (b.isMouseOverQuestion(mouseX, mouseY)) {
@@ -260,6 +257,10 @@ public abstract class JECGuiContainer extends GuiContainer {
         );
     }
 
+    public FontRenderer getFontRenderer() {
+        return fontRendererObj;
+    }
+
     protected abstract int getSizeSlot(int index);
 
     protected abstract void init();
@@ -285,7 +286,7 @@ public abstract class JECGuiContainer extends GuiContainer {
 
         @Override
         public void drawLabel(Minecraft mc, int mouseX, int mouseY) {
-            JECGuiContainer.this.buttonList.forEach((button -> JECGuiButton.toJECGuiButton(button, JECGuiContainer.this).drawOverlay(mc, mouseX, mouseY)));
+            JECGuiContainer.this.buttonList.forEach((button -> JECGuiButton.toJECGuiButton(button, JECGuiContainer.this).drawOverlay(mc)));
         }
     }
 }
