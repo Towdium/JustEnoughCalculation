@@ -269,6 +269,25 @@ public class GuiEditor extends JECGuiContainer {
         }
     }
 
+    @Override
+    protected int getDestSlot(int button) {
+        int i = getLastFilledSlot();
+        if (i == 20) {
+            return -1;
+        }
+        if (button == 0) {
+            return i + 1;
+        } else {
+            if (i < 4) {
+                return 4;
+            } else if (i < 8) {
+                return 8;
+            } else {
+                return i + 1;
+            }
+        }
+    }
+
     public void putRecipe(Recipe recipe) {
         BiConsumer<Integer, List<ItemStack>> putStacks = (integer, itemStacks) -> {
             Singleton<Integer> i = new Singleton<>(integer - 1);

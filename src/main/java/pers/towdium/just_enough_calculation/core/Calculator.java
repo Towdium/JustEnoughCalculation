@@ -180,7 +180,7 @@ public class Calculator {
                 } else if (NBT.getType(stackExternal) == ItemStackHelper.EnumStackAmountType.FLUID || NBT.getType(stackInternal) == ItemStackHelper.EnumStackAmountType.FLUID) {
                     return false;
                 } else {
-                    NBT.setData(stackInternal, ItemStackHelper.EnumStackAmountType.PERCENTAGE, func.apply(NBT.getAmountInternal(stackExternal), NBT.getAmountInternal(stackInternal)));
+                    NBT.setData(stackInternal, ItemStackHelper.EnumStackAmountType.PERCENTAGE, func.apply(NBT.getAmountInternal(stackInternal), NBT.getAmountInternal(stackExternal)));
                     return true;
                 }
             } else {

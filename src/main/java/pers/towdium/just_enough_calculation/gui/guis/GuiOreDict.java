@@ -113,4 +113,9 @@ public class GuiOreDict extends JECGuiContainer {
     protected BiFunction<Long, ItemStackHelper.EnumStackAmountType, String> getFormer() {
         return (aLong, type) -> "";
     }
+
+    @Override
+    protected int getDestSlot(int button) {
+        return 54;
+    }
 }

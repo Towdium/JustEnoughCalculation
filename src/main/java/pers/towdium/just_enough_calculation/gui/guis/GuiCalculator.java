@@ -170,7 +170,7 @@ public class GuiCalculator extends JECGuiContainer {
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         textFieldAmount.mouseClicked(mouseX, mouseY, mouseButton);
         if (buttonMode.isMouseOver() && mouseButton == 1) {
-            mode = EnumMode.values()[Utilities.circulate(mode.ordinal(), 4, false)];
+            mode = EnumMode.values()[Utilities.circulate(mode.ordinal(), EnumMode.values().length, false)];
             updateContent();
             mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
         }
@@ -211,7 +211,7 @@ public class GuiCalculator extends JECGuiContainer {
             textFieldAmount.setTextColor(0xFFFFFF);
         } catch (NumberFormatException e) {
             textFieldAmount.setTextColor(0xFF0000);
-            amount = 0;
+            amount = textFieldAmount.getText().equals("") ? 1 : 0;
         }
         if (inventorySlots.getSlot(0).getHasStack() && amount != 0) {
             try {
@@ -230,6 +230,11 @@ public class GuiCalculator extends JECGuiContainer {
             calculatorInventory = null;
         }
         updateContent();
+    }
+
+    @Override
+    protected int getDestSlot(int button) {
+        return 0;
     }
 
     void updateItemFromGui() {

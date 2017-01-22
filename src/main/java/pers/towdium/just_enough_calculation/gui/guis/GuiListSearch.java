@@ -134,6 +134,11 @@ public class GuiListSearch extends GuiList {
         super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
+    @Override
+    protected int getDestSlot(int button) {
+        return 20;
+    }
+
     enum EnumMode {
         INPUT, OUTPUT, CATALYST, ALL
     }

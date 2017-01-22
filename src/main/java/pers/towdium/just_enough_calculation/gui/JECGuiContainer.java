@@ -143,7 +143,19 @@ public abstract class JECGuiContainer extends GuiContainer {
                 }
                 onItemStackSet(slot.getSlotIndex());
             }
-        } else if (Mouse.getEventButton() == 0 && Mouse.getEventButtonState()) {
+        }
+        if (Mouse.getEventButtonState() && activeSlot == -1) {
+            ItemStack stack = JEIPlugin.runtime.getItemListOverlay().getStackUnderMouse();
+            int dest = getDestSlot(Mouse.getEventButton());
+            if (dest != -1 && stack != null) {
+                inventorySlots.getSlot(dest).putStack(stack == null ? null :
+                        ((JECContainer) inventorySlots).getSlotType(activeSlot) == JECContainer.EnumSlotType.AMOUNT ?
+                                ItemStackHelper.toItemStackJEC(stack.copy()) : stack.copy());
+                onItemStackSet(dest);
+                return true;
+            }
+        }
+        if (Mouse.getEventButton() == 0 && Mouse.getEventButtonState()) {
             if (activeSlot == -1) {
                 Slot slot = getSlotUnderMouse();
                 if (slot != null) {
@@ -166,15 +178,16 @@ public abstract class JECGuiContainer extends GuiContainer {
                                 mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
                             }
                     }
+                    return false;
                 }
-                return false;
             } else {
                 onItemStackSet(activeSlot);
                 activeSlot = -1;
                 mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
                 return true;
             }
-        } else if (activeSlot != -1) {
+        }
+        if (activeSlot != -1) {
             ItemStack stack = JEIPlugin.runtime.getItemListOverlay().getStackUnderMouse();
             stack = stack == null ? (getSlotUnderMouse() != null ? getSlotUnderMouse().getStack() : null) : stack;
             inventorySlots.getSlot(activeSlot).putStack(stack == null ? null :
@@ -183,6 +196,10 @@ public abstract class JECGuiContainer extends GuiContainer {
             return false;
         }
         return false;
+    }
+
+    protected int getDestSlot(int button) {
+        return -1;
     }
 
     protected void drawTooltipScreen(int mouseX, int mouseY) {
@@ -208,6 +225,8 @@ public abstract class JECGuiContainer extends GuiContainer {
     }
 
     protected void drawInHalfSize(int x, int y, Runnable r) {
+        boolean b = fontRendererObj.getUnicodeFlag();
+        fontRendererObj.setUnicodeFlag(false);
         GlStateManager.pushMatrix();
         GlStateManager.translate(x, y, 1);
         if (!fontRendererObj.getUnicodeFlag()) {
@@ -225,6 +244,16 @@ public abstract class JECGuiContainer extends GuiContainer {
         GlStateManager.depthMask(true);
         GlStateManager.disableBlend();
         GlStateManager.popMatrix();
+        fontRendererObj.setUnicodeFlag(b);
+    }
+
+    protected int getLastFilledSlot() {
+        List<Slot> slots = inventorySlots.inventorySlots;
+        for (int i = slots.size() - 1; i >= 0; i--) {
+            if (slots.get(i) != null && slots.get(i).getHasStack())
+                return i;
+        }
+        return -1;
     }
 
     public void drawCenteredStringMultiLine(FontRenderer fontRendererIn, String text, int x1, int x2, int y1, int y2, int color) {
