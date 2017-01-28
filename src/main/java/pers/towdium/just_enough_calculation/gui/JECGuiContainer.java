@@ -12,6 +12,8 @@ import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.client.config.GuiButtonExt;
+import net.minecraftforge.fml.client.config.GuiUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import pers.towdium.just_enough_calculation.plugin.JEIPlugin;
@@ -19,10 +21,13 @@ import pers.towdium.just_enough_calculation.util.Utilities;
 import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper;
 import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper.NBT;
 import pers.towdium.just_enough_calculation.util.helpers.LocalizationHelper;
+import pers.towdium.just_enough_calculation.util.wrappers.Pair;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 
 /**
  * Author:  Towdium
@@ -35,6 +40,7 @@ public abstract class JECGuiContainer extends GuiContainer {
     protected GuiScreen parent;
     protected int activeSlot = -1;
     protected ItemStack temp;
+    protected Pair<Integer, Character> keyBuffer;
 
     public JECGuiContainer(Container inventorySlotsIn, GuiScreen parent) {
         super(inventorySlotsIn);
@@ -76,12 +82,9 @@ public abstract class JECGuiContainer extends GuiContainer {
         inventorySlots.inventorySlots.forEach(slot -> {
             ItemStack s = slot.getStack();
             if (s != null)
-                drawQuantity(
-                        slot.xDisplayPosition, slot.yDisplayPosition,
-                        getFormer().apply(NBT.getAmount(s), NBT.getType(s))
-                );
+                drawQuantity(slot.xDisplayPosition, slot.yDisplayPosition,
+                        getFormer(slot.getSlotIndex()).apply(NBT.getAmount(s), NBT.getType(s)));
         });
-        drawTooltipScreen(mouseX, mouseY);
     }
 
     @Override
@@ -101,7 +104,16 @@ public abstract class JECGuiContainer extends GuiContainer {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
-        buttonList.forEach((button -> JECGuiButton.toJECGuiButton(button, this).drawToolTip(mouseX, mouseY)));
+        buttonList.forEach((button -> toJECGuiButton(button).drawToolTip(mouseX, mouseY)));
+    }
+
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        buttonList.forEach(button -> {
+            JECGuiButton jecButton = toJECGuiButton(button);
+            jecButton.mouseClicked(mouseX, mouseY, mouseButton);
+        });
+        super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
     @Override
@@ -109,17 +121,19 @@ public abstract class JECGuiContainer extends GuiContainer {
         super.drawHoveringText(textLines, x, y);
     }
 
-    public int getGuiLeft() {
-        return guiLeft;
-    }
-
-    public int getGuiTop() {
-        return guiTop;
-    }
-
     protected void handleMouseClick(Slot slotIn, int slotId, int mouseButton, ClickType type) {
         inventorySlots.slotClick(slotIn == null ? slotId : slotIn.slotNumber, mouseButton, type, mc.thePlayer);
         onItemStackSet(slotId);
+    }
+
+    @Override
+    public void handleKeyboardInput() throws IOException {
+        super.handleKeyboardInput();
+        if (Keyboard.getEventKeyState()) {
+            int key = Keyboard.getEventKey();
+            char ch = Keyboard.getEventCharacter();
+            buttonList.forEach((button -> toJECGuiButton(button).keyTyped(key, ch)));
+        }
     }
 
     public boolean handleMouseEvent() {
@@ -149,7 +163,7 @@ public abstract class JECGuiContainer extends GuiContainer {
             int dest = getDestSlot(Mouse.getEventButton());
             if (dest != -1 && stack != null) {
                 inventorySlots.getSlot(dest).putStack(stack == null ? null :
-                        ((JECContainer) inventorySlots).getSlotType(activeSlot) == JECContainer.EnumSlotType.AMOUNT ?
+                        ((JECContainer) inventorySlots).getSlotType(dest) == JECContainer.EnumSlotType.AMOUNT ?
                                 ItemStackHelper.toItemStackJEC(stack.copy()) : stack.copy());
                 onItemStackSet(dest);
                 return true;
@@ -200,21 +214,6 @@ public abstract class JECGuiContainer extends GuiContainer {
 
     protected int getDestSlot(int button) {
         return -1;
-    }
-
-    protected void drawTooltipScreen(int mouseX, int mouseY) {
-        for (GuiButton button : buttonList) {
-            JECGuiButton b = JECGuiButton.toJECGuiButton(button, this);
-            if (b.shouldDrawQuestion()) {
-                int drawX = b.xPosition + b.getButtonWidth() - 6 - guiLeft;
-                int drawY = b.yPosition + 3 - guiTop;
-                if (b.isMouseOverQuestion(mouseX, mouseY)) {
-                    drawInHalfSize(drawX, drawY, () -> drawString(fontRendererObj, "\247b?", 0, 0, 16777215));
-                } else {
-                    drawInHalfSize(drawX, drawY, () -> drawString(fontRendererObj, "?", 0, 0, 14737632));
-                }
-            }
-        }
     }
 
     protected void drawSlotOverlay(int index, int color) {
@@ -286,10 +285,6 @@ public abstract class JECGuiContainer extends GuiContainer {
         );
     }
 
-    public FontRenderer getFontRenderer() {
-        return fontRendererObj;
-    }
-
     protected abstract int getSizeSlot(int index);
 
     protected abstract void init();
@@ -303,8 +298,14 @@ public abstract class JECGuiContainer extends GuiContainer {
     protected void onItemStackPick(ItemStack itemStack) {
     }
 
-    protected BiFunction<Long, ItemStackHelper.EnumStackAmountType, String> getFormer() {
+    protected BiFunction<Long, ItemStackHelper.EnumStackAmountType, String> getFormer(int id) {
         return (aLong, type) -> type.getStringEditor(aLong);
+    }
+
+    JECGuiButton toJECGuiButton(GuiButton button) {
+        return button instanceof JECGuiButton ? ((JECGuiButton) button) : new JECGuiButton(
+                button.id, button.xPosition, button.yPosition,
+                button.width, button.height, button.displayString);
     }
 
     class MyLabel extends GuiLabel {
@@ -315,7 +316,142 @@ public abstract class JECGuiContainer extends GuiContainer {
 
         @Override
         public void drawLabel(Minecraft mc, int mouseX, int mouseY) {
-            JECGuiContainer.this.buttonList.forEach((button -> JECGuiButton.toJECGuiButton(button, JECGuiContainer.this).drawOverlay(mc)));
+            JECGuiContainer.this.buttonList.forEach((button ->
+                    toJECGuiButton(button).drawOverlay(mc, mouseX, mouseY)));
+        }
+    }
+
+    public class JECGuiButton extends GuiButtonExt {
+        String name;
+        boolean hasTooltip;
+        long timeStartToolTip = 0;
+        long timeStartButton = 0;
+        Runnable listenerLeft = null;
+        Runnable listenerRight = null;
+        BiPredicate<Integer, Character> keyAdapter = null;
+
+        public JECGuiButton(int id, int xPos, int yPos, int width, int height, String name) {
+            this(id, xPos, yPos, width, height, name, true, false);
+        }
+
+        public JECGuiButton(int id, int xPos, int yPos, int width, int height, String name, boolean needLocalization) {
+            this(id, xPos, yPos, width, height, name, needLocalization, false);
+        }
+
+        public JECGuiButton(int id, int xPos, int yPos, int width, int height, String name,
+                            boolean needLocalization, boolean hasTooltip) {
+            super(id, xPos, yPos, width, height, needLocalization ? localization(name) : name);
+            this.name = name;
+            this.hasTooltip = hasTooltip;
+        }
+
+        @Override
+        public void drawButton(Minecraft mc, int mouseX, int mouseY) {
+            if (keyAdapter != null && Keyboard.getEventKeyState() && keyAdapter.test(Keyboard.getEventKey(), Keyboard.getEventCharacter())) {
+                super.drawButton(mc, xPosition, yPosition);
+            } else {
+                super.drawButton(mc, mouseX, mouseY);
+            }
+            if (hovered && !isMouseOverQuestion(mouseX, mouseY)) {
+                if (timeStartButton == 0) {
+                    timeStartButton = System.currentTimeMillis();
+                }
+            } else {
+                timeStartButton = 0;
+            }
+            if (isMouseOverQuestion(mouseX, mouseY)) {
+                if (timeStartToolTip == 0) {
+                    timeStartToolTip = System.currentTimeMillis();
+                }
+            } else {
+                timeStartToolTip = 0;
+            }
+        }
+
+        public void drawToolTip(int mouseX, int mouseY) {
+            if (hasTooltip && timeStartToolTip != 0 && System.currentTimeMillis() - timeStartToolTip > 600) {
+                drawHoveringText(Arrays.asList(localizationToolTip(name).split("\\n")), mouseX, mouseY);
+            }
+        }
+
+        public void drawOverlay(Minecraft mc, int mouseX, int mouseY) {
+            if (shouldDrawQuestion()) {
+                int drawX = xPosition + getButtonWidth() - 6;
+                int drawY = yPosition + 3;
+                if (isMouseOverQuestion(mouseX, mouseY)) {
+                    drawInHalfSize(drawX, drawY, () -> drawString(fontRendererObj, "\247b?", 0, 0, 16777215));
+                } else {
+                    drawInHalfSize(drawX, drawY, () -> drawString(fontRendererObj, "?", 0, 0, 14737632));
+                }
+            }
+
+            if (!shouldDrawOverlay()) {
+                return;
+            }
+
+            int color = 14737632;
+            if (packedFGColour != 0) {
+                color = packedFGColour;
+            } else if (!this.enabled) {
+                color = 10526880;
+            } else if (this.hovered) {
+                color = 16777120;
+            }
+            int strWidth = fontRendererObj.getStringWidth(displayString);
+            GuiUtils.drawContinuousTexturedBox(BUTTON_TEXTURES,
+                    this.xPosition - (strWidth + 10 - width) / 2, this.yPosition, 0, 46 + getHoverState(true) * 20,
+                    strWidth + 10, this.height, 200, 20, 2, 3, 2, 2, this.zLevel);
+            drawCenteredString(mc.fontRendererObj, displayString,
+                    this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, color);
+        }
+
+        public boolean isMouseOverQuestion(int mouseX, int mouseY) {
+            return mouseX >= xPosition + width - 10 && mouseX <= xPosition + width
+                    && mouseY >= yPosition && mouseY <= yPosition + 10;
+        }
+
+        public boolean shouldDrawQuestion() {
+            return !shouldDrawOverlay() && hasTooltip;
+        }
+
+        public boolean shouldDrawOverlay() {
+            int strWidth = fontRendererObj.getStringWidth(displayString);
+            int ellipsisWidth = fontRendererObj.getStringWidth("...");
+            return strWidth > width - 6 && strWidth > ellipsisWidth && hovered &&
+                    timeStartButton != 0 && System.currentTimeMillis() - timeStartButton > 600;
+        }
+
+        public void mouseClicked(int mouseX, int mouseY, int button) {
+            if (this.enabled && this.visible && mouseX >= this.xPosition && mouseY >= this.yPosition
+                    && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height) {
+                if (button == 0 && listenerLeft != null) {
+                    listenerLeft.run();
+                } else if (button == 1 && listenerRight != null) {
+                    listenerRight.run();
+                    mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
+                }
+            }
+        }
+
+        public void keyTyped(int key, char ch) {
+            if (keyAdapter != null && keyAdapter.test(key, ch)) {
+                listenerLeft.run();
+            }
+        }
+
+        public JECGuiButton setKeyAdapter(BiPredicate<Integer, Character> adapter) {
+            keyAdapter = adapter;
+            return this;
+        }
+
+        public JECGuiButton setLsnLeft(Runnable r) {
+            listenerLeft = r;
+            return this;
+        }
+
+        public JECGuiButton setLsnRight(Runnable r) {
+            listenerRight = r;
+            return this;
         }
     }
 }

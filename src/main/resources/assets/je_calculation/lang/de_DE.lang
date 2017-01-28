@@ -32,6 +32,7 @@ gui.guiListSearch.all=Alle
 gui.guiOreDict.add=Hinzufügen
 
 gui.guiPicker.search=Suche:
+gui.guiPickerFluid.confirm=Bestätigen
 
 item.itemCalculator.name=Herstellungsrechner
 item.itemMathCalculator.name=Mathematischer Rechner

@@ -10,7 +10,6 @@ import net.minecraft.util.ResourceLocation;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.core.Recipe;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
-import pers.towdium.just_enough_calculation.gui.JECGuiButton;
 import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
 import pers.towdium.just_enough_calculation.util.Utilities;
 import pers.towdium.just_enough_calculation.util.exception.IllegalPositionException;
@@ -25,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * Author:  Towdium
@@ -54,25 +54,118 @@ public class GuiEditor extends JECGuiContainer {
 
     @Override
     public void init() {
+        Function<JECGuiButton, JECGuiButton> genButtonNumType = (button) -> {
+            button.setLsnLeft(() -> {
+                Slot slot = inventorySlots.getSlot(button.id / 2);
+                ItemStack stack = slot.getStack();
+                switch (button.displayString) {
+                    case "#":
+                        slot.putStack(stack == null ? null : ItemStackHelper.toItemStackOfType(ItemStackHelper.EnumStackAmountType.PERCENTAGE, stack));
+                        button.displayString = "%";
+                        break;
+                    case "%":
+                        slot.putStack(stack == null ? null : ItemStackHelper.toItemStackOfType(ItemStackHelper.EnumStackAmountType.NUMBER, stack));
+                        button.displayString = "#";
+                        break;
+                }
+            });
+            return button;
+        };
+
+        Function<JECGuiButton, JECGuiButton> genButtonStackType = (button) -> {
+            button.setLsnLeft(() -> {
+                Slot slot = inventorySlots.getSlot(button.id / 2);
+                ItemStack stack = slot.getStack();
+                Utilities.openGui(new GuiPickerFluid(itemStack -> {
+                    Utilities.openGui(this);
+                    slot.putStack(itemStack);
+                    updateLayout();
+                }, this, stack));
+            });
+            return button;
+        };
+
+
         buttonMode = new ArrayList<>();
         int count = -1;
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 4; j++) {
-                buttonMode.add(new JECGuiButton(++count, 44 + j * 21 + guiLeft, 51 + i * 33 + guiTop, 10, 10, "#", this, false, false));
-                buttonMode.add(new JECGuiButton(++count, 54 + j * 21 + guiLeft, 51 + i * 33 + guiTop, 10, 10, "I", this, false, false));
+                buttonMode.add(genButtonNumType.apply(new JECGuiButton(
+                        ++count, 44 + j * 21 + guiLeft, 51 + i * 33 + guiTop, 10, 10, "#", false)));
+                buttonMode.add(genButtonStackType.apply(new JECGuiButton(
+                        ++count, 54 + j * 21 + guiLeft, 51 + i * 33 + guiTop, 10, 10, "I", false)));
             }
         }
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 6; j++) {
-                buttonMode.add(new JECGuiButton(++count, 44 + j * 21 + guiLeft, 117 + i * 32 + guiTop, 10, 10, "#", this, false, false));
-                buttonMode.add(new JECGuiButton(++count, 54 + j * 21 + guiLeft, 117 + i * 32 + guiTop, 10, 10, "I", this, false, false));
+                buttonMode.add(genButtonNumType.apply(new JECGuiButton(
+                        ++count, 44 + j * 21 + guiLeft, 117 + i * 32 + guiTop, 10, 10, "#", false)));
+                buttonMode.add(genButtonStackType.apply(new JECGuiButton(
+                        ++count, 54 + j * 21 + guiLeft, 117 + i * 32 + guiTop, 10, 10, "I", false)));
             }
         }
-        buttonLeft = new JECGuiButton(40, guiLeft + 7, guiTop + 7, 14, 20, "<", this, false, false);
-        buttonRight = new JECGuiButton(41, guiLeft + 90, guiTop + 7, 14, 20, ">", this, false, false);
-        buttonNew = new JECGuiButton(42, guiLeft + 108, guiTop + 7, 61, 20, "newGroup", this);
-        buttonSave = new JECGuiButton(43, guiLeft + 131, guiTop + 31, 38, 18, "save", this);
-        buttonClear = new JECGuiButton(44, guiLeft + 131, guiTop + 53, 38, 18, "clear", this);
+        buttonLeft = new JECGuiButton(40, guiLeft + 7, guiTop + 7, 14, 20, "<", false).setLsnLeft(() -> {
+            if (customName == null) {
+                if (group == 0) {
+                    group = PlayerRecordHelper.getSizeGroup() - 1;
+                } else {
+                    --group;
+                }
+            } else {
+                if (PlayerRecordHelper.getSizeGroup() != 0) {
+                    group = PlayerRecordHelper.getSizeGroup() - 1;
+                    customName = null;
+                } else {
+                    customName = "Default";
+                }
+            }
+        });
+        buttonRight = new JECGuiButton(41, guiLeft + 90, guiTop + 7, 14, 20, ">", false).setLsnRight(() -> {
+            if (customName == null) {
+                if (group + 1 >= PlayerRecordHelper.getSizeGroup()) {
+                    group = 0;
+                } else {
+                    ++group;
+                }
+            } else {
+                if (PlayerRecordHelper.getSizeGroup() != 0) {
+                    group = 0;
+                    customName = null;
+                } else {
+                    customName = "Default";
+                }
+            }
+        });
+        buttonNew = new JECGuiButton(42, guiLeft + 108, guiTop + 7, 61, 20, "newGroup").setLsnLeft(() -> {
+            if (newGroup) {
+                customName = textGroup.getText();
+                group = 0;
+                textGroup.setText("");
+                newGroup = false;
+                buttonLeft.visible = true;
+                buttonRight.visible = true;
+                buttonNew.displayString = localization("newGroup");
+            } else {
+                buttonLeft.visible = false;
+                buttonRight.visible = false;
+                newGroup = true;
+                buttonNew.displayString = localization("confirm");
+            }
+        });
+        buttonSave = new JECGuiButton(43, guiLeft + 131, guiTop + 31, 38, 18, "save").setLsnLeft(() -> {
+            if (dest == null) {
+                PlayerRecordHelper.addRecipe(toRecipe(), getGroup());
+            } else {
+                PlayerRecordHelper.setRecipe(getGroup(), dest.one, dest.two, toRecipe());
+            }
+            Utilities.openGui(parent);
+        });
+        buttonClear = new JECGuiButton(44, guiLeft + 131, guiTop + 53, 38, 18, "clear").setLsnLeft(() -> {
+            for (int i = 0; i < 20; i++) {
+                inventorySlots.getSlot(i).putStack(null);
+            }
+            updateLayout();
+        });
         buttonList.addAll(buttonMode);
         buttonList.add(buttonLeft);
         buttonList.add(buttonRight);
@@ -80,7 +173,11 @@ public class GuiEditor extends JECGuiContainer {
         buttonList.add(buttonSave);
         buttonList.add(buttonClear);
         if (dest != null) {
-            buttonDup = new JECGuiButton(45, guiLeft + 131, guiTop + 75, 38, 18, "dup", this, true, true);
+            buttonDup = new JECGuiButton(45, guiLeft + 131, guiTop + 75, 38, 18, "dup", true, true).
+                    setLsnLeft(() -> {
+                        PlayerRecordHelper.addRecipe(toRecipe(), getGroup());
+                        Utilities.openGui(parent);
+                    });
             buttonList.add(buttonDup);
         }
         textGroup = new GuiTextField(0, fontRendererObj, guiLeft + 8, guiTop + 8, 95, 18);
@@ -118,100 +215,6 @@ public class GuiEditor extends JECGuiContainer {
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
         if (newGroup) {
             textGroup.drawTextBox();
-        }
-    }
-
-    @Override
-    protected void actionPerformed(GuiButton button) throws IOException {
-        if (button.id < 40) {
-            Slot slot = inventorySlots.getSlot(button.id / 2);
-            ItemStack stack = slot.getStack();
-            if (button.id % 2 == 0) {
-                switch (button.displayString) {
-                    case "#":
-                        slot.putStack(stack == null ? null : ItemStackHelper.toItemStackOfType(ItemStackHelper.EnumStackAmountType.PERCENTAGE, stack));
-                        button.displayString = "%";
-                        break;
-                    case "%":
-                        slot.putStack(stack == null ? null : ItemStackHelper.toItemStackOfType(ItemStackHelper.EnumStackAmountType.NUMBER, stack));
-                        button.displayString = "#";
-                        break;
-                }
-            } else {
-                Utilities.openGui(new GuiPickerFluid(itemStack -> {
-                    Utilities.openGui(this);
-                    slot.putStack(itemStack);
-                    updateLayout();
-                }, this, stack));
-            }
-        } else {
-            switch (button.id) {
-                case 40:
-                    if (customName == null) {
-                        if (group == 0) {
-                            group = PlayerRecordHelper.getSizeGroup() - 1;
-                        } else {
-                            --group;
-                        }
-                    } else {
-                        if (PlayerRecordHelper.getSizeGroup() != 0) {
-                            group = PlayerRecordHelper.getSizeGroup() - 1;
-                            customName = null;
-                        } else {
-                            customName = "Default";
-                        }
-                    }
-                    break;
-                case 41:
-                    if (customName == null) {
-                        if (group + 1 >= PlayerRecordHelper.getSizeGroup()) {
-                            group = 0;
-                        } else {
-                            ++group;
-                        }
-                    } else {
-                        if (PlayerRecordHelper.getSizeGroup() != 0) {
-                            group = 0;
-                            customName = null;
-                        } else {
-                            customName = "Default";
-                        }
-                    }
-                    break;
-                case 42:
-                    if (newGroup) {
-                        customName = textGroup.getText();
-                        group = 0;
-                        textGroup.setText("");
-                        newGroup = false;
-                        buttonLeft.visible = true;
-                        buttonRight.visible = true;
-                        buttonNew.displayString = localization("newGroup");
-                    } else {
-                        buttonLeft.visible = false;
-                        buttonRight.visible = false;
-                        newGroup = true;
-                        buttonNew.displayString = localization("confirm");
-                    }
-                    break;
-                case 43:
-                    if (dest == null) {
-                        PlayerRecordHelper.addRecipe(toRecipe(), getGroup());
-                    } else {
-                        PlayerRecordHelper.setRecipe(getGroup(), dest.one, dest.two, toRecipe());
-                    }
-                    Utilities.openGui(parent);
-                    break;
-                case 44:
-                    for (int i = 0; i < 20; i++) {
-                        inventorySlots.getSlot(i).putStack(null);
-                    }
-                    updateLayout();
-                    break;
-                case 45:
-                    PlayerRecordHelper.addRecipe(toRecipe(), getGroup());
-                    Utilities.openGui(parent);
-            }
         }
     }
 

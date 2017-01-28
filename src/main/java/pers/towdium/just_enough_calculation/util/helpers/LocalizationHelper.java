@@ -31,6 +31,11 @@ public class LocalizationHelper {
         if (!ret.two && !c.equals(Object.class)) {
             ret = localization(c.getSuperclass(), prefix, translateKey, parameters);
         }
-        return ret;
+        if (ret.two) {
+            return ret;
+        } else {
+            ret.one = key;
+            return ret;
+        }
     }
 }

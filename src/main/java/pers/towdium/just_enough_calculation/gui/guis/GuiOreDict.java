@@ -1,19 +1,16 @@
 package pers.towdium.just_enough_calculation.gui.guis;
 
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
-import pers.towdium.just_enough_calculation.gui.JECGuiButton;
 import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
 import pers.towdium.just_enough_calculation.util.Utilities;
 import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper;
 import pers.towdium.just_enough_calculation.util.helpers.PlayerRecordHelper;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.function.BiFunction;
 
@@ -48,9 +45,18 @@ public class GuiOreDict extends JECGuiContainer {
 
     @Override
     public void init() {
-        buttonList.add(new JECGuiButton(0, guiLeft + 7, guiTop + 147, 13, 12, "<", this, false, false));
-        buttonList.add(new JECGuiButton(1, guiLeft + 156, guiTop + 147, 13, 12, ">", this, false, false));
-        buttonAdd = new JECGuiButton(2, 117 + guiLeft, 7 + guiTop, 52, 20, "add", this, false, false);
+        buttonList.add(new JECGuiButton(0, guiLeft + 7, guiTop + 147, 13, 12, "<", false).setLsnLeft(() -> {
+            page = total == 0 ? 0 : page == total ? 1 : page + 1;
+            updateLayout();
+        }));
+        buttonList.add(new JECGuiButton(1, guiLeft + 156, guiTop + 147, 13, 12, ">", false).setLsnLeft(() -> {
+            page = total == 0 ? 0 : page == 1 ? total : page - 1;
+            updateLayout();
+        }));
+        buttonAdd = new JECGuiButton(2, 117 + guiLeft, 7 + guiTop, 52, 20, "add").setLsnLeft(() -> {
+            PlayerRecordHelper.addOreDictPref(inventorySlots.getSlot(54).getStack());
+            updateLayout();
+        });
         buttonList.add(buttonAdd);
         onItemStackSet(54);
     }
@@ -74,22 +80,6 @@ public class GuiOreDict extends JECGuiContainer {
     }
 
     @Override
-    protected void actionPerformed(GuiButton button) throws IOException {
-        switch (button.id) {
-            case 0:
-                page = total == 0 ? 0 : page == total ? 1 : page + 1;
-                break;
-            case 1:
-                page = total == 0 ? 0 : page == 1 ? total : page - 1;
-                break;
-            case 2:
-                PlayerRecordHelper.addOreDictPref(inventorySlots.getSlot(54).getStack());
-                break;
-        }
-        updateLayout();
-    }
-
-    @Override
     public void updateLayout() {
         List<ItemStack> buffer = PlayerRecordHelper.getOreDictPref();
         int row = 6;
@@ -110,7 +100,7 @@ public class GuiOreDict extends JECGuiContainer {
     }
 
     @Override
-    protected BiFunction<Long, ItemStackHelper.EnumStackAmountType, String> getFormer() {
+    protected BiFunction<Long, ItemStackHelper.EnumStackAmountType, String> getFormer(int id) {
         return (aLong, type) -> "";
     }
 

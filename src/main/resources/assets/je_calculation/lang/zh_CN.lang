@@ -32,6 +32,7 @@ gui.guiListSearch.all=所有
 gui.guiOreDict.add=添加
 
 gui.guiPicker.search=搜索：
+gui.guiPickerFluid.confirm=确认
 
 item.itemCalculator.name=合成计算器
 item.itemMathCalculator.name=数学计算器

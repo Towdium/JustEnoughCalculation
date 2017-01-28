@@ -29,9 +29,10 @@ gui.guiListSearch.output=Output
 gui.guiListSearch.catalyst=Catalyst
 gui.guiListSearch.all=All
 
-gui.gioOreDict.add=Add
+gui.guiOreDict.add=Add
 
 gui.guiPicker.search=Search:
+gui.guiPickerFluid.confirm=Confirm
 
 item.itemCalculator.name=Crafting Calculator
 item.itemMathCalculator.name=Math Calculator

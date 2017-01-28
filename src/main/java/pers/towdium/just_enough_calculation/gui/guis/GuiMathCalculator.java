@@ -1,7 +1,5 @@
 package pers.towdium.just_enough_calculation.gui.guis;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
@@ -10,14 +8,12 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
-import pers.towdium.just_enough_calculation.gui.JECGuiButton;
 import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
 import pers.towdium.just_enough_calculation.network.packets.PacketSyncCalculator;
 import pers.towdium.just_enough_calculation.util.Utilities;
 import pers.towdium.just_enough_calculation.util.exception.IllegalPositionException;
 import pers.towdium.just_enough_calculation.util.wrappers.Singleton;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
@@ -25,6 +21,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Stack;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * Author: Towdium
@@ -60,25 +57,53 @@ public class GuiMathCalculator extends JECGuiContainer {
 
     @Override
     protected void init() {
-        buttonList.add(new MyButton(7, guiLeft + 7, guiTop + 67, 28, 20, "7"));
-        buttonList.add(new MyButton(8, guiLeft + 39, guiTop + 67, 28, 20, "8"));
-        buttonList.add(new MyButton(9, guiLeft + 71, guiTop + 67, 28, 20, "9"));
-        buttonList.add(new MyButton(4, guiLeft + 7, guiTop + 91, 28, 20, "4"));
-        buttonList.add(new MyButton(5, guiLeft + 39, guiTop + 91, 28, 20, "5"));
-        buttonList.add(new MyButton(6, guiLeft + 71, guiTop + 91, 28, 20, "6"));
-        buttonList.add(new MyButton(1, guiLeft + 7, guiTop + 115, 28, 20, "1"));
-        buttonList.add(new MyButton(2, guiLeft + 39, guiTop + 115, 28, 20, "2"));
-        buttonList.add(new MyButton(3, guiLeft + 71, guiTop + 115, 28, 20, "3"));
-        buttonList.add(new MyButton(0, guiLeft + 7, guiTop + 139, 28, 20, "0"));
-        buttonList.add(new MyButton(10, guiLeft + 39, guiTop + 139, 28, 20, "00"));
-        buttonList.add(new MyButton(11, guiLeft + 71, guiTop + 139, 28, 20, "."));
-        buttonList.add(new MyButton(12, guiLeft + 109, guiTop + 67, 28, 20, "◄"));
-        buttonList.add(new MyButton(13, guiLeft + 141, guiTop + 67, 28, 20, "+"));
-        buttonList.add(new MyButton(14, guiLeft + 109, guiTop + 91, 28, 20, "C"));
-        buttonList.add(new MyButton(15, guiLeft + 141, guiTop + 91, 28, 20, "-"));
-        buttonList.add(new MyButton(16, guiLeft + 109, guiTop + 115, 28, 44, "="));
-        buttonList.add(new MyButton(17, guiLeft + 141, guiTop + 115, 28, 20, "*"));
-        buttonList.add(new MyButton(18, guiLeft + 141, guiTop + 139, 28, 20, "/"));
+        Function<JECGuiButton, JECGuiButton> genNumButton = (button) ->
+                button.setLsnLeft(() -> current = current.appendChar((char) ('0' + button.id))).
+                        setKeyAdapter((key, ch) -> button.id == ch - '0');
+
+        buttonList.add(genNumButton.apply(new JECGuiButton(7, guiLeft + 7, guiTop + 67, 28, 20, "7", false)));
+        buttonList.add(genNumButton.apply(new JECGuiButton(8, guiLeft + 39, guiTop + 67, 28, 20, "8", false)));
+        buttonList.add(genNumButton.apply(new JECGuiButton(9, guiLeft + 71, guiTop + 67, 28, 20, "9", false)));
+        buttonList.add(genNumButton.apply(new JECGuiButton(4, guiLeft + 7, guiTop + 91, 28, 20, "4", false)));
+        buttonList.add(genNumButton.apply(new JECGuiButton(5, guiLeft + 39, guiTop + 91, 28, 20, "5", false)));
+        buttonList.add(genNumButton.apply(new JECGuiButton(6, guiLeft + 71, guiTop + 91, 28, 20, "6", false)));
+        buttonList.add(genNumButton.apply(new JECGuiButton(1, guiLeft + 7, guiTop + 115, 28, 20, "1", false)));
+        buttonList.add(genNumButton.apply(new JECGuiButton(2, guiLeft + 39, guiTop + 115, 28, 20, "2", false)));
+        buttonList.add(genNumButton.apply(new JECGuiButton(3, guiLeft + 71, guiTop + 115, 28, 20, "3", false)));
+        buttonList.add(genNumButton.apply(new JECGuiButton(0, guiLeft + 7, guiTop + 139, 28, 20, "0", false)));
+        buttonList.add(new JECGuiButton(10, guiLeft + 39, guiTop + 139, 28, 20, "00", false).setLsnLeft(() -> {
+            current = current.appendChar('0');
+            current = current.appendChar('0');
+        }));
+        buttonList.add(new JECGuiButton(11, guiLeft + 71, guiTop + 139, 28, 20, ".", false).setLsnLeft(() ->
+                current = current.appendChar('.')).setKeyAdapter((key, ch) -> ch == '.'));
+        buttonList.add(new JECGuiButton(12, guiLeft + 109, guiTop + 67, 28, 20, "◄", false).setLsnLeft(() ->
+                current = current.removeChar()).setKeyAdapter((key, ch) -> key == Keyboard.KEY_BACK));
+        buttonList.add(new JECGuiButton(13, guiLeft + 141, guiTop + 67, 28, 20, "+", false).setLsnLeft(() -> {
+            updateResult();
+            sign = enumSign.PLUS;
+        }).setKeyAdapter((key, ch) -> ch == '+'));
+        buttonList.add(new JECGuiButton(14, guiLeft + 109, guiTop + 91, 28, 20, "C", false).setLsnLeft(() -> {
+            current = new NumStack();
+            record = null;
+            sign = enumSign.NONE;
+        }).setKeyAdapter((key, ch) -> key == Keyboard.KEY_DELETE));
+        buttonList.add(new JECGuiButton(15, guiLeft + 141, guiTop + 91, 28, 20, "-", false).setLsnLeft(() -> {
+            updateResult();
+            sign = enumSign.MINUS;
+        }).setKeyAdapter((key, ch) -> ch == '-'));
+        buttonList.add(new JECGuiButton(16, guiLeft + 109, guiTop + 115, 28, 44, "=", false).setLsnLeft(() -> {
+            updateResult();
+            sign = enumSign.NONE;
+        }).setKeyAdapter((key, ch) -> key == Keyboard.KEY_RETURN || key == Keyboard.KEY_NUMPADENTER || ch == '='));
+        buttonList.add(new JECGuiButton(17, guiLeft + 141, guiTop + 115, 28, 20, "*", false).setLsnLeft(() -> {
+            updateResult();
+            sign = enumSign.PRODUCT;
+        }).setKeyAdapter((key, ch) -> ch == '*'));
+        buttonList.add(new JECGuiButton(18, guiLeft + 141, guiTop + 139, 28, 20, "/", false).setLsnLeft(() -> {
+            updateResult();
+            sign = enumSign.DIVIDE;
+        }).setKeyAdapter((key, ch) -> ch == '/'));
         if (!initialized) {
             updateGuiFromItem();
             initialized = true;
@@ -94,94 +119,9 @@ public class GuiMathCalculator extends JECGuiContainer {
     }
 
     @Override
-    protected void actionPerformed(GuiButton button) throws IOException {
-        actionPerformed(button.id);
-    }
-
-    void actionPerformed(int i) {
-        if (i == -1)
-            return;
-        if (i < 10) {
-            current = current.appendChar((char)('0' + i));
-        } else if (i == 10) {
-            current = current.appendChar('0');
-            current = current.appendChar('0');
-        } else {
-            switch (i) {
-                case 11:
-                    current = current.appendChar('.');
-                    break;
-                case 12:
-                    current = current.removeChar();
-                    break;
-                case 13:
-                    updateResult();
-                    sign = enumSign.PLUS;
-                    break;
-                case 15:
-                    updateResult();
-                    sign = enumSign.MINUS;
-                    break;
-                case 17:
-                    updateResult();
-                    sign = enumSign.PRODUCT;
-                    break;
-                case 18:
-                    updateResult();
-                    sign = enumSign.DIVIDE;
-                    break;
-                case 16:
-                    updateResult();
-                    sign = enumSign.NONE;
-                    break;
-                case 14:
-                    current = new NumStack();
-                    record = null;
-                    sign = enumSign.NONE;
-                    break;
-                default:
-                    throw new IllegalPositionException();
-            }
-        }
-    }
-
-    @Override
     public void onGuiClosed() {
         super.onGuiClosed();
         updateItemFromGui();
-    }
-
-    @Override
-    public void handleKeyboardInput() throws IOException {
-        super.handleKeyboardInput();
-        actionPerformed(getButton());
-    }
-
-    int getButton() {
-        if (!Keyboard.getEventKeyState())
-            return -1;
-        char c = Keyboard.getEventCharacter();
-        int code = Keyboard.getEventKey();
-        if (c >= '0' && c <= '9') {
-            return c - '0';
-        } else {
-            switch (c) {
-                case '/': return 18;
-                case '*': return 17;
-                case '+': return 13;
-                case '-': return 15;
-                case '=': return 16;
-                case '.': return 11;
-            }
-            switch (code) {
-                case 156:
-                    return 16;
-                case 28: return 16;
-                case 14: return 12;
-                case 211: return 14;
-                default: return -1;
-            }
-        }
     }
 
     void updateResult() {
@@ -641,20 +581,6 @@ public class GuiMathCalculator extends JECGuiContainer {
                     --posDot;
                 }
             }
-        }
-    }
-
-    class MyButton extends JECGuiButton {
-        public MyButton(int id, int xPos, int yPos, int width, int height, String displayString) {
-            super(id, xPos, yPos, width, height, displayString, GuiMathCalculator.this, false, false);
-        }
-
-        @Override
-        public void drawButton(Minecraft mc, int mouseX, int mouseY) {
-            if(getButton() == id)
-                super.drawButton(mc, xPosition, yPosition);
-            else
-                super.drawButton(mc, mouseX, mouseY);
         }
     }
 }

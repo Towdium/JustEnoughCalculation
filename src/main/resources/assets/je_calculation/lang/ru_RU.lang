@@ -30,6 +30,7 @@ gui.guiListSearch.all=Всё
 gui.guiOreDict.add=Добавить
 
 gui.guiPicker.search=Поиск:
+gui.guiPickerFluid.confirm=Подтвердить
 
 item.itemCalculator.name=Калькулятор создания
 item.itemMathCalculator.name=Математический калькулятор

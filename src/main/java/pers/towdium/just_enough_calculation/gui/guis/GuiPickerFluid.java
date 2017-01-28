@@ -1,7 +1,6 @@
 package pers.towdium.just_enough_calculation.gui.guis;
 
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
@@ -11,7 +10,6 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
-import pers.towdium.just_enough_calculation.gui.JECGuiButton;
 import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper;
 
 import java.io.IOException;
@@ -44,8 +42,18 @@ public class GuiPickerFluid extends GuiPicker {
     public void init() {
         super.init();
         fieldAmount = new GuiTextField(0, fontRendererObj, guiLeft + 39, guiTop + 8, 58, 18);
-        fieldAmount.setText(inventorySlots.getSlot(36).getStack() == null ? "" : String.valueOf(ItemStackHelper.NBT.getAmount(inventorySlots.getSlot(36).getStack())));
-        buttonConfirm = new JECGuiButton(2, guiLeft + 119, guiTop + 7, 50, 20, "confirm", this);
+        fieldAmount.setText(inventorySlots.getSlot(36).getStack() == null ?
+                "" : String.valueOf(ItemStackHelper.NBT.getAmount(inventorySlots.getSlot(36).getStack())));
+        buttonConfirm = new JECGuiButton(2, guiLeft + 119, guiTop + 7, 50, 20, "confirm").setLsnLeft(() -> {
+            int amount;
+            try {
+                amount = Integer.parseInt(fieldAmount.getText());
+            } catch (NumberFormatException e) {
+                fieldAmount.setTextColor(0xFF0000);
+                return;
+            }
+            callback.accept(ItemStackHelper.NBT.setAmount(inventorySlots.getSlot(36).getStack(), amount));
+        });
         buttonConfirm.enabled = inventorySlots.getSlot(36).getHasStack();
         buttonList.add(buttonConfirm);
     }
@@ -63,26 +71,26 @@ public class GuiPickerFluid extends GuiPicker {
         fieldAmount.drawTextBox();
         drawCenteredStringWithoutShadow(fontRendererObj, "mb", guiLeft + 107, guiTop + 13, 4210752);
         fontRendererObj.drawString(localization("search"), guiLeft + 7, guiTop + 51, 4210752);
-        fontRendererObj.drawString("x", 30, 13, 4210752);
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        fontRendererObj.drawString("x", 30, 13, 4210752);
-
-    }
-
-    @Override
     GuiTextField getSearchField(FontRenderer renderer) {
-        return new GuiTextField(0, renderer, guiLeft + 52, guiTop + 46, 75, 18);
+        String textConfirm = localization("confirm");
+        return new GuiTextField(0, renderer, guiLeft + fontRendererObj.getStringWidth(textConfirm) + 15,
+                guiTop + 46, 75, 18);
     }
 
     @Override
     protected void onItemStackPick(ItemStack itemStack) {
         inventorySlots.getSlot(36).putStack(itemStack);
-        buttonConfirm.enabled = true;
+        try {
+            //noinspection ResultOfMethodCallIgnored
+            Integer.parseInt(fieldAmount.getText());
+            buttonConfirm.enabled = true;
+        } catch (NumberFormatException e) {
+            fieldAmount.setTextColor(0xFF0000);
+        }
     }
 
     @Override
@@ -100,25 +108,11 @@ public class GuiPickerFluid extends GuiPicker {
                 //noinspection ResultOfMethodCallIgnored
                 Long.parseLong(fieldAmount.getText());
                 fieldAmount.setTextColor(0xFFFFFF);
+                buttonConfirm.enabled = inventorySlots.getSlot(36).getHasStack();
             } catch (NumberFormatException e) {
                 fieldAmount.setTextColor(0xFF0000);
             }
         }
-    }
-
-    @Override
-    protected void actionPerformed(GuiButton button) throws IOException {
-        if (button.id == 2) {
-            int amount;
-            try {
-                amount = Integer.parseInt(fieldAmount.getText());
-            } catch (NumberFormatException e) {
-                fieldAmount.setTextColor(0xFF0000);
-                return;
-            }
-            callback.accept(ItemStackHelper.NBT.setAmount(inventorySlots.getSlot(36).getStack(), amount));
-        }
-        super.actionPerformed(button);
     }
 
     public static class ContainerPickerFluid extends JECContainer {

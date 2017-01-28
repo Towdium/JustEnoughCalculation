@@ -5,16 +5,15 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import pers.towdium.just_enough_calculation.core.Recipe;
-import pers.towdium.just_enough_calculation.gui.JECGuiButton;
 import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
 import pers.towdium.just_enough_calculation.util.Utilities;
 import pers.towdium.just_enough_calculation.util.helpers.PlayerRecordHelper;
 import pers.towdium.just_enough_calculation.util.wrappers.Pair;
 
 import javax.annotation.Nullable;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * Author:  Towdium
@@ -42,14 +41,42 @@ public abstract class GuiList extends JECGuiContainer {
 
     @Override
     public void init() {
-        buttonList.add(new JECGuiButton(0, guiLeft + 7, guiTop + 133, 13, 12, "<", this, false, false));
-        buttonList.add(new JECGuiButton(1, guiLeft + 156, guiTop + 133, 13, 12, ">", this, false, false));
-        buttonList.add(new JECGuiButton(2, guiLeft + 7, guiTop + 147, 13, 12, "<", this, false, false));
-        buttonList.add(new JECGuiButton(3, guiLeft + 156, guiTop + 147, 13, 12, ">", this, false, false));
+        Function<JECGuiButton, JECGuiButton> genButtonEdit = (button) -> {
+            button.setLsnLeft(() -> {
+                Pair<String, Integer> pair = result.get((page - 1) * row + (button.id - 4) / 2);
+                Utilities.openGui(new GuiEditor(this, pair));
+            });
+            return button;
+        };
+        Function<JECGuiButton, JECGuiButton> genButtonDel = (button) -> {
+            button.setLsnLeft(() -> {
+                Pair<String, Integer> pair = result.get((page - 1) * row + (button.id - 5) / 2);
+                PlayerRecordHelper.removeRecipe(pair.one, pair.two);
+                updateLayout();
+            });
+            return button;
+        };
+
+        buttonList.add(new JECGuiButton(0, guiLeft + 7, guiTop + 133, 13, 12, "<", false).setLsnLeft(() -> {
+            --group;
+            updateLayout();
+        }));
+        buttonList.add(new JECGuiButton(1, guiLeft + 156, guiTop + 133, 13, 12, ">", false).setLsnLeft(() -> {
+            ++group;
+            updateLayout();
+        }));
+        buttonList.add(new JECGuiButton(2, guiLeft + 7, guiTop + 147, 13, 12, "<", false).setLsnLeft(() -> {
+            --page;
+            updateLayout();
+        }));
+        buttonList.add(new JECGuiButton(3, guiLeft + 156, guiTop + 147, 13, 12, ">", false).setLsnLeft(() -> {
+            ++page;
+            updateLayout();
+        }));
         buttons = new ArrayList<>(row * 2);
         for (int i = 0; i < row; i++) {
-            buttons.add(new JECGuiButton(2 * i + 4, guiLeft + 83, guiTop + top + 20 * i, 41, 18, "edit", this));
-            buttons.add(new JECGuiButton(1 + 2 * i + 4, guiLeft + 128, guiTop + top + 20 * i, 41, 18, "delete", this));
+            buttons.add(genButtonEdit.apply(new JECGuiButton(2 * i + 4, guiLeft + 83, guiTop + top + 20 * i, 41, 18, "edit")));
+            buttons.add(genButtonDel.apply(new JECGuiButton(1 + 2 * i + 4, guiLeft + 128, guiTop + top + 20 * i, 41, 18, "delete")));
         }
         buttonList.addAll(buttons);
     }
@@ -61,37 +88,6 @@ public abstract class GuiList extends JECGuiContainer {
                 PlayerRecordHelper.getSizeGroup() > group ? PlayerRecordHelper.getGroupName(group) :
                         localization("noRecord"), 7, 169, 133, 145, 0xFFFFFF);
         drawCenteredStringMultiLine(fontRendererObj, page + "/" + total, 7, 169, 147, 159, 0xFFFFFF);
-    }
-
-    @Override
-    protected void actionPerformed(GuiButton button) throws IOException {
-        switch (button.id) {
-            case 0:
-                --group;
-                updateLayout();
-                break;
-            case 1:
-                ++group;
-                updateLayout();
-                break;
-            case 2:
-                --page;
-                updateLayout();
-                break;
-            case 3:
-                ++page;
-                updateLayout();
-                break;
-        }
-        if (button.id <= row * 2 + 3 && button.id > 3) {
-            Pair<String, Integer> pair = result.get((page - 1) * row + (button.id - 4) / 2);
-            if (button.id % 2 != 0) {
-                PlayerRecordHelper.removeRecipe(pair.one, pair.two);
-                updateLayout();
-            } else {
-                Utilities.openGui(new GuiEditor(this, pair));
-            }
-        }
     }
 
     protected void putRecipe(int position, @Nullable Recipe recipe) {

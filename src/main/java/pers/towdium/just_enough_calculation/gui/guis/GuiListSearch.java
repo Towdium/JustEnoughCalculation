@@ -1,21 +1,17 @@
 package pers.towdium.just_enough_calculation.gui.guis;
 
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.core.Recipe;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
-import pers.towdium.just_enough_calculation.gui.JECGuiButton;
 import pers.towdium.just_enough_calculation.util.Utilities;
 import pers.towdium.just_enough_calculation.util.exception.IllegalPositionException;
 import pers.towdium.just_enough_calculation.util.helpers.PlayerRecordHelper;
 import pers.towdium.just_enough_calculation.util.wrappers.Pair;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -48,7 +44,13 @@ public class GuiListSearch extends GuiList {
     @Override
     public void init() {
         super.init();
-        buttonMode = new JECGuiButton(14, 117 + guiLeft, 7 + guiTop, 52, 20, "", this, false, false);
+        buttonMode = new JECGuiButton(14, 117 + guiLeft, 7 + guiTop, 52, 20, "", false).setLsnLeft(() -> {
+            mode = EnumMode.values()[Utilities.circulate(mode.ordinal(), 4, true)];
+            updateLayout();
+        }).setLsnRight(() -> {
+            mode = EnumMode.values()[Utilities.circulate(mode.ordinal(), 4, false)];
+            updateLayout();
+        });
         buttonList.add(buttonMode);
     }
 
@@ -68,7 +70,8 @@ public class GuiListSearch extends GuiList {
                 func = recipe -> recipe.getIndexCatalyst(itemStack) != -1;
                 break;
             case ALL:
-                func = recipe -> recipe.getIndexCatalyst(itemStack) != -1 || recipe.getIndexOutput(itemStack) != -1 || recipe.getIndexInput(itemStack) != -1;
+                func = recipe -> recipe.getIndexCatalyst(itemStack) != -1 || recipe.getIndexOutput(itemStack) != -1
+                        || recipe.getIndexInput(itemStack) != -1;
                 break;
             default:
                 throw new IllegalPositionException();
@@ -85,7 +88,8 @@ public class GuiListSearch extends GuiList {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID, "textures/gui/guiListSearch.png"));
+        this.mc.getTextureManager().bindTexture(
+                new ResourceLocation(JustEnoughCalculation.Reference.MODID, "textures/gui/guiListSearch.png"));
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
     }
 
@@ -94,7 +98,8 @@ public class GuiListSearch extends GuiList {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
         ItemStack itemStack = inventorySlots.getSlot(20).getStack();
         if (itemStack != null) {
-            drawString(fontRendererObj, Utilities.cutString(itemStack.getDisplayName(), 72, fontRendererObj), 35, 13, 0xFFFFFF);
+            drawString(fontRendererObj,
+                    Utilities.cutString(itemStack.getDisplayName(), 72, fontRendererObj), 35, 13, 0xFFFFFF);
         }
     }
 
@@ -113,25 +118,6 @@ public class GuiListSearch extends GuiList {
     public void updateLayout() {
         super.updateLayout();
         buttonMode.displayString = localization(mode.toString().toLowerCase());
-    }
-
-    @Override
-    protected void actionPerformed(GuiButton button) throws IOException {
-        if (button.id == 14) {
-            mode = EnumMode.values()[Utilities.circulate(mode.ordinal(), 4, true)];
-            updateLayout();
-        } else
-            super.actionPerformed(button);
-    }
-
-    @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        if (buttonMode.isMouseOver() && mouseButton == 1) {
-            mode = EnumMode.values()[Utilities.circulate(mode.ordinal(), 4, false)];
-            updateLayout();
-            mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
-        }
-        super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
     @Override

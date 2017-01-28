@@ -37,7 +37,8 @@ public class GuiPickerOreDict extends GuiPicker {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID, "textures/gui/guiPickerOreDict.png"));
+        this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID,
+                "textures/gui/guiPickerOreDict.png"));
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
         fontRendererObj.drawString(localization("search"), guiLeft + 7, guiTop + 13, 4210752);
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
@@ -45,7 +46,8 @@ public class GuiPickerOreDict extends GuiPicker {
 
     @Override
     GuiTextField getSearchField(FontRenderer renderer) {
-        return new GuiTextField(0, renderer, guiLeft + 52, guiTop + 8, 75, 18);
+        String textConfirm = localization("search");
+        return new GuiTextField(0, renderer, guiLeft + fontRendererObj.getStringWidth(textConfirm) + 15, guiTop + 8, 75, 18);
     }
 
     @Override

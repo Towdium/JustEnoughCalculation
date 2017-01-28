@@ -1,10 +1,8 @@
 package pers.towdium.just_enough_calculation.gui.guis;
 
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -14,7 +12,6 @@ import pers.towdium.just_enough_calculation.JECConfig;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.core.Calculator;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
-import pers.towdium.just_enough_calculation.gui.JECGuiButton;
 import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
 import pers.towdium.just_enough_calculation.network.packets.PacketSyncCalculator;
 import pers.towdium.just_enough_calculation.util.Utilities;
@@ -62,13 +59,29 @@ public class GuiCalculator extends JECGuiContainer {
 
     @Override
     public void init() {
-        buttonSearch = new JECGuiButton(1, guiLeft + 119, guiTop + 7, 50, 20, "search", this);
-        buttonAdd = new JECGuiButton(2, guiLeft + 7, guiTop + 53, 52, 20, "add", this);
-        buttonView = new JECGuiButton(3, guiLeft + 63, guiTop + 53, 52, 20, "records", this);
-        buttonSettings = new JECGuiButton(4, guiLeft + 119, guiTop + 53, 50, 20, "oreDict", this);
-        buttonLeft = new JECGuiButton(5, guiLeft + 7, guiTop + 139, 14, 20, "<", this, false, false);
-        buttonRight = new JECGuiButton(6, guiLeft + 72, guiTop + 139, 14, 20, ">", this, false, false);
-        buttonMode = new JECGuiButton(7, guiLeft + 90, guiTop + 139, 79, 20, "", this, false, false);
+        buttonSearch = new JECGuiButton(1, guiLeft + 119, guiTop + 7, 50, 20, "search").setLsnLeft(() ->
+                Utilities.openGui(new GuiListSearch(this, inventorySlots.getSlot(0).getStack())));
+        buttonAdd = new JECGuiButton(2, guiLeft + 7, guiTop + 53, 52, 20, "add").setLsnLeft(() ->
+                Utilities.openGui(new GuiEditor(this, null)));
+        buttonView = new JECGuiButton(3, guiLeft + 63, guiTop + 53, 52, 20, "records").setLsnLeft(() ->
+                Utilities.openGui(new GuiListViewer(this)));
+        buttonSettings = new JECGuiButton(4, guiLeft + 119, guiTop + 53, 50, 20, "oreDict").setLsnLeft(() ->
+                Utilities.openGui(new GuiOreDict(this)));
+        buttonLeft = new JECGuiButton(5, guiLeft + 7, guiTop + 139, 14, 20, "<", false).setLsnLeft(() -> {
+            ++page;
+            updateContent();
+        });
+        buttonRight = new JECGuiButton(6, guiLeft + 72, guiTop + 139, 14, 20, ">", false).setLsnLeft(() -> {
+            --page;
+            updateContent();
+        });
+        buttonMode = new JECGuiButton(7, guiLeft + 90, guiTop + 139, 79, 20, "", false).setLsnLeft(() -> {
+            mode = EnumMode.values()[Utilities.circulate(mode.ordinal(), EnumMode.values().length, true)];
+            updateContent();
+        }).setLsnRight(() -> {
+            mode = EnumMode.values()[Utilities.circulate(mode.ordinal(), EnumMode.values().length, false)];
+            updateContent();
+        });
         buttonList.add(buttonSearch);
         buttonList.add(buttonAdd);
         buttonList.add(buttonView);
@@ -97,38 +110,8 @@ public class GuiCalculator extends JECGuiContainer {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        fontRendererObj.drawString("x", 30, 13, 4210752);
         drawCenteredString(fontRendererObj, localization("recent"), 144, 36, 0xFFFFFF);
         drawCenteredString(fontRendererObj, page + "/" + total, 47, 145, 0xFFFFFF);
-    }
-
-    @Override
-    protected void actionPerformed(GuiButton button) throws IOException {
-
-        switch (button.id) {
-            case 1:
-                Utilities.openGui(new GuiListSearch(this, inventorySlots.getSlot(0).getStack()));
-                return;
-            case 2:
-                Utilities.openGui(new GuiEditor(this, null));
-                return;
-            case 3:
-                Utilities.openGui(new GuiListViewer(this));
-                return;
-            case 4:
-                Utilities.openGui(new GuiOreDict(this));
-            case 5:
-                ++page;
-                updateContent();
-                return;
-            case 6:
-                --page;
-                updateContent();
-                return;
-            case 7:
-                mode = EnumMode.values()[Utilities.circulate(mode.ordinal(), EnumMode.values().length, true)];
-                updateContent();
-        }
     }
 
     @Override
@@ -137,7 +120,7 @@ public class GuiCalculator extends JECGuiContainer {
     }
 
     @Override
-    protected BiFunction<Long, ItemStackHelper.EnumStackAmountType, String> getFormer() {
+    protected BiFunction<Long, ItemStackHelper.EnumStackAmountType, String> getFormer(int id) {
         return (aLong, type) -> type.getStringResult(aLong);
     }
 
@@ -169,11 +152,6 @@ public class GuiCalculator extends JECGuiContainer {
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         textFieldAmount.mouseClicked(mouseX, mouseY, mouseButton);
-        if (buttonMode.isMouseOver() && mouseButton == 1) {
-            mode = EnumMode.values()[Utilities.circulate(mode.ordinal(), EnumMode.values().length, false)];
-            updateContent();
-            mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
-        }
         super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
@@ -240,8 +218,16 @@ public class GuiCalculator extends JECGuiContainer {
     void updateItemFromGui() {
         Singleton<ItemStack> calc = new Singleton<>(null);
         calc.predicate = stack -> stack.getItem() == JustEnoughCalculation.itemCalculator;
-        calc.push(mc.thePlayer.inventory.getCurrentItem());
-        calc.push(mc.thePlayer.inventory.offHandInventory[0]);
+        try {
+            calc.push(mc.thePlayer.inventory.getCurrentItem());
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+        try {
+            calc.push(mc.thePlayer.inventory.offHandInventory[0]);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
         if (calc.value != null) {
             NBTTagCompound tag = calc.value.getSubCompound(keyRecipe, true);
             tag.setString(keyAmount, textFieldAmount.getText());
@@ -262,8 +248,16 @@ public class GuiCalculator extends JECGuiContainer {
     void updateGuiFromItem() {
         Singleton<ItemStack> calc = new Singleton<>(null);
         calc.predicate = stack -> stack.getItem() == JustEnoughCalculation.itemCalculator;
-        calc.push(mc.thePlayer.inventory.getCurrentItem());
-        calc.push(mc.thePlayer.inventory.offHandInventory[0]);
+        try {
+            calc.push(mc.thePlayer.inventory.getCurrentItem());
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+        try {
+            calc.push(mc.thePlayer.inventory.offHandInventory[0]);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
         if (calc.value != null) {
             NBTTagCompound tag = calc.value.getSubCompound(keyRecipe, true);
             textFieldAmount.setText(tag.getString(keyAmount));
