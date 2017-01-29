@@ -14,7 +14,6 @@ import javax.annotation.Nullable;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * Author:  Towdium
@@ -175,6 +174,8 @@ public class ItemStackHelper {
     }
 
     public static class NBT {
+        static NBTTagCompound empty = new NBTTagCompound();
+
         public static boolean equalsIgnoreJEC(@Nullable NBTTagCompound a, @Nullable NBTTagCompound b) {
             if (a == null && b == null) {
                 return true;
@@ -297,11 +298,8 @@ public class ItemStackHelper {
         }
 
         static NBTTagCompound getTag(@Nonnull ItemStack itemStack, boolean isolate) {
-            return isolate ? itemStack.getSubCompound(JustEnoughCalculation.Reference.MODID, true) :
-                    itemStack.hasTagCompound() ? itemStack.getTagCompound() : ((Supplier<NBTTagCompound>) () -> {
-                        itemStack.setTagCompound(new NBTTagCompound());
-                        return itemStack.getTagCompound();
-                    }).get();
+            NBTTagCompound n = itemStack.getSubCompound(JustEnoughCalculation.Reference.MODID, false);
+            return isolate ? (n == null ? empty : n) : itemStack.hasTagCompound() ? itemStack.getTagCompound() : empty;
         }
     }
 
