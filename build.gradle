@@ -40,9 +40,6 @@ minecraft {
 dependencies {
     runtime "mezz.jei:jei_${mc_version}:${jei_version}"
     deobfCompile "mezz.jei:jei_${mc_version}:${jei_version}:api"
-    //compile "codechicken:CodeChickenCore:${mc_version}-${ccc_version}:deobf"
-    //compile "codechicken:CodeChickenLib:${mc_version}-${ccl_version}:deobf"
-    //compile "codechicken:NotEnoughItems:${mc_version}-${nei_version}:deobf"
 }
 
 processResources
