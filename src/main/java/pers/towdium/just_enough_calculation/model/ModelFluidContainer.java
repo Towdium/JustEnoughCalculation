@@ -11,13 +11,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.IPerspectiveAwareModel;
 import net.minecraftforge.client.model.ItemTextureQuadConverter;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fluids.Fluid;
+import org.apache.commons.lang3.tuple.Pair;
 import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.vecmath.Matrix4f;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +31,7 @@ import java.util.Map;
  * Date:   2016/7/22.
  */
 
-public class ModelFluidContainer implements IBakedModel {
+public class ModelFluidContainer implements IBakedModel, IPerspectiveAwareModel {
     public static final ModelResourceLocation modelResourceLocation = new ModelResourceLocation("je_calculation:itemFluidContainer", "inventory");
     public static final ResourceLocation liquidResourceLocation = new ResourceLocation("je_calculation:items/itemFluidContainer_liquid");
     //public static final ResourceLocation coverResourceLocation = new ResourceLocation("je_calculation:items/itemFluidContainer_cover");
@@ -37,7 +40,6 @@ public class ModelFluidContainer implements IBakedModel {
     IBakedModel originalModel;
     TextureAtlasSprite particle;
     List<BakedQuad> buffer;
-
 
     public ModelFluidContainer(IBakedModel originalModel, TextureAtlasSprite particle, int color) {
         this.originalModel = originalModel;
@@ -95,6 +97,16 @@ public class ModelFluidContainer implements IBakedModel {
         return originalModel.getItemCameraTransforms();
     }
 
+    @Override
+    public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType) {
+        if (originalModel instanceof IPerspectiveAwareModel) {
+            Pair<? extends IBakedModel, Matrix4f> ret = ((IPerspectiveAwareModel) originalModel).handlePerspective(cameraTransformType);
+            return Pair.of(this, ret.getRight());
+        } else {
+            return Pair.of(this, TRSRTransformation.identity().getMatrix());
+        }
+    }
+
     static class ModelFluidContainerOverride extends ItemOverrideList {
 
         static Map<String, IBakedModel> buffer = new HashMap<>();
@@ -103,9 +115,10 @@ public class ModelFluidContainer implements IBakedModel {
             super(ImmutableList.of());
         }
 
+        @SuppressWarnings("NullableProblems")
         @Override
         @Nonnull
-        public IBakedModel handleItemState(@Nonnull IBakedModel originalModel, ItemStack stack, @Nonnull World world, @Nonnull EntityLivingBase entity) {
+        public IBakedModel handleItemState(@Nonnull IBakedModel originalModel, ItemStack stack, World world, EntityLivingBase entity) {
             Fluid fluid = ItemStackHelper.NBT.getFluid(stack);
             if (fluid != null && buffer.containsKey(fluid.getName()))
                 return buffer.get(fluid.getName());

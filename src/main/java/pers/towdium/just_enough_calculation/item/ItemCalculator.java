@@ -16,6 +16,7 @@ import pers.towdium.just_enough_calculation.network.packets.PacketSyncCalculator
 import pers.towdium.just_enough_calculation.util.Utilities;
 import pers.towdium.just_enough_calculation.util.exception.IllegalPositionException;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -30,7 +31,8 @@ public class ItemCalculator extends Item {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
+    @Nonnull
+    public ActionResult<ItemStack> onItemRightClick(@Nonnull ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
         if (worldIn.isRemote) {
             if((Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))){
                 Utilities.setField(itemStackIn, Utilities.circulate(itemStackIn.getMetadata(), 2, true), "field_77991_e", "itemDamage");
@@ -50,6 +52,7 @@ public class ItemCalculator extends Item {
     }
 
     @Override
+    @Nonnull
     public String getUnlocalizedName(ItemStack stack) {
         switch (stack.getMetadata()) {
             case 0: return "item.itemCalculator";

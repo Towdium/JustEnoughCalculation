@@ -10,6 +10,7 @@ import pers.towdium.just_enough_calculation.util.wrappers.Singleton;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -107,7 +108,7 @@ public class Calculator {
         List<ItemStack> procedure = new ArrayList<>();
 
         public CostList(List<ItemStack> inventory) {
-            inventory.stream().filter(stack -> stack != null).forEach(stack -> items.add(ItemStackHelper.toItemStackJEC(stack.copy())));
+            inventory.stream().filter(Objects::nonNull).forEach(stack -> items.add(ItemStackHelper.toItemStackJEC(stack.copy())));
         }
 
         public CostList(ItemStack itemStack) {
@@ -136,7 +137,7 @@ public class Calculator {
                 merge(EnumMergeType.NORMAL_MERGE, catalyst, caller.catalyst);
                 merge(EnumMergeType.CATALYST_CANCEL, items, callee.items);
                 merge(EnumMergeType.CATALYST_CANCEL, catalyst, callee.items);
-                caller.procedure.stream().forEachOrdered(itemStack -> procedure.add(itemStack.copy()));
+                caller.procedure.forEach(itemStack -> procedure.add(itemStack.copy()));
             } else {
                 merge(EnumMergeType.NORMAL_MERGE, items, caller.items);
                 merge(EnumMergeType.NORMAL_MERGE, catalyst, caller.catalyst);
@@ -144,8 +145,8 @@ public class Calculator {
                 merge(EnumMergeType.CATALYST_CANCEL, catalyst, callee.catalyst);
                 merge(EnumMergeType.NORMAL_MERGE, catalyst, callee.catalyst);
                 merge(EnumMergeType.CATALYST_CANCEL, catalyst, callee.items);
-                caller.procedure.stream().forEachOrdered(itemStack -> procedure.add(itemStack.copy()));
-                callee.procedure.stream().forEachOrdered(itemStack -> procedure.add(itemStack.copy()));
+                caller.procedure.forEach(itemStack -> procedure.add(itemStack.copy()));
+                callee.procedure.forEach(itemStack -> procedure.add(itemStack.copy()));
             }
         }
 
