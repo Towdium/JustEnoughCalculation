@@ -45,18 +45,18 @@ public class ModelFluidContainer implements IBakedModel, IPerspectiveAwareModel 
         this.originalModel = originalModel;
         this.particle = particle;
         this.color = color;
+        if (particle != null) {
+            buffer = new ArrayList<>(2);
+            TextureAtlasSprite fluid = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(liquidResourceLocation.toString());
+            buffer.addAll(ItemTextureQuadConverter.convertTexture(DefaultVertexFormats.ITEM, TRSRTransformation.identity(), fluid, particle, 7.498f / 16f, EnumFacing.NORTH, color));
+            buffer.addAll(ItemTextureQuadConverter.convertTexture(DefaultVertexFormats.ITEM, TRSRTransformation.identity(), fluid, particle, 8.502f / 16f, EnumFacing.SOUTH, color));
+        } else
+            buffer = new ArrayList<>();
     }
 
     @Override
     @Nonnull
     public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
-        if (buffer == null && particle != null) {
-            buffer = new ArrayList<>(2);
-            TextureAtlasSprite fluid = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(liquidResourceLocation.toString());
-            buffer.addAll(ItemTextureQuadConverter.convertTexture(DefaultVertexFormats.ITEM, TRSRTransformation.identity(), fluid, particle, 7.498f / 16f, EnumFacing.NORTH, color));
-            buffer.addAll(ItemTextureQuadConverter.convertTexture(DefaultVertexFormats.ITEM, TRSRTransformation.identity(), fluid, particle, 8.502f / 16f, EnumFacing.SOUTH, color));
-        } else if (buffer == null)
-            buffer = new ArrayList<>();
         ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
         builder.addAll(originalModel.getQuads(state, side, rand));
         builder.addAll(buffer);

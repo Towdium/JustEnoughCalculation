@@ -1,5 +1,6 @@
 package pers.towdium.just_enough_calculation.network;
 
+import com.google.common.collect.ImmutableList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
@@ -8,6 +9,7 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.core.Recipe;
+import pers.towdium.just_enough_calculation.item.ItemLabel;
 import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper;
 import pers.towdium.just_enough_calculation.util.wrappers.Pair;
 import pers.towdium.just_enough_calculation.util.wrappers.Singleton;
@@ -26,6 +28,7 @@ import java.util.function.Function;
 public class PlayerHandlerSP implements IProxy.IPlayerHandler {
     List<ItemStack> oreDictPref = new ArrayList<>();
     LinkedHashMap<String, List<Recipe>> recipes = new LinkedHashMap<>();
+    HashMap<String, Pair<Integer, ItemStack>> labelCounter = new HashMap<>();
 
     public void addRecipe(Recipe recipe, String group) {
         Singleton<Boolean> i = new Singleton<>(false);
@@ -42,6 +45,7 @@ public class PlayerHandlerSP implements IProxy.IPlayerHandler {
             } else {
                 list.add(recipe);
             }
+            updateCounter(recipe, true);
         }
     }
 
@@ -80,6 +84,10 @@ public class PlayerHandlerSP implements IProxy.IPlayerHandler {
         if (temp == null) {
             throw new RuntimeException("Key " + group + " not found in the map.");
         } else {
+            Recipe r = temp.get(index);
+            if (r != null) {
+                updateCounter(r, false);
+            }
             temp.remove(index);
             if (temp.size() == 0) {
                 recipes.remove(group);
@@ -89,6 +97,9 @@ public class PlayerHandlerSP implements IProxy.IPlayerHandler {
 
     public void setRecipe(String group, String groupOld, int index, Recipe recipe) {
         if (group.equals(groupOld)) {
+            Recipe r = recipes.get(groupOld).get(index);
+            updateCounter(r, false);
+            updateCounter(recipe, true);
             recipes.get(groupOld).set(index, recipe);
         } else {
             removeRecipe(groupOld, index);
@@ -232,6 +243,12 @@ public class PlayerHandlerSP implements IProxy.IPlayerHandler {
     public void handleJoin(EntityJoinWorldEvent event) {
     }
 
+    public List<ItemStack> getListLabel() {
+        ImmutableList.Builder<ItemStack> b = ImmutableList.builder();
+        labelCounter.forEach(((string, pair) -> b.add(pair.two)));
+        return b.build();
+    }
+
     public void readFromNBT(NBTTagCompound tag) throws IllegalArgumentException {
         NBTTagList recipes = tag.getTagList("recipes", 10);
         for (int i = 0; i < recipes.tagCount(); i++) {
@@ -239,7 +256,8 @@ public class PlayerHandlerSP implements IProxy.IPlayerHandler {
             String name = group.getString("name");
             NBTTagList content = group.getTagList("content", 10);
             for (int j = 0; j < content.tagCount(); j++) {
-                addRecipe(new Recipe(new ItemStack[4], new ItemStack[4], new ItemStack[12]).readFromNBT(content.getCompoundTagAt(j)), name);
+                Recipe r = new Recipe(new ItemStack[4], new ItemStack[4], new ItemStack[12]).readFromNBT(content.getCompoundTagAt(j));
+                addRecipe(r, name);
             }
         }
         NBTTagList oreDictPref = tag.getTagList("oreDictPref", 10);
@@ -247,6 +265,38 @@ public class PlayerHandlerSP implements IProxy.IPlayerHandler {
             NBTTagCompound stack = oreDictPref.getCompoundTagAt(i);
             addOreDictPref(ItemStack.loadItemStackFromNBT(stack));
         }
+    }
+
+    void updateCounter(Recipe r, boolean add) {
+        updateCounter(r.getCatalyst(), add);
+        updateCounter(r.getInput(), add);
+        updateCounter(r.getOutput(), add);
+    }
+
+    void updateCounter(List<ItemStack> stacks, boolean add) {
+        stacks.stream().filter((itemStack -> itemStack != null && itemStack.getItem() instanceof ItemLabel)).forEach(itemStack -> {
+            String name = ItemLabel.getName(itemStack);
+            if (name == null) {
+                JustEnoughCalculation.log.info("An invalid ItemLabel is found in records");
+            } else {
+                if (labelCounter.containsKey(name)) {
+                    Pair<Integer, ItemStack> i = labelCounter.get(name);
+                    if (add) {
+                        i.one++;
+                    } else {
+                        if (i.one == 1) {
+                            labelCounter.remove(name);
+                        } else {
+                            i.one--;
+                        }
+                    }
+                } else {
+                    if (add) {
+                        labelCounter.put(name, new Pair<>(1, ItemLabel.createStack(name)));
+                    }
+                }
+            }
+        });
     }
 
     public NBTTagCompound writeToNBT() {

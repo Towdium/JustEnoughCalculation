@@ -12,6 +12,8 @@ public interface IProxy {
 
     void preInit();
 
+    void postInit();
+
     IPlayerHandler getPlayerHandler();
 
     interface IPlayerHandler {

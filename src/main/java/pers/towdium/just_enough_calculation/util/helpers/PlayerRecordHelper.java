@@ -81,6 +81,10 @@ public class PlayerRecordHelper {
         return playerHandler.getAllRecipeOutput(itemStack);
     }
 
+    public static List<ItemStack> getListLabel() {
+        return playerHandler.getListLabel();
+    }
+
     public static void setPlayerHandler(PlayerHandlerSP handler) {
         playerHandler = handler;
     }

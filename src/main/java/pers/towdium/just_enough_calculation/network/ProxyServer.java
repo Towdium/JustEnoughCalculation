@@ -19,6 +19,10 @@ public class ProxyServer implements IProxy {
     }
 
     @Override
+    public void postInit() {
+    }
+
+    @Override
     public IPlayerHandler getPlayerHandler() {
         return playerHandler;
     }

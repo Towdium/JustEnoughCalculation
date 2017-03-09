@@ -76,8 +76,8 @@ public class GuiPickerFluid extends GuiPicker {
 
     @Override
     GuiTextField getSearchField(FontRenderer renderer) {
-        String textConfirm = localization("confirm");
-        return new GuiTextField(0, renderer, guiLeft + fontRendererObj.getStringWidth(textConfirm) + 15,
+        String textSearch = localization("search");
+        return new GuiTextField(0, renderer, guiLeft + fontRendererObj.getStringWidth(textSearch) + 15,
                 guiTop + 46, 75, 18);
     }
 

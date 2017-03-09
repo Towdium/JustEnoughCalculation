@@ -33,7 +33,10 @@ gui.guiOreDict.add=Add
 
 gui.guiPicker.search=Search:
 gui.guiPickerFluid.confirm=Confirm
+gui.guiPickerLabelNew.create=Create
 
 item.itemCalculator.name=Crafting Calculator
 item.itemMathCalculator.name=Math Calculator
 item.itemFluidContainer.name=Fluid Container
+item.itemLabel.name=Label
+item.itemLabel.format=Label: %s

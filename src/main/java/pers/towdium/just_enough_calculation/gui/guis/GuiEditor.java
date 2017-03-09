@@ -11,6 +11,7 @@ import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.core.Recipe;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
 import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
+import pers.towdium.just_enough_calculation.item.ItemLabel;
 import pers.towdium.just_enough_calculation.util.Utilities;
 import pers.towdium.just_enough_calculation.util.exception.IllegalPositionException;
 import pers.towdium.just_enough_calculation.util.function.QuaConsumer;
@@ -235,6 +236,14 @@ public class GuiEditor extends JECGuiContainer {
 
     @Override
     public void onItemStackSet(int index) {
+        ItemStack stack = inventorySlots.getSlot(index).getStack();
+        if (stack != null && stack.getItem() instanceof ItemLabel && ItemLabel.getName(stack) == null) {
+            inventorySlots.getSlot(index).putStack(null);
+            Utilities.openGui(new GuiPickerLabelNew(this, (itemStack) -> {
+                inventorySlots.getSlot(index).putStack(itemStack);
+                Utilities.openGui(this);
+            }, stack));
+        }
         updateLayout();
     }
 

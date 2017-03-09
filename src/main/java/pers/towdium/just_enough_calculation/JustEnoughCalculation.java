@@ -2,7 +2,6 @@ package pers.towdium.just_enough_calculation;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -18,6 +17,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pers.towdium.just_enough_calculation.item.ItemCalculator;
 import pers.towdium.just_enough_calculation.item.ItemFluidContainer;
+import pers.towdium.just_enough_calculation.item.ItemLabel;
 import pers.towdium.just_enough_calculation.network.IProxy;
 import pers.towdium.just_enough_calculation.network.packets.PacketOredictModify;
 import pers.towdium.just_enough_calculation.network.packets.PacketRecordModify;
@@ -39,14 +39,14 @@ public class JustEnoughCalculation {
 
     public static Item itemCalculator = new ItemCalculator().setUnlocalizedName("itemCalculator").setRegistryName("itemCalculator");
     public static Item itemFluidContainer = new ItemFluidContainer().setUnlocalizedName("itemFluidContainer").setRegistryName("itemFluidContainer");
-
-    public static boolean withNEI;
+    public static Item itemLabel = new ItemLabel().setUnlocalizedName("itemLabel").setRegistryName("itemLabel");
 
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent event) {
         JECConfig.preInit(event);
         GameRegistry.register(itemCalculator);
         GameRegistry.register(itemFluidContainer);
+        GameRegistry.register(itemLabel);
         networkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel(Reference.MODID);
         networkWrapper.registerMessage(PacketRecordModify.class, PacketRecordModify.class, 0, Side.SERVER);
         networkWrapper.registerMessage(PacketRecordSync.class, PacketRecordSync.class, 1, Side.CLIENT);
@@ -64,7 +64,7 @@ public class JustEnoughCalculation {
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
-        withNEI = Loader.isModLoaded("NotEnoughItems");
+        proxy.postInit();
     }
 
     @Mod.EventHandler

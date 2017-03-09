@@ -1,5 +1,6 @@
 package pers.towdium.just_enough_calculation.network;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.model.ModelLoader;
@@ -13,6 +14,7 @@ import pers.towdium.just_enough_calculation.event.InputEventHandler;
 import pers.towdium.just_enough_calculation.event.ModelEventHandler;
 import pers.towdium.just_enough_calculation.event.TooltipEventHandler;
 import pers.towdium.just_enough_calculation.gui.JECGuiHandler;
+import pers.towdium.just_enough_calculation.model.ColorLabel;
 
 /**
  * @author Towdium
@@ -28,8 +30,8 @@ public class ProxyClient implements IProxy {
                         id, "inventory"));
     }
 
-    static void setModelLocation(Item item, int meta) {
-        setModelLocation(item, meta, item.getUnlocalizedName().substring(5));
+    static void setModelLocation(Item item) {
+        setModelLocation(item, 0, item.getUnlocalizedName().substring(5));
     }
 
     @Override
@@ -43,9 +45,17 @@ public class ProxyClient implements IProxy {
 
     @Override
     public void preInit() {
-        setModelLocation(JustEnoughCalculation.itemCalculator, 0);
-        setModelLocation(JustEnoughCalculation.itemFluidContainer, 0);
+        setModelLocation(JustEnoughCalculation.itemCalculator);
         setModelLocation(JustEnoughCalculation.itemCalculator, 1, "itemMathCalculator");
+        setModelLocation(JustEnoughCalculation.itemFluidContainer);
+        setModelLocation(JustEnoughCalculation.itemLabel);
+
+    }
+
+    @Override
+    public void postInit() {
+        Minecraft.getMinecraft().getItemColors()
+                .registerItemColorHandler(new ColorLabel(), JustEnoughCalculation.itemLabel);
     }
 
     @Override
