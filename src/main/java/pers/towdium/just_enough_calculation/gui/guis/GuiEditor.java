@@ -190,7 +190,6 @@ public class GuiEditor extends JECGuiContainer {
             group = PlayerRecordHelper.getIndexGroup(dest.one);
             initialized = true;
         }
-
     }
 
     @Override
@@ -283,21 +282,13 @@ public class GuiEditor extends JECGuiContainer {
 
     @Override
     protected int getDestSlot(int button) {
-        int i = getLastFilledSlot(); // TODO change order
-        if (i == 19) {
-            return -1;
-        }
-        if (button == 0) {
-            return i + 1;
-        } else {
-            if (i < 4) {
-                return 4;
-            } else if (i < 8) {
-                return 8;
-            } else {
-                return i + 1;
-            }
-        }
+        int i = getLastFilledSlot(7);
+        if (i >= 4) return i == 7 ? -1 : i + 1;
+        i = getLastFilledSlot(19);
+        if (i >= 8) return i == 19 || button == 1 ? 4 : i + 1;
+        i = getLastFilledSlot(3);
+        if (i != -1) return i == 3 || button == 1 ? 8 : i + 1;
+        else return 0;
     }
 
     public void putRecipe(Recipe recipe) {
