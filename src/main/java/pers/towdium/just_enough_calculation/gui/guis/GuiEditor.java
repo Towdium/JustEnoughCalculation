@@ -235,10 +235,10 @@ public class GuiEditor extends JECGuiContainer {
     }
 
     @Override
-    public void onItemStackSet(int index) {
+    public void onItemStackSet(int index, ItemStack s) {
         ItemStack stack = inventorySlots.getSlot(index).getStack();
         if (stack != null && stack.getItem() instanceof ItemLabel && ItemLabel.getName(stack) == null) {
-            inventorySlots.getSlot(index).putStack(null);
+            inventorySlots.getSlot(index).putStack(s);
             Utilities.openGui(new GuiPickerLabelNew(this, (itemStack) -> {
                 inventorySlots.getSlot(index).putStack(itemStack);
                 Utilities.openGui(this);
@@ -283,8 +283,8 @@ public class GuiEditor extends JECGuiContainer {
 
     @Override
     protected int getDestSlot(int button) {
-        int i = getLastFilledSlot();
-        if (i == 20) {
+        int i = getLastFilledSlot(); // TODO change order
+        if (i == 19) {
             return -1;
         }
         if (button == 0) {

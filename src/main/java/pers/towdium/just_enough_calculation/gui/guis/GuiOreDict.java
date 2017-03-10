@@ -58,7 +58,7 @@ public class GuiOreDict extends JECGuiContainer {
             updateLayout();
         });
         buttonList.add(buttonAdd);
-        onItemStackSet(54);
+        onItemStackSet(54, null);
     }
 
     @Override
@@ -89,7 +89,7 @@ public class GuiOreDict extends JECGuiContainer {
     }
 
     @Override
-    public void onItemStackSet(int index) {
+    public void onItemStackSet(int index, ItemStack s) {
         buttonAdd.enabled = inventorySlots.getSlot(54).getHasStack();
     }
 

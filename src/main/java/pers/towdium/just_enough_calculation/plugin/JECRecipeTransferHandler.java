@@ -40,6 +40,7 @@ public class JECRecipeTransferHandler implements IRecipeTransferHandler {
         this.container = container;
     }
 
+    @SuppressWarnings("unchecked")
     static void checkTemp(GuiEditor editor) {
         Singleton<Boolean> flag = new Singleton<>(false);
         for (Recipe.EnumStackIOType type : Recipe.EnumStackIOType.values()) {
@@ -73,8 +74,9 @@ public class JECRecipeTransferHandler implements IRecipeTransferHandler {
                 stacks.forEach(stack -> merger.accept(buffer, ((ItemStack) stack.value)));
                 for (int i = start; i <= end; i++) {
                     ItemStack stack = buffer.size() > i - start ? buffer.get(i - start) : null;
+                    editor.onItemStackSet(i, editor.inventorySlots.getSlot(i).getStack());
                     editor.inventorySlots.getSlot(i).putStack(stack);
-                    editor.onItemStackSet(i);
+
                 }
             };
 

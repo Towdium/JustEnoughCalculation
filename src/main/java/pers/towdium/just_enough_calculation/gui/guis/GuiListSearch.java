@@ -7,6 +7,7 @@ import net.minecraft.util.ResourceLocation;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.core.Recipe;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
+import pers.towdium.just_enough_calculation.item.ItemLabel;
 import pers.towdium.just_enough_calculation.util.Utilities;
 import pers.towdium.just_enough_calculation.util.exception.IllegalPositionException;
 import pers.towdium.just_enough_calculation.util.helpers.PlayerRecordHelper;
@@ -109,8 +110,17 @@ public class GuiListSearch extends GuiList {
     }
 
     @Override
-    public void onItemStackSet(int index) {
-        super.onItemStackSet(index);
+    public void onItemStackSet(int index, ItemStack s) {
+        super.onItemStackSet(index, s);
+        ItemStack stack = inventorySlots.getSlot(index).getStack();
+        if (stack != null && stack.getItem() instanceof ItemLabel && ItemLabel.getName(stack) == null) {
+            inventorySlots.getSlot(index).putStack(s);
+            Utilities.openGui(new GuiPickerLabelExisting(this, (itemStack) -> {
+                inventorySlots.getSlot(index).putStack(itemStack);
+                Utilities.openGui(this);
+                updateLayout();
+            }));
+        }
         updateLayout();
     }
 

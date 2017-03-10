@@ -68,11 +68,13 @@ public abstract class JECContainer extends Container {
                     itemStack = ItemStackHelper.Click.rightShift(itemStack);
                 }
                 getSlot(slotId).putStack(itemStack);
+                return itemStack;
             }
         }
-        return null;
+        return slotId > 0 ? getSlot(slotId).getStack() : null;
     }
 
+    @SuppressWarnings("SameParameterValue")
     protected void addSlotSingle(int left, int top) {
         slotBuffer.add(new int[]{left, top, 0, 0, 1, 1});
     }

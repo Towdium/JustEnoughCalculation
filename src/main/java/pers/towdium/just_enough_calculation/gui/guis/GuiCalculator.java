@@ -13,6 +13,7 @@ import pers.towdium.just_enough_calculation.JustEnoughCalculation;
 import pers.towdium.just_enough_calculation.core.Calculator;
 import pers.towdium.just_enough_calculation.gui.JECContainer;
 import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
+import pers.towdium.just_enough_calculation.item.ItemLabel;
 import pers.towdium.just_enough_calculation.network.packets.PacketSyncCalculator;
 import pers.towdium.just_enough_calculation.util.Utilities;
 import pers.towdium.just_enough_calculation.util.exception.IllegalPositionException;
@@ -60,7 +61,7 @@ public class GuiCalculator extends JECGuiContainer {
     @Override
     public void init() {
         buttonSearch = new JECGuiButton(3, guiLeft + 119, guiTop + 7, 50, 20, "search").setLsnLeft(() ->
-                Utilities.openGui(new GuiListSearch(this, inventorySlots.getSlot(0).getStack())));
+                Utilities.openGui(new GuiListSearch(this, inventorySlots.getSlot(27).getStack())));
         buttonAdd = new JECGuiButton(4, guiLeft + 7, guiTop + 53, 52, 20, "add").setLsnLeft(() ->
                 Utilities.openGui(new GuiEditor(this, null)));
         buttonView = new JECGuiButton(5, guiLeft + 63, guiTop + 53, 52, 20, "records").setLsnLeft(() ->
@@ -125,14 +126,27 @@ public class GuiCalculator extends JECGuiContainer {
     }
 
     @Override
-    public void onItemStackSet(int index) {
-        updateLayout();
-        if (inventorySlots.getSlot(27).getHasStack()) {
+    public void onItemStackSet(int index, ItemStack old) {
+        ItemStack s = inventorySlots.getSlot(27).getStack();
+        if (s != null && s.getItem() instanceof ItemLabel && ItemLabel.getName(s) == null) {
+            inventorySlots.getSlot(27).putStack(old);
+            Utilities.openGui(new GuiPickerLabelExisting(this, (itemStack) -> {
+                inventorySlots.getSlot(27).putStack(itemStack);
+                updateLayout();
+                updateRecent(s);
+                Utilities.openGui(this);
+            }));
+        } else {
+            updateLayout();
+            updateRecent(s);
+        }
+    }
+
+    void updateRecent(ItemStack s) {
+        if (s != null) {
             int indexFound = 33;
-            ItemStack stack = inventorySlots.getSlot(27).getStack();
             for (int i = 33; i > 27 && indexFound == 33; i--) {
-                ItemStack s = inventorySlots.getSlot(i).getStack();
-                if (inventorySlots.getSlot(i).getHasStack() && ItemStackHelper.isItemEqual(stack, inventorySlots.getSlot(i).getStack()))
+                if (inventorySlots.getSlot(i).getHasStack() && ItemStackHelper.isItemEqual(s, inventorySlots.getSlot(i).getStack()))
                     indexFound = i;
             }
             for (int i = indexFound; i > 27; i--) {
@@ -158,8 +172,9 @@ public class GuiCalculator extends JECGuiContainer {
 
     @Override
     protected void onItemStackPick(ItemStack itemStack) {
+        ItemStack s = inventorySlots.getSlot(27).getStack();
         inventorySlots.getSlot(27).putStack(itemStack);
-        onItemStackSet(27);
+        onItemStackSet(27, s);
     }
 
     public void updateContent() {

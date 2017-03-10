@@ -121,9 +121,13 @@ public abstract class JECGuiContainer extends GuiContainer {
         super.drawHoveringText(textLines, x, y);
     }
 
+    @Override
     protected void handleMouseClick(Slot slotIn, int slotId, int mouseButton, ClickType type) {
-        inventorySlots.slotClick(slotIn == null ? slotId : slotIn.slotNumber, mouseButton, type, mc.thePlayer);
-        onItemStackSet(slotId);
+        ItemStack s = slotIn == null ? null : slotIn.getStack();
+        ItemStack r = inventorySlots.slotClick(slotIn == null ? slotId : slotIn.slotNumber, mouseButton, type, mc.thePlayer);
+        if ((s != null && !s.equals(r)) || (s == null && r != null)) {
+            onItemStackSet(slotId, null);
+        }
     }
 
     @Override
@@ -139,39 +143,44 @@ public abstract class JECGuiContainer extends GuiContainer {
     public boolean handleMouseEvent() {
         if (Mouse.getEventDWheel() != 0) {
             Slot slot = getSlotUnderMouse();
+            //noinspection ConstantConditions
             if (slot != null && ((JECContainer) inventorySlots).getSlotType(slot.getSlotIndex()) == JECContainer.EnumSlotType.AMOUNT) {
-                ItemStack stack = null;
+                ItemStack stack;
                 boolean up = Mouse.getEventDWheel() > 0;
                 boolean shift = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
                 if (up && shift) {
                     stack = ItemStackHelper.Click.leftShift(slot.getStack());
-                } else if (up && !shift) {
+                } else if (up) {
                     stack = ItemStackHelper.Click.leftClick(slot.getStack());
-                } else if (!up && shift) {
+                } else if (shift) {
                     stack = ItemStackHelper.Click.rightShift(slot.getStack());
-                } else if (!up && !shift) {
+                } else {
                     stack = ItemStackHelper.Click.rightClick(slot.getStack());
                 }
                 if (stack == null) {
+                    ItemStack buf = slot.getStack();
                     slot.putStack(null);
+                    onItemStackSet(slot.getSlotIndex(), buf);
                 }
-                onItemStackSet(slot.getSlotIndex());
             }
         }
         if (Mouse.getEventButtonState() && activeSlot == -1) {
             ItemStack stack = JEIPlugin.runtime.getItemListOverlay().getStackUnderMouse();
             int dest = getDestSlot(Mouse.getEventButton());
             if (dest != -1 && stack != null) {
+                ItemStack s = inventorySlots.getSlot(dest).getStack();
+                //noinspection ConstantConditions
                 inventorySlots.getSlot(dest).putStack(stack == null ? null :
                         ((JECContainer) inventorySlots).getSlotType(dest) == JECContainer.EnumSlotType.AMOUNT ?
                                 ItemStackHelper.toItemStackJEC(stack.copy()) : stack.copy());
-                onItemStackSet(dest);
+                onItemStackSet(dest, s);
                 return true;
             }
         }
         if (Mouse.getEventButton() == 0 && Mouse.getEventButtonState()) {
             if (activeSlot == -1) {
                 Slot slot = getSlotUnderMouse();
+                //noinspection ConstantConditions
                 if (slot != null) {
                     switch (((JECContainer) inventorySlots).getSlotType(slot.getSlotIndex())) {
                         case SELECT:
@@ -195,7 +204,7 @@ public abstract class JECGuiContainer extends GuiContainer {
                     return false;
                 }
             } else {
-                onItemStackSet(activeSlot);
+                onItemStackSet(activeSlot, temp);
                 activeSlot = -1;
                 mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
                 return true;
@@ -203,6 +212,7 @@ public abstract class JECGuiContainer extends GuiContainer {
         }
         if (activeSlot != -1) {
             ItemStack stack = JEIPlugin.runtime.getItemListOverlay().getStackUnderMouse();
+            //noinspection ConstantConditions
             stack = stack == null ? (getSlotUnderMouse() != null ? getSlotUnderMouse().getStack() : null) : stack;
             inventorySlots.getSlot(activeSlot).putStack(stack == null ? null :
                     ((JECContainer) inventorySlots).getSlotType(activeSlot) == JECContainer.EnumSlotType.AMOUNT ?
@@ -247,8 +257,12 @@ public abstract class JECGuiContainer extends GuiContainer {
     }
 
     protected int getLastFilledSlot() {
+        return getLastFilledSlot(-1);
+    }
+
+    protected int getLastFilledSlot(int start) {
         List<Slot> slots = inventorySlots.inventorySlots;
-        for (int i = slots.size() - 1; i >= 0; i--) {
+        for (int i = start < 0 ? slots.size() - 1 : start; i >= 0; i--) {
             if (slots.get(i) != null && slots.get(i).getHasStack())
                 return i;
         }
@@ -289,7 +303,7 @@ public abstract class JECGuiContainer extends GuiContainer {
 
     protected abstract void init();
 
-    public void onItemStackSet(int index) {
+    public void onItemStackSet(int index, ItemStack old) {
     }
 
     public void updateLayout() {
