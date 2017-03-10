@@ -51,7 +51,6 @@ public class PlayerHandlerMP implements IProxy.IPlayerHandler {
         PlayerHandlerSP handler = new PlayerHandlerSP();
         handler.handleLogin(event);
         records.put(event.getEntityPlayer().getUniqueID(), handler);
-
     }
 
     @Override
