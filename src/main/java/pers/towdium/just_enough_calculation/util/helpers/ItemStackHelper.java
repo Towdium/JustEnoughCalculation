@@ -199,7 +199,7 @@ public class ItemStackHelper {
         }
 
         public static ItemStack setFluid(ItemStack itemStack, Fluid fluid) {
-            return setString(itemStack, true, keyFluid, fluid.getName());
+            return setString(itemStack, false, keyFluid, fluid.getName());
         }
 
         public static ItemStack setData(ItemStack itemStack, EnumStackAmountType type, long amount) {
@@ -254,7 +254,7 @@ public class ItemStackHelper {
         }
 
         public static Fluid getFluid(ItemStack itemStack) {
-            return FluidRegistry.getFluid(getString(itemStack, true, keyFluid));
+            return FluidRegistry.getFluid(getString(itemStack, false, keyFluid));
         }
 
         public static long getAmountItem(ItemStack itemStack) {

@@ -4,8 +4,10 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import org.lwjgl.input.Keyboard;
 import pers.towdium.just_enough_calculation.JustEnoughCalculation;
@@ -24,11 +26,6 @@ public class ItemCalculator extends Item {
         setHasSubtypes(true);
         setMaxStackSize(1);
         setCreativeTab(CreativeTabs.MISC);
-    }
-
-    @Override
-    public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
-        return EnumActionResult.SUCCESS;
     }
 
     @Override
