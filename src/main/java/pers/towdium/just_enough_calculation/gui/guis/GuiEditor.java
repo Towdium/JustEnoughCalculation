@@ -61,11 +61,11 @@ public class GuiEditor extends JECGuiContainer {
                 ItemStack stack = slot.getStack();
                 switch (button.displayString) {
                     case "#":
-                        slot.putStack(stack == null ? null : ItemStackHelper.toItemStackOfType(ItemStackHelper.EnumStackAmountType.PERCENTAGE, stack));
+                        slot.putStack(stack.isEmpty() ? ItemStack.EMPTY : ItemStackHelper.toItemStackOfType(ItemStackHelper.EnumStackAmountType.PERCENTAGE, stack));
                         button.displayString = "%";
                         break;
                     case "%":
-                        slot.putStack(stack == null ? null : ItemStackHelper.toItemStackOfType(ItemStackHelper.EnumStackAmountType.NUMBER, stack));
+                        slot.putStack(stack.isEmpty() ? ItemStack.EMPTY : ItemStackHelper.toItemStackOfType(ItemStackHelper.EnumStackAmountType.NUMBER, stack));
                         button.displayString = "#";
                         break;
                 }
@@ -163,7 +163,7 @@ public class GuiEditor extends JECGuiContainer {
         });
         buttonClear = new JECGuiButton(44, guiLeft + 131, guiTop + 53, 38, 18, "clear").setLsnLeft(() -> {
             for (int i = 0; i < 20; i++) {
-                inventorySlots.getSlot(i).putStack(null);
+                inventorySlots.getSlot(i).putStack(ItemStack.EMPTY);
             }
             updateLayout();
         });
@@ -181,7 +181,7 @@ public class GuiEditor extends JECGuiContainer {
                     });
             buttonList.add(buttonDup);
         }
-        textGroup = new GuiTextField(0, fontRendererObj, guiLeft + 8, guiTop + 8, 95, 18);
+        textGroup = new GuiTextField(0, fontRenderer, guiLeft + 8, guiTop + 8, 95, 18);
         if (customName == null && PlayerRecordHelper.getSizeGroup() == 0) {
             customName = "Default";
         }
@@ -195,11 +195,11 @@ public class GuiEditor extends JECGuiContainer {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        drawCenteredStringMultiLine(fontRendererObj, localization("output"), 7, 44, 31, 61, 0xFFFFFF);
-        drawCenteredStringMultiLine(fontRendererObj, localization("catalyst"), 7, 44, 64, 94, 0xFFFFFF);
-        drawCenteredStringMultiLine(fontRendererObj, localization("input"), 7, 44, 97, 159, 0xFFFFFF);
+        drawCenteredStringMultiLine(fontRenderer, localization("output"), 7, 44, 31, 61, 0xFFFFFF);
+        drawCenteredStringMultiLine(fontRenderer, localization("catalyst"), 7, 44, 64, 94, 0xFFFFFF);
+        drawCenteredStringMultiLine(fontRenderer, localization("input"), 7, 44, 97, 159, 0xFFFFFF);
         if (!newGroup) {
-            drawCenteredStringMultiLine(fontRendererObj, getGroup(), 7, 104, 7, 27, 0xFFFFFF);
+            drawCenteredStringMultiLine(fontRenderer, getGroup(), 7, 104, 7, 27, 0xFFFFFF);
         }
     }
 
@@ -211,7 +211,8 @@ public class GuiEditor extends JECGuiContainer {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID, "textures/gui/guiEditor.png"));
+        this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID,
+                "textures/gui/gui_editor.png"));
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
         if (newGroup) {
             textGroup.drawTextBox();
@@ -236,7 +237,7 @@ public class GuiEditor extends JECGuiContainer {
     @Override
     public void onItemStackSet(int index, ItemStack s) {
         ItemStack stack = inventorySlots.getSlot(index).getStack();
-        if (stack != null && stack.getItem() instanceof ItemLabel && ItemLabel.getName(stack) == null) {
+        if (!stack.isEmpty() && stack.getItem() instanceof ItemLabel && ItemLabel.getName(stack) == null) {
             inventorySlots.getSlot(index).putStack(s);
             Utilities.openGui(new GuiPickerLabelNew(this, (itemStack) -> {
                 inventorySlots.getSlot(index).putStack(itemStack);
@@ -260,7 +261,7 @@ public class GuiEditor extends JECGuiContainer {
                 type.displayString = s2;
                 type.enabled = b2;
             };
-            if (stack == null) {
+            if (stack.isEmpty()) {
                 setter.accept("#", false, "I", true);
             } else {
                 switch (ItemStackHelper.NBT.getType(stack)) {

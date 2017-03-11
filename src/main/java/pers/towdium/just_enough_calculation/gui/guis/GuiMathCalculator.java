@@ -113,7 +113,7 @@ public class GuiMathCalculator extends JECGuiContainer {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID, "textures/gui/guiMathCalculator.png"));
+        this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID, "textures/gui/gui_math_calculator.png"));
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
         drawDisplay();
     }
@@ -138,10 +138,14 @@ public class GuiMathCalculator extends JECGuiContainer {
     void updateItemFromGui() {
         Singleton<ItemStack> calc = new Singleton<>(null);
         calc.predicate = stack -> stack.getItem() == JustEnoughCalculation.itemCalculator;
-        calc.push(mc.thePlayer.inventory.getCurrentItem());
-        calc.push(mc.thePlayer.inventory.offHandInventory[0]);
+        calc.push(mc.player.inventory.getCurrentItem());
+        calc.push(mc.player.inventory.offHandInventory.get(0));
         if (calc.value != null) {
-            NBTTagCompound tag = calc.value.getSubCompound(KEY_MATH, true);
+            NBTTagCompound tag = calc.value.getSubCompound(KEY_MATH);
+            if (tag == null) {
+                tag = new NBTTagCompound();
+                calc.value.setTagCompound(tag);
+            }
             tag.setString(KEY_RECORD, record == null ? "" : record.toString());
             tag.setInteger(KEY_SIGN, sign.ordinal());
             tag.setString(KEY_CURRENT, current.toString());
@@ -154,10 +158,10 @@ public class GuiMathCalculator extends JECGuiContainer {
     void updateGuiFromItem() {
         Singleton<ItemStack> calc = new Singleton<>(null);
         calc.predicate = stack -> stack.getItem() == JustEnoughCalculation.itemCalculator;
-        calc.push(mc.thePlayer.inventory.getCurrentItem());
-        calc.push(mc.thePlayer.inventory.offHandInventory[0]);
+        calc.push(mc.player.inventory.getCurrentItem());
+        calc.push(mc.player.inventory.offHandInventory.get(0));
         if (calc.value != null) {
-            NBTTagCompound tag = calc.value.getSubCompound(KEY_MATH, false);
+            NBTTagCompound tag = calc.value.getSubCompound(KEY_MATH);
             if(tag != null) {
                 String str = tag.getString(KEY_RECORD);
                 record = str.equals("") ? null : new BigDecimal(tag.getString(KEY_RECORD));

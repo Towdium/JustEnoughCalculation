@@ -64,19 +64,19 @@ public class GuiOreDict extends JECGuiContainer {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID, "textures/gui/guiOreDict.png"));
+        this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID, "textures/gui/gui_ore_dict.png"));
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
-        //fontRendererObj.drawString("Search:", guiLeft + 7, guiTop + 13, 4210752);
+        //fontRenderer.drawString("Search:", guiLeft + 7, guiTop + 13, 4210752);
     }
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
         ItemStack itemStack = inventorySlots.getSlot(54).getStack();
-        if (itemStack != null) {
-            drawString(fontRendererObj, Utilities.cutString(itemStack.getDisplayName(), 72, fontRendererObj), 35, 13, 0xFFFFFF);
+        if (!itemStack.isEmpty()) {
+            drawString(fontRenderer, Utilities.cutString(itemStack.getDisplayName(), 72, fontRenderer), 35, 13, 0xFFFFFF);
         }
-        drawCenteredStringMultiLine(fontRendererObj, page + "/" + total, 7, 169, 147, 159, 0xFFFFFF);
+        drawCenteredStringMultiLine(fontRenderer, page + "/" + total, 7, 169, 147, 159, 0xFFFFFF);
     }
 
     @Override

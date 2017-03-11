@@ -8,7 +8,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,12 +51,12 @@ public abstract class JECContainer extends Container {
         return null;
     }
 
-    @Nullable
+    @Nonnull
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
         if (slotId >= 0 && getSlotType(slotId) == EnumSlotType.AMOUNT) {
             ItemStack itemStack = getSlot(slotId).getStack();
-            if (itemStack != null) {
+            if (!itemStack.isEmpty()) {
                 itemStack = itemStack.copy();
                 if (dragType == 0 && clickTypeIn == ClickType.PICKUP) {
                     itemStack = ItemStackHelper.Click.leftClick(itemStack);
@@ -71,7 +71,7 @@ public abstract class JECContainer extends Container {
                 return itemStack;
             }
         }
-        return slotId > 0 ? getSlot(slotId).getStack() : null;
+        return slotId > 0 ? getSlot(slotId).getStack() : ItemStack.EMPTY;
     }
 
     @SuppressWarnings("SameParameterValue")

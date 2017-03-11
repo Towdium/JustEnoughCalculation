@@ -41,7 +41,7 @@ public abstract class GuiPicker extends JECGuiContainer {
             page = total == 0 ? 0 : page == 1 ? total : page - 1;
             updateLayout();
         }));
-        searchField = getSearchField(fontRendererObj);
+        searchField = getSearchField(fontRenderer);
     }
 
     @Override
@@ -52,7 +52,7 @@ public abstract class GuiPicker extends JECGuiContainer {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        drawCenteredStringMultiLine(fontRendererObj, page + "/" + total, 7, 169, 147, 159, 0xFFFFFF);
+        drawCenteredStringMultiLine(fontRenderer, page + "/" + total, 7, 169, 147, 159, 0xFFFFFF);
     }
 
     @Override

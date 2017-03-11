@@ -1,5 +1,6 @@
 package pers.towdium.just_enough_calculation.network;
 
+import com.google.common.base.CaseFormat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -27,7 +28,7 @@ public class ProxyClient implements IProxy {
     static void setModelLocation(Item item, int meta, String id) {
         ModelLoader.setCustomModelResourceLocation(item, meta,
                 new ModelResourceLocation(JustEnoughCalculation.Reference.MODID + ":" +
-                        id, "inventory"));
+                        CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, id), "inventory"));
     }
 
     static void setModelLocation(Item item) {

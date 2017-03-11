@@ -256,14 +256,14 @@ public class PlayerHandlerSP implements IProxy.IPlayerHandler {
             String name = group.getString("name");
             NBTTagList content = group.getTagList("content", 10);
             for (int j = 0; j < content.tagCount(); j++) {
-                Recipe r = new Recipe(new ItemStack[4], new ItemStack[4], new ItemStack[12]).readFromNBT(content.getCompoundTagAt(j));
+                Recipe r = new Recipe(content.getCompoundTagAt(j));
                 addRecipe(r, name);
             }
         }
         NBTTagList oreDictPref = tag.getTagList("oreDictPref", 10);
         for (int i = 0; i < oreDictPref.tagCount(); i++) {
             NBTTagCompound stack = oreDictPref.getCompoundTagAt(i);
-            addOreDictPref(ItemStack.loadItemStackFromNBT(stack));
+            addOreDictPref(new ItemStack(stack));
         }
     }
 

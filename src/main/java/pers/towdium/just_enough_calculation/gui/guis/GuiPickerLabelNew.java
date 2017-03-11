@@ -43,7 +43,7 @@ public class GuiPickerLabelNew extends GuiPicker {
     @Override
     public void init() {
         super.init();
-        fieldName = new GuiTextField(0, fontRendererObj, guiLeft + 7, guiTop + 8, 108, 18);
+        fieldName = new GuiTextField(0, fontRenderer, guiLeft + 7, guiTop + 8, 108, 18);
         buttonCreate = new JECGuiButton(2, guiLeft + 119, guiTop + 7, 50, 20, "create").setLsnLeft(() -> {
             if (fieldName.getText().isEmpty()) {
                 fieldName.setTextColor(0xFF0000);
@@ -81,16 +81,17 @@ public class GuiPickerLabelNew extends GuiPicker {
     @Override
     GuiTextField getSearchField(FontRenderer renderer) {
         String textSearch = localization("search");
-        return new GuiTextField(0, renderer, guiLeft + fontRendererObj.getStringWidth(textSearch) + 15,
+        return new GuiTextField(0, renderer, guiLeft + fontRenderer.getStringWidth(textSearch) + 15,
                 guiTop + 46, 75, 18);
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID, "textures/gui/guiPickerLabelNew.png"));
+        this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID,
+                "textures/gui/gui_picker_label_new.png"));
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
-        fontRendererObj.drawString(localization("search"), guiLeft + 7, guiTop + 51, 4210752);
+        fontRenderer.drawString(localization("search"), guiLeft + 7, guiTop + 51, 4210752);
         fieldName.drawTextBox();
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
     }

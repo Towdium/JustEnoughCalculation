@@ -18,13 +18,13 @@ import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper;
 public class JECCommand extends CommandBase {
 
     @Override
-    public String getCommandName() {
+    public String getName() {
         return "jec";
     }
 
 
     @Override
-    public String getCommandUsage(ICommandSender sender) {
+    public String getUsage(ICommandSender sender) {
         return "JEC debug commands";
     }
 
@@ -45,10 +45,10 @@ public class JECCommand extends CommandBase {
                     player.inventory.addItemStackToInventory(ItemStackHelper.NBT.setFluid(new ItemStack(JustEnoughCalculation.itemFluidContainer), f));
                     break;
                 case "fluids":
-                    FluidRegistry.getRegisteredFluids().entrySet().forEach(entry -> player.addChatMessage(new TextComponentString(entry.getKey())));
+                    FluidRegistry.getRegisteredFluids().entrySet().forEach(entry -> player.sendMessage(new TextComponentString(entry.getKey())));
                     break;
                 default:
-                    player.addChatMessage(new TextComponentString("Command not found"));
+                    player.sendMessage(new TextComponentString("Command not found"));
             }
         }
     }

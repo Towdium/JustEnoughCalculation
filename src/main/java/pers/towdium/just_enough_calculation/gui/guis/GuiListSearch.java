@@ -90,7 +90,7 @@ public class GuiListSearch extends GuiList {
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(
-                new ResourceLocation(JustEnoughCalculation.Reference.MODID, "textures/gui/guiListSearch.png"));
+                new ResourceLocation(JustEnoughCalculation.Reference.MODID, "textures/gui/gui_list_search.png"));
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
     }
 
@@ -98,9 +98,9 @@ public class GuiListSearch extends GuiList {
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
         ItemStack itemStack = inventorySlots.getSlot(20).getStack();
-        if (itemStack != null) {
-            drawString(fontRendererObj,
-                    Utilities.cutString(itemStack.getDisplayName(), 72, fontRendererObj), 35, 13, 0xFFFFFF);
+        if (!itemStack.isEmpty()) {
+            drawString(fontRenderer,
+                    Utilities.cutString(itemStack.getDisplayName(), 72, fontRenderer), 35, 13, 0xFFFFFF);
         }
     }
 
@@ -113,7 +113,7 @@ public class GuiListSearch extends GuiList {
     public void onItemStackSet(int index, ItemStack s) {
         super.onItemStackSet(index, s);
         ItemStack stack = inventorySlots.getSlot(index).getStack();
-        if (stack != null && stack.getItem() instanceof ItemLabel && ItemLabel.getName(stack) == null) {
+        if (!stack.isEmpty() && stack.getItem() instanceof ItemLabel && ItemLabel.getName(stack) == null) {
             inventorySlots.getSlot(index).putStack(s);
             Utilities.openGui(new GuiPickerLabelExisting(this, (itemStack) -> {
                 inventorySlots.getSlot(index).putStack(itemStack);

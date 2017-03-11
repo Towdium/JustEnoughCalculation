@@ -32,14 +32,14 @@ compileJava {
 minecraft {
     version = "1.11.2-13.20.0.2228"
     runDir = "run"
-    mappings = "snapshot_20161111"
+    mappings = "snapshot_20170310"
 
     replace '@VERSION@', project.version
 }
 
 dependencies {
     runtime "mezz.jei:jei_${mc_version}:${jei_version}"
-    deobfCompile "mezz.jei:jei_${mc_version}:${jei_version}:api"
+    compile "mezz.jei:jei_${mc_version}:${jei_version}:api"
 }
 
 processResources

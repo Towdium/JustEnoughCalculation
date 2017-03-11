@@ -37,16 +37,16 @@ public class GuiPickerLabelExisting extends GuiPicker {
     @Override
     GuiTextField getSearchField(FontRenderer renderer) {
         String textSearch = localization("search");
-        return new GuiTextField(0, renderer, guiLeft + fontRendererObj.getStringWidth(textSearch) + 15, guiTop + 8, 75, 18);
+        return new GuiTextField(0, renderer, guiLeft + fontRenderer.getStringWidth(textSearch) + 15, guiTop + 8, 75, 18);
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID,
-                "textures/gui/guiPickerLabelExisting.png"));
+                "textures/gui/gui_picker_label_existing.png"));
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
-        fontRendererObj.drawString(localization("search"), guiLeft + 7, guiTop + 13, 4210752);
+        fontRenderer.drawString(localization("search"), guiLeft + 7, guiTop + 13, 4210752);
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
     }
 

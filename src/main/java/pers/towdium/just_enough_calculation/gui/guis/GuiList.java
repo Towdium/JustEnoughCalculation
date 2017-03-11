@@ -84,16 +84,16 @@ public abstract class GuiList extends JECGuiContainer {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        drawCenteredStringMultiLine(fontRendererObj,
+        drawCenteredStringMultiLine(fontRenderer,
                 PlayerRecordHelper.getSizeGroup() > group ? PlayerRecordHelper.getGroupName(group) :
                         localization("noRecord"), 7, 169, 133, 145, 0xFFFFFF);
-        drawCenteredStringMultiLine(fontRendererObj, page + "/" + total, 7, 169, 147, 159, 0xFFFFFF);
+        drawCenteredStringMultiLine(fontRenderer, page + "/" + total, 7, 169, 147, 159, 0xFFFFFF);
     }
 
     protected void putRecipe(int position, @Nullable Recipe recipe) {
         if (recipe == null) {
             for (int i = 0; i < 4; i++) {
-                inventorySlots.getSlot(position * 4 + i).putStack(null);
+                inventorySlots.getSlot(position * 4 + i).putStack(ItemStack.EMPTY);
             }
         } else {
             List<ItemStack> buffer = recipe.getOutput();

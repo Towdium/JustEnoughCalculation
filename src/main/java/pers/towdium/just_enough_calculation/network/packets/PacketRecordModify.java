@@ -1,7 +1,6 @@
 package pers.towdium.just_enough_calculation.network.packets;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -12,6 +11,7 @@ import pers.towdium.just_enough_calculation.core.Recipe;
 import pers.towdium.just_enough_calculation.network.IProxy;
 import pers.towdium.just_enough_calculation.network.PlayerHandlerMP;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -37,11 +37,12 @@ public class PacketRecordModify implements IMessage, IMessageHandler<PacketRecor
     @Override
     public void fromBytes(ByteBuf buf) {
         NBTTagCompound tag = ByteBufUtils.readTag(buf);
+        Objects.requireNonNull(tag);
         index = tag.getInteger("index");
         group = tag.getString("group");
         groupOld = tag.getString("groupOld");
         NBTTagCompound r = tag.getCompoundTag("recipe");
-        recipe = r.hasNoTags() ? null : new Recipe(new ItemStack[4], new ItemStack[4], new ItemStack[12]).readFromNBT(r);
+        recipe = r.hasNoTags() ? null : new Recipe(r);
     }
 
     @Override
@@ -59,7 +60,7 @@ public class PacketRecordModify implements IMessage, IMessageHandler<PacketRecor
         IProxy.IPlayerHandler handler = JustEnoughCalculation.proxy.getPlayerHandler();
         if (handler instanceof PlayerHandlerMP) {
             PlayerHandlerMP handlerMP = ((PlayerHandlerMP) handler);
-            UUID uuid = ctx.getServerHandler().playerEntity.getUniqueID();
+            UUID uuid = ctx.getServerHandler().player.getUniqueID();
             if (message.recipe == null) {
                 handlerMP.removeRecipe(uuid, message.group, message.index);
             } else if (message.index == -1) {

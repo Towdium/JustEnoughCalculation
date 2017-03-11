@@ -22,7 +22,6 @@ import pers.towdium.just_enough_calculation.util.wrappers.Singleton;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
 
@@ -91,7 +90,7 @@ public class GuiCalculator extends JECGuiContainer {
         buttonList.add(buttonRight);
         buttonList.add(buttonMode);
         String temp = textFieldAmount == null ? "" : textFieldAmount.getText();
-        textFieldAmount = new GuiTextField(0, fontRendererObj, guiLeft + 39, guiTop + 8, 75, 18);
+        textFieldAmount = new GuiTextField(0, fontRenderer, guiLeft + 39, guiTop + 8, 75, 18);
         textFieldAmount.setText(temp);
         textFieldAmount.setMaxStringLength(10);
         if (!initialized) {
@@ -103,7 +102,7 @@ public class GuiCalculator extends JECGuiContainer {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID, "textures/gui/guiCalculator.png"));
+        this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID, "textures/gui/gui_calculator.png"));
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
         textFieldAmount.drawTextBox();
     }
@@ -111,8 +110,8 @@ public class GuiCalculator extends JECGuiContainer {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        drawCenteredString(fontRendererObj, localization("recent"), 144, 36, 0xFFFFFF);
-        drawCenteredString(fontRendererObj, page + "/" + total, 47, 145, 0xFFFFFF);
+        drawCenteredString(fontRenderer, localization("recent"), 144, 36, 0xFFFFFF);
+        drawCenteredString(fontRenderer, page + "/" + total, 47, 145, 0xFFFFFF);
     }
 
     @Override
@@ -128,7 +127,7 @@ public class GuiCalculator extends JECGuiContainer {
     @Override
     public void onItemStackSet(int index, ItemStack old) {
         ItemStack s = inventorySlots.getSlot(27).getStack();
-        if (s != null && s.getItem() instanceof ItemLabel && ItemLabel.getName(s) == null) {
+        if (!s.isEmpty() && s.getItem() instanceof ItemLabel && ItemLabel.getName(s) == null) {
             inventorySlots.getSlot(27).putStack(old);
             Utilities.openGui(new GuiPickerLabelExisting(this, (itemStack) -> {
                 inventorySlots.getSlot(27).putStack(itemStack);
@@ -211,12 +210,12 @@ public class GuiCalculator extends JECGuiContainer {
             try {
                 calculatorNormal = new Calculator(inventorySlots.getSlot(27).getStack(), amount);
                 calculatorInventory = new Calculator(JECConfig.EnumItems.EnableInventoryCheck.getProperty().getBoolean() ?
-                        Arrays.asList(mc.thePlayer.inventory.mainInventory) : new ArrayList<>(), inventorySlots.getSlot(27).getStack(), amount);
+                        new ArrayList<>(mc.player.inventory.mainInventory) : new ArrayList<>(), inventorySlots.getSlot(27).getStack(), amount);
             } catch (Calculator.JECCalculatingCoreException e) {
-                mc.thePlayer.addChatMessage(new TextComponentString(localization("errorCore")));
+                mc.player.sendMessage(new TextComponentString(localization("errorCore")));
                 e.printStackTrace();
             } catch (RuntimeException e) {
-                mc.thePlayer.addChatMessage(new TextComponentString(localization("errorUnknown")));
+                mc.player.sendMessage(new TextComponentString(localization("errorUnknown")));
                 e.printStackTrace();
             }
         } else {
@@ -235,22 +234,26 @@ public class GuiCalculator extends JECGuiContainer {
         Singleton<ItemStack> calc = new Singleton<>(null);
         calc.predicate = stack -> stack.getItem() == JustEnoughCalculation.itemCalculator;
         try {
-            calc.push(mc.thePlayer.inventory.getCurrentItem());
+            calc.push(mc.player.inventory.getCurrentItem());
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
         try {
-            calc.push(mc.thePlayer.inventory.offHandInventory[0]);
+            calc.push(mc.player.inventory.offHandInventory.get(0));
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
         if (calc.value != null) {
-            NBTTagCompound tag = calc.value.getSubCompound(keyRecipe, true);
+            NBTTagCompound tag = calc.value.getSubCompound(keyRecipe);
+            if (tag == null) {
+                tag = new NBTTagCompound();
+                calc.value.setTagCompound(tag);
+            }
             tag.setString(keyAmount, textFieldAmount.getText());
             NBTTagList buffer = new NBTTagList();
             for (int i = 28; i <= 33; i++) {
                 ItemStack s = inventorySlots.getSlot(i).getStack();
-                if (s == null)
+                if (s.isEmpty())
                     break;
                 else
                     buffer.appendTag(s.serializeNBT());
@@ -265,25 +268,29 @@ public class GuiCalculator extends JECGuiContainer {
         Singleton<ItemStack> calc = new Singleton<>(null);
         calc.predicate = stack -> stack.getItem() == JustEnoughCalculation.itemCalculator;
         try {
-            calc.push(mc.thePlayer.inventory.getCurrentItem());
+            calc.push(mc.player.inventory.getCurrentItem());
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
         try {
-            calc.push(mc.thePlayer.inventory.offHandInventory[0]);
+            calc.push(mc.player.inventory.offHandInventory.get(0));
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
         if (calc.value != null) {
-            NBTTagCompound tag = calc.value.getSubCompound(keyRecipe, true);
+            NBTTagCompound tag = calc.value.getSubCompound(keyRecipe);
+            if (tag == null) {
+                tag = new NBTTagCompound();
+                calc.value.setTagCompound(tag);
+            }
             textFieldAmount.setText(tag.getString(keyAmount));
             List<ItemStack> buffer = new ArrayList<>();
             NBTTagList recent = tag.getTagList(keyRecent, 10);
             for (int i = 0; i < recent.tagCount(); i++) {
-                buffer.add(ItemStack.loadItemStackFromNBT(recent.getCompoundTagAt(i)));
+                buffer.add(new ItemStack(recent.getCompoundTagAt(i)));
             }
             putStacks(28, 33, buffer, 0);
-            inventorySlots.getSlot(27).putStack(buffer.size() > 0 ? buffer.get(0) : null);
+            inventorySlots.getSlot(27).putStack(buffer.size() > 0 ? buffer.get(0) : ItemStack.EMPTY);
             mode = EnumMode.values()[tag.getInteger(keyMode)];
         }
     }

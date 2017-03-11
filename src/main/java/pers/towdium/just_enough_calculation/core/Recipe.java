@@ -23,6 +23,22 @@ public class Recipe {
     ItemStack[] catalyst;
     ItemStack[] input;
 
+    public Recipe(NBTTagCompound nbtTagCompound) {
+        BiConsumer<ItemStack[], NBTTagList> writer = (itemStacks, nbtTagList) -> {
+            if (itemStacks.length != nbtTagList.tagCount())
+                throw new IllegalArgumentException("Length not match");
+            for (int i = 0; i < itemStacks.length; i++) {
+                itemStacks[i] = ItemStackHelper.readFromNBT(nbtTagList.getCompoundTagAt(i));
+            }
+        };
+        output = new ItemStack[4];
+        input = new ItemStack[12];
+        catalyst = new ItemStack[4];
+        writer.accept(output, nbtTagCompound.getTagList("output", 10));
+        writer.accept(catalyst, nbtTagCompound.getTagList("catalyst", 10));
+        writer.accept(input, nbtTagCompound.getTagList("input", 10));
+    }
+
     public Recipe(ItemStack[] output, ItemStack[] catalyst, ItemStack[] input) {
         TriFunction<ItemStack[], Integer, String, String> checkArray = (itemStackIn, amount, type) -> {
             if (itemStackIn.length != amount)
@@ -38,7 +54,7 @@ public class Recipe {
             ItemStack[] buffer = new ItemStack[itemStacks.length];
             int count = -1;
             for (ItemStack itemStack : itemStacks) {
-                buffer[++count] = itemStack == null ? null : itemStack.copy();
+                buffer[++count] = itemStack.copy();
             }
             return buffer;
         };
@@ -130,20 +146,6 @@ public class Recipe {
         ret.setTag("catalyst", former.apply(catalyst));
         ret.setTag("input", former.apply(input));
         return ret;
-    }
-
-    public Recipe readFromNBT(NBTTagCompound tag) throws IllegalArgumentException {
-        BiConsumer<ItemStack[], NBTTagList> writer = (itemStacks, nbtTagList) -> {
-            if (itemStacks.length != nbtTagList.tagCount())
-                throw new IllegalArgumentException("Length not match");
-            for (int i = 0; i < nbtTagList.tagCount(); i++) {
-                itemStacks[i] = ItemStackHelper.readFromNBT(nbtTagList.getCompoundTagAt(i));
-            }
-        };
-        writer.accept(output, tag.getTagList("output", 10));
-        writer.accept(catalyst, tag.getTagList("catalyst", 10));
-        writer.accept(input, tag.getTagList("input", 10));
-        return this;
     }
 
     public enum EnumStackIOType {

@@ -45,7 +45,7 @@ public class PacketOredictModify implements IMessage, IMessageHandler<PacketOred
         IProxy.IPlayerHandler handler = JustEnoughCalculation.proxy.getPlayerHandler();
         if (handler instanceof PlayerHandlerMP) {
             PlayerHandlerMP handlerMP = ((PlayerHandlerMP) handler);
-            UUID uuid = ctx.getServerHandler().playerEntity.getUniqueID();
+            UUID uuid = ctx.getServerHandler().player.getUniqueID();
             if (message.add) {
                 handlerMP.addOredictPref(uuid, message.stack);
             } else {

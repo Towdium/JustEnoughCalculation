@@ -32,8 +32,8 @@ import java.util.Map;
  */
 
 public class ModelFluidContainer implements IBakedModel, IPerspectiveAwareModel {
-    public static final ModelResourceLocation modelResourceLocation = new ModelResourceLocation("je_calculation:itemFluidContainer", "inventory");
-    public static final ResourceLocation liquidResourceLocation = new ResourceLocation("je_calculation:items/itemFluidContainer_liquid");
+    public static final ModelResourceLocation modelResourceLocation = new ModelResourceLocation("je_calculation:item_fluid_container", "inventory");
+    public static final ResourceLocation liquidResourceLocation = new ResourceLocation("je_calculation:items/item_fluid_container__liquid");
     //public static final ResourceLocation coverResourceLocation = new ResourceLocation("je_calculation:items/itemFluidContainer_cover");
 
     int color;

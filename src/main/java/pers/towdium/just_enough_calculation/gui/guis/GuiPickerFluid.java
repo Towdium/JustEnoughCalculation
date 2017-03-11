@@ -41,8 +41,8 @@ public class GuiPickerFluid extends GuiPicker {
     @Override
     public void init() {
         super.init();
-        fieldAmount = new GuiTextField(0, fontRendererObj, guiLeft + 39, guiTop + 8, 58, 18);
-        fieldAmount.setText(inventorySlots.getSlot(36).getStack() == null ?
+        fieldAmount = new GuiTextField(0, fontRenderer, guiLeft + 39, guiTop + 8, 58, 18);
+        fieldAmount.setText(inventorySlots.getSlot(36).getStack().isEmpty() ?
                 "" : String.valueOf(ItemStackHelper.NBT.getAmount(inventorySlots.getSlot(36).getStack())));
         buttonConfirm = new JECGuiButton(2, guiLeft + 119, guiTop + 7, 50, 20, "confirm").setLsnLeft(() -> {
             int amount;
@@ -66,18 +66,18 @@ public class GuiPickerFluid extends GuiPicker {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID, "textures/gui/guiPickerFluid.png"));
+        this.mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID, "textures/gui/gui_picker_fluid.png"));
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
         fieldAmount.drawTextBox();
-        drawCenteredStringWithoutShadow(fontRendererObj, "mb", guiLeft + 107, guiTop + 13, 4210752);
-        fontRendererObj.drawString(localization("search"), guiLeft + 7, guiTop + 51, 4210752);
+        drawCenteredStringWithoutShadow(fontRenderer, "mb", guiLeft + 107, guiTop + 13, 4210752);
+        fontRenderer.drawString(localization("search"), guiLeft + 7, guiTop + 51, 4210752);
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
     }
 
     @Override
     GuiTextField getSearchField(FontRenderer renderer) {
         String textSearch = localization("search");
-        return new GuiTextField(0, renderer, guiLeft + fontRendererObj.getStringWidth(textSearch) + 15,
+        return new GuiTextField(0, renderer, guiLeft + fontRenderer.getStringWidth(textSearch) + 15,
                 guiTop + 46, 75, 18);
     }
 

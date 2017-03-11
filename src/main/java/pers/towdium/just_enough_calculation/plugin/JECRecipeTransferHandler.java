@@ -2,7 +2,6 @@ package pers.towdium.just_enough_calculation.plugin;
 
 import mezz.jei.api.gui.IGuiIngredient;
 import mezz.jei.api.gui.IRecipeLayout;
-import mezz.jei.api.recipe.IFocus;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import net.minecraft.client.gui.GuiScreen;
@@ -73,7 +72,7 @@ public class JECRecipeTransferHandler implements IRecipeTransferHandler {
                 List<ItemStack> buffer = new ArrayList<>(stacks.size());
                 stacks.forEach(stack -> merger.accept(buffer, ((ItemStack) stack.value)));
                 for (int i = start; i <= end; i++) {
-                    ItemStack stack = buffer.size() > i - start ? buffer.get(i - start) : null;
+                    ItemStack stack = buffer.size() > i - start ? buffer.get(i - start) : ItemStack.EMPTY;
                     editor.onItemStackSet(i, editor.inventorySlots.getSlot(i).getStack());
                     editor.inventorySlots.getSlot(i).putStack(stack);
 
@@ -91,12 +90,6 @@ public class JECRecipeTransferHandler implements IRecipeTransferHandler {
     @Nonnull
     public Class<? extends Container> getContainerClass() {
         return container;
-    }
-
-    @Override
-    @Nonnull
-    public String getRecipeCategoryUid() {
-        return recipeUID;
     }
 
     @Nullable
@@ -132,8 +125,7 @@ public class JECRecipeTransferHandler implements IRecipeTransferHandler {
             mover.accept(iRecipeLayout.getFluidStacks().getGuiIngredients());
             List<ItemStack> buffer = new ArrayList<>();
             JEIPlugin.recipeRegistry.getCraftingItems(
-                    JEIPlugin.recipeRegistry.getRecipeCategories(Collections.singletonList(recipeUID)).get(0),
-                    JEIPlugin.recipeRegistry.createFocus(IFocus.Mode.NONE, null)
+                    JEIPlugin.recipeRegistry.getRecipeCategories(Collections.singletonList(recipeUID)).get(0), null
             ).forEach(itemStack -> buffer.add(ItemStackHelper.toItemStackJEC(itemStack.copy())));
             tempList.get(Recipe.EnumStackIOType.CATALYST).
                     add(buffer.size() == 1 ? new Singleton<>(buffer.get(0)) : new Singleton<>(buffer));

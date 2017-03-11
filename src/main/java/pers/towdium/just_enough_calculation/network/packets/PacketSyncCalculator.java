@@ -35,14 +35,14 @@ public class PacketSyncCalculator implements IMessage, IMessageHandler<PacketSyn
 
     @Override
     public IMessage onMessage(PacketSyncCalculator message, MessageContext ctx) {
-        InventoryPlayer inventory = ctx.getServerHandler().playerEntity.inventory;
+        InventoryPlayer inventory = ctx.getServerHandler().player.inventory;
         ItemStack calculator = inventory.getCurrentItem();
-        if (calculator != null && calculator.getItem() == JustEnoughCalculation.itemCalculator) {
+        if (!calculator.isEmpty() && calculator.getItem() == JustEnoughCalculation.itemCalculator) {
             inventory.setInventorySlotContents(inventory.currentItem, message.stack);
         } else {
-            calculator = inventory.offHandInventory[0];
-            if (calculator != null && calculator.getItem() == JustEnoughCalculation.itemCalculator) {
-                inventory.offHandInventory[0] = message.stack;
+            calculator = inventory.offHandInventory.get(0);
+            if (!calculator.isEmpty() && calculator.getItem() == JustEnoughCalculation.itemCalculator) {
+                inventory.offHandInventory.set(0, message.stack);
             }
         }
         return null;
