@@ -123,7 +123,7 @@ public abstract class JECGuiContainer extends GuiContainer {
     protected void handleMouseClick(Slot slotIn, int slotId, int mouseButton, ClickType type) {
         ItemStack s = slotIn == null ? ItemStack.EMPTY : slotIn.getStack();
         ItemStack r = inventorySlots.slotClick(slotIn == null ? slotId : slotIn.slotNumber, mouseButton, type, mc.player);
-        if ((!s.isEmpty() && !s.equals(r)) || (s.isEmpty() && r.isEmpty())) {
+        if ((!s.isEmpty() && !s.equals(r)) || (s.isEmpty() && !r.isEmpty())) {
             onItemStackSet(slotId, null);
         }
     }
