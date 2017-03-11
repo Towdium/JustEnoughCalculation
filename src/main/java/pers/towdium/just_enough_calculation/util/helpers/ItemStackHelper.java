@@ -26,7 +26,7 @@ public class ItemStackHelper {
 
     public static boolean isItemEqual(@Nullable ItemStack one, @Nullable ItemStack two) {
         return one != null && two != null && one.getItem() == two.getItem() && one.getMetadata() == two.getMetadata() &&
-                NBT.equalsIgnoreJEC(one.getTagCompound(), two.getTagCompound());
+                NBT.equalsIgnoreJEC(one.getTagCompound(), two.getTagCompound()) && NBT.getFluid(one) == NBT.getFluid(two);
     }
 
     @Nullable
@@ -299,6 +299,7 @@ public class ItemStackHelper {
 
         static NBTTagCompound getTag(@Nonnull ItemStack itemStack, boolean isolate) {
             NBTTagCompound n = itemStack.getSubCompound(JustEnoughCalculation.Reference.MODID, false);
+            //noinspection ConstantConditions
             return isolate ? (n == null ? empty : n) : itemStack.hasTagCompound() ? itemStack.getTagCompound() : empty;
         }
     }
