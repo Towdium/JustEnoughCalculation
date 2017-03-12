@@ -29,6 +29,17 @@ public class ItemStackHelper {
                 NBT.equalsIgnoreJEC(one.getTagCompound(), two.getTagCompound());
     }
 
+    public static NBTTagCompound getSubTag(ItemStack stack, String key) {
+        NBTTagCompound ret = stack.getSubCompound(key);
+        if (ret == null) {
+            ret = new NBTTagCompound();
+            NBTTagCompound tmp = new NBTTagCompound();
+            tmp.setTag(key, ret);
+            stack.setTagCompound(tmp);
+        }
+        return ret;
+    }
+
     @Nonnull
     public static ItemStack toItemStackJEC(ItemStack itemStack) {
         if (itemStack.isEmpty()) return ItemStack.EMPTY;

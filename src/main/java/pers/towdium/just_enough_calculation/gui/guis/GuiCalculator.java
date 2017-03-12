@@ -234,21 +234,17 @@ public class GuiCalculator extends JECGuiContainer {
         Singleton<ItemStack> calc = new Singleton<>(null);
         calc.predicate = stack -> stack.getItem() == JustEnoughCalculation.itemCalculator;
         try {
-            calc.push(mc.player.inventory.getCurrentItem());
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
-        try {
             calc.push(mc.player.inventory.offHandInventory.get(0));
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
+        try {
+            calc.push(mc.player.inventory.getCurrentItem());
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
         if (calc.value != null) {
-            NBTTagCompound tag = calc.value.getSubCompound(keyRecipe);
-            if (tag == null) {
-                tag = new NBTTagCompound();
-                calc.value.setTagCompound(tag);
-            }
+            NBTTagCompound tag = ItemStackHelper.getSubTag(calc.value, keyRecipe);
             tag.setString(keyAmount, textFieldAmount.getText());
             NBTTagList buffer = new NBTTagList();
             for (int i = 28; i <= 33; i++) {
@@ -268,21 +264,17 @@ public class GuiCalculator extends JECGuiContainer {
         Singleton<ItemStack> calc = new Singleton<>(null);
         calc.predicate = stack -> stack.getItem() == JustEnoughCalculation.itemCalculator;
         try {
-            calc.push(mc.player.inventory.getCurrentItem());
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
-        try {
             calc.push(mc.player.inventory.offHandInventory.get(0));
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
+        try {
+            calc.push(mc.player.inventory.getCurrentItem());
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
         if (calc.value != null) {
-            NBTTagCompound tag = calc.value.getSubCompound(keyRecipe);
-            if (tag == null) {
-                tag = new NBTTagCompound();
-                calc.value.setTagCompound(tag);
-            }
+            NBTTagCompound tag = ItemStackHelper.getSubTag(calc.value, keyRecipe);
             textFieldAmount.setText(tag.getString(keyAmount));
             List<ItemStack> buffer = new ArrayList<>();
             NBTTagList recent = tag.getTagList(keyRecent, 10);

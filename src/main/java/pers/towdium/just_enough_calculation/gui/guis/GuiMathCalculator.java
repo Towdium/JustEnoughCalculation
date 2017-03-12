@@ -12,6 +12,7 @@ import pers.towdium.just_enough_calculation.gui.JECGuiContainer;
 import pers.towdium.just_enough_calculation.network.packets.PacketSyncCalculator;
 import pers.towdium.just_enough_calculation.util.Utilities;
 import pers.towdium.just_enough_calculation.util.exception.IllegalPositionException;
+import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper;
 import pers.towdium.just_enough_calculation.util.wrappers.Singleton;
 
 import java.math.BigDecimal;
@@ -138,14 +139,10 @@ public class GuiMathCalculator extends JECGuiContainer {
     void updateItemFromGui() {
         Singleton<ItemStack> calc = new Singleton<>(null);
         calc.predicate = stack -> stack.getItem() == JustEnoughCalculation.itemCalculator;
-        calc.push(mc.player.inventory.getCurrentItem());
         calc.push(mc.player.inventory.offHandInventory.get(0));
+        calc.push(mc.player.inventory.getCurrentItem());
         if (calc.value != null) {
-            NBTTagCompound tag = calc.value.getSubCompound(KEY_MATH);
-            if (tag == null) {
-                tag = new NBTTagCompound();
-                calc.value.setTagCompound(tag);
-            }
+            NBTTagCompound tag = ItemStackHelper.getSubTag(calc.value, KEY_MATH);
             tag.setString(KEY_RECORD, record == null ? "" : record.toString());
             tag.setInteger(KEY_SIGN, sign.ordinal());
             tag.setString(KEY_CURRENT, current.toString());
@@ -158,8 +155,8 @@ public class GuiMathCalculator extends JECGuiContainer {
     void updateGuiFromItem() {
         Singleton<ItemStack> calc = new Singleton<>(null);
         calc.predicate = stack -> stack.getItem() == JustEnoughCalculation.itemCalculator;
-        calc.push(mc.player.inventory.getCurrentItem());
         calc.push(mc.player.inventory.offHandInventory.get(0));
+        calc.push(mc.player.inventory.getCurrentItem());
         if (calc.value != null) {
             NBTTagCompound tag = calc.value.getSubCompound(KEY_MATH);
             if(tag != null) {
