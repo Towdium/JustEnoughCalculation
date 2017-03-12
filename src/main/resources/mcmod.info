@@ -10,7 +10,7 @@
   "authorList": ["Towdium"],
   "logoFile": "",
   "screenshots": [],
-  "dependencies": [JEI],
+  "dependencies": [jei],
   "credits": "Thanks to the MCP, Forge and FML guys; along with sesess, Pahimar, MrCrayfish and BedrockMiner for their tutorial."
 }
 ]

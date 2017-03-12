@@ -136,6 +136,7 @@ public class GuiCalculator extends JECGuiContainer {
                 Utilities.openGui(this);
             }));
         } else {
+            s.removeSubCompound(JustEnoughCalculation.Reference.MODID);
             updateLayout();
             updateRecent(s);
         }
