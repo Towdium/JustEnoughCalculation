@@ -162,7 +162,7 @@ public class PlayerHandlerSP implements IProxy.IPlayerHandler {
                 bufferB.get(element.three).add(new Pair<>(element.one, element.two));
         });
         List<Pair<String, Integer>> bufferC = new ArrayList<>(size);
-        bufferB.forEach(elementList -> elementList.forEach(bufferC::add));
+        bufferB.forEach(bufferC::addAll);
         return bufferC;
     }
 

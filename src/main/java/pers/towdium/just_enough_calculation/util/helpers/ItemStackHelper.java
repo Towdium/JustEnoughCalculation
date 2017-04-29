@@ -19,6 +19,7 @@ import java.util.function.Function;
  * Author:  Towdium
  * Created: 2016/6/14.
  */
+@SuppressWarnings("ALL")
 public class ItemStackHelper {
     public static final String keyAmount = "amount";
     public static final String keyType = "type";
@@ -191,7 +192,8 @@ public class ItemStackHelper {
             if (a == null && b == null) {
                 return true;
             } else if (a == null || b == null) {
-                return false;
+                NBTTagCompound tag = a == null ? b.copy() : a.copy();
+                return tag.getKeySet().size() == 1 && tag.getKeySet().contains(JustEnoughCalculation.Reference.MODID);
             } else {
                 NBTTagCompound aNew = a.copy();
                 aNew.removeTag(JustEnoughCalculation.Reference.MODID);
