@@ -5,6 +5,7 @@ import pers.towdium.just_enough_calculation.util.exception.IllegalPositionExcept
 import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper;
 import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper.NBT;
 import pers.towdium.just_enough_calculation.util.helpers.PlayerRecordHelper;
+import pers.towdium.just_enough_calculation.util.wrappers.Pair;
 import pers.towdium.just_enough_calculation.util.wrappers.Singleton;
 
 import java.util.ArrayList;
@@ -56,7 +57,7 @@ public class Calculator {
         LOOP2:
         while (cancellableItems.size() != 0) {
             ++count;
-            if (count > 10000) {
+            if (count > 2000) {
                 throw new JECCalculatingCoreException();
             }
             // all the items possible tp cancel
@@ -64,15 +65,15 @@ public class Calculator {
                 // all the recipes for one item
                 LOOP1:
                 for (Recipe recipe : PlayerRecordHelper.getAllRecipeOutput(stack)) {
-                    CostList record = new CostList(costLists.get(costLists.size() - 1), new CostList(recipe, NBT.setAmount(stack.copy(), -NBT.getAmount(stack)), getCount(stack, recipe)));
+                    CostList record = new CostList(costLists.get(costLists.size() - 1), new CostList(recipe, stack.copy(), getCount(stack, recipe)));
                     for (CostList costList : costLists) {
-                        if (costList.equals(record)) {
+                        if (record.includesAll(costList)) {
                             continue LOOP1;
                         }
-                        costLists.add(record);
-                        cancellableItems = record.getValidItems();
-                        continue LOOP2;
                     }
+                    costLists.add(record);
+                    cancellableItems = record.getValidItems();
+                    continue LOOP2;
                 }
             }
             break;
@@ -109,7 +110,7 @@ public class Calculator {
     }
 
     protected long getCount(ItemStack itemStack, Recipe recipe) {
-        long a = recipe.getAmountOutput(itemStack);
+        long a = recipe.getAmountOutputInternal(itemStack);
         return (-ItemStackHelper.NBT.getAmountInternal(itemStack) + a - 1) / a;
     }
 
@@ -139,7 +140,8 @@ public class Calculator {
             merge(EnumMergeType.NORMAL_MERGE, catalyst, recipe.catalyst);
             merge(EnumMergeType.NORMAL_CANCEL, items, recipe.input);
             items.forEach(itemStack -> NBT.setAmount(itemStack, NBT.getAmount(itemStack) * amount));
-            procedure.add(dest.copy());
+            Pair<Long, ItemStackHelper.EnumStackAmountType> p = recipe.getAmountOutput(dest);
+            procedure.add(NBT.setData(dest.copy(), p.two, p.one * amount));
         }
 
         public CostList(CostList caller, CostList callee) {
@@ -213,29 +215,21 @@ public class Calculator {
             }
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (obj instanceof CostList) {
-                BiPredicate<ItemStack, List<ItemStack>> stackChecker = (itemStack, stacks) -> {
-                    Singleton<Boolean> flag = new Singleton<>(false);
-                    stacks.forEach(toCheck -> flag.value = flag.value || itemStack.equals(toCheck));
-                    return flag.value;
-                };
+        public boolean includesAll(CostList old) {
+            BiPredicate<ItemStack, List<ItemStack>> stackChecker = (itemStack, stacks) -> {
+                Singleton<Boolean> flag = new Singleton<>(null);
+                stacks.stream().filter(s -> ItemStackHelper.isItemEqual(s, itemStack))
+                        .forEach(s -> flag.value = NBT.getAmountInternal(itemStack) > NBT.getAmountInternal(s));
+                return flag.value == null ? NBT.getAmount(itemStack) > 0 : flag.value;
+            };
 
-                BiPredicate<List<ItemStack>, List<ItemStack>> listChecker = (stacks1, stacks2) -> {
-                    Singleton<Boolean> flag = new Singleton<>(true);
-                    stacks1.forEach(itemStack -> flag.value = flag.value && stackChecker.test(itemStack, stacks2));
-                    return flag.value;
-                };
+            BiPredicate<List<ItemStack>, List<ItemStack>> listChecker = (stacks1, stacks2) -> {
+                Singleton<Boolean> flag = new Singleton<>(false);
+                stacks1.forEach(itemStack -> flag.value = flag.value || stackChecker.test(itemStack, stacks2));
+                return flag.value;
+            };
 
-                BiPredicate<List<ItemStack>, List<ItemStack>> doubleChecker = (stacks1, stacks2) ->
-                        listChecker.test(stacks1, stacks2) && listChecker.test(stacks2, stacks1);
-
-                CostList costList = ((CostList) obj);
-                return doubleChecker.test(items, costList.items) && doubleChecker.test(catalyst, costList.catalyst);
-            } else {
-                return false;
-            }
+            return !listChecker.test(items, old.items);
         }
 
         public void finalise() {
