@@ -5,6 +5,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import pers.towdium.just_enough_calculation.util.function.TriFunction;
 import pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper;
+import pers.towdium.just_enough_calculation.util.wrappers.Pair;
 import pers.towdium.just_enough_calculation.util.wrappers.Singleton;
 
 import java.util.ArrayList;
@@ -13,6 +14,8 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+
+import static pers.towdium.just_enough_calculation.util.helpers.ItemStackHelper.EnumStackAmountType.INVALID;
 
 /**
  * Author: Towdium
@@ -69,9 +72,16 @@ public class Recipe {
         this.input = copyArray.apply(input);
     }
 
-    public long getAmountOutput(ItemStack itemStack) {
+    public long getAmountOutputInternal(ItemStack itemStack) {
         int index = getIndexOutput(itemStack);
         return index == -1 ? 0 : ItemStackHelper.NBT.getAmountInternal(output[index]);
+    }
+
+    public Pair<Long, ItemStackHelper.EnumStackAmountType> getAmountOutput(ItemStack itemStack) {
+        int index = getIndexOutput(itemStack);
+        return index == -1 ? new Pair<>(0L, INVALID) :
+                new Pair<>(ItemStackHelper.NBT.getAmount(output[index]),
+                        ItemStackHelper.NBT.getType(output[index]));
     }
 
     public int getIndexInput(ItemStack itemStack) {
