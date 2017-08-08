@@ -1,7 +1,0 @@
-{
-  "parent": "item/generated",
-  "textures": {
-    "layer0": "je_calculation:items/item_label__base",
-    "layer1": "je_calculation:items/item_label__overlay"
-  }
-}

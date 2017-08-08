@@ -4,37 +4,31 @@ buildscript {
         maven { url = "http://files.minecraftforge.net/maven" }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
-//Only edit below this line, the above code adds and enables the nessasary things for Forge to be setup.
+//Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
 repositories {
     maven {
         url "http://dvs1.progwml6.com/files/maven"
     }
-    maven {
-        name 'CB Repo'
-        url "http://chickenbones.net/maven/"
-    }
 }
 
 version = "${mc_version}-${proj_version}"
-group = "pers.towdium.justEnoughCalulation" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "je_calculation"
+group = "me.towdium.jecalculation" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "jecalculation"
 
-sourceCompatibility = targetCompatibility = "1.8" // Need this here so eclipse task generates correctly.
+sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 compileJava {
-    sourceCompatibility = targetCompatibility = "1.8"
+    sourceCompatibility = targetCompatibility = '1.8'
 }
 
 minecraft {
-    version = "1.11.2-13.20.0.2255"
+    version = "1.12-14.21.1.2443"
     runDir = "run"
-    mappings = "snapshot_20170310"
-
-    replace '@VERSION@', project.version
+    mappings = "snapshot_20170624"
 }
 
 dependencies {
@@ -42,21 +36,20 @@ dependencies {
     compile "mezz.jei:jei_${mc_version}:${jei_version}:api"
 }
 
-processResources
-{
+processResources {
     // this will ensure that this task is redone when the versions change.
     inputs.property "version", project.version
-    inputs.property "mc_version", project.minecraft.version
+    inputs.property "mcversion", project.minecraft.version
 
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
-
+                
         // replace version and mcversion
         expand 'version':project.version, 'mcversion':project.minecraft.version
     }
-
-    // copy everything else, thats not the mcmod.info
+        
+    // copy everything else except the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }

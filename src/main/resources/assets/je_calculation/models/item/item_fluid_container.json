@@ -1,7 +1,0 @@
-{
-  "parent": "item/generated",
-  "textures": {
-    "layer0": "je_calculation:items/item_fluid_container__base",
-    "fluid": "je_calculation:items/item_fluid_container__liquid"
-  }
-}

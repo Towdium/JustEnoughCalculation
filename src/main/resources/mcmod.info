@@ -1,6 +1,6 @@
 [
 {
-  "modid": "je_calculation",
+  "modid": "jecalculation",
   "name": "Just Enough Calculation",
   "description": "A simple mod to help you with recipe calculation.",
   "version": "${version}",
