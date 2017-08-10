@@ -1,46 +1,16 @@
 package me.towdium.jecalculation.network;
 
-import me.towdium.jecalculation.JustEnoughCalculation;
-import me.towdium.jecalculation.event.*;
-import me.towdium.jecalculation.gui.JECGuiHandler;
-import me.towdium.jecalculation.model.ColorLabel;
-import net.minecraft.client.Minecraft;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import me.towdium.jecalculation.command.JecCommand;
+import net.minecraftforge.client.ClientCommandHandler;
 
 /**
- * @author Towdium
+ * Author: towdium
+ * Date:   8/10/17.
  */
-
-@SideOnly(Side.CLIENT)
-public class ProxyClient implements IProxy {
-    static PlayerHandlerSP playerHandler = new PlayerHandlerSP();
-
+public class ProxyClient extends ProxyCommon {
     @Override
-    public void init() {
-
-        NetworkRegistry.INSTANCE.registerGuiHandler(JustEnoughCalculation.instance, new JECGuiHandler());
-    }
-
-    @Override
-    public void preInit() {
-        MinecraftForge.EVENT_BUS.register(new InputEventHandler());
-        MinecraftForge.EVENT_BUS.register(new ModelEventHandler());
-        MinecraftForge.EVENT_BUS.register(new DataEventHandler());
-        MinecraftForge.EVENT_BUS.register(new TooltipEventHandler());
-        MinecraftForge.EVENT_BUS.register(new RegisterEventHandler());
-    }
-
-    @Override
-    public void postInit() {
-        Minecraft.getMinecraft().getItemColors()
-                .registerItemColorHandler(new ColorLabel(), JustEnoughCalculation.itemLabel);
-    }
-
-    @Override
-    public IPlayerHandler getPlayerHandler() {
-        return playerHandler;
+    public void initPost() {
+        super.initPost();
+        ClientCommandHandler.instance.registerCommand(new JecCommand());
     }
 }
