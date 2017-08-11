@@ -12,4 +12,22 @@ public class Pair<K, V> {
         this.one = one;
         this.two = two;
     }
+
+    @Override
+    public int hashCode() {
+        return one.hashCode() ^ two.hashCode();
+    }
+
+    public boolean swap(Class<? extends K> ke, Class<? extends V> ve) {
+        if (ke.isInstance(one) && ve.isInstance(two)) return true;
+        else if (!(ke.isInstance(two) && ve.isInstance(one))) return false;
+        else {
+            //noinspection unchecked
+            K o = (K) two;
+            //noinspection unchecked
+            two = (V) one;
+            one = o;
+            return true;
+        }
+    }
 }

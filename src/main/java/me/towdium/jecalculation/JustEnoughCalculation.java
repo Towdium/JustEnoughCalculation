@@ -22,6 +22,7 @@ import java.util.Map;
 /**
  * @author Towdium
  */
+@SuppressWarnings("unused")
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 @Mod(
@@ -45,15 +46,11 @@ public class JustEnoughCalculation {
     @NetworkCheckHandler
     public static boolean networkCheck(Map<String, String> mods, Side s) {
         if (s == Side.SERVER) {
-            if (mods.containsKey(Reference.MODID))
-                side = enumSide.BOTH;
-            else
-                side = enumSide.CLIENT;
+            if (mods.containsKey(Reference.MODID) && !JecConfig.forceClient) side = enumSide.BOTH;
+            else side = enumSide.CLIENT;
         } else {
-            if (mods.containsKey(Reference.MODID))
-                side = enumSide.SERVER;
-            else
-                return false;
+            if (mods.containsKey(Reference.MODID)) side = enumSide.SERVER;
+            else return false;
         }
         return true;
     }
@@ -85,7 +82,6 @@ public class JustEnoughCalculation {
         public static final String MODNAME = "Just Enough Calculation";
         public static final String VERSION = "@VERSION@";
     }
-
 
     /**
      * CLIENT: running at client side and server not installed

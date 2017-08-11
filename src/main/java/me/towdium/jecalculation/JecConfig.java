@@ -16,6 +16,7 @@ public class JecConfig {
     @Config.LangKey("config.force_client")
     public static boolean forceClient = false;
 
+    @SuppressWarnings("unused")
     @Mod.EventBusSubscriber
     public static class ConfigHandler {
         @SubscribeEvent
