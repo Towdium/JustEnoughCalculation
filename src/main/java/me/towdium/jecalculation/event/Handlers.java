@@ -1,6 +1,7 @@
 package me.towdium.jecalculation.event;
 
 import mcp.MethodsReturnNonnullByDefault;
+import me.towdium.jecalculation.event.handlers.InputEventHandler;
 import me.towdium.jecalculation.event.handlers.RegisterEventHandler;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -19,5 +20,6 @@ public class Handlers {
         handlers = new ArrayList<>();
 
         handlers.add(new RegisterEventHandler());
+        handlers.add(new InputEventHandler());
     }
 }

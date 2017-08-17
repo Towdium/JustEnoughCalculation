@@ -1,11 +1,18 @@
 package me.towdium.jecalculation.item.items;
 
 import mcp.MethodsReturnNonnullByDefault;
+import me.towdium.jecalculation.JustEnoughCalculation;
+import me.towdium.jecalculation.client.gui.guis.GuiCalculator;
 import me.towdium.jecalculation.item.JecItem;
 import me.towdium.jecalculation.utils.IllegalPositionException;
+import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
+import net.minecraft.world.World;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -42,5 +49,14 @@ public class ItemCalculator extends JecItem {
             items.add(new ItemStack(this, 1, 0));
             items.add(new ItemStack(this, 1, 1));
         }
+    }
+
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
+        if (JustEnoughCalculation.side != JustEnoughCalculation.enumSide.SERVER) {
+            Minecraft.getMinecraft().addScheduledTask(() ->
+                    Minecraft.getMinecraft().displayGuiScreen(new GuiCalculator(null)));
+        }
+        return super.onItemRightClick(worldIn, playerIn, handIn);
     }
 }

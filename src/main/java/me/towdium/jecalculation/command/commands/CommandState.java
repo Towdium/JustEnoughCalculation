@@ -31,6 +31,6 @@ public class CommandState implements SubCommand {
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         sender.sendMessage(new TextComponentTranslation("command.state.desc",
-                LocalizationHelper.format(JustEnoughCalculation.side.toString()).one));
+                LocalizationHelper.format(JustEnoughCalculation.side.toString())));
     }
 }

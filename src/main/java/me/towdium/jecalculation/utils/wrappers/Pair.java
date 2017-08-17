@@ -30,4 +30,14 @@ public class Pair<K, V> {
             return true;
         }
     }
+
+    public Pair<K, V> setOne(K one) {
+        this.one = one;
+        return this;
+    }
+
+    public Pair<K, V> setTwo(V two) {
+        this.two = two;
+        return this;
+    }
 }
