@@ -35,25 +35,43 @@ public class WButton extends Widget {
         return this;
     }
 
+    protected static boolean mouseIn(GuiButtonExt button, int x, int y) {
+        return button.enabled && button.visible &&
+                JecGui.mouseIn(button.x, button.y, button.width, button.height, x, y);
+    }
+
     @Override
     public void onGuiInit(JecGui gui) {
         super.onGuiInit(gui);
-        button = new GuiButtonExt(0, xPos + gui.getGuiLeft(), yPos + gui.getGuiTop(), xSize, ySize, text);
+        button = new GuiButtonExt(0, xPos + gui.getGuiLeft(), yPos + gui.getGuiTop(), xSize, ySize, text) {
+            @Override
+            public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
+                return false;
+            }
+        };
         gui.buttonList.add(button);
     }
 
     @Override
-    public void onClicked(JecGui gui, int xMouse, int yMouse, int button) {
-        if (this.button.mousePressed(Minecraft.getMinecraft(), xMouse, yMouse)) {
+    public boolean onClicked(JecGui gui, int xMouse, int yMouse, int button) {
+        if (mouseIn(this.button, xMouse, yMouse)) {
             if (button == 0 && lsnrLeft != null) {
                 lsnrLeft.run();
                 Minecraft.getMinecraft().getSoundHandler().playSound(
                         PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+                return true;
             } else if (button == 1 && lsnrRight != null) {
                 lsnrLeft.run();
                 Minecraft.getMinecraft().getSoundHandler().playSound(
                         PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 0.8F));
+                return true;
             }
         }
+        return false;
+    }
+
+    @Override
+    public void onRemoved(JecGui gui) {
+        gui.buttonList.remove(button);
     }
 }

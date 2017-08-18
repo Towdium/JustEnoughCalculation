@@ -17,6 +17,6 @@ public class WLine extends Widget {
 
     @Override
     public void onDraw(JecGui gui, int xMouse, int yMouse) {
-        gui.drawResource(Resource.LINE, 6 + gui.getGuiLeft(), y + gui.getGuiTop() - 1);
+        gui.drawResource(Resource.WIDGET_LINE, 6 + gui.getGuiLeft(), y + gui.getGuiTop() - 1);
     }
 }

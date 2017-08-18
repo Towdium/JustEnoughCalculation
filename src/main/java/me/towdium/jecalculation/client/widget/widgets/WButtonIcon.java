@@ -28,7 +28,7 @@ public class WButtonIcon extends WButton {
             @Override
             public void drawButton(Minecraft mc, int mouseX, int mouseY, float partial) {
                 this.hovered = mouseX > x + 1 && mouseY > y + 1 && mouseX <= x + width - 1 && mouseY <= y + height - 1;
-                gui.drawResource(hovered ? Resource.BUTTON_FOCUSED : Resource.BUTTON_NORMAL, x, y);
+                gui.drawResource(hovered ? Resource.WIDGET_BUTTON_FOCUSED : Resource.WIDGET_BUTTON_NORMAL, x, y);
                 String text = displayString;
                 int strWidth = mc.fontRenderer.getStringWidth(text);
                 int ellipsisWidth = mc.fontRenderer.getStringWidth("...");
@@ -37,6 +37,11 @@ public class WButtonIcon extends WButton {
                 this.drawCenteredString(mc.fontRenderer, text, this.x + this.width / 2, this.y + (this.height - 8) / 2,
                         hovered ? 16777120 : 14737632);
                 gui.drawResource(hovered ? focused : normal, x + 3, y + 3);
+            }
+
+            @Override
+            public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
+                return false;
             }
         });
     }

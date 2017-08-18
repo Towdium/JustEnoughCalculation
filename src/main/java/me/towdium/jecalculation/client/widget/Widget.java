@@ -8,6 +8,14 @@ import net.minecraft.client.gui.Gui;
  * Date:   8/14/17.
  */
 public class Widget extends Gui {
+    protected static int gl(JecGui gui) {
+        return gui.getGuiLeft();
+    }
+
+    protected static int gt(JecGui gui) {
+        return gui.getGuiTop();
+    }
+
     public void onGuiInit(JecGui gui) {
     }
 
@@ -17,6 +25,29 @@ public class Widget extends Gui {
     public void onRemoved(JecGui gui) {
     }
 
-    public void onClicked(JecGui gui, int xMouse, int yMouse, int button) {
+    public boolean onClicked(JecGui gui, int xMouse, int yMouse, int button) {
+        return false;
+    }
+
+    public boolean onKey(JecGui gui, char ch, int code) {
+        return false;
+    }
+
+    public class Timer {
+        long time = System.currentTimeMillis();
+        boolean running = false;
+
+        public void setState(boolean b) {
+            if (!b && running) running = false;
+            if (b && !running) {
+                running = true;
+                time = System.currentTimeMillis();
+            }
+        }
+
+        public long getTime() {
+            return running ? System.currentTimeMillis() - time : 0;
+        }
+
     }
 }

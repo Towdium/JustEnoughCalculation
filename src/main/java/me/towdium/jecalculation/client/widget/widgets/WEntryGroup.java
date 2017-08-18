@@ -38,7 +38,7 @@ public class WEntryGroup extends Widget {
     }
 
     @Override
-    public void onClicked(JecGui gui, int xMouse, int yMouse, int button) {
-        widgets.forEach(w -> w.onClicked(gui, xMouse, yMouse, button));
+    public boolean onClicked(JecGui gui, int xMouse, int yMouse, int button) {
+        return widgets.stream().anyMatch(w -> w.onClicked(gui, xMouse, yMouse, button));
     }
 }

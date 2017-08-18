@@ -30,7 +30,7 @@ public class WEntry extends Widget {
 
     @Override
     public void onDraw(JecGui gui, int xMouse, int yMouse) {
-        gui.drawResourceContinuous(Resource.SLOT, xPos + gui.getGuiLeft(), yPos + gui.getGuiTop(),
+        gui.drawResourceContinuous(Resource.WIDGET_SLOT, xPos + gui.getGuiLeft(), yPos + gui.getGuiTop(),
                 xSize, ySize, 3, 3, 3, 3);
         if (mouseIn(gui, xMouse, yMouse)) drawRect(gui.getGuiLeft() + xPos + 1, gui.getGuiTop() + yPos + 1,
                 gui.getGuiLeft() + xPos + xSize - 1, gui.getGuiTop() + yPos + ySize - 1, 0x80FFFFFF);
