@@ -11,7 +11,7 @@ import net.minecraftforge.fml.client.config.GuiButtonExt;
  * Author: towdium
  * Date:   8/14/17.
  */
-public class WButton extends Widget {
+public class WButton extends Widget.Advanced {
     protected int xPos, yPos, xSize, ySize;
     protected Runnable lsnrLeft, lsnrRight;
     protected String text;

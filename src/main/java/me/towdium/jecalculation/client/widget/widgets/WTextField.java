@@ -8,7 +8,7 @@ import net.minecraft.client.gui.GuiTextField;
  * Author: towdium
  * Date:   17-8-18.
  */
-public class WTextField extends Widget {
+public class WTextField extends Widget.Advanced {
     protected int xPos, yPos, xSize;
     GuiTextField textField;
 

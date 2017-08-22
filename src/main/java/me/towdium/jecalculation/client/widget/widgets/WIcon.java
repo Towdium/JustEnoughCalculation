@@ -9,9 +9,8 @@ import me.towdium.jecalculation.client.widget.Widget;
  * Date:   17-8-18.
  */
 public class WIcon extends Widget {
-    int xPos, yPos, xSize, ySize;
-    Resource normal;
-    Resource focused;
+    public int xPos, yPos, xSize, ySize;
+    public Resource normal, focused;
     Timer timer = new Timer();
 
     public WIcon(int xPos, int yPos, int xSize, int ySize, Resource normal, Resource focused) {
@@ -31,6 +30,6 @@ public class WIcon extends Widget {
         Resource r = hovered ? focused : normal;
         gui.drawResource(r, (xSize - r.getXSize()) / 2 + xPos + gl(gui), (ySize - r.getYSize()) / 2 + yPos + gt(gui));
         timer.setState(hovered);
-        if (timer.getTime() > 500) gui.drawHoveringText("hahah", xMouse, yMouse);
+        if (timer.getTime() > 500) gui.drawTooltip(xMouse, yMouse, "hahaa");  // TODO hover
     }
 }

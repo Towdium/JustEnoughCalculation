@@ -10,7 +10,7 @@ import java.util.stream.IntStream;
  * Author: towdium
  * Date:   17-8-17.
  */
-public class WEntryGroup extends Widget {
+public class WEntryGroup extends Widget.Advanced {
     ArrayList<WEntry> widgets = new ArrayList<>();
 
     public WEntryGroup(int xPos, int yPos, int column, int row) {

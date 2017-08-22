@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * Author: towdium
@@ -127,32 +128,59 @@ public class JecGui extends GuiContainer {
     }
 
     public void drawText(int xPos, int yPos, Font f, String... text) {
-        Single<Integer> y = new Single<>(yPos);
+        drawText(xPos, yPos, f, (s) -> 0, text);
+    }
+
+    public void drawText(int xPos, int yPos, Font f, Function<String, Integer> indenter, String... text) {
+        Single<Integer> y = new Single<>(0);
+        boolean unicode = fontRenderer.getUnicodeFlag();
+        if (!f.unicode) fontRenderer.setUnicodeFlag(false);
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(xPos, yPos, 0);
+        GlStateManager.scale(f.size, f.size, 1);
         Arrays.stream(text).forEachOrdered(s -> {
-            fontRenderer.drawString(s, xPos, y.value, f.color, f.shadow);
+            fontRenderer.drawString(s, indenter.apply(s), y.value, f.color, f.shadow);
             y.value += fontRenderer.FONT_HEIGHT;
         });
+        GlStateManager.popMatrix();
+        fontRenderer.setUnicodeFlag(unicode);
     }
 
     public void drawText(int xPos, int yPos, int xSize, Font f, String... text) {
+        float sizeScaled = xSize / f.size;
         int l = fontRenderer.getStringWidth("...");
         String[] ss = !f.cut ? text : Arrays.stream(text).map(s -> {
             int w = fontRenderer.getStringWidth(s);
-            if (w <= xSize) return s;
+            if (w <= sizeScaled) return s;
             else if (l >= w) return "...";
-            else return fontRenderer.trimStringToWidth(s, xSize - l) + "...";
+            else return fontRenderer.trimStringToWidth(s, (int) sizeScaled - l) + "...";
         }).toArray(String[]::new);
-        int xOffset = (xSize - Arrays.stream(ss).mapToInt(s -> fontRenderer.getStringWidth(s)).max().orElse(0)) / 2;
-        drawText(xPos + xOffset, yPos, f, ss);
+        if (f.centred) {
+            drawText(xPos, yPos, f, (s) -> (int) ((sizeScaled - fontRenderer.getStringWidth(s)) / 2), ss);
+        } else {
+            int maxLen = Arrays.stream(ss).mapToInt(s -> fontRenderer.getStringWidth(s)).max().orElse(0);
+            int xOffset = (int) ((sizeScaled - maxLen) / 2);
+            drawText(xPos, yPos, f, (s) -> xOffset, ss);
+        }
     }
 
     public void drawText(int xPos, int yPos, int xSize, int ySize, Font f, String... text) {
-        int yOffset = (ySize - text.length * fontRenderer.FONT_HEIGHT) / 2;
+        int yOffset = (ySize - (int) (text.length * fontRenderer.FONT_HEIGHT * f.size)) / 2;
         drawText(xPos, yPos + yOffset, xSize, f, text);
     }
 
+    public void drawTooltip(int xPos, int yPos, String... text) {
+        drawTooltip(xPos, yPos, Arrays.asList(text));
+    }
+
+    public void drawTooltip(int xPos, int yPos, List<String> text) {
+        drawHoveringText(text, xPos, yPos);
+        GlStateManager.disableLighting();
+        GlStateManager.disableDepth();
+    }
+
     public void localize(String key) {
-        //LocalizationHelper.format(this.getClass(), )
+        //LocalizationHelper.format(this.getClass(), )  // TODO
     }
 
     // function to override
@@ -161,19 +189,36 @@ public class JecGui extends GuiContainer {
     }
 
     public static class Font {
-        public static final Font DEFAULT_SHADOW = new Font(0xA0A0A0, true, true);
-        public static final Font DEFAULT_NO_SHADOW = new Font(0x404040, false, true);
+        public static final Font DEFAULT_SHADOW = new Font(0xFFFFFF, true, true, false, true, 1);
+        public static final Font DEFAULT_NO_SHADOW = new Font(0x404040, false, true, false, true, 1);
+        public static final Font DEFAULT_HALF = new Font(0xFFFFFF, true, true, true, true, 0.5f);
 
-        protected int color;
-        protected boolean shadow, cut;
+        public int color;
+        public boolean shadow, cut, unicode, centred;
+        public float size;
 
-        public Font(int color, boolean shadow, boolean cut) {
+        /**
+         * @param color   foreground color
+         * @param shadow  whether to draw shadow
+         * @param cut     whether to cut string when exceed xSize
+         * @param unicode if false, FORCE NOT UNICODE
+         * @param size    font size, 1 for default font size
+         */
+        public Font(int color, boolean shadow, boolean cut, boolean unicode, boolean centred, float size) {
             this.color = color;
             this.shadow = shadow;
             this.cut = cut;
+            this.size = size;
+            this.unicode = unicode;
+            this.centred = centred;
+        }
+
+        public Font copy() {
+            return new Font(color, shadow, cut, unicode, centred, size);
         }
     }
 
+    @SuppressWarnings({"UnusedReturnValue", "unused"})
     public class WidgetManager {
         protected List<Widget> widgets = new ArrayList<>();
 
@@ -183,25 +228,26 @@ public class JecGui extends GuiContainer {
 
         public void remove(Widget w) {
             widgets.remove(w);
-            w.onRemoved(JecGui.this);
+            if (w instanceof Widget.Advanced) ((Widget.Advanced) w).onRemoved(JecGui.this);
         }
 
         public void onInit() {
-            widgets.forEach(w -> w.onGuiInit(JecGui.this));
+            widgets.stream().filter(w -> w instanceof Widget.Advanced)
+                    .forEach(w -> ((Widget.Advanced) w).onGuiInit(JecGui.this));
         }
 
         public void onDraw(int mouseX, int mouseY) {
             widgets.forEach(widget -> widget.onDraw(JecGui.this, mouseX, mouseY));
         }
 
-        @SuppressWarnings("UnusedReturnValue")
         public boolean onClick(int xMouse, int yMouse, int button) {
-            return widgets.stream().anyMatch(w -> w.onClicked(JecGui.this, xMouse, yMouse, button));
+            return widgets.stream().filter(w -> w instanceof Widget.Advanced)
+                    .anyMatch(w -> ((Widget.Advanced) w).onClicked(JecGui.this, xMouse, yMouse, button));
         }
 
-        @SuppressWarnings("UnusedReturnValue")
         public boolean onKey(char ch, int code) {
-            return widgets.stream().anyMatch(w -> w.onKey(JecGui.this, ch, code));
+            return widgets.stream().filter(w -> w instanceof Widget.Advanced)
+                    .anyMatch(w -> ((Widget.Advanced) w).onKey(JecGui.this, ch, code));
         }
     }
 }
