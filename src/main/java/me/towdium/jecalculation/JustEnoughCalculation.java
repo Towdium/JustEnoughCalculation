@@ -29,7 +29,7 @@ import java.util.Map;
         modid = JustEnoughCalculation.Reference.MODID,
         name = JustEnoughCalculation.Reference.MODNAME,
         version = JustEnoughCalculation.Reference.VERSION,
-        dependencies = "required-after:jei@[4.2.7.241,)",
+        dependencies = "required-after:jei@[4.7.6.89,)",
         clientSideOnly = true
 )
 public class JustEnoughCalculation {

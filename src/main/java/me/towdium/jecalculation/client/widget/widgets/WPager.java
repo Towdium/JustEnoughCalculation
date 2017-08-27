@@ -3,7 +3,11 @@ package me.towdium.jecalculation.client.widget.widgets;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.resource.Resource;
 import me.towdium.jecalculation.client.widget.Widget;
+import me.towdium.jecalculation.utils.Utilities.Circulator;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -15,17 +19,30 @@ public class WPager extends Widget.Advanced {
 
     protected int xPos, xSize, yPos;
     protected WButtonIcon left, right;
-    protected Widget wRect, wText;
+    protected WRectangle wRect;
+    protected WText wText;
+    protected List<String> keys;
+    protected Circulator index;
 
-    public WPager(int xPos, int yPos, int xSize) {
+    public WPager(int xPos, int yPos, int xSize, int total) {
+        this(xPos, yPos, xSize, IntStream.rangeClosed(1, total)
+                .mapToObj(i -> i + "/" + total).collect(Collectors.toList()));
+    }
+
+    public WPager(int xPos, int yPos, int xSize, List<String> keys) {
         this.xPos = xPos;
         this.xSize = xSize;
         this.yPos = yPos;
-        left = new WButtonIcon(xPos, yPos, SIZE, SIZE, Resource.WIDGET_ARR_L_N, Resource.WIDGET_ARR_L_F);
+        this.keys = keys;
+        left = new WButtonIcon(xPos, yPos, SIZE, SIZE, Resource.WIDGET_ARR_L_N, Resource.WIDGET_ARR_L_F)
+                .setListenerLeft(() -> index.prev());
         right = new WButtonIcon(xPos + xSize - SIZE, yPos, SIZE, SIZE,
-                Resource.WIDGET_ARR_R_N, Resource.WIDGET_ARR_R_F);
+                Resource.WIDGET_ARR_R_N, Resource.WIDGET_ARR_R_F)
+                .setListenerLeft(() -> index.next());
         wRect = new WRectangle(xPos + SIZE, yPos, xSize - 2 * SIZE, SIZE, JecGui.COLOR_GREY);
-        wText = new WText(xPos + SIZE, yPos, xSize - 2 * SIZE, SIZE, JecGui.Font.DEFAULT_SHADOW, "test"); // TODO input
+        wText = new WText(xPos + SIZE, yPos, xSize - 2 * SIZE, SIZE, JecGui.Font.DEFAULT_SHADOW,
+                () -> keys.get(index.index()));
+        index = new Circulator(keys.size());
     }
 
     @Override

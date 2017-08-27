@@ -11,6 +11,10 @@ public class EntryItemStack implements Entry {
     int amount;
     ItemStack itemStack;
 
+    public EntryItemStack(ItemStack is) {
+        this(is, is.getCount());
+    }
+
     // I will copy it!
     public EntryItemStack(ItemStack is, int amount) {
         itemStack = is.copy();

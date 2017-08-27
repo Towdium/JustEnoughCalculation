@@ -18,7 +18,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class GuiCalculator extends JecGui {
     public GuiCalculator(@Nullable GuiScreen parent) {
-        super(parent);
+        super(parent, true);
         widgetManager.add(new WButtonIcon(7, 7, 20, 20, Resource.BUTTON_LABEL_N, Resource.BUTTON_LABEL_F)
                 .setListenerLeft(() -> Minecraft.getMinecraft().displayGuiScreen(null))
                 .setListenerRight(() -> Minecraft.getMinecraft().displayGuiScreen(null)));
@@ -30,6 +30,6 @@ public class GuiCalculator extends JecGui {
         widgetManager.add(new WLine(52));
         widgetManager.add(new WTextField(62, 7, 63));
         widgetManager.add(new WIcon(151, 31, 18, 18, Resource.ICON_RECENT_N, Resource.ICON_RECENT_F));
-        widgetManager.add(new WPager(7, 56, 162));
+        widgetManager.add(new WPager(7, 56, 162, 5));
     }
 }

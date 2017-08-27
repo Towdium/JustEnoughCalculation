@@ -3,16 +3,25 @@ package me.towdium.jecalculation.client.gui;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.resource.Resource;
 import me.towdium.jecalculation.client.widget.Widget;
+import me.towdium.jecalculation.client.widget.widgets.WEntry;
+import me.towdium.jecalculation.client.widget.widgets.WEntryGroup;
+import me.towdium.jecalculation.core.entry.Entry;
+import me.towdium.jecalculation.jei.JecPlugin;
 import me.towdium.jecalculation.utils.wrappers.Single;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiUtils;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -20,6 +29,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -34,15 +44,15 @@ public class JecGui extends GuiContainer {
 
     public List<GuiButton> buttonList = super.buttonList;
     public WidgetManager widgetManager = new WidgetManager();
+    public Entry hand = Entry.EMPTY;
     GuiScreen parent;
 
     public JecGui(@Nullable GuiScreen parent) {
-        super(new Container() {
-            @Override
-            public boolean canInteractWith(EntityPlayer playerIn) {
-                return true;
-            }
-        });
+        this(parent, false);
+    }
+
+    public JecGui(@Nullable GuiScreen parent, boolean acceptsTransfer) {
+        super(acceptsTransfer ? new ContainerTransfer() : new ContainerNonTransfer());
         this.parent = parent;
     }
 
@@ -64,6 +74,7 @@ public class JecGui extends GuiContainer {
         GlStateManager.disableDepth();
         widgetManager.onDraw(mouseX, mouseY);
         drawExtra();
+        drawItemStack(mouseX, mouseY, hand.getRepresentation(), true);
         GlStateManager.enableLighting();
         GlStateManager.enableDepth();
     }
@@ -84,12 +95,49 @@ public class JecGui extends GuiContainer {
         widgetManager.onClick(mouseX, mouseY, mouseButton);
     }
 
-    // new functions
-
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        super.keyTyped(typedChar, keyCode);
-        widgetManager.onKey(typedChar, keyCode);
+        if (!widgetManager.onKey(typedChar, keyCode)) {
+            if (keyCode == Keyboard.KEY_ESCAPE) {
+                if (hand != Entry.EMPTY) hand = Entry.EMPTY;
+                else if (parent != null) Minecraft.getMinecraft().displayGuiScreen(parent);
+                else super.keyTyped(typedChar, keyCode);
+            }
+        }
+    }
+
+
+    /**
+     * @return if the event is canceled
+     * This function handles click outside the normal region,
+     * especially the overlap with JEI overlay. It handles
+     * mouse event before JEI.
+     */
+    public boolean handleMouseEvent() {
+        int xMouse = Mouse.getEventX() * this.width / this.mc.displayWidth;
+        int yMouse = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
+        if (Mouse.getEventButtonState()) {
+            if (Mouse.getEventButton() == 0) {
+                if (hand == Entry.EMPTY) {
+                    Entry e = JecPlugin.getEntryUnderMouse();
+                    if (e != Entry.EMPTY) {
+                        hand = e;
+                        return true;
+                    }
+                } else {
+                    if (!mouseIn(guiLeft, guiTop, width, height, xMouse, yMouse)) {
+                        hand = Entry.EMPTY;
+                        return true;
+                    }
+                }
+            } else if (Mouse.getEventButton() == 1) {
+                if (hand != Entry.EMPTY) {
+                    hand = Entry.EMPTY;
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public FontRenderer getFontRenderer() {
@@ -179,6 +227,16 @@ public class JecGui extends GuiContainer {
         GlStateManager.disableDepth();
     }
 
+    public void drawItemStack(int xPos, int yPos, ItemStack is, boolean centred) {
+        if (centred) {
+            xPos -= 8;
+            yPos -= 8;
+        }
+        RenderHelper.enableGUIStandardItemLighting();
+        itemRender.renderItemIntoGUI(is, xPos, yPos);
+        RenderHelper.disableStandardItemLighting();
+    }
+
     public void localize(String key) {
         //LocalizationHelper.format(this.getClass(), )  // TODO
     }
@@ -218,6 +276,20 @@ public class JecGui extends GuiContainer {
         }
     }
 
+    public static class ContainerTransfer extends Container {
+        @Override
+        public boolean canInteractWith(EntityPlayer playerIn) {
+            return true;
+        }
+    }
+
+    public static class ContainerNonTransfer extends Container {
+        @Override
+        public boolean canInteractWith(EntityPlayer playerIn) {
+            return true;
+        }
+    }
+
     @SuppressWarnings({"UnusedReturnValue", "unused"})
     public class WidgetManager {
         protected List<Widget> widgets = new ArrayList<>();
@@ -248,6 +320,15 @@ public class JecGui extends GuiContainer {
         public boolean onKey(char ch, int code) {
             return widgets.stream().filter(w -> w instanceof Widget.Advanced)
                     .anyMatch(w -> ((Widget.Advanced) w).onKey(JecGui.this, ch, code));
+        }
+
+        public Optional<WEntry> getEntryAt(int xMouse, int yMouse) {
+            return widgets.stream().map(w -> {
+                if (w instanceof WEntryGroup) return ((WEntryGroup) w).getEntryAt(JecGui.this, xMouse, yMouse);
+                else if (w instanceof WEntry) return Optional.ofNullable(
+                        ((WEntry) w).mouseIn(JecGui.this, xMouse, yMouse) ? ((WEntry) w) : null);
+                else return Optional.<WEntry>empty();
+            }).filter(Optional::isPresent).findFirst().orElse(Optional.empty());
         }
     }
 }

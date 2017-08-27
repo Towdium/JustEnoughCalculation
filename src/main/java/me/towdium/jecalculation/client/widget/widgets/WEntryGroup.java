@@ -4,6 +4,7 @@ import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.widget.Widget;
 
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 /**
@@ -40,5 +41,9 @@ public class WEntryGroup extends Widget.Advanced {
     @Override
     public boolean onClicked(JecGui gui, int xMouse, int yMouse, int button) {
         return widgets.stream().anyMatch(w -> w.onClicked(gui, xMouse, yMouse, button));
+    }
+
+    public Optional<WEntry> getEntryAt(JecGui gui, int xMouse, int yMouse) {
+        return widgets.stream().filter(w -> w.mouseIn(gui, xMouse, yMouse)).findFirst();
     }
 }

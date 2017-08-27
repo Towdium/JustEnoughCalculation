@@ -34,22 +34,4 @@ public class Widget extends Gui {
         public void onGuiInit(JecGui gui) {
         }
     }
-
-    public class Timer {
-        long time = System.currentTimeMillis();
-        boolean running = false;
-
-        public void setState(boolean b) {
-            if (!b && running) running = false;
-            if (b && !running) {
-                running = true;
-                time = System.currentTimeMillis();
-            }
-        }
-
-        public long getTime() {
-            return running ? System.currentTimeMillis() - time : 0;
-        }
-
-    }
 }

@@ -42,4 +42,12 @@ public class WButtonIcon extends WButton {
         };
         gui.buttonList.add(button);
     }
+
+    public WButtonIcon setListenerLeft(Runnable r) {
+        return ((WButtonIcon) super.setListenerLeft(r));
+    }
+
+    public WButtonIcon setListenerRight(Runnable r) {
+        return ((WButtonIcon) super.setListenerRight(r));
+    }
 }

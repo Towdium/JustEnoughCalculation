@@ -18,6 +18,7 @@ public class WEntry extends Widget.Advanced {
         this.yPos = yPos;
         this.xSize = xSize;
         this.ySize = ySize;
+        this.entry = Entry.EMPTY;
     }
 
     public Entry getEntry() {
@@ -32,9 +33,22 @@ public class WEntry extends Widget.Advanced {
     public void onDraw(JecGui gui, int xMouse, int yMouse) {
         gui.drawResourceContinuous(Resource.WIDGET_SLOT, xPos + gui.getGuiLeft(), yPos + gui.getGuiTop(),
                 xSize, ySize, 3, 3, 3, 3);
+        gui.drawItemStack(gl(gui) + xPos + xSize / 2, gt(gui) + yPos + ySize / 2, entry.getRepresentation(), true);
         if (mouseIn(gui, xMouse, yMouse)) drawRect(gui.getGuiLeft() + xPos + 1, gui.getGuiTop() + yPos + 1,
                 gui.getGuiLeft() + xPos + xSize - 1, gui.getGuiTop() + yPos + ySize - 1, 0x80FFFFFF);
-        // TODO draw itemStack
+        // TODO draw amount
+    }
+
+    @Override
+    public boolean onClicked(JecGui gui, int xMouse, int yMouse, int button) {
+        if (mouseIn(gui, xMouse, yMouse)) {  // TODO different modes
+            if (gui.hand != Entry.EMPTY && button == 0) {
+                entry = gui.hand;
+                gui.hand = Entry.EMPTY;
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean mouseIn(JecGui gui, int x, int y) {
