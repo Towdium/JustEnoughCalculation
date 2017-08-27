@@ -40,7 +40,7 @@ public class JecCommand extends CommandBase {
             if (cmd != null) {
                 cmd.execute(server, sender, args);
             } else {
-                sender.sendMessage(new TextComponentTranslation("command.not_found", args[0]));
+                sender.sendMessage(new TextComponentTranslation("command.common.not_found", args[0]));
             }
         }
     }

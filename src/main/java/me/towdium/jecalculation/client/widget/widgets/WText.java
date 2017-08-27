@@ -1,14 +1,18 @@
 package me.towdium.jecalculation.client.widget.widgets;
 
+import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.widget.Widget;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.Supplier;
 
 /**
  * Author: towdium
  * Date:   17-8-21.
  */
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class WText extends Widget {
     public static final int UNDEFINED = Integer.MAX_VALUE;
 

@@ -7,14 +7,19 @@ import me.towdium.jecalculation.client.widget.widgets.WEntry;
 import me.towdium.jecalculation.client.widget.widgets.WEntryGroup;
 import me.towdium.jecalculation.core.entry.Entry;
 import me.towdium.jecalculation.jei.JecPlugin;
+import me.towdium.jecalculation.utils.helpers.LocalizationHelper;
 import me.towdium.jecalculation.utils.wrappers.Single;
+import me.towdium.jecalculation.utils.wrappers.Triple;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
@@ -43,9 +48,10 @@ public class JecGui extends GuiContainer {
     public static final int COLOR_BLUE = 0xFFb0b9e6;
 
     public List<GuiButton> buttonList = super.buttonList;
-    public WidgetManager widgetManager = new WidgetManager();
+    public WidgetManager wgtMgr = new WidgetManager();
     public Entry hand = Entry.EMPTY;
-    GuiScreen parent;
+    protected GuiScreen parent;
+    protected List<Triple<Integer, Integer, List<String>>> tooltipBuffer = new ArrayList<>();
 
     public JecGui(@Nullable GuiScreen parent) {
         this(parent, false);
@@ -59,7 +65,7 @@ public class JecGui extends GuiContainer {
     @Override
     public void initGui() {
         super.initGui();
-        widgetManager.onInit();
+        wgtMgr.onInit();
     }
 
     public static boolean mouseIn(int xPos, int yPos, int xSize, int ySize, int xMouse, int yMouse) {
@@ -72,9 +78,10 @@ public class JecGui extends GuiContainer {
         super.drawScreen(mouseX, mouseY, partialTicks);
         GlStateManager.disableLighting();
         GlStateManager.disableDepth();
-        widgetManager.onDraw(mouseX, mouseY);
+        wgtMgr.onDraw(mouseX, mouseY);
         drawExtra();
         drawItemStack(mouseX, mouseY, hand.getRepresentation(), true);
+        drawBufferedTooltip();
         GlStateManager.enableLighting();
         GlStateManager.enableDepth();
     }
@@ -92,12 +99,12 @@ public class JecGui extends GuiContainer {
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
-        widgetManager.onClick(mouseX, mouseY, mouseButton);
+        wgtMgr.onClick(mouseX, mouseY, mouseButton);
     }
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        if (!widgetManager.onKey(typedChar, keyCode)) {
+        if (!wgtMgr.onKey(typedChar, keyCode)) {
             if (keyCode == Keyboard.KEY_ESCAPE) {
                 if (hand != Entry.EMPTY) hand = Entry.EMPTY;
                 else if (parent != null) Minecraft.getMinecraft().displayGuiScreen(parent);
@@ -172,7 +179,23 @@ public class JecGui extends GuiContainer {
     }
 
     public void drawRectangle(int xPos, int yPos, int xSize, int ySize, int color) {
-        drawRect(xPos, yPos, xPos + xSize, yPos + ySize, color);
+        float f3 = (float) (color >> 24 & 255) / 255.0F;
+        float f = (float) (color >> 16 & 255) / 255.0F;
+        float f1 = (float) (color >> 8 & 255) / 255.0F;
+        float f2 = (float) (color & 255) / 255.0F;
+        int right = xPos + xSize;
+        int bottom = yPos + ySize;
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        GlStateManager.disableTexture2D();
+        GlStateManager.color(f, f1, f2, f3);
+        bufferbuilder.begin(7, DefaultVertexFormats.POSITION);
+        bufferbuilder.pos((double) xPos, (double) bottom, 0.0D).endVertex();
+        bufferbuilder.pos((double) right, (double) bottom, 0.0D).endVertex();
+        bufferbuilder.pos((double) right, (double) yPos, 0.0D).endVertex();
+        bufferbuilder.pos((double) xPos, (double) yPos, 0.0D).endVertex();
+        tessellator.draw();
+        GlStateManager.enableTexture2D();
     }
 
     public void drawText(int xPos, int yPos, Font f, String... text) {
@@ -222,9 +245,16 @@ public class JecGui extends GuiContainer {
     }
 
     public void drawTooltip(int xPos, int yPos, List<String> text) {
-        drawHoveringText(text, xPos, yPos);
-        GlStateManager.disableLighting();
-        GlStateManager.disableDepth();
+        tooltipBuffer.add(new Triple<>(xPos, yPos, text));
+    }
+
+    protected void drawBufferedTooltip() {
+        tooltipBuffer.forEach(i -> {
+            drawHoveringText(i.three, i.one, i.two);
+            GlStateManager.disableLighting();
+            GlStateManager.disableDepth();
+        });
+        tooltipBuffer.clear();
     }
 
     public void drawItemStack(int xPos, int yPos, ItemStack is, boolean centred) {
@@ -237,8 +267,8 @@ public class JecGui extends GuiContainer {
         RenderHelper.disableStandardItemLighting();
     }
 
-    public void localize(String key) {
-        //LocalizationHelper.format(this.getClass(), )  // TODO
+    public String localize(String key, Object... os) {
+        return LocalizationHelper.format(this.getClass(), "gui", key, os);
     }
 
     // function to override

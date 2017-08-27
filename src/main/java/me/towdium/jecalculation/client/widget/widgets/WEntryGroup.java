@@ -1,8 +1,10 @@
 package me.towdium.jecalculation.client.widget.widgets;
 
+import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.widget.Widget;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.IntStream;
@@ -11,6 +13,8 @@ import java.util.stream.IntStream;
  * Author: towdium
  * Date:   17-8-17.
  */
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class WEntryGroup extends Widget.Advanced {
     ArrayList<WEntry> widgets = new ArrayList<>();
 

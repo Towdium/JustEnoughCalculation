@@ -32,7 +32,7 @@ public class CommandHelp implements SubCommand {
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if (args.length != 0) {
-            sender.sendMessage(new TextComponentTranslation("command.unexpected_arg", String.join(" ", args)));
+            sender.sendMessage(new TextComponentTranslation("command.common.unexpected_arg", String.join(" ", args)));
             return;
         }
 

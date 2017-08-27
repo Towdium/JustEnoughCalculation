@@ -1,12 +1,17 @@
 package me.towdium.jecalculation.client.widget.widgets;
 
+import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.widget.Widget;
+
+import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
  * Author: towdium
  * Date:   17-8-22.
  */
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class WRectangle extends Widget {
     public int xPos, yPos, xSize, ySize, color;
 

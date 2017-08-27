@@ -1,12 +1,17 @@
 package me.towdium.jecalculation.client.widget;
 
+import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.gui.JecGui;
 import net.minecraft.client.gui.Gui;
+
+import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
  * Author: towdium
  * Date:   8/14/17.
  */
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class Widget extends Gui {
     protected static int gl(JecGui gui) {
         return gui.getGuiLeft();

@@ -1,10 +1,12 @@
 package me.towdium.jecalculation.client.widget.widgets;
 
+import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.resource.Resource;
 import me.towdium.jecalculation.client.widget.Widget;
 import me.towdium.jecalculation.utils.Utilities.Circulator;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -14,6 +16,8 @@ import java.util.stream.Stream;
  * Author: towdium
  * Date:   17-8-19.
  */
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class WPager extends Widget.Advanced {
     public static final int SIZE = 13;
 
