@@ -36,12 +36,11 @@ public class WIcon extends Widget {
         this.tooltip = tooltip;
     }
 
-
     @Override
     public void onDraw(JecGui gui, int xMouse, int yMouse) {
-        boolean hovered = JecGui.mouseIn(xPos + gl(gui), yPos + gt(gui), xSize, ySize, xMouse, yMouse);
-        gui.drawRectangle(xPos + gl(gui), yPos + gt(gui), xSize, ySize,
-                hovered ? JecGui.COLOR_BLUE : JecGui.COLOR_GREY);
+        boolean hovered = JecGui.mouseIn(xPos + gl(gui) + (xSize - normal.getXSize()) / 2,
+                yPos + gt(gui) + (ySize - normal.getYSize()) / 2, normal.getXSize(), normal.getYSize(), xMouse, yMouse);
+        gui.drawRectangle(xPos + gl(gui), yPos + gt(gui), xSize, ySize, JecGui.COLOR_GREY);
         Resource r = hovered ? focused : normal;
         gui.drawResource(r, (xSize - r.getXSize()) / 2 + xPos + gl(gui), (ySize - r.getYSize()) / 2 + yPos + gt(gui));
         if (tooltip != null) {

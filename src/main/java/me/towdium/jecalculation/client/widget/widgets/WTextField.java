@@ -26,7 +26,7 @@ public class WTextField extends Widget.Advanced {
     @Override
     public void onGuiInit(JecGui gui) {
         textField = new GuiTextField(0, gui.getFontRenderer(),
-                xPos + gui.getGuiLeft(), yPos + gui.getGuiTop(), xSize, 20);
+                xPos + gui.getGuiLeft() + 1, yPos + gui.getGuiTop() + 1, xSize - 2, 18);
     }
 
     @Override

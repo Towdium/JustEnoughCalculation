@@ -93,7 +93,7 @@ public class JecGui extends GuiContainer {
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        drawResourceContinuous(Resource.WIDGET_PANEL, guiLeft, guiTop, xSize, ySize, 5, 5, 5, 5);
+        drawResourceContinuous(Resource.WGT_PANEL, guiLeft, guiTop, xSize, ySize, 5, 5, 5, 5);
     }
 
     @Override
@@ -323,19 +323,32 @@ public class JecGui extends GuiContainer {
     @SuppressWarnings({"UnusedReturnValue", "unused"})
     public class WidgetManager {
         protected List<Widget> widgets = new ArrayList<>();
+        protected boolean initialized = false;
 
         public void add(Widget w) {
             widgets.add(w);
+            if (initialized && w instanceof Widget.Advanced)
+                ((Widget.Advanced) w).onGuiInit(JecGui.this);
+        }
+
+        public void addAll(Widget... w) {
+            for (Widget aw : w)
+                add(aw);
         }
 
         public void remove(Widget w) {
-            widgets.remove(w);
-            if (w instanceof Widget.Advanced) ((Widget.Advanced) w).onRemoved(JecGui.this);
+            if (widgets.remove(w) && w instanceof Widget.Advanced) ((Widget.Advanced) w).onRemoved(JecGui.this);
+        }
+
+        public void removeAll(Widget... w) {
+            for (Widget aw : w)
+                remove(aw);
         }
 
         public void onInit() {
             widgets.stream().filter(w -> w instanceof Widget.Advanced)
                     .forEach(w -> ((Widget.Advanced) w).onGuiInit(JecGui.this));
+            initialized = true;
         }
 
         public void onDraw(int mouseX, int mouseY) {
@@ -343,8 +356,12 @@ public class JecGui extends GuiContainer {
         }
 
         public boolean onClick(int xMouse, int yMouse, int button) {
-            return widgets.stream().filter(w -> w instanceof Widget.Advanced)
-                    .anyMatch(w -> ((Widget.Advanced) w).onClicked(JecGui.this, xMouse, yMouse, button));
+            for (Widget w : widgets) {
+                if (w instanceof Widget.Advanced &&
+                        ((Widget.Advanced) w).onClicked(JecGui.this, xMouse, yMouse, button))
+                    return true;
+            }
+            return false;
         }
 
         public boolean onKey(char ch, int code) {
