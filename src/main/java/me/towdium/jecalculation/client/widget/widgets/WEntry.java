@@ -16,6 +16,13 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class WEntry extends Widget.Advanced {
+    static JecGui.Font font;
+
+    static {
+        font = JecGui.Font.DEFAULT_HALF.copy();
+        font.align = JecGui.Font.enumAlign.RIGHT;
+    }
+
     public int xPos, yPos, xSize, ySize;
     public Entry entry;
     public enumMode mode;
@@ -42,9 +49,11 @@ public class WEntry extends Widget.Advanced {
         gui.drawResourceContinuous(Resource.WGT_SLOT, xPos + gui.getGuiLeft(), yPos + gui.getGuiTop(),
                 xSize, ySize, 3, 3, 3, 3);
         gui.drawItemStack(gl(gui) + xPos + xSize / 2, gt(gui) + yPos + ySize / 2, entry.getRepresentation(), true);
+        if (mode == enumMode.RESULT || mode == enumMode.EDITOR)
+            gui.drawText(gl(gui) + xPos + xSize / 2 + 7.5f, gt(gui) + yPos + ySize / 2 + 7 -
+                    (int) (font.size * gui.getFontRenderer().FONT_HEIGHT), font, entry.getAmountString());
         if (mouseIn(gui, xMouse, yMouse)) gui.drawRectangle(gui.getGuiLeft() + xPos + 1, gui.getGuiTop() + yPos + 1,
                 xSize - 2, ySize - 2, 0x80FFFFFF);
-        // TODO draw amount
     }
 
     @Override

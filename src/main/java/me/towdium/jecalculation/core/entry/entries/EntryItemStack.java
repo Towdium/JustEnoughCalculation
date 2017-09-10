@@ -1,6 +1,7 @@
 package me.towdium.jecalculation.core.entry.entries;
 
 import me.towdium.jecalculation.core.entry.Entry;
+import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.item.ItemStack;
 
 /**
@@ -63,7 +64,7 @@ public class EntryItemStack implements Entry {
 
     @Override
     public String getAmountString() {
-        return Integer.toString(amount);  // TODO format
+        return amount == 0 ? "" : Utilities.cutLong(amount, 5);
     }
 
     @Override
