@@ -306,6 +306,10 @@ public class JecGui extends GuiContainer {
         }
     }
 
+    public static boolean isShiftDown() {
+        return Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
+    }
+
     public static class ContainerTransfer extends Container {
         @Override
         public boolean canInteractWith(EntityPlayer playerIn) {

@@ -18,13 +18,13 @@ import java.util.stream.IntStream;
 public class WEntryGroup extends Widget.Advanced {
     ArrayList<WEntry> widgets = new ArrayList<>();
 
-    public WEntryGroup(int xPos, int yPos, int column, int row) {
-        this(xPos, yPos, column, row, 18, 18);
+    public WEntryGroup(int xPos, int yPos, int column, int row, WEntry.enumMode mode) {
+        this(xPos, yPos, column, row, 18, 18, mode);
     }
 
-    public WEntryGroup(int xPos, int yPos, int column, int row, int xSize, int ySize) {
+    public WEntryGroup(int xPos, int yPos, int column, int row, int xSize, int ySize, WEntry.enumMode mode) {
         IntStream.range(0, column).forEach(c -> IntStream.range(0, row).forEach(r ->
-                widgets.add(new WEntry(xPos + c * xSize, yPos + r * ySize, xSize, ySize))));
+                widgets.add(new WEntry(xPos + c * xSize, yPos + r * ySize, xSize, ySize, mode))));
     }
 
     @Override

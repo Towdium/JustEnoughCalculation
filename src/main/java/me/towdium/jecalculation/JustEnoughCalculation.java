@@ -83,13 +83,22 @@ public class JustEnoughCalculation {
         public static final String VERSION = "@VERSION@";
     }
 
-    /**
-     * CLIENT: running at client side and server not installed
-     * SERVER: running at server side whether client is installed
-     * BOTH: running at client side and both installed
-     * UNDEFINED: default unknown
-     */
     public enum enumSide {
-        CLIENT, SERVER, BOTH, UNDEFINED
+        /**
+         * Running at client side and server not installed.
+         */
+        CLIENT,
+        /**
+         * Running at server side whether client is installed.
+         */
+        SERVER,
+        /**
+         * Running at client side and both installed.
+         */
+        BOTH,
+        /**
+         * Default unknown.
+         */
+        UNDEFINED
     }
 }

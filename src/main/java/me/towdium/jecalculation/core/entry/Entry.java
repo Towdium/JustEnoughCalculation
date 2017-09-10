@@ -19,13 +19,19 @@ public interface Entry {
     EntryRegistry REGISTRY = EntryRegistry.INSTANCE;
     Entry EMPTY = new EntryItemStack(ItemStack.EMPTY, 0);
 
-    int getAmount();
+    Entry increaseAmount();
 
-    void setAmount(int amount);
+    Entry increaseAmountLarge();
+
+    Entry decreaseAmount();
+
+    Entry decreaseAmountLarge();
 
     ItemStack getRepresentation();
 
     String getAmountString();
+
+    Entry copy();
 
     /**
      * Since {@link Entry} merging is bidirectional, it is redundant to
