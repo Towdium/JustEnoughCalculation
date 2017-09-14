@@ -38,7 +38,7 @@ public class JecCommand extends CommandBase {
         } else {
             SubCommand cmd = Commands.commands.get(args[0].toLowerCase());
             if (cmd != null) {
-                cmd.execute(server, sender, args);
+                cmd.execute(server, sender, cut(args));
             } else {
                 sender.sendMessage(new TextComponentTranslation("command.common.not_found", args[0]));
             }

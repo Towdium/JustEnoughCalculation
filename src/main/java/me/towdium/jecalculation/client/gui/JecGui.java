@@ -1,10 +1,10 @@
 package me.towdium.jecalculation.client.gui;
 
 import mcp.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.client.resource.Resource;
-import me.towdium.jecalculation.client.widget.Widget;
-import me.towdium.jecalculation.client.widget.widgets.WEntry;
-import me.towdium.jecalculation.client.widget.widgets.WEntryGroup;
+import me.towdium.jecalculation.client.gui.resource.Resource;
+import me.towdium.jecalculation.client.gui.widget.Widget;
+import me.towdium.jecalculation.client.gui.widget.widgets.WEntry;
+import me.towdium.jecalculation.client.gui.widget.widgets.WEntryGroup;
 import me.towdium.jecalculation.core.entry.Entry;
 import me.towdium.jecalculation.jei.JecPlugin;
 import me.towdium.jecalculation.utils.IllegalPositionException;
@@ -20,11 +20,14 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -80,7 +83,10 @@ public class JecGui extends GuiContainer {
         GlStateManager.disableDepth();
         wgtMgr.onDraw(mouseX, mouseY);
         drawExtra();
-        drawItemStack(mouseX, mouseY, hand.getRepresentation(), true);
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(mouseX - 8, mouseY - 8, 0);
+        hand.drawEntry(this);
+        GlStateManager.popMatrix();
         drawBufferedTooltip();
         GlStateManager.enableLighting();
         GlStateManager.enableDepth();
@@ -166,8 +172,14 @@ public class JecGui extends GuiContainer {
     public void drawTexture(ResourceLocation l, int destXPos, int destYPos,
                             int sourceXPos, int sourceYPos, int sourceXSize, int sourceYSize) {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.getTextureManager().bindTexture(l);
-        this.drawTexturedModalRect(destXPos, destYPos, sourceXPos, sourceYPos, sourceXSize, sourceYSize);
+        mc.getTextureManager().bindTexture(l);
+        drawTexturedModalRect(destXPos, destYPos, sourceXPos, sourceYPos, sourceXSize, sourceYSize);
+    }
+
+    public void drawFluid(Fluid f, int xPos, int yPos, int xSize, int ySize) {
+        TextureAtlasSprite fluidTexture = mc.getTextureMapBlocks().getTextureExtry(f.getStill().toString());
+        mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        if (fluidTexture != null) drawTexturedModalRect(xPos, yPos, fluidTexture, xSize, ySize);
     }
 
     public void drawTextureContinuous(

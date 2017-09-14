@@ -1,11 +1,12 @@
-package me.towdium.jecalculation.client.widget.widgets;
+package me.towdium.jecalculation.client.gui.widget.widgets;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.gui.JecGui;
-import me.towdium.jecalculation.client.resource.Resource;
-import me.towdium.jecalculation.client.widget.Widget;
+import me.towdium.jecalculation.client.gui.resource.Resource;
+import me.towdium.jecalculation.client.gui.widget.Widget;
 import me.towdium.jecalculation.core.entry.Entry;
 import me.towdium.jecalculation.utils.IllegalPositionException;
+import net.minecraft.client.renderer.GlStateManager;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -48,7 +49,10 @@ public class WEntry extends Widget.Advanced {
     public void onDraw(JecGui gui, int xMouse, int yMouse) {
         gui.drawResourceContinuous(Resource.WGT_SLOT, xPos + gui.getGuiLeft(), yPos + gui.getGuiTop(),
                 xSize, ySize, 3, 3, 3, 3);
-        gui.drawItemStack(gl(gui) + xPos + xSize / 2, gt(gui) + yPos + ySize / 2, entry.getRepresentation(), true);
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(xPos + gl(gui) + xSize / 2 - 8, yPos + gt(gui) + ySize / 2 - 8, 0);
+        entry.drawEntry(gui);
+        GlStateManager.popMatrix();
         if (mode == enumMode.RESULT || mode == enumMode.EDITOR)
             gui.drawText(gl(gui) + xPos + xSize / 2 + 7.5f, gt(gui) + yPos + ySize / 2 + 7 -
                     (int) (font.size * gui.getFontRenderer().FONT_HEIGHT), font, entry.getAmountString());

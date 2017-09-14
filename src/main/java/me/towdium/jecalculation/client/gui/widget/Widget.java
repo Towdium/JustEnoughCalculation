@@ -1,4 +1,4 @@
-package me.towdium.jecalculation.client.widget;
+package me.towdium.jecalculation.client.gui.widget;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.gui.JecGui;

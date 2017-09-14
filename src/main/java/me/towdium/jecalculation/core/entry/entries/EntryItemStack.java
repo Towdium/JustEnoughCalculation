@@ -1,14 +1,14 @@
 package me.towdium.jecalculation.core.entry.entries;
 
+import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.core.entry.Entry;
-import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.item.ItemStack;
 
 /**
  * Author: towdium
  * Date:   8/11/17.
  */
-public class EntryItemStack implements Entry {
+public class EntryItemStack extends EntrySimpleAmount {
     int amount;
     ItemStack itemStack;
 
@@ -28,47 +28,12 @@ public class EntryItemStack implements Entry {
     }
 
     @Override
-    public Entry increaseAmount() {
-        amount++;
-        return this;
-    }
-
-    @Override
-    public Entry increaseAmountLarge() {
-        amount += 10;
-        return this;
-    }
-
-    @Override
-    public Entry decreaseAmount() {
-        if (amount <= 1) return Entry.EMPTY;
-        else {
-            amount--;
-            return this;
-        }
-    }
-
-    @Override
-    public Entry decreaseAmountLarge() {
-        if (amount <= 10) return Entry.EMPTY;
-        else {
-            amount -= 10;
-            return this;
-        }
-    }
-
-    @Override
-    public ItemStack getRepresentation() {
-        return itemStack;
-    }
-
-    @Override
-    public String getAmountString() {
-        return amount == 0 ? "" : Utilities.cutLong(amount, 5);
-    }
-
-    @Override
     public Entry copy() {
         return new EntryItemStack(this);
+    }
+
+    @Override
+    public void drawEntry(JecGui gui) {
+        gui.drawItemStack(0, 0, itemStack, false);
     }
 }

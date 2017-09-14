@@ -4,8 +4,6 @@ import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.core.entry.Entry;
-import me.towdium.jecalculation.core.entry.entries.EntryItemStack;
-import me.towdium.jecalculation.utils.Utilities.ReversedIterator;
 import mezz.jei.api.IJeiRuntime;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.IModRegistry;
@@ -19,11 +17,6 @@ import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Author: towdium
@@ -33,8 +26,8 @@ import java.util.stream.Collectors;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class JecPlugin implements IModPlugin {
-    public static final TransferRegistryItem registryItem = TransferRegistryItem.INSTANCE;
-    public static final TransferRegistryFluid registryFluid = TransferRegistryFluid.INSTANCE;
+    public static final Entry.ConverterRegistryItem registryItem = Entry.ConverterRegistryItem.INSTANCE;
+    public static final Entry.ConverterRegistryFluid registryFluid = Entry.ConverterRegistryFluid.INSTANCE;
     public static IJeiRuntime runtime;
 
     public static Entry getEntryUnderMouse() {
@@ -46,10 +39,6 @@ public class JecPlugin implements IModPlugin {
             JustEnoughCalculation.logger.warn("Unsupported ingredient type detected: " + o.getClass());
             return Entry.EMPTY;
         }
-    }
-
-    public static List<Entry> transferRawItemStack(List<ItemStack> iss) {
-        return iss.stream().map(EntryItemStack::new).collect(Collectors.toList());
     }
 
     @Override
@@ -77,49 +66,6 @@ public class JecPlugin implements IModPlugin {
         }
     }
 
-    public static class TransferHandlerRegistry<T> {
-        List<Function<List<T>, List<Entry>>> handlers = new ArrayList<>();
 
-        private TransferHandlerRegistry() {
-        }
-
-        Entry toEntry(T ingredient) {
-            return handlers.isEmpty() ? Entry.EMPTY :
-                    handlers.get(0).apply(Collections.singletonList(ingredient)).get(0);
-        }
-
-        List<Entry> toEntry(List<T> ingredients) {
-            return new ReversedIterator<>(handlers).stream().flatMap(h -> h.apply(ingredients).stream())
-                    .collect(Collectors.toList());
-        }
-
-        void register(Function<List<T>, List<Entry>> handler) {
-            handlers.add(handler);
-        }
-    }
-
-    public static class TransferRegistryItem extends TransferHandlerRegistry<ItemStack> {
-        public static final TransferRegistryItem INSTANCE;
-
-        static {
-            INSTANCE = new TransferRegistryItem();
-
-            INSTANCE.register(JecPlugin::transferRawItemStack);
-        }
-
-        private TransferRegistryItem() {
-        }
-    }
-
-    public static class TransferRegistryFluid extends TransferHandlerRegistry<FluidStack> {
-        public static final TransferRegistryFluid INSTANCE;
-
-        static {
-            INSTANCE = new TransferRegistryFluid();
-        }
-
-        private TransferRegistryFluid() {
-        }
-    }
 
 }

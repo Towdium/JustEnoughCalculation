@@ -1,8 +1,8 @@
-package me.towdium.jecalculation.client.widget.widgets;
+package me.towdium.jecalculation.client.gui.widget.widgets;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.gui.JecGui;
-import me.towdium.jecalculation.client.widget.Widget;
+import me.towdium.jecalculation.client.gui.widget.Widget;
 import me.towdium.jecalculation.utils.Utilities.Timer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;

@@ -1,14 +1,17 @@
 package me.towdium.jecalculation.core.entry;
 
+import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.core.entry.entries.EntryItemStack;
+import me.towdium.jecalculation.utils.Utilities.Relation;
+import me.towdium.jecalculation.utils.Utilities.ReversedIterator;
 import me.towdium.jecalculation.utils.wrappers.Pair;
-import me.towdium.jecalculation.utils.wrappers.Single;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fluids.FluidStack;
 
-import java.util.HashMap;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Author: towdium
@@ -16,7 +19,7 @@ import java.util.function.Function;
  */
 public interface Entry {
     EntryMergerRegistry MERGER = EntryMergerRegistry.INSTANCE;
-    EntryRegistry REGISTRY = EntryRegistry.INSTANCE;
+    Registry REGISTRY = Registry.INSTANCE;
     Entry EMPTY = new EntryItemStack(ItemStack.EMPTY, 0);
 
     Entry increaseAmount();
@@ -27,11 +30,11 @@ public interface Entry {
 
     Entry decreaseAmountLarge();
 
-    ItemStack getRepresentation();
-
     String getAmountString();
 
     Entry copy();
+
+    void drawEntry(JecGui gui);
 
     /**
      * Since {@link Entry} merging is bidirectional, it is redundant to
@@ -40,7 +43,7 @@ public interface Entry {
      * It uses singleton mode. First register merge functions, then use
      * {@link #test(Entry, Entry)} and {@link #merge(Entry, Entry, boolean)}
      * to operate the {@link Entry}.
-     * For registering, see {@link EntryRegistry}.
+     * For registering, see {@link Registry}.
      */
     class EntryMergerRegistry {
         public static final EntryMergerRegistry INSTANCE;
@@ -51,6 +54,7 @@ public interface Entry {
         }
 
         private Relation<String, MergerFunction> functions = new Relation<>();
+
 
         private EntryMergerRegistry() {
         }
@@ -90,13 +94,13 @@ public interface Entry {
      * Here you can find the identifier and deserializer of one type.
      * For {@link Entry} operations, see {@link EntryMergerRegistry}
      */
-    class EntryRegistry {
+    class Registry {
         public static final String KEY_IDENTIFIER = "identifier";
         public static final String KEY_CONTENT = "content";
-        public static final EntryRegistry INSTANCE;
+        public static final Registry INSTANCE;
 
         static {
-            INSTANCE = new EntryRegistry();
+            INSTANCE = new Registry();
         }
 
         private HashMap<Class<? extends Entry>, Pair<String,
@@ -104,7 +108,7 @@ public interface Entry {
         private HashMap<String, Pair<Class<? extends Entry>,
                 Function<NBTTagCompound, Optional<Entry>>>> idToData = new HashMap<>();
 
-        private EntryRegistry() {
+        private Registry() {
         }
 
         public <T extends Entry> void register(
@@ -141,22 +145,52 @@ public interface Entry {
         }
     }
 
-    class Relation<T, R> {
-        HashMap<Pair<T, T>, R> data = new HashMap<>();
+    class ConverterRegistry<T> {
+        List<Function<List<T>, List<Entry>>> handlers = new ArrayList<>();
 
-        public void add(T a, T b, R relation) {
-            data.put(a.hashCode() < b.hashCode() ? new Pair<>(a, b) : new Pair<>(b, a), relation);
+        private ConverterRegistry() {
         }
 
-        public Optional<R> get(T a, T b) {
-            int ah = a.hashCode();
-            int bh = b.hashCode();
-            Single<R> ret = new Single<>(null);
-            if (ah == bh)
-                ret.push(data.get(new Pair<>(a, b))).push(data.get(new Pair<>(b, a)));
-            else
-                ret.push(data.get(ah < bh ? new Pair<>(a, b) : new Pair<>(b, a)));
-            return Optional.ofNullable(ret.value);
+        public Entry toEntry(T ingredient) {
+            return handlers.stream().map(h -> h.apply(Collections.singletonList(ingredient)))
+                    .filter(l -> !l.isEmpty()).findFirst().orElse(Collections.singletonList(Entry.EMPTY)).get(0);
+        }
+
+        public List<Entry> toEntry(List<T> ingredients) {
+            return new ReversedIterator<>(handlers).stream().flatMap(h -> h.apply(ingredients).stream())
+                    .collect(Collectors.toList());
+        }
+
+        void register(Function<List<T>, List<Entry>> handler) {
+            handlers.add(handler);
+        }
+    }
+
+    class ConverterRegistryItem extends ConverterRegistry<ItemStack> {
+        public static final ConverterRegistryItem INSTANCE;
+
+        static {
+            INSTANCE = new ConverterRegistryItem();
+
+            INSTANCE.register(ConverterRegistryItem::convertRawItemStack);
+        }
+
+        private ConverterRegistryItem() {
+        }
+
+        public static List<Entry> convertRawItemStack(List<ItemStack> iss) {
+            return iss.stream().map(EntryItemStack::new).collect(Collectors.toList());
+        }
+    }
+
+    class ConverterRegistryFluid extends ConverterRegistry<FluidStack> {
+        public static final ConverterRegistryFluid INSTANCE;
+
+        static {
+            INSTANCE = new ConverterRegistryFluid();
+        }
+
+        private ConverterRegistryFluid() {
         }
     }
 }
