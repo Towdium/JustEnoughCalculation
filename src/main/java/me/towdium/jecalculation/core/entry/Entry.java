@@ -1,5 +1,6 @@
 package me.towdium.jecalculation.core.entry;
 
+import me.towdium.jecalculation.client.gui.IDrawable;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.core.entry.entries.EntryItemStack;
 import me.towdium.jecalculation.utils.Utilities.Relation;
@@ -31,6 +32,8 @@ public interface Entry {
     Entry decreaseAmountLarge();
 
     String getAmountString();
+
+    String getDisplayName();
 
     Entry copy();
 
@@ -103,18 +106,18 @@ public interface Entry {
             INSTANCE = new Registry();
         }
 
-        private HashMap<Class<? extends Entry>, Pair<String,
-                Function<NBTTagCompound, Optional<Entry>>>> clazzToData = new HashMap<>();
-        private HashMap<String, Pair<Class<? extends Entry>,
-                Function<NBTTagCompound, Optional<Entry>>>> idToData = new HashMap<>();
+        private HashMap<Class<? extends Entry>, Record> clazzToData = new HashMap<>();
+        private HashMap<String, Record> idToData = new HashMap<>();
 
         private Registry() {
         }
 
         public <T extends Entry> void register(
-                Class<T> clazz, String identifier, Function<NBTTagCompound, Optional<Entry>> deserializer) {
-            clazzToData.put(clazz, new Pair<>(identifier, deserializer));
-            idToData.put(identifier, new Pair<>(clazz, deserializer));
+                Class<T> clazz, String identifier, Function<NBTTagCompound, Entry> deserializer,
+                IDrawable editor, Entry representation) {
+            Record r = new Record(deserializer, clazz, representation, editor, identifier);
+            clazzToData.put(clazz, r);
+            idToData.put(identifier, r);
         }
 
 
@@ -133,15 +136,32 @@ public interface Entry {
          */
         public Entry deserialization(NBTTagCompound nbt) {
             String s = nbt.getString(KEY_IDENTIFIER);
-            Optional<Entry> e = idToData.get(s).two.apply(nbt.getCompoundTag(KEY_CONTENT));
-            if (e.isPresent()) return e.get();
+            Entry e = idToData.get(s).deserializer.apply(nbt.getCompoundTag(KEY_CONTENT));
+            if (e != Entry.EMPTY) return e;
             else throw new RuntimeException("Fail to deserialize entry type: " + s);
         }
 
         public String getIdentifier(Entry e) {
-            Pair<String, Function<NBTTagCompound, Optional<Entry>>> p = clazzToData.get(e.getClass());
-            if (p == null) throw new RuntimeException("Unregistered entry type: " + e.getClass());
-            else return p.one;
+            Record r = clazzToData.get(e.getClass());
+            if (r == null) throw new RuntimeException("Unregistered entry type: " + e.getClass());
+            else return r.identifier;
+        }
+
+        private static class Record {
+            Function<NBTTagCompound, Entry> deserializer;
+            Class<? extends Entry> clazz;
+            Entry representation;
+            IDrawable editor;
+            String identifier;
+
+            public Record(Function<NBTTagCompound, Entry> deserializer, Class<? extends Entry> clazz,
+                          Entry representation, IDrawable editor, String identifier) {
+                this.deserializer = deserializer;
+                this.clazz = clazz;
+                this.representation = representation;
+                this.editor = editor;
+                this.identifier = identifier;
+            }
         }
     }
 

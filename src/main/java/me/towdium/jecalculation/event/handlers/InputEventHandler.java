@@ -4,7 +4,6 @@ import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.guis.GuiCalculator;
 import me.towdium.jecalculation.network.ProxyClient;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -22,7 +21,7 @@ public class InputEventHandler {
     @SubscribeEvent
     public void onKey(InputEvent.KeyInputEvent event) {
         if (ProxyClient.keyOpenGui.isPressed() && JustEnoughCalculation.side != JustEnoughCalculation.enumSide.SERVER)
-            Minecraft.getMinecraft().displayGuiScreen(new GuiCalculator(null));
+            JecGui.displayGui(new GuiCalculator());
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)

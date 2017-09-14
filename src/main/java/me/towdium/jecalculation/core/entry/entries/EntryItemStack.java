@@ -9,7 +9,6 @@ import net.minecraft.item.ItemStack;
  * Date:   8/11/17.
  */
 public class EntryItemStack extends EntrySimpleAmount {
-    int amount;
     ItemStack itemStack;
 
     public EntryItemStack(ItemStack is) {
@@ -25,6 +24,11 @@ public class EntryItemStack extends EntrySimpleAmount {
     private EntryItemStack(EntryItemStack eis) {
         amount = eis.amount;
         itemStack = eis.itemStack;
+    }
+
+    @Override
+    public String getDisplayName() {
+        return itemStack.getDisplayName();
     }
 
     @Override

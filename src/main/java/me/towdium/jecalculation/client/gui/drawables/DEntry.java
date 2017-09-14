@@ -1,9 +1,9 @@
-package me.towdium.jecalculation.client.gui.widget.widgets;
+package me.towdium.jecalculation.client.gui.drawables;
 
 import mcp.MethodsReturnNonnullByDefault;
+import me.towdium.jecalculation.client.gui.IDrawable;
 import me.towdium.jecalculation.client.gui.JecGui;
-import me.towdium.jecalculation.client.gui.resource.Resource;
-import me.towdium.jecalculation.client.gui.widget.Widget;
+import me.towdium.jecalculation.client.gui.Resource;
 import me.towdium.jecalculation.core.entry.Entry;
 import me.towdium.jecalculation.utils.IllegalPositionException;
 import net.minecraft.client.renderer.GlStateManager;
@@ -16,7 +16,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class WEntry extends Widget.Advanced {
+public class DEntry implements IDrawable {
     static JecGui.Font font;
 
     static {
@@ -28,7 +28,7 @@ public class WEntry extends Widget.Advanced {
     public Entry entry;
     public enumMode mode;
 
-    public WEntry(int xPos, int yPos, int xSize, int ySize, enumMode mode) {
+    public DEntry(int xPos, int yPos, int xSize, int ySize, enumMode mode) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.xSize = xSize;
@@ -47,16 +47,15 @@ public class WEntry extends Widget.Advanced {
 
     @Override
     public void onDraw(JecGui gui, int xMouse, int yMouse) {
-        gui.drawResourceContinuous(Resource.WGT_SLOT, xPos + gui.getGuiLeft(), yPos + gui.getGuiTop(),
-                xSize, ySize, 3, 3, 3, 3);
+        gui.drawResourceContinuous(Resource.WGT_SLOT, xPos, yPos, xSize, ySize, 3, 3, 3, 3);
         GlStateManager.pushMatrix();
-        GlStateManager.translate(xPos + gl(gui) + xSize / 2 - 8, yPos + gt(gui) + ySize / 2 - 8, 0);
+        GlStateManager.translate(xPos + xSize / 2 - 8, yPos + ySize / 2 - 8, 0);
         entry.drawEntry(gui);
         GlStateManager.popMatrix();
         if (mode == enumMode.RESULT || mode == enumMode.EDITOR)
-            gui.drawText(gl(gui) + xPos + xSize / 2 + 7.5f, gt(gui) + yPos + ySize / 2 + 7 -
+            gui.drawText(xPos + xSize / 2 + 7.5f, yPos + ySize / 2 + 7 -
                     (int) (font.size * gui.getFontRenderer().FONT_HEIGHT), font, entry.getAmountString());
-        if (mouseIn(gui, xMouse, yMouse)) gui.drawRectangle(gui.getGuiLeft() + xPos + 1, gui.getGuiTop() + yPos + 1,
+        if (mouseIn(gui, xMouse, yMouse)) gui.drawRectangle(xPos + 1, yPos + 1,
                 xSize - 2, ySize - 2, 0x80FFFFFF);
     }
 
@@ -98,8 +97,8 @@ public class WEntry extends Widget.Advanced {
     }
 
     public boolean mouseIn(JecGui gui, int x, int y) {
-        int xx = x - gui.getGuiLeft() - xPos;
-        int yy = y - gui.getGuiTop() - yPos;
+        int xx = x - xPos;
+        int yy = y - yPos;
         return xx >= 0 && xx < xSize && yy >= 0 && yy < ySize;
     }
 

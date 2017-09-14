@@ -31,6 +31,11 @@ public class EntryOreDict extends EntrySimpleAmount {
     }
 
     @Override
+    public String getDisplayName() {
+        return "Ore: " + name; // localization
+    }
+
+    @Override
     public EntryOreDict copy() {
         return new EntryOreDict(this);
     }

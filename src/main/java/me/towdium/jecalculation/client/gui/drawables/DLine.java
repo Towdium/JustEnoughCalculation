@@ -1,9 +1,9 @@
-package me.towdium.jecalculation.client.gui.widget.widgets;
+package me.towdium.jecalculation.client.gui.drawables;
 
 import mcp.MethodsReturnNonnullByDefault;
+import me.towdium.jecalculation.client.gui.IDrawable;
 import me.towdium.jecalculation.client.gui.JecGui;
-import me.towdium.jecalculation.client.gui.resource.Resource;
-import me.towdium.jecalculation.client.gui.widget.Widget;
+import me.towdium.jecalculation.client.gui.Resource;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -13,15 +13,15 @@ import javax.annotation.ParametersAreNonnullByDefault;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class WLine extends Widget {
+public class DLine implements IDrawable {
     public int y;
 
-    public WLine(int y) {
+    public DLine(int y) {
         this.y = y;
     }
 
     @Override
     public void onDraw(JecGui gui, int xMouse, int yMouse) {
-        gui.drawResource(Resource.WGT_LINE, 6 + gui.getGuiLeft(), y + gui.getGuiTop() - 1);
+        gui.drawResource(Resource.WGT_LINE, 6, y - 1);
     }
 }
