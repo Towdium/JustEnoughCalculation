@@ -27,6 +27,7 @@ import net.minecraftforge.fml.client.config.GuiUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,17 +44,19 @@ import java.util.function.Function;
 public class JecGui extends GuiContainer {
     public static final int COLOR_GREY = 0xFFA1A1A1;
 
-    protected static JecGui parent;
+    protected static JecGui last;
+    protected JecGui parent;
     public Entry hand = Entry.EMPTY;
     public DContainer container = new DContainer();
     protected List<Triple<Integer, Integer, List<String>>> tooltipBuffer = new ArrayList<>();
 
-    public JecGui(IDrawable... drawables) {
-        this(false, drawables);
+    public JecGui(@Nullable JecGui parent, IDrawable... drawables) {
+        this(parent, false, drawables);
     }
 
-    public JecGui(boolean acceptsTransfer, IDrawable... drawables) {
+    public JecGui(@Nullable JecGui parent, boolean acceptsTransfer, IDrawable... drawables) {
         super(acceptsTransfer ? new ContainerTransfer() : new ContainerNonTransfer());
+        this.parent = parent;
         container.addAll(drawables);
     }
 
@@ -66,14 +69,18 @@ public class JecGui extends GuiContainer {
     }
 
     public static void displayGui(boolean updateParent, boolean acceptsTransfer, IDrawable... components) {
-        Single<JecGui> buf = new Single<>(parent);
-        Minecraft.getMinecraft().addScheduledTask(() -> {
-            Minecraft mc = Minecraft.getMinecraft();
-            if (mc.currentScreen == null) buf.value = null;
-            else if (updateParent && mc.currentScreen instanceof JecGui) buf.value = (JecGui) mc.currentScreen;
-            mc.displayGuiScreen(new JecGui(acceptsTransfer, components));
-        });
-        if (buf.value != null) parent = buf.value;
+        if (Minecraft.getMinecraft().isCallingFromMinecraftThread())
+            displayGuiUnsafe(updateParent, acceptsTransfer, components);
+    }
+
+    public static void displayGuiUnsafe(boolean updateParent, boolean acceptsTransfer, IDrawable... components) {
+        Minecraft mc = Minecraft.getMinecraft();
+        JecGui parent;
+        if (mc.currentScreen == null) parent = null;
+        else if (!(mc.currentScreen instanceof JecGui)) parent = last;
+        else if (updateParent) parent = (JecGui) mc.currentScreen;
+        else parent = ((JecGui) mc.currentScreen).parent;
+        mc.displayGuiScreen(new JecGui(parent, acceptsTransfer, components));
     }
 
     @Override

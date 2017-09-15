@@ -17,6 +17,7 @@ import static me.towdium.jecalculation.client.gui.drawables.DEntry.enumMode.*;
 @ParametersAreNonnullByDefault
 public class GuiCalculator extends DContainer {
     public GuiCalculator() {
+        add(new DTextField(61, 7, 64));
         add(new DButton(7, 7, 20, 20, Resource.BTN_LABEL_N, Resource.BTN_LABEL_F, "label"));
         add(new DButton(130, 7, 20, 20, Resource.BTN_NEW_N, Resource.BTN_NEW_F, "recipe")
                 .setListenerLeft(() -> JecGui.displayGui(new GuiEditor())));
@@ -25,7 +26,6 @@ public class GuiCalculator extends DContainer {
         add(new DEntryGroup(7, 31, 8, 1, PICKER));
         add(new DEntry(31, 7, 20, 20, SELECTOR));
         add(new DLine(52));
-        add(new DTextField(61, 7, 64));
         add(new DIcon(151, 31, 18, 18, Resource.ICN_RECENT_N, Resource.ICN_RECENT_F, "history"));
         add(new DPager(7, 56, 162, 5));
     }

@@ -16,13 +16,13 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 public class DTextField implements IDrawable {
     protected int xPos, yPos, xSize;
-    GuiTextField textField = new GuiTextField(0, Minecraft.getMinecraft().fontRenderer,
-            xPos + 1, yPos + 1, xSize - 2, 18);
+    GuiTextField textField;
 
     public DTextField(int xPos, int yPos, int xSize) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.xSize = xSize;
+        textField = new GuiTextField(0, Minecraft.getMinecraft().fontRenderer, xPos + 1, yPos + 1, xSize - 2, 18);
     }
 
     @Override
