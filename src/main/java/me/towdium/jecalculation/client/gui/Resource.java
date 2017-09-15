@@ -36,6 +36,8 @@ public class Resource {
     public static final Resource WGT_ARR_L_N = new Resource(0, 242, 9, 9);
     public static final Resource WGT_ARR_R_F = new Resource(10, 232, 9, 9);
     public static final Resource WGT_ARR_R_N = new Resource(10, 242, 9, 9);
+    public static final Resource WGT_PAGER_F = new Resource(120, 232, 20, 20);
+    public static final Resource WGT_PAGER_B = new Resource(120, 232, 20, 16);
     public static final Resource ICN_RECENT_N = new Resource(0, 42, 14, 14);
     public static final Resource ICN_RECENT_F = new Resource(0, 28, 14, 14);
     public static final Resource ICN_INPUT_N = new Resource(14, 42, 14, 14);

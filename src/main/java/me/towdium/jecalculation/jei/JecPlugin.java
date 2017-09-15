@@ -3,7 +3,7 @@ package me.towdium.jecalculation.jei;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.client.gui.JecGui;
-import me.towdium.jecalculation.core.entry.Entry;
+import me.towdium.jecalculation.core.labels.ILabel;
 import mezz.jei.api.IJeiRuntime;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.IModRegistry;
@@ -26,18 +26,18 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class JecPlugin implements IModPlugin {
-    public static final Entry.ConverterRegistryItem registryItem = Entry.ConverterRegistryItem.INSTANCE;
-    public static final Entry.ConverterRegistryFluid registryFluid = Entry.ConverterRegistryFluid.INSTANCE;
+    public static final ILabel.RegistryConverterItem registryItem = ILabel.RegistryConverterItem.INSTANCE;
+    public static final ILabel.RegistryConverterFluid registryFluid = ILabel.RegistryConverterFluid.INSTANCE;
     public static IJeiRuntime runtime;
 
-    public static Entry getEntryUnderMouse() {
+    public static ILabel getEntryUnderMouse() {
         Object o = runtime.getIngredientListOverlay().getIngredientUnderMouse();
-        if (o == null) return Entry.EMPTY;
+        if (o == null) return ILabel.EMPTY;
         else if (o instanceof ItemStack) return registryItem.toEntry(((ItemStack) o));
         else if (o instanceof FluidStack) return registryFluid.toEntry(((FluidStack) o));
         else {
             JustEnoughCalculation.logger.warn("Unsupported ingredient type detected: " + o.getClass());
-            return Entry.EMPTY;
+            return ILabel.EMPTY;
         }
     }
 

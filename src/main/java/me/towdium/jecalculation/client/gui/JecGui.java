@@ -2,7 +2,7 @@ package me.towdium.jecalculation.client.gui;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.gui.drawables.DContainer;
-import me.towdium.jecalculation.core.entry.Entry;
+import me.towdium.jecalculation.core.labels.ILabel;
 import me.towdium.jecalculation.jei.JecPlugin;
 import me.towdium.jecalculation.utils.IllegalPositionException;
 import me.towdium.jecalculation.utils.helpers.LocalizationHelper;
@@ -46,7 +46,7 @@ public class JecGui extends GuiContainer {
 
     protected static JecGui last;
     protected JecGui parent;
-    public Entry hand = Entry.EMPTY;
+    public ILabel hand = ILabel.EMPTY;
     public DContainer container = new DContainer();
     protected List<Triple<Integer, Integer, List<String>>> tooltipBuffer = new ArrayList<>();
 
@@ -90,7 +90,6 @@ public class JecGui extends GuiContainer {
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        drawResourceContinuous(Resource.WGT_PANEL, guiLeft, guiTop, xSize, ySize, 5, 5, 5, 5);
     }
 
     @Override
@@ -123,21 +122,21 @@ public class JecGui extends GuiContainer {
         int yMouse = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
         if (Mouse.getEventButtonState()) {
             if (Mouse.getEventButton() == 0) {
-                if (hand == Entry.EMPTY) {
-                    Entry e = JecPlugin.getEntryUnderMouse();
-                    if (e != Entry.EMPTY) {
+                if (hand == ILabel.EMPTY) {
+                    ILabel e = JecPlugin.getEntryUnderMouse();
+                    if (e != ILabel.EMPTY) {
                         hand = e;
                         return true;
                     }
                 } else {
                     if (!mouseIn(guiLeft, guiTop, width, height, xMouse, yMouse)) {
-                        hand = Entry.EMPTY;
+                        hand = ILabel.EMPTY;
                         return true;
                     }
                 }
             } else if (Mouse.getEventButton() == 1) {
-                if (hand != Entry.EMPTY) {
-                    hand = Entry.EMPTY;
+                if (hand != ILabel.EMPTY) {
+                    hand = ILabel.EMPTY;
                     return true;
                 }
             }
@@ -340,7 +339,7 @@ public class JecGui extends GuiContainer {
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         if (!container.onKey(this, typedChar, keyCode)) {
             if (keyCode == Keyboard.KEY_ESCAPE) {
-                if (hand != Entry.EMPTY) hand = Entry.EMPTY;
+                if (hand != ILabel.EMPTY) hand = ILabel.EMPTY;
                 else if (parent != null) Minecraft.getMinecraft().displayGuiScreen(parent);
                 else super.keyTyped(typedChar, keyCode);
             }

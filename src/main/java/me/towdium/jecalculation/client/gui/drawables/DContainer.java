@@ -54,12 +54,12 @@ public class DContainer implements IDrawable {
         return false;
     }
 
-    /*public Optional<DEntry> getEntryAt(int xMouse, int yMouse) {
+    /*public Optional<DLabel> getEntryAt(int xMouse, int yMouse) {
         return drawables.stream().map(w -> {
-            if (w instanceof DEntryGroup) return ((DEntryGroup) w).getEntryAt(xMouse, yMouse);
-            else if (w instanceof DEntry) return Optional.ofNullable(
-                    ((DEntry) w).mouseIn(xMouse, yMouse) ? ((DEntry) w) : null);
-            else return Optional.<DEntry>empty();
+            if (w instanceof DLabelGroup) return ((DLabelGroup) w).getEntryAt(xMouse, yMouse);
+            else if (w instanceof DLabel) return Optional.ofNullable(
+                    ((DLabel) w).mouseIn(xMouse, yMouse) ? ((DLabel) w) : null);
+            else return Optional.<DLabel>empty();
         }).filter(Optional::isPresent).findFirst().orElse(Optional.empty());
     }*/
 }

@@ -15,16 +15,16 @@ import java.util.stream.IntStream;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class DEntryGroup implements IDrawable {
-    ArrayList<DEntry> widgets = new ArrayList<>();
+public class DLabelGroup implements IDrawable {
+    ArrayList<DLabel> widgets = new ArrayList<>();
 
-    public DEntryGroup(int xPos, int yPos, int column, int row, DEntry.enumMode mode) {
+    public DLabelGroup(int xPos, int yPos, int column, int row, DLabel.enumMode mode) {
         this(xPos, yPos, column, row, 18, 18, mode);
     }
 
-    public DEntryGroup(int xPos, int yPos, int column, int row, int xSize, int ySize, DEntry.enumMode mode) {
+    public DLabelGroup(int xPos, int yPos, int column, int row, int xSize, int ySize, DLabel.enumMode mode) {
         IntStream.range(0, column).forEach(c -> IntStream.range(0, row).forEach(r ->
-                widgets.add(new DEntry(xPos + c * xSize, yPos + r * ySize, xSize, ySize, mode))));
+                widgets.add(new DLabel(xPos + c * xSize, yPos + r * ySize, xSize, ySize, mode))));
     }
 
     @Override
@@ -37,7 +37,7 @@ public class DEntryGroup implements IDrawable {
         return widgets.stream().anyMatch(w -> w.onClicked(gui, xMouse, yMouse, button));
     }
 
-    public Optional<DEntry> getEntryAt(JecGui gui, int xMouse, int yMouse) {
+    public Optional<DLabel> getEntryAt(JecGui gui, int xMouse, int yMouse) {
         return widgets.stream().filter(w -> w.mouseIn(gui, xMouse, yMouse)).findFirst();
     }
 }
