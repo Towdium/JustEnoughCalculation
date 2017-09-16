@@ -1,11 +1,9 @@
 package me.towdium.jecalculation.client.gui;
 
 import mcp.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.client.gui.drawables.DContainer;
 import me.towdium.jecalculation.core.labels.ILabel;
 import me.towdium.jecalculation.jei.JecPlugin;
 import me.towdium.jecalculation.utils.IllegalPositionException;
-import me.towdium.jecalculation.utils.helpers.LocalizationHelper;
 import me.towdium.jecalculation.utils.wrappers.Single;
 import me.towdium.jecalculation.utils.wrappers.Triple;
 import net.minecraft.client.Minecraft;
@@ -43,44 +41,57 @@ import java.util.function.Function;
 @MethodsReturnNonnullByDefault
 public class JecGui extends GuiContainer {
     public static final int COLOR_GREY = 0xFFA1A1A1;
-
     protected static JecGui last;
+    public static final boolean ALWAYS_TOOLTIP = false;
+
     protected JecGui parent;
     public ILabel hand = ILabel.EMPTY;
-    public DContainer container = new DContainer();
+    public IDrawable root;
     protected List<Triple<Integer, Integer, List<String>>> tooltipBuffer = new ArrayList<>();
 
-    public JecGui(@Nullable JecGui parent, IDrawable... drawables) {
-        this(parent, false, drawables);
+    public JecGui(@Nullable JecGui parent, IDrawable root) {
+        this(parent, false, root);
     }
 
-    public JecGui(@Nullable JecGui parent, boolean acceptsTransfer, IDrawable... drawables) {
+    public JecGui(@Nullable JecGui parent, boolean acceptsTransfer, IDrawable root) {
         super(acceptsTransfer ? new ContainerTransfer() : new ContainerNonTransfer());
         this.parent = parent;
-        container.addAll(drawables);
+        this.root = root;
     }
 
     public static boolean mouseIn(int xPos, int yPos, int xSize, int ySize, int xMouse, int yMouse) {
         return xMouse > xPos && yMouse > yPos && xMouse <= xPos + xSize && yMouse <= yPos + ySize;
     }
 
-    public static void displayGui(IDrawable... components) {
-        displayGui(true, false, components);
+    public static void displayGui(IDrawable root) {
+        displayGui(true, false, root);
     }
 
-    public static void displayGui(boolean updateParent, boolean acceptsTransfer, IDrawable... components) {
+    public static void displayGui(boolean updateParent, boolean acceptsTransfer, IDrawable root) {
         if (Minecraft.getMinecraft().isCallingFromMinecraftThread())
-            displayGuiUnsafe(updateParent, acceptsTransfer, components);
+            displayGuiUnsafe(updateParent, acceptsTransfer, root);
     }
 
-    public static void displayGuiUnsafe(boolean updateParent, boolean acceptsTransfer, IDrawable... components) {
+    public static JecGui getCurrent() {
+        return last;
+    }
+
+    private static void displayGuiUnsafe(boolean updateParent, boolean acceptsTransfer, IDrawable root) {
         Minecraft mc = Minecraft.getMinecraft();
         JecGui parent;
         if (mc.currentScreen == null) parent = null;
         else if (!(mc.currentScreen instanceof JecGui)) parent = last;
         else if (updateParent) parent = (JecGui) mc.currentScreen;
         else parent = ((JecGui) mc.currentScreen).parent;
-        mc.displayGuiScreen(new JecGui(parent, acceptsTransfer, components));
+        JecGui toShow = new JecGui(parent, acceptsTransfer, root);
+        mc.displayGuiScreen(toShow);
+        last = toShow;
+    }
+
+    @Override
+    public void onGuiClosed() {
+        super.onGuiClosed();
+        last = null;
     }
 
     @Override
@@ -100,7 +111,7 @@ public class JecGui extends GuiContainer {
         GlStateManager.translate(guiLeft, guiTop, 0);
         GlStateManager.disableLighting();
         GlStateManager.disableDepth();
-        container.onDraw(this, mouseX - guiLeft, mouseY - guiTop);
+        root.onDraw(this, mouseX - guiLeft, mouseY - guiTop);
         GlStateManager.popMatrix();
         GlStateManager.pushMatrix();
         GlStateManager.translate(mouseX - 8, mouseY - 8, 0);
@@ -292,10 +303,6 @@ public class JecGui extends GuiContainer {
         RenderHelper.disableStandardItemLighting();
     }
 
-    public String localize(String key, Object... os) {
-        return LocalizationHelper.format(this.getClass(), "gui", key, os);
-    }
-
     public static class Font {
         public static final Font DEFAULT_SHADOW = new Font(0xFFFFFF, true, true, false, 1, enumAlign.AUTO);
         public static final Font DEFAULT_NO_SHADOW = new Font(0x404040, false, true, false, 1, enumAlign.AUTO);
@@ -332,12 +339,12 @@ public class JecGui extends GuiContainer {
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
-        container.onClicked(this, mouseX - guiLeft, mouseY - guiTop, mouseButton);
+        root.onClicked(this, mouseX - guiLeft, mouseY - guiTop, mouseButton);
     }
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        if (!container.onKey(this, typedChar, keyCode)) {
+        if (!root.onKey(this, typedChar, keyCode)) {
             if (keyCode == Keyboard.KEY_ESCAPE) {
                 if (hand != ILabel.EMPTY) hand = ILabel.EMPTY;
                 else if (parent != null) Minecraft.getMinecraft().displayGuiScreen(parent);

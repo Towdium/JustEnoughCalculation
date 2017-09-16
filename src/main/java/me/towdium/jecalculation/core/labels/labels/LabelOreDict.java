@@ -1,6 +1,8 @@
 package me.towdium.jecalculation.core.labels.labels;
 
+import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.gui.JecGui;
+import me.towdium.jecalculation.client.gui.Resource;
 import me.towdium.jecalculation.client.gui.drawables.DContainer;
 import me.towdium.jecalculation.client.gui.drawables.DText;
 import me.towdium.jecalculation.core.labels.ILabel;
@@ -11,14 +13,16 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.oredict.OreDictionary;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.Consumer;
 
 /**
  * Author: towdium
  * Date:   17-9-10.
  */
+@MethodsReturnNonnullByDefault
+@ParametersAreNonnullByDefault
 public class LabelOreDict extends LabelSimpleAmount {
-    public static final String IDENTIFIER = "oreDict";
     public static final String KEY_NAME = "name";
     public static final String KEY_AMOUNT = "amount";
 
@@ -66,7 +70,7 @@ public class LabelOreDict extends LabelSimpleAmount {
             } else list.add(is);
         });
         long index = System.currentTimeMillis() / 1500;
-
+        gui.drawResource(Resource.LBL_ORE_DICT, 0, 0);
         GlStateManager.pushMatrix();
         GlStateManager.translate(1, 1, 0);
         GlStateManager.scale(14f / 16, 14f / 16, 1);
@@ -83,15 +87,22 @@ public class LabelOreDict extends LabelSimpleAmount {
     }
 
     public static class Editor extends DContainer implements RegistryEditor.IEditor {
-        Consumer<ILabel> label;
+        Consumer<ILabel> callback;
 
         public Editor() {
             add(new DText(5, 5, JecGui.Font.DEFAULT_NO_SHADOW, "hello"));
         }
 
         @Override
-        public void setCallback(Consumer<ILabel> callback) {
-            label = callback;
+        public RegistryEditor.IEditor setCallback(Consumer<ILabel> callback) {
+            this.callback = callback;
+            return this;
+        }
+
+        @Override
+        public boolean onClicked(JecGui gui, int xMouse, int yMouse, int button) {
+            callback.accept(new LabelOreDict("plankWood"));
+            return super.onClicked(gui, xMouse, yMouse, button);
         }
     }
 }

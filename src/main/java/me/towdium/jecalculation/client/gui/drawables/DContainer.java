@@ -36,6 +36,10 @@ public class DContainer implements IDrawable {
             remove(aw);
     }
 
+    public void clear() {
+        widgets.clear();
+    }
+
     public void onDraw(JecGui gui, int mouseX, int mouseY) {
         widgets.forEach(widget -> widget.onDraw(gui, mouseX, mouseY));
     }
