@@ -3,7 +3,7 @@ package me.towdium.jecalculation.item.items;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.client.gui.JecGui;
-import me.towdium.jecalculation.client.gui.guis.GuiCalculator;
+import me.towdium.jecalculation.client.gui.guis.GuiDisambiguation;
 import me.towdium.jecalculation.item.JecItem;
 import me.towdium.jecalculation.utils.IllegalPositionException;
 import net.minecraft.creativetab.CreativeTabs;
@@ -54,7 +54,7 @@ public class ItemCalculator extends JecItem {
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
         if (JustEnoughCalculation.side != JustEnoughCalculation.enumSide.SERVER) {
-            JecGui.displayGui(new GuiCalculator());
+            JecGui.displayGui(new GuiDisambiguation(null));
         }
         return super.onItemRightClick(worldIn, playerIn, handIn);
     }

@@ -32,6 +32,6 @@ public class GuiCalculator extends DContainer {
         add(new DLabel(31, 7, 20, 20, SELECTOR));
         add(new DLine(52));
         add(new DIcon(151, 31, 18, 18, Resource.ICN_RECENT_N, Resource.ICN_RECENT_F, "calculator.history"));
-        add(new DScroll(7, 56, 162, 5));
+        add(new DSwitcher(7, 56, 162, 5));
     }
 }

@@ -4,62 +4,57 @@ import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.gui.IDrawable;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
-import me.towdium.jecalculation.utils.Utilities.Circulator;
+import org.lwjgl.input.Mouse;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
+import java.util.function.Consumer;
 
 /**
  * Author: towdium
- * Date:   17-8-19.
+ * Date:   17-9-16.
  */
-@ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
+@ParametersAreNonnullByDefault
 public class DScroll implements IDrawable {
-    public static final int SIZE = 13;
+    public int xPos, yPos, ySize, current;
+    public Consumer<Float> lsnrScroll;
+    protected boolean drag;
 
-    protected int xPos, xSize, yPos;
-    protected DButton left, right;
-    protected DRectangle wRect;
-    protected DText dText;
-    protected List<String> keys;
-    protected Circulator index;
-
-    public DScroll(int xPos, int yPos, int xSize, int total) {
-        this(xPos, yPos, xSize, IntStream.rangeClosed(1, total)
-                .mapToObj(i -> i + "/" + total).collect(Collectors.toList()));
-    }
-
-    public DScroll(int xPos, int yPos, int xSize, List<String> keys) {
+    public DScroll(int xPos, int yPos, int ySize) {
         this.xPos = xPos;
-        this.xSize = xSize;
         this.yPos = yPos;
-        this.keys = keys;
-        left = new DButtonIcon(xPos, yPos, SIZE, SIZE, Resource.WGT_ARR_L_N, Resource.WGT_ARR_L_F)
-                .setListenerLeft(() -> index.prev());
-        right = new DButtonIcon(xPos + xSize - SIZE, yPos, SIZE, SIZE, Resource.WGT_ARR_R_N, Resource.WGT_ARR_R_F)
-                .setListenerLeft(() -> index.next());
-        wRect = new DRectangle(xPos + SIZE, yPos, xSize - 2 * SIZE, SIZE, JecGui.COLOR_GREY);
-        dText = new DText(xPos + SIZE, yPos, xSize - 2 * SIZE, SIZE, JecGui.Font.DEFAULT_SHADOW,
-                () -> keys.get(index.index()));
-        index = new Circulator(keys.size());
+        this.ySize = ySize;
     }
 
     @Override
     public void onDraw(JecGui gui, int xMouse, int yMouse) {
-        Stream.of(left, right, wRect, dText).forEach(w -> w.onDraw(gui, xMouse, yMouse));
+        if (Mouse.isButtonDown(0) && drag) setCurrent(yMouse);
+        else drag = false;
+
+        gui.drawResourceContinuous(Resource.WGT_SLOT, xPos, yPos, 14, ySize, 3, 3, 3, 3);
+        gui.drawResource(Resource.WGT_SCROLL, xPos + 1, yPos + 1 + current);
     }
 
     @Override
     public boolean onClicked(JecGui gui, int xMouse, int yMouse, int button) {
-        return Stream.of(left, right).anyMatch(w -> w.onClicked(gui, xMouse, yMouse, button));
+        drag = mouseIn(xMouse, yMouse);
+        if (drag) setCurrent(yMouse);
+        return drag;
     }
 
-    @Override
-    public boolean onKey(JecGui gui, char ch, int code) {
-        return Stream.of(left, right).anyMatch(w -> w.onKey(gui, ch, code));
+    public void setCurrent(int yMouse) {
+        current = yMouse - yPos - 9;
+        if (current < 0) current = 0;
+        if (current > ySize - 17) current = ySize - 17;
+        if (lsnrScroll != null) lsnrScroll.accept(current / (ySize - 17f));
+    }
+
+    public boolean mouseIn(int xMouse, int yMouse) {
+        return JecGui.mouseIn(xPos + 1, yPos + 1, 12, ySize - 2, xMouse, yMouse);
+    }
+
+    public DScroll setLsnrScroll(Consumer<Float> lsnrScroll) {
+        this.lsnrScroll = lsnrScroll;
+        return this;
     }
 }

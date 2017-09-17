@@ -11,14 +11,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public interface IDrawable {
-    static int gl(JecGui gui) {
-        return gui.getGuiLeft();
-    }
-
-    static int gt(JecGui gui) {
-        return gui.getGuiTop();
-    }
-
     void onDraw(JecGui gui, int xMouse, int yMouse);
 
     default boolean onClicked(JecGui gui, int xMouse, int yMouse, int button) {
