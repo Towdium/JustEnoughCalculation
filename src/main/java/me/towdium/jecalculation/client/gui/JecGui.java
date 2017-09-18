@@ -123,14 +123,28 @@ public class JecGui extends GuiContainer {
     }
 
     /**
+     * This function handles events within the interface.
+     * Specifically, handles mouse wheel within interface.
+     * Different from {@link #handleMouseEvent()}, which is
+     * used to handle mouse event outside.
+     */
+    @Override
+    public void handleMouseInput() throws IOException {
+        super.handleMouseInput();
+        int diff = Mouse.getEventDWheel() / 120;
+        if (diff != 0) root.onScroll(this, Mouse.getEventX() * width / mc.displayWidth - guiLeft,
+                height - Mouse.getEventY() * height / mc.displayHeight - 1 - guiTop, diff);
+    }
+
+    /**
      * @return if the event is canceled
      * This function handles click outside the normal region,
      * especially the overlap with JEI overlay. It handles
      * mouse event before JEI.
      */
     public boolean handleMouseEvent() {
-        int xMouse = Mouse.getEventX() * this.width / this.mc.displayWidth;
-        int yMouse = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
+        int xMouse = Mouse.getEventX() * width / mc.displayWidth;
+        int yMouse = height - Mouse.getEventY() * height / mc.displayHeight - 1;
         if (Mouse.getEventButtonState()) {
             if (Mouse.getEventButton() == 0) {
                 if (hand == ILabel.EMPTY) {

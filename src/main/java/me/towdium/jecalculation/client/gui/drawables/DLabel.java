@@ -51,13 +51,13 @@ public class DLabel implements IDrawable {
         if (mode == enumMode.RESULT || mode == enumMode.EDITOR)
             gui.drawText(xPos + xSize / 2 + 7.5f, yPos + ySize / 2 + 7 -
                     (int) (font.size * gui.getFontRenderer().FONT_HEIGHT), font, ILabel.getAmountString());
-        if (mouseIn(gui, xMouse, yMouse)) gui.drawRectangle(xPos + 1, yPos + 1,
+        if (mouseIn(xMouse, yMouse)) gui.drawRectangle(xPos + 1, yPos + 1,
                 xSize - 2, ySize - 2, 0x80FFFFFF);
     }
 
     @Override
     public boolean onClicked(JecGui gui, int xMouse, int yMouse, int button) {
-        if (mouseIn(gui, xMouse, yMouse)) {
+        if (mouseIn(xMouse, yMouse)) {
             switch (mode) {
                 case EDITOR:
                     if (gui.hand != ILabel.EMPTY) {
@@ -92,7 +92,7 @@ public class DLabel implements IDrawable {
         } else return false;
     }
 
-    public boolean mouseIn(JecGui gui, int x, int y) {
+    public boolean mouseIn(int x, int y) {
         int xx = x - xPos;
         int yy = y - yPos;
         return xx >= 0 && xx < xSize && yy >= 0 && yy < ySize;

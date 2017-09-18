@@ -38,15 +38,19 @@ public class DScroll implements IDrawable {
     @Override
     public boolean onClicked(JecGui gui, int xMouse, int yMouse, int button) {
         drag = mouseIn(xMouse, yMouse);
-        if (drag) setCurrent(yMouse);
+        if (drag) setCurrent(yMouse - yPos - 9);
         return drag;
     }
 
-    public void setCurrent(int yMouse) {
-        current = yMouse - yPos - 9;
+    private void setCurrent(int pos) {
+        current = pos;
         if (current < 0) current = 0;
         if (current > ySize - 17) current = ySize - 17;
         if (lsnrScroll != null) lsnrScroll.accept(current / (ySize - 17f));
+    }
+
+    public void setCurrent(float ratio) {
+        setCurrent((int) ((ySize - 17) * ratio));
     }
 
     public boolean mouseIn(int xMouse, int yMouse) {

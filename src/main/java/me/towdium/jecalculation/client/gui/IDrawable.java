@@ -20,4 +20,8 @@ public interface IDrawable {
     default boolean onKey(JecGui gui, char ch, int code) {
         return false;
     }
+
+    default boolean onScroll(JecGui gui, int xMouse, int yMouse, int diff) {
+        return false;
+    }
 }
