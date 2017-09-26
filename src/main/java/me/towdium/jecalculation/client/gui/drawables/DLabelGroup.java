@@ -46,6 +46,6 @@ public class DLabelGroup implements IDrawable {
 
     public void setLabel(List<ILabel> labels, int start) {
         Single<Integer> i = new Single<>(start);
-        widgets.forEach(l -> l.setILabel(i.value < labels.size() ? labels.get(i.value++) : ILabel.EMPTY));
+        widgets.forEach(l -> l.setLabel(i.value < labels.size() ? labels.get(i.value++) : ILabel.EMPTY));
     }
 }

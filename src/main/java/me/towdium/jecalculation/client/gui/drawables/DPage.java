@@ -6,7 +6,7 @@ import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
 import me.towdium.jecalculation.core.labels.ILabel;
 import me.towdium.jecalculation.utils.Utilities;
-import me.towdium.jecalculation.utils.helpers.LocalizationHelper;
+import me.towdium.jecalculation.utils.Utilities.L18n;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -39,7 +39,7 @@ public class DPage implements IDrawable {
         record.representation.drawEntry(gui, index * 24 + 4, -17, false);
         timer.setState(JecGui.mouseIn(index * 24, -21, 24, 21, xMouse, yMouse));
         if (timer.getTime() > 1000)
-            gui.drawTooltip(xMouse, yMouse, LocalizationHelper.format("gui." + record.localizeKey));
+            gui.drawTooltip(xMouse, yMouse, L18n.format("gui." + record.localizeKey));
     }
 
     @Override

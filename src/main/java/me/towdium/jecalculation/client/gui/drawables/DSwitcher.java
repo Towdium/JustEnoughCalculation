@@ -42,7 +42,7 @@ public class DSwitcher implements IDrawable {
                 .setListenerLeft(() -> index.prev());
         right = new DButtonIcon(xPos + xSize - SIZE, yPos, SIZE, SIZE, Resource.WGT_ARR_R_N, Resource.WGT_ARR_R_F)
                 .setListenerLeft(() -> index.next());
-        wRect = new DRectangle(xPos + SIZE, yPos, xSize - 2 * SIZE, SIZE, JecGui.COLOR_GREY);
+        wRect = new DRectangle(xPos + SIZE, yPos, xSize - 2 * SIZE, SIZE, JecGui.COLOR_GUI_GREY);
         dText = new DText(xPos + SIZE, yPos, xSize - 2 * SIZE, SIZE, JecGui.Font.DEFAULT_SHADOW,
                 () -> keys.get(index.index()));
         index = new Circulator(keys.size());

@@ -3,10 +3,12 @@ package me.towdium.jecalculation.client.gui.drawables;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.core.labels.ILabel;
+import me.towdium.jecalculation.utils.Utilities;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Author: towdium
@@ -15,12 +17,14 @@ import java.util.List;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class DLabelScroll extends DContainer {
-    List<ILabel> labels = new ArrayList<>();
-    DLabelGroup labelGroup;
-    DScroll scroll;
-    int xPos, yPos, column, row, current;
+    protected List<ILabel> labels = new ArrayList<>();
+    protected List<ILabel> filtered = new ArrayList<>();
+    protected DLabelGroup labelGroup;
+    protected DScroll scroll;
+    protected int xPos, yPos, column, row, current;
+    protected String filter = "";
 
-    public DLabelScroll(int xPos, int yPos, int column, int row, DLabel.enumMode mode) {
+    public DLabelScroll(int xPos, int yPos, int column, int row, DLabel.enumMode mode, boolean drawConnection) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.column = column;
@@ -29,13 +33,14 @@ public class DLabelScroll extends DContainer {
         scroll = new DScroll(xPos + column * 18 + 4, yPos, row * 18).setLsnrScroll(this::update);
         add(labelGroup);
         add(scroll);
+        if (drawConnection) add(new DRectangle(xPos + column * 18, yPos, 4, row * 18, JecGui.COLOR_GUI_GREY));
     }
 
     public void update(float f) {
         int step = getStepAmount();
         current = (int) (step * f);
         if (current == step) current--;
-        labelGroup.setLabel(labels, current * column);
+        labelGroup.setLabel(filtered, current * column);
     }
 
     @Override
@@ -51,8 +56,16 @@ public class DLabelScroll extends DContainer {
 
     public DLabelScroll setLabels(List<ILabel> labels) {
         this.labels = labels;
-        scroll.setCurrent(0);
+        setFilter(filter);
         return this;
+    }
+
+    public boolean setFilter(String str) {
+        filter = str;
+        filtered = labels.stream().filter(l -> Utilities.contains(l.getDisplayName(), str))
+                .collect(Collectors.toList());
+        scroll.setCurrent(0);
+        return filtered.size() != 0;
     }
 
     private int getStepAmount() {

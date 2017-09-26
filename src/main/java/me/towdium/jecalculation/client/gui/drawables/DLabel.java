@@ -8,6 +8,7 @@ import me.towdium.jecalculation.core.labels.ILabel;
 import me.towdium.jecalculation.utils.IllegalPositionException;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.ArrayList;
 
 /**
  * Author: towdium
@@ -24,7 +25,7 @@ public class DLabel implements IDrawable {
     }
 
     public int xPos, yPos, xSize, ySize;
-    public ILabel ILabel;
+    public ILabel label;
     public enumMode mode;
 
     public DLabel(int xPos, int yPos, int xSize, int ySize, enumMode mode) {
@@ -32,27 +33,31 @@ public class DLabel implements IDrawable {
         this.yPos = yPos;
         this.xSize = xSize;
         this.ySize = ySize;
-        this.ILabel = ILabel.EMPTY;
+        this.label = label.EMPTY;
         this.mode = mode;
     }
 
-    public ILabel getILabel() {
-        return ILabel;
+    public ILabel getLabel() {
+        return label;
     }
 
-    public void setILabel(ILabel ILabel) {
-        this.ILabel = ILabel;
+    public void setLabel(ILabel label) {
+        this.label = label;
     }
 
     @Override
     public void onDraw(JecGui gui, int xMouse, int yMouse) {
         gui.drawResourceContinuous(Resource.WGT_SLOT, xPos, yPos, xSize, ySize, 3, 3, 3, 3);
-        ILabel.drawEntry(gui, xPos + xSize / 2, yPos + ySize / 2, true);
+        label.drawEntry(gui, xPos + xSize / 2, yPos + ySize / 2, true);
         if (mode == enumMode.RESULT || mode == enumMode.EDITOR)
             gui.drawText(xPos + xSize / 2 + 7.5f, yPos + ySize / 2 + 7 -
-                    (int) (font.size * gui.getFontRenderer().FONT_HEIGHT), font, ILabel.getAmountString());
-        if (mouseIn(xMouse, yMouse)) gui.drawRectangle(xPos + 1, yPos + 1,
-                xSize - 2, ySize - 2, 0x80FFFFFF);
+                    (int) (font.size * gui.getFontRenderer().FONT_HEIGHT), font, label.getAmountString());
+        if (mouseIn(xMouse, yMouse)) {
+            gui.drawRectangle(xPos + 1, yPos + 1, xSize - 2, ySize - 2, 0x80FFFFFF);
+            ArrayList<String> buf = new ArrayList<>();
+            buf.add(label.getDisplayName());
+            gui.drawTooltip(xMouse, yMouse, label.getToolTip(buf));
+        }
     }
 
     @Override
@@ -60,31 +65,31 @@ public class DLabel implements IDrawable {
         if (mouseIn(xMouse, yMouse)) {
             switch (mode) {
                 case EDITOR:
-                    if (gui.hand != ILabel.EMPTY) {
-                        ILabel = gui.hand;
-                        gui.hand = ILabel.EMPTY;
+                    if (gui.hand != label.EMPTY) {
+                        label = gui.hand;
+                        gui.hand = label.EMPTY;
                         return true;
-                    } else if (ILabel != ILabel.EMPTY) {
+                    } else if (label != label.EMPTY) {
                         if (button == 0) {
-                            if (JecGui.isShiftDown()) ILabel = ILabel.increaseAmountLarge();
-                            else ILabel = ILabel.increaseAmount();
+                            if (JecGui.isShiftDown()) label = label.increaseAmountLarge();
+                            else label = label.increaseAmount();
                             return true;
                         } else if (button == 1) {
-                            if (JecGui.isShiftDown()) ILabel = ILabel.decreaseAmountLarge();
-                            else ILabel = ILabel.decreaseAmount();
+                            if (JecGui.isShiftDown()) label = label.decreaseAmountLarge();
+                            else label = label.decreaseAmount();
                             return true;
                         }
                     } else return false;
                 case RESULT:
                     return false;
                 case PICKER:
-                    if (ILabel != ILabel.EMPTY) {
-                        gui.hand = ILabel.copy();
+                    if (label != label.EMPTY) {
+                        gui.hand = label.copy();
                         return true;
                     } else return false;
                 case SELECTOR:
-                    ILabel = gui.hand;
-                    gui.hand = ILabel.EMPTY;
+                    label = gui.hand;
+                    gui.hand = label.EMPTY;
                     return true;
                 default:
                     throw new IllegalPositionException();

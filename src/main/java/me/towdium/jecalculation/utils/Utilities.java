@@ -2,11 +2,13 @@ package me.towdium.jecalculation.utils;
 
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import me.towdium.jecalculation.utils.wrappers.Single;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import java.util.*;
 import java.util.function.BiFunction;
@@ -92,6 +94,10 @@ public class Utilities {
         String name = stack.getFluid().getName();
         if (name.equals("lava") || name.equals("water")) return "Minecraft";
         else return dictionary.get(stack.getFluid().getStill().toString().split(":")[0]);
+    }
+
+    public static boolean contains(String s1, String s2) {
+        return s1.contains(s2);
     }
 
     public static class Timer {
@@ -181,6 +187,21 @@ public class Utilities {
             else
                 ret.push(data.get(ah < bh ? new Pair<>(a, b) : new Pair<>(b, a)));
             return Optional.ofNullable(ret.value);
+        }
+    }
+
+    public static class L18n {
+        public static Pair<String, Boolean> search(String translateKey, Object... parameters) {
+            Pair<String, Boolean> ret = new Pair<>(null, null);
+            String buffer = I18n.format(translateKey, parameters);
+            ret.two = !buffer.equals(translateKey);
+            buffer = StringEscapeUtils.unescapeJava(buffer);
+            ret.one = buffer.replace("\t", "    ");
+            return ret;
+        }
+
+        public static String format(String translateKey, Object... parameters) {
+            return search(translateKey, parameters).one;
         }
     }
 }

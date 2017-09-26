@@ -2,8 +2,11 @@ package me.towdium.jecalculation.core.labels.labels;
 
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.core.labels.ILabel;
+import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+
+import java.util.List;
 
 /**
  * Author: towdium
@@ -34,6 +37,12 @@ public class LabelItemStack extends LabelSimpleAmount {
     private LabelItemStack(LabelItemStack eis) {
         amount = eis.amount;
         itemStack = eis.itemStack;
+    }
+
+    @Override
+    public List<String> getToolTip(List<String> existing) {
+        existing.add("&9" + Utilities.getModName(itemStack));
+        return existing;
     }
 
     @Override

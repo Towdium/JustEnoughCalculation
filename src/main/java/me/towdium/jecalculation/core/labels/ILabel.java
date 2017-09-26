@@ -44,6 +44,10 @@ public interface ILabel {
 
     String getDisplayName();
 
+    default List<String> getToolTip(List<String> existing) {
+        return existing;
+    }
+
     default String getIdentifier() {
         String s = this.getClass().getSimpleName();
         if (s.startsWith("Label")) s = s.substring(5);
@@ -66,7 +70,7 @@ public interface ILabel {
     /**
      * Since {@link ILabel} merging is bidirectional, it is redundant to
      * implement on both side. So this class is created for merging
-     * {@link ILabel ILabel(s)}.
+     * {@link ILabel label(s)}.
      * It uses singleton mode. First register merge functions, then use
      * {@link #test(ILabel, ILabel)} and {@link #merge(ILabel, ILabel, boolean)}
      * to operate the {@link ILabel}.
@@ -110,7 +114,7 @@ public interface ILabel {
              * @param a   an {@link ILabel} to merge
              * @param b   another {@link ILabel} to merge
              * @param add add together or cancel each other
-             * @return merged {@link ILabel ILabel(s)} if not changed (no matter order), they cannot merge.
+             * @return merged {@link ILabel label(s)} if not changed (no matter order), they cannot merge.
              */
             Pair<ILabel, ILabel> merge(ILabel a, ILabel b, boolean add);
         }
@@ -143,7 +147,7 @@ public interface ILabel {
 
         /**
          * @param nbt NBT to deserialize
-         * @return the recovered ILabel
+         * @return the recovered label
          * A typical NBT structure of an {@link ILabel} is as follows:
          * <pre>{@code
          * {
@@ -158,7 +162,7 @@ public interface ILabel {
             String s = nbt.getString(KEY_IDENTIFIER);
             ILabel e = idToData.get(s).apply(nbt.getCompoundTag(KEY_CONTENT));
             if (e != ILabel.EMPTY) return e;
-            else throw new RuntimeException("Fail to deserialize ILabel type: " + s);
+            else throw new RuntimeException("Fail to deserialize label type: " + s);
         }
     }
 

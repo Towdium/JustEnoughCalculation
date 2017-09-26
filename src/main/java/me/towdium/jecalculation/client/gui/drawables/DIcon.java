@@ -35,7 +35,7 @@ public class DIcon extends DTooltip {
     @Override
     public void onDraw(JecGui gui, int xMouse, int yMouse) {
         super.onDraw(gui, xMouse, yMouse);
-        gui.drawRectangle(xPos, yPos, xSize, ySize, JecGui.COLOR_GREY);
+        gui.drawRectangle(xPos, yPos, xSize, ySize, JecGui.COLOR_GUI_GREY);
         Resource r = mouseIn(xMouse, yMouse) ? focused : normal;
         gui.drawResource(r, (xSize - r.getXSize()) / 2 + xPos, (ySize - r.getYSize()) / 2 + yPos);
     }
