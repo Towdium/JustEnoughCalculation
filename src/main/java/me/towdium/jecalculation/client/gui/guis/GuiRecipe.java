@@ -2,6 +2,11 @@ package me.towdium.jecalculation.client.gui.guis;
 
 import me.towdium.jecalculation.client.gui.Resource;
 import me.towdium.jecalculation.client.gui.drawables.*;
+import me.towdium.jecalculation.core.labels.ILabel;
+import mezz.jei.api.gui.IRecipeLayout;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static me.towdium.jecalculation.client.gui.drawables.DLabel.enumMode.EDITOR;
 
@@ -42,5 +47,33 @@ public class GuiRecipe extends DContainer {
             addAll(buttonNew, buttonLabel, buttonDel, buttonSave); // TODO buttonCopy
             removeAll(buttonYes, buttonNo, textField);
         }
+    }
+
+    public void transfer(IRecipeLayout recipe) {
+        ArrayList<ArrayList<ILabel>> buf = new ArrayList<>();
+        ArrayList<ILabel> input = new ArrayList<>();
+        ArrayList<ILabel> output = new ArrayList<>();
+
+        recipe.getFluidStacks().getGuiIngredients().forEach((i, g) -> {
+            if (g.getAllIngredients().isEmpty()) return;
+            ArrayList<ILabel> raw = new ArrayList<>();
+            g.getAllIngredients().forEach(f -> raw.add(ILabel.CONVERTER_FLUID.toLabel(f)));
+            List<ILabel> guessed = ILabel.CONVERTER_FLUID.toLabel(g.getAllIngredients());
+            (g.isInput() ? input : output).add(guessed.isEmpty() ?
+                    ILabel.CONVERTER_FLUID.toLabel(g.getAllIngredients().get(0)) : guessed.get(0));
+            buf.add(raw);
+        });
+        recipe.getItemStacks().getGuiIngredients().forEach((i, g) -> {
+            if (g.getAllIngredients().isEmpty()) return;
+            ArrayList<ILabel> raw = new ArrayList<>();
+            g.getAllIngredients().forEach(f -> raw.add(ILabel.CONVERTER_ITEM.toLabel(f)));
+            List<ILabel> guessed = ILabel.CONVERTER_ITEM.toLabel(g.getAllIngredients());
+            (g.isInput() ? input : output).add(guessed.isEmpty() ?
+                    ILabel.CONVERTER_ITEM.toLabel(g.getAllIngredients().get(0)) : guessed.get(0));
+            buf.add(raw);
+        });
+
+        groupInput.setLabel(input, 0);
+        groupOutput.setLabel(output, 0);
     }
 }

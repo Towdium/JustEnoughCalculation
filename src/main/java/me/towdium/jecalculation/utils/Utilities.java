@@ -68,17 +68,6 @@ public class Utilities {
         }
     }
 
-    // CIRCULATE STRUCTURE
-    public static int circulate(int current, int total, boolean forward) {
-        if (forward) {
-            if (current == total - 1) return 0;
-            else return current + 1;
-        } else {
-            if (current == 0) return total - 1;
-            else return current - 1;
-        }
-    }
-
     // MOD NAME
     public static String getModName(ItemStack stack) {
         ResourceLocation tmp = stack.getItem().getRegistryName();

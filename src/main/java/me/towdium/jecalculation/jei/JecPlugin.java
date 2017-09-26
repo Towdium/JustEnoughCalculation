@@ -3,6 +3,7 @@ package me.towdium.jecalculation.jei;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.client.gui.JecGui;
+import me.towdium.jecalculation.client.gui.guis.GuiRecipe;
 import me.towdium.jecalculation.core.labels.ILabel;
 import mezz.jei.api.IJeiRuntime;
 import mezz.jei.api.IModPlugin;
@@ -33,8 +34,8 @@ public class JecPlugin implements IModPlugin {
     public static ILabel getEntryUnderMouse() {
         Object o = runtime.getIngredientListOverlay().getIngredientUnderMouse();
         if (o == null) return ILabel.EMPTY;
-        else if (o instanceof ItemStack) return registryItem.toEntry(((ItemStack) o));
-        else if (o instanceof FluidStack) return registryFluid.toEntry(((FluidStack) o));
+        else if (o instanceof ItemStack) return registryItem.toLabel(((ItemStack) o));
+        else if (o instanceof FluidStack) return registryFluid.toLabel(((FluidStack) o));
         else {
             JustEnoughCalculation.logger.warn("Unsupported ingredient type detected: " + o.getClass());
             return ILabel.EMPTY;
@@ -62,10 +63,19 @@ public class JecPlugin implements IModPlugin {
         public IRecipeTransferError transferRecipe(
                 Container container, IRecipeLayout recipeLayout, EntityPlayer player,
                 boolean maxTransfer, boolean doTransfer) {
-            return null;  // TODO
+            if (doTransfer && container instanceof JecGui.JecContainer) {
+                JecGui gui = ((JecGui.JecContainer) container).getGui();
+                if (gui.root instanceof GuiRecipe) {
+                    ((GuiRecipe) gui.root).transfer(recipeLayout);
+                } else {
+                    GuiRecipe guiRecipe = new GuiRecipe();
+                    JecGui.displayGui(true, true, guiRecipe);
+                    guiRecipe.transfer(recipeLayout);
+                }
+                return null;
+            } else return null;
         }
     }
-
 
 
 }

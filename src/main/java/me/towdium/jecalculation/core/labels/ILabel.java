@@ -29,8 +29,9 @@ public interface ILabel {
     RegistryConverterFluid CONVERTER_FLUID = RegistryConverterFluid.INSTANCE;
     RegistryEditor EDITOR = RegistryEditor.INSTANCE;
     ILabel EMPTY = new LabelItemStack(ItemStack.EMPTY, 0);
-    String LOCALIZE_PREFIX = "label";
-    String LOCALIZE_SUFFIX = "name";
+
+    String FORMAT_BLUE = "\u00A79";
+    String FORMAT_ITALIC = "\u00A7o";
 
     ILabel increaseAmount();
 
@@ -71,7 +72,7 @@ public interface ILabel {
      * Since {@link ILabel} merging is bidirectional, it is redundant to
      * implement on both side. So this class is created for merging
      * {@link ILabel label(s)}.
-     * It uses singleton mode. First register merge functions, then use
+     * It uses singleton mode. First registerGuess merge functions, then use
      * {@link #test(ILabel, ILabel)} and {@link #merge(ILabel, ILabel, boolean)}
      * to operate the {@link ILabel}.
      * For registering, see {@link RegistryDeserializer}.
@@ -81,7 +82,7 @@ public interface ILabel {
 
         static {
             INSTANCE = new RegistryEntryMerger();
-            // register functions here
+            // registerGuess functions here
         }
 
         private Relation<String, MergerFunction> functions = new Relation<>();
@@ -121,7 +122,7 @@ public interface ILabel {
     }
 
     /**
-     * This class is used to register an {@link ILabel} type.
+     * This class is used to registerGuess an {@link ILabel} type.
      * Here you can find the identifier and deserializer of one type.
      * For {@link ILabel} operations, see {@link RegistryEntryMerger}
      */
@@ -167,23 +168,36 @@ public interface ILabel {
     }
 
     class RegistryConverter<T> {
-        List<Function<List<T>, List<ILabel>>> handlers = new ArrayList<>();
+        List<Function<List<T>, List<ILabel>>> handlersGuess = new ArrayList<>();
+        List<Function<T, ILabel>> handlersRaw = new ArrayList<>();
 
         private RegistryConverter() {
         }
 
-        public ILabel toEntry(T ingredient) {
-            return handlers.stream().map(h -> h.apply(Collections.singletonList(ingredient)))
-                    .filter(l -> !l.isEmpty()).findFirst().orElse(Collections.singletonList(ILabel.EMPTY)).get(0);
+        /**
+         * @param ingredient the ingredient, possibly itemStack or FluidStack
+         * @return the identical representation
+         */
+        public ILabel toLabel(T ingredient) {
+            return handlersRaw.stream().map(h -> h.apply(ingredient))
+                    .filter(Objects::nonNull).findFirst().orElse(ILabel.EMPTY);
         }
 
-        public List<ILabel> toEntry(List<T> ingredients) {
-            return new ReversedIterator<>(handlers).stream().flatMap(h -> h.apply(ingredients).stream())
+        /**
+         * @param ingredients the list of ingredient, possibly itemStack or FluidStack
+         * @return list of guessed representation, sorted by possibility
+         */
+        public List<ILabel> toLabel(List<T> ingredients) {
+            return new ReversedIterator<>(handlersGuess).stream().flatMap(h -> h.apply(ingredients).stream())
                     .collect(Collectors.toList());
         }
 
-        void register(Function<List<T>, List<ILabel>> handler) {
-            handlers.add(handler);
+        void registerGuess(Function<List<T>, List<ILabel>> handler) {
+            handlersGuess.add(handler);
+        }
+
+        void registerRaw(Function<T, ILabel> handler) {
+            handlersRaw.add(handler);
         }
     }
 
@@ -193,14 +207,14 @@ public interface ILabel {
         static {
             INSTANCE = new RegistryConverterItem();
 
-            INSTANCE.register(RegistryConverterItem::convertRawItemStack);
+            INSTANCE.registerRaw(RegistryConverterItem::convertRawItemStack);
         }
 
         private RegistryConverterItem() {
         }
 
-        public static List<ILabel> convertRawItemStack(List<ItemStack> iss) {
-            return iss.stream().map(LabelItemStack::new).collect(Collectors.toList());
+        public static ILabel convertRawItemStack(ItemStack is) {
+            return new LabelItemStack(is);
         }
     }
 

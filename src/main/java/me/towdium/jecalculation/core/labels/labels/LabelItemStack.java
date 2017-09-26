@@ -41,7 +41,7 @@ public class LabelItemStack extends LabelSimpleAmount {
 
     @Override
     public List<String> getToolTip(List<String> existing) {
-        existing.add("&9" + Utilities.getModName(itemStack));
+        existing.add(FORMAT_BLUE + FORMAT_ITALIC + Utilities.getModName(itemStack));
         return existing;
     }
 
@@ -66,5 +66,10 @@ public class LabelItemStack extends LabelSimpleAmount {
     @Override
     public void drawEntry(JecGui gui) {
         gui.drawItemStack(0, 0, itemStack, false);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof LabelItemStack && itemStack.equals(((LabelItemStack) obj).itemStack);
     }
 }

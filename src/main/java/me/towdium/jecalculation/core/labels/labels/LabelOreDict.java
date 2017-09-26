@@ -57,7 +57,7 @@ public class LabelOreDict extends LabelSimpleAmount {
 
     @Override
     public List<String> getToolTip(List<String> existing) {
-        existing.add("\u00A79\u00A7o" + JustEnoughCalculation.Reference.MODNAME);
+        existing.add(FORMAT_BLUE + FORMAT_ITALIC + JustEnoughCalculation.Reference.MODNAME);
         return existing;
     }
 
