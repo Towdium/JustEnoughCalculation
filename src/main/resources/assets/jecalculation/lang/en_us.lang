@@ -4,7 +4,7 @@ item.item_calculator_math.name=Math Calculator
 command.common.not_found=Invalid option: %s
 command.common.unexpected_arg=Unexpected arg: %s
 command.help.list=Here is the list of all commands available:
-command.state.desc=This mod is working on state: %s
+command.state.desc=The mod is working on state: %s
 command.state.s_server=server
 command.state.s_client=client only
 command.state.s_both=client with server
@@ -12,7 +12,9 @@ command.state.s_undefined=error state
 
 gui.gui_calculator.new_recipe.name=New recipe
 gui.common.label.ore_dict=OreDict
+gui.common.label.fluid_stack=Fluid
 
 config.force_client=Force Client
 
 label.ore_dict.name=Ore: %s
+label.common.tooltip.amount=Amount: %s

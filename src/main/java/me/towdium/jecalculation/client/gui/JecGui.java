@@ -198,6 +198,11 @@ public class JecGui extends GuiContainer {
     public void drawFluid(Fluid f, int xPos, int yPos, int xSize, int ySize) {
         TextureAtlasSprite fluidTexture = mc.getTextureMapBlocks().getTextureExtry(f.getStill().toString());
         mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        int color = f.getColor();
+        float red = (color >> 16 & 0xFF) / 255.0F;
+        float green = (color >> 8 & 0xFF) / 255.0F;
+        float blue = (color & 0xFF) / 255.0F;
+        GlStateManager.color(red, green, blue, 1.0F);
         if (fluidTexture != null) drawTexturedModalRect(xPos, yPos, fluidTexture, xSize, ySize);
     }
 

@@ -34,37 +34,27 @@ public class Utilities {
     }
 
     // FLOAT FORMATTING
-    public static String cutFloat(float f, int size) {
+    public static String cutNumber(float f, int size) {
         BiFunction<Float, Integer, String> form = (fl, len) -> {
-            // here 2 means floating point and unit character
-            // represents for maximum acceptable decimal digits
-            int scale = len - 2 - String.valueOf(fl.intValue()).length();
-            // maximum decimal limits to 2
-            int cut = scale > 2 ? 2 : scale;
-            return String.format("%." + (cut < 0 ? 0 : cut) + 'f', fl);
+            String ret = Float.toString(fl);
+            if (ret.endsWith(".0")) ret = ret.substring(0, ret.length() - 2);
+            if (ret.length() > len) ret = ret.substring(0, len);
+            return ret;
         };
         int scale = (int) Math.log10(f) / 3;
         switch (scale) {
             case 0:
                 return form.apply(f, size);
             case 1:
-                return form.apply(f / 1000.0f, size) + 'K';
+                return form.apply(f / 1000.0f, size - 1) + 'K';
             case 2:
-                return form.apply(f / 1000000.0f, size) + 'M';
+                return form.apply(f / 1000000.0f, size - 1) + 'M';
             case 3:
-                return form.apply(f / 1000000000.0f, size) + 'B';
+                return form.apply(f / 1000000000.0f, size - 1) + 'B';
             case 4:
-                return form.apply(f / 1000000000000.0f, size) + 'G';
+                return form.apply(f / 1000000000000.0f, size - 1) + 'G';
             default:
-                return form.apply(f / 1000000000000000.0f, size) + 'T';
-        }
-    }
-
-    public static String cutLong(long i, int size) {
-        if (i < 1000) {
-            return String.valueOf(i);
-        } else {
-            return cutFloat(i, size);
+                return form.apply(f / 1000000000000000.0f, size - 1) + 'T';
         }
     }
 

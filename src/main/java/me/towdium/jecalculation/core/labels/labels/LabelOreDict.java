@@ -4,7 +4,6 @@ import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
-import me.towdium.jecalculation.client.gui.drawables.DContainer;
 import me.towdium.jecalculation.client.gui.drawables.DText;
 import me.towdium.jecalculation.core.labels.ILabel;
 import me.towdium.jecalculation.utils.Utilities;
@@ -16,8 +15,9 @@ import net.minecraft.util.NonNullList;
 import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.HashSet;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * Author: towdium
@@ -55,14 +55,14 @@ public class LabelOreDict extends LabelSimpleAmount {
         return Utilities.L18n.format("label.ore_dict.name", name);
     }
 
-    @Override
-    public List<String> getToolTip(List<String> existing) {
-        existing.add(FORMAT_BLUE + FORMAT_ITALIC + JustEnoughCalculation.Reference.MODNAME);
-        return existing;
-    }
-
-    public static RegistryEditor.IEditor getEditor() {
-        return new Editor();
+    public static List<ILabel> guess(List<ItemStack> iss) {
+        HashSet<Integer> ids = new HashSet<>();
+        for (int i : OreDictionary.getOreIDs(iss.get(0))) ids.add(i);
+        iss.forEach(is -> {
+            for (int i : OreDictionary.getOreIDs(is))
+                if (!ids.contains(i)) ids.remove(i);
+        });
+        return ids.stream().map(i -> new LabelOreDict(OreDictionary.getOreName(i))).collect(Collectors.toList());
     }
 
     @Override
@@ -95,17 +95,20 @@ public class LabelOreDict extends LabelSimpleAmount {
         return ret;
     }
 
-    public static class Editor extends DContainer implements RegistryEditor.IEditor {
-        Consumer<ILabel> callback;
+    public static RegistryEditor.IEditor getEditor() {
+        return new Editor();
+    }
 
+    @Override
+    public List<String> getToolTip(List<String> existing, boolean detailed) {
+        super.getToolTip(existing, detailed);
+        existing.add(FORMAT_BLUE + FORMAT_ITALIC + JustEnoughCalculation.Reference.MODNAME);
+        return existing;
+    }
+
+    public static class Editor extends RegistryEditor.Editor {
         public Editor() {
             add(new DText(5, 5, JecGui.Font.DEFAULT_NO_SHADOW, "hello"));
-        }
-
-        @Override
-        public RegistryEditor.IEditor setCallback(Consumer<ILabel> callback) {
-            this.callback = callback;
-            return this;
         }
 
         @Override

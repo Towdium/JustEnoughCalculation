@@ -1,17 +1,21 @@
 package me.towdium.jecalculation.core.labels.labels;
 
+import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.core.labels.ILabel;
 import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
 /**
  * Author: towdium
  * Date:   8/11/17.
  */
+@MethodsReturnNonnullByDefault
+@ParametersAreNonnullByDefault
 public class LabelItemStack extends LabelSimpleAmount {
     public static final String IDENTIFIER = "oreDict";
     public static final String KEY_STACK = "stack";
@@ -40,7 +44,8 @@ public class LabelItemStack extends LabelSimpleAmount {
     }
 
     @Override
-    public List<String> getToolTip(List<String> existing) {
+    public List<String> getToolTip(List<String> existing, boolean detailed) {
+        super.getToolTip(existing, detailed);
         existing.add(FORMAT_BLUE + FORMAT_ITALIC + Utilities.getModName(itemStack));
         return existing;
     }
