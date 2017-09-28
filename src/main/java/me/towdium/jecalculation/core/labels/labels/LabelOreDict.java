@@ -113,7 +113,7 @@ public class LabelOreDict extends LabelSimpleAmount {
 
         @Override
         public boolean onClicked(JecGui gui, int xMouse, int yMouse, int button) {
-            callback.accept(new LabelOreDict("plankWood"));
+            callback.value.accept(new LabelOreDict("plankWood"));
             return super.onClicked(gui, xMouse, yMouse, button);
         }
     }

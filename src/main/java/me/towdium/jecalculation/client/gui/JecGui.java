@@ -8,6 +8,7 @@ import me.towdium.jecalculation.utils.wrappers.Single;
 import me.towdium.jecalculation.utils.wrappers.Triple;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -31,6 +32,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -43,7 +45,6 @@ public class JecGui extends GuiContainer {
     public static final int COLOR_GUI_GREY = 0xFFA1A1A1;
     public static final int COLOR_TEXT_RED = 0xFF0000;
     public static final int COLOR_TEXT_WHITE = 0xFFFFFF;
-    public static JecGui current;
     public static final boolean ALWAYS_TOOLTIP = false;
 
     protected JecGui parent;
@@ -75,26 +76,33 @@ public class JecGui extends GuiContainer {
             displayGuiUnsafe(updateParent, acceptsTransfer, root);
     }
 
+    /**
+     * @return The currently displayed {@link JecGui}
+     * Make sure the method is called when a {@link JecGui} is displayed!
+     * Otherwise it will throw a {@link NullPointerException}
+     */
     public static JecGui getCurrent() {
-        return current;
+        GuiScreen gui = Minecraft.getMinecraft().currentScreen;
+        JecGui ret = gui instanceof JecGui ? (JecGui) gui : null;
+        Objects.requireNonNull(ret);
+        return ret;
     }
 
     private static void displayGuiUnsafe(boolean updateParent, boolean acceptsTransfer, IDrawable root) {
         Minecraft mc = Minecraft.getMinecraft();
         JecGui parent;
         if (mc.currentScreen == null) parent = null;
-        else if (!(mc.currentScreen instanceof JecGui)) parent = current;
+        else if (!(mc.currentScreen instanceof JecGui)) parent = getCurrent();
         else if (updateParent) parent = (JecGui) mc.currentScreen;
         else parent = ((JecGui) mc.currentScreen).parent;
         JecGui toShow = new JecGui(parent, acceptsTransfer, root);
         mc.displayGuiScreen(toShow);
-        current = toShow;
     }
 
-    @Override
-    public void onGuiClosed() {
-        super.onGuiClosed();
-        current = null;
+    public static void displayParent() {
+        if (Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
+            Minecraft.getMinecraft().displayGuiScreen(getCurrent().parent);
+        }
     }
 
     @Override
@@ -369,8 +377,9 @@ public class JecGui extends GuiContainer {
         if (!root.onKey(this, typedChar, keyCode)) {
             if (keyCode == Keyboard.KEY_ESCAPE) {
                 if (hand != ILabel.EMPTY) hand = ILabel.EMPTY;
-                else if (parent != null) Minecraft.getMinecraft().displayGuiScreen(parent);
-                else super.keyTyped(typedChar, keyCode);
+                else if (parent != null) {
+                    Minecraft.getMinecraft().displayGuiScreen(parent);
+                } else super.keyTyped(typedChar, keyCode);
             }
         }
     }

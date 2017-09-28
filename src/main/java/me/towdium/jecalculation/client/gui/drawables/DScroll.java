@@ -28,7 +28,7 @@ public class DScroll implements IDrawable {
 
     @Override
     public void onDraw(JecGui gui, int xMouse, int yMouse) {
-        if (Mouse.isButtonDown(0) && drag) setCurrent(yMouse);
+        if (Mouse.isButtonDown(0) && drag) setCurrent(yMouse - yPos - 9);
         else drag = false;
 
         gui.drawResourceContinuous(Resource.WGT_SLOT, xPos, yPos, 14, ySize, 3, 3, 3, 3);

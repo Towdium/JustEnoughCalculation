@@ -21,7 +21,7 @@ public class GuiCalculator extends DContainer {
         add(new DTextField(61, 7, 64));
         add(new DButtonIcon(7, 7, 20, 20, Resource.BTN_LABEL_N, Resource.BTN_LABEL_F, "calculator.label")
                 .setListenerLeft(() -> JecGui.displayGui(new GuiLabel(l -> {
-                    JecGui.displayGui(this);
+                    JecGui.displayParent();
                     JecGui.getCurrent().hand = l;
                 }))));
         add(new DButtonIcon(130, 7, 20, 20, Resource.BTN_NEW_N, Resource.BTN_NEW_F, "calculator.recipe")

@@ -5,12 +5,14 @@ import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.gui.IDrawable;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.drawables.DContainer;
+import me.towdium.jecalculation.client.gui.guis.GuiEditorFluidStack;
 import me.towdium.jecalculation.core.labels.labels.LabelFluidStack;
 import me.towdium.jecalculation.core.labels.labels.LabelItemStack;
 import me.towdium.jecalculation.core.labels.labels.LabelOreDict;
 import me.towdium.jecalculation.utils.Utilities.Relation;
 import me.towdium.jecalculation.utils.Utilities.ReversedIterator;
 import me.towdium.jecalculation.utils.wrappers.Pair;
+import me.towdium.jecalculation.utils.wrappers.Single;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -248,9 +251,9 @@ public interface ILabel {
         static {
             INSTANCE = new RegistryEditor();
 
-            INSTANCE.register(LabelOreDict.getEditor(), "common.label.ore_dict",
+            INSTANCE.register(LabelOreDict::getEditor, "common.label.ore_dict",
                     new LabelOreDict("ingotIron"));
-            INSTANCE.register(LabelFluidStack.getEditor(), "common.label.fluid_stack",
+            INSTANCE.register(GuiEditorFluidStack::new, "common.label.fluid_stack",
                     new LabelFluidStack(new FluidStack(FluidRegistry.WATER, 1000), 1000));
         }
 
@@ -259,7 +262,7 @@ public interface ILabel {
         private RegistryEditor() {
         }
 
-        public void register(IEditor editor, String unlocalizedName, ILabel representation) {
+        public void register(Supplier<IEditor> editor, String unlocalizedName, ILabel representation) {
             records.add(new Record(editor, unlocalizedName, representation));
         }
 
@@ -272,21 +275,21 @@ public interface ILabel {
         }
 
         public static class Editor extends DContainer implements RegistryEditor.IEditor {
-            protected Consumer<ILabel> callback;
+            protected Single<Consumer<ILabel>> callback = new Single<>(null);
 
             @Override
             public RegistryEditor.IEditor setCallback(Consumer<ILabel> callback) {
-                this.callback = callback;
+                this.callback.value = callback;
                 return this;
             }
         }
 
         public static class Record {
-            public IEditor editor;
+            public Supplier<IEditor> editor;
             public String localizeKey;
             public ILabel representation;
 
-            public Record(IEditor editor, String localizeKey, ILabel representation) {
+            public Record(Supplier<IEditor> editor, String localizeKey, ILabel representation) {
                 this.editor = editor;
                 this.localizeKey = localizeKey;
                 this.representation = representation;
