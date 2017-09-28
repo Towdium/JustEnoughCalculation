@@ -4,7 +4,6 @@ import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
-import me.towdium.jecalculation.client.gui.drawables.WText;
 import me.towdium.jecalculation.core.labels.ILabel;
 import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.client.renderer.GlStateManager;
@@ -95,26 +94,10 @@ public class LabelOreDict extends LabelSimpleAmount {
         return ret;
     }
 
-    public static RegistryEditor.IEditor getEditor() {
-        return new Editor();
-    }
-
     @Override
     public List<String> getToolTip(List<String> existing, boolean detailed) {
         super.getToolTip(existing, detailed);
         existing.add(FORMAT_BLUE + FORMAT_ITALIC + JustEnoughCalculation.Reference.MODNAME);
         return existing;
-    }
-
-    public static class Editor extends RegistryEditor.Editor {
-        public Editor() {
-            add(new WText(5, 5, JecGui.Font.DEFAULT_NO_SHADOW, "hello"));
-        }
-
-        @Override
-        public boolean onClicked(JecGui gui, int xMouse, int yMouse, int button) {
-            callback.value.accept(new LabelOreDict("plankWood"));
-            return super.onClicked(gui, xMouse, yMouse, button);
-        }
     }
 }
