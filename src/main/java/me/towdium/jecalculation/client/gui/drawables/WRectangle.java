@@ -1,7 +1,7 @@
 package me.towdium.jecalculation.client.gui.drawables;
 
 import mcp.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.client.gui.IDrawable;
+import me.towdium.jecalculation.client.gui.IWidget;
 import me.towdium.jecalculation.client.gui.JecGui;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -12,10 +12,10 @@ import javax.annotation.ParametersAreNonnullByDefault;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class DRectangle implements IDrawable {
+public class WRectangle implements IWidget {
     public int xPos, yPos, xSize, ySize, color;
 
-    public DRectangle(int xPos, int yPos, int xSize, int ySize, int color) {
+    public WRectangle(int xPos, int yPos, int xSize, int ySize, int color) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.xSize = xSize;

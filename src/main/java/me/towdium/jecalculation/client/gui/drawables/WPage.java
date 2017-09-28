@@ -1,7 +1,7 @@
 package me.towdium.jecalculation.client.gui.drawables;
 
 import mcp.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.client.gui.IDrawable;
+import me.towdium.jecalculation.client.gui.IWidget;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
 import me.towdium.jecalculation.core.labels.ILabel;
@@ -16,7 +16,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
  */
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class DPage implements IDrawable {
+public class WPage implements IWidget {
 
 
     protected int index;
@@ -25,7 +25,7 @@ public class DPage implements IDrawable {
     protected boolean focused;
     protected Runnable listener;
 
-    public DPage(int index, ILabel.RegistryEditor.Record record, boolean focused) {
+    public WPage(int index, ILabel.RegistryEditor.Record record, boolean focused) {
         this.index = index;
         this.record = record;
         this.focused = focused;
@@ -36,7 +36,7 @@ public class DPage implements IDrawable {
         Resource resource = focused ? (index == 0 ? Resource.WGT_PAGER_F0 : Resource.WGT_PAGER_FN)
                 : Resource.WGT_PAGER_N;
         gui.drawResourceContinuous(resource, index * 24, -21, 24, 25, 4, 4, 4, 4);
-        record.representation.drawEntry(gui, index * 24 + 4, -17, false);
+        record.representation.drawLabel(gui, index * 24 + 4, -17, false);
         timer.setState(JecGui.mouseIn(index * 24, -21, 24, 21, xMouse, yMouse));
         if (timer.getTime() > 1000)
             gui.drawTooltip(xMouse, yMouse, L18n.format("gui." + record.localizeKey));
@@ -49,7 +49,7 @@ public class DPage implements IDrawable {
         return ret;
     }
 
-    public DPage setListener(Runnable r) {
+    public WPage setListener(Runnable r) {
         listener = r;
         return this;
     }

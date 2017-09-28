@@ -17,12 +17,12 @@ import javax.annotation.ParametersAreNonnullByDefault;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public abstract class DButton extends DTooltip {
+public abstract class WButton extends WTooltip {
     protected int xPos, yPos, xSize, ySize;
     protected Runnable lsnrLeft, lsnrRight;
     protected Utilities.Timer timer = new Utilities.Timer();
 
-    public DButton(int xPos, int yPos, int xSize, int ySize, @Nullable String name) {
+    public WButton(int xPos, int yPos, int xSize, int ySize, @Nullable String name) {
         super(name);
         this.xPos = xPos;
         this.yPos = yPos;
@@ -30,12 +30,12 @@ public abstract class DButton extends DTooltip {
         this.ySize = ySize;
     }
 
-    public DButton setListenerLeft(Runnable r) {
+    public WButton setListenerLeft(Runnable r) {
         lsnrLeft = r;
         return this;
     }
 
-    public DButton setListenerRight(Runnable r) {
+    public WButton setListenerRight(Runnable r) {
         lsnrRight = r;
         return this;
     }

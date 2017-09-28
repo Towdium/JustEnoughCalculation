@@ -10,7 +10,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public interface IDrawable {
+public interface IWidget {
     void onDraw(JecGui gui, int xMouse, int yMouse);
 
     default boolean onClicked(JecGui gui, int xMouse, int yMouse, int button) {

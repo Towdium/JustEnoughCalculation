@@ -31,7 +31,7 @@ public class JecPlugin implements IModPlugin {
     public static final ILabel.RegistryConverterFluid registryFluid = ILabel.RegistryConverterFluid.INSTANCE;
     public static IJeiRuntime runtime;
 
-    public static ILabel getEntryUnderMouse() {
+    public static ILabel getLabelUnderMouse() {
         Object o = runtime.getIngredientListOverlay().getIngredientUnderMouse();
         if (o == null) return ILabel.EMPTY;
         else if (o instanceof ItemStack) return registryItem.toLabel(((ItemStack) o));

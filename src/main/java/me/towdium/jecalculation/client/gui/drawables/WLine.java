@@ -1,7 +1,7 @@
 package me.towdium.jecalculation.client.gui.drawables;
 
 import mcp.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.client.gui.IDrawable;
+import me.towdium.jecalculation.client.gui.IWidget;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
 
@@ -13,10 +13,10 @@ import javax.annotation.ParametersAreNonnullByDefault;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class DLine implements IDrawable {
+public class WLine implements IWidget {
     public int y;
 
-    public DLine(int y) {
+    public WLine(int y) {
         this.y = y;
     }
 

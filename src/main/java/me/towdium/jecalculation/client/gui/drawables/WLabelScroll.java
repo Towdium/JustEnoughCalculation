@@ -16,24 +16,24 @@ import java.util.stream.Collectors;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class DLabelScroll extends DContainer {
+public class WLabelScroll extends WContainer {
     protected List<ILabel> labels = new ArrayList<>();
     protected List<ILabel> filtered = new ArrayList<>();
-    protected DLabelGroup labelGroup;
-    protected DScroll scroll;
+    protected WLabelGroup labelGroup;
+    protected WScroll scroll;
     protected int xPos, yPos, column, row, current;
     protected String filter = "";
 
-    public DLabelScroll(int xPos, int yPos, int column, int row, DLabel.enumMode mode, boolean drawConnection) {
+    public WLabelScroll(int xPos, int yPos, int column, int row, WLabel.enumMode mode, boolean drawConnection) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.column = column;
         this.row = row;
-        labelGroup = new DLabelGroup(xPos, yPos, column, row, mode);
-        scroll = new DScroll(xPos + column * 18 + 4, yPos, row * 18).setLsnrScroll(this::update);
+        labelGroup = new WLabelGroup(xPos, yPos, column, row, mode);
+        scroll = new WScroll(xPos + column * 18 + 4, yPos, row * 18).setLsnrScroll(this::update);
         add(labelGroup);
         add(scroll);
-        if (drawConnection) add(new DRectangle(xPos + column * 18, yPos, 4, row * 18, JecGui.COLOR_GUI_GREY));
+        if (drawConnection) add(new WRectangle(xPos + column * 18, yPos, 4, row * 18, JecGui.COLOR_GUI_GREY));
     }
 
     public void update(float f) {
@@ -54,7 +54,7 @@ public class DLabelScroll extends DContainer {
         return 1f / (getStepAmount() - 1) * step;
     }
 
-    public DLabelScroll setLabels(List<ILabel> labels) {
+    public WLabelScroll setLabels(List<ILabel> labels) {
         this.labels = labels;
         setFilter(filter);
         return this;

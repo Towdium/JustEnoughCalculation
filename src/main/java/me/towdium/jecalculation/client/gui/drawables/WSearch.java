@@ -15,13 +15,13 @@ import java.util.function.Consumer;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class DSearch extends DContainer {
-    DTextField tf;
-    List<DLabelScroll> lss;
+public class WSearch extends WContainer {
+    WTextField tf;
+    List<WLabelScroll> lss;
     Consumer<ILabel> callback;
 
-    public DSearch(Consumer<ILabel> callback, DTextField tf, DLabelScroll... lss) {
-        List<DLabelScroll> lst = Arrays.asList(lss);
+    public WSearch(Consumer<ILabel> callback, WTextField tf, WLabelScroll... lss) {
+        List<WLabelScroll> lst = Arrays.asList(lss);
         tf.setLsnrText(s -> tf.setColor(lst.stream().anyMatch(ls -> ls.setFilter(s)) ?
                 JecGui.COLOR_TEXT_WHITE : JecGui.COLOR_TEXT_RED));
         add(tf);

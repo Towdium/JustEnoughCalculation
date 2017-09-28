@@ -89,7 +89,7 @@ public class LabelFluidStack implements ILabel {
     }
 
     @Override
-    public void drawEntry(JecGui gui) {
+    public void drawLabel(JecGui gui) {
         gui.drawResource(Resource.LBL_FLUID, 0, 0);
         gui.drawFluid(fluid.getFluid(), 2, 2, 12, 12);
     }

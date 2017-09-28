@@ -2,9 +2,9 @@ package me.towdium.jecalculation.core.labels;
 
 import com.google.common.base.CaseFormat;
 import mcp.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.client.gui.IDrawable;
+import me.towdium.jecalculation.client.gui.IWidget;
 import me.towdium.jecalculation.client.gui.JecGui;
-import me.towdium.jecalculation.client.gui.drawables.DContainer;
+import me.towdium.jecalculation.client.gui.drawables.WContainer;
 import me.towdium.jecalculation.client.gui.guis.GuiEditorFluidStack;
 import me.towdium.jecalculation.core.labels.labels.LabelFluidStack;
 import me.towdium.jecalculation.core.labels.labels.LabelItemStack;
@@ -75,14 +75,14 @@ public interface ILabel {
 
     NBTTagCompound toNBTTagCompound();
 
-    default void drawEntry(JecGui gui, int xPos, int yPos, boolean center) {
+    default void drawLabel(JecGui gui, int xPos, int yPos, boolean center) {
         GlStateManager.pushMatrix();
         GlStateManager.translate(center ? xPos - 8 : xPos, center ? yPos - 8 : yPos, 0);
-        drawEntry(gui);
+        drawLabel(gui);
         GlStateManager.popMatrix();
     }
 
-    void drawEntry(JecGui gui);
+    void drawLabel(JecGui gui);
 
     /**
      * Since {@link ILabel} merging is bidirectional, it is redundant to
@@ -270,11 +270,11 @@ public interface ILabel {
             return records;
         }
 
-        public interface IEditor extends IDrawable {
+        public interface IEditor extends IWidget {
             IEditor setCallback(Consumer<ILabel> callback);
         }
 
-        public static class Editor extends DContainer implements RegistryEditor.IEditor {
+        public static class Editor extends WContainer implements RegistryEditor.IEditor {
             protected Single<Consumer<ILabel>> callback = new Single<>(null);
 
             @Override

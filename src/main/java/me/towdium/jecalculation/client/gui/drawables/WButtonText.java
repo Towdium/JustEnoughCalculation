@@ -12,8 +12,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
  */
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class DButtonText extends DButton {
-    public DButtonText(int xPos, int yPos, int xSize, int ySize, String name) {
+public class WButtonText extends WButton {
+    public WButtonText(int xPos, int yPos, int xSize, int ySize, String name) {
         super(xPos, yPos, xSize, ySize, name);
     }
 

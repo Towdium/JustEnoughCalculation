@@ -13,15 +13,15 @@ import javax.annotation.ParametersAreNonnullByDefault;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class DIcon extends DTooltip {
+public class WIcon extends WTooltip {
     public int xPos, yPos, xSize, ySize;
     public Resource normal, focused;
 
-    public DIcon(int xPos, int yPos, int xSize, int ySize, Resource normal, Resource focused) {
+    public WIcon(int xPos, int yPos, int xSize, int ySize, Resource normal, Resource focused) {
         this(xPos, yPos, xSize, ySize, normal, focused, null);
     }
 
-    public DIcon(int xPos, int yPos, int xSize, int ySize,
+    public WIcon(int xPos, int yPos, int xSize, int ySize,
                  Resource normal, Resource focused, @Nullable String name) {
         super(name);
         this.xPos = xPos;

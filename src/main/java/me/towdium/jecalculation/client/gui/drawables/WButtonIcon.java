@@ -13,14 +13,14 @@ import javax.annotation.ParametersAreNonnullByDefault;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class DButtonIcon extends DButton {
+public class WButtonIcon extends WButton {
     protected Resource normal, focused;
 
-    public DButtonIcon(int xPos, int yPos, int xSize, int ySize, Resource normal, Resource focused) {
+    public WButtonIcon(int xPos, int yPos, int xSize, int ySize, Resource normal, Resource focused) {
         this(xPos, yPos, xSize, ySize, normal, focused, null);
     }
 
-    public DButtonIcon(int xPos, int yPos, int xSize, int ySize, Resource normal, Resource focused, @Nullable String name) {
+    public WButtonIcon(int xPos, int yPos, int xSize, int ySize, Resource normal, Resource focused, @Nullable String name) {
         super(xPos, yPos, xSize, ySize, name);
         this.normal = normal;
         this.focused = focused;
