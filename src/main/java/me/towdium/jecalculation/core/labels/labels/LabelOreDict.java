@@ -35,18 +35,18 @@ public class LabelOreDict extends LabelSimpleAmount {
     }
 
     public LabelOreDict(String name, int amount) {
+        super(amount);
         this.name = name;
-        this.amount = amount;
     }
 
-    public LabelOreDict(LabelOreDict eod) {
-        this.name = eod.name;
-        this.amount = eod.amount;
+    public LabelOreDict(LabelOreDict lod) {
+        super(lod);
+        this.name = lod.name;
     }
 
     public LabelOreDict(NBTTagCompound nbt) {
+        super(nbt);
         name = nbt.getString(KEY_NAME);
-        amount = nbt.getInteger(KEY_AMOUNT);
     }
 
     @Override

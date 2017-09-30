@@ -3,6 +3,7 @@ package me.towdium.jecalculation.core.labels.labels;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.core.labels.ILabel;
 import me.towdium.jecalculation.utils.Utilities;
+import net.minecraft.nbt.NBTTagCompound;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -14,7 +15,21 @@ import java.util.List;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public abstract class LabelSimpleAmount implements ILabel {
+    public static final String KEY_AMOUNT = "amount";
+
     protected int amount;
+
+    public LabelSimpleAmount(int amount) {
+        this.amount = amount;
+    }
+
+    public LabelSimpleAmount(LabelSimpleAmount lsa) {
+        this(lsa.amount);
+    }
+
+    public LabelSimpleAmount(NBTTagCompound nbt) {
+        amount = nbt.getInteger(KEY_AMOUNT);
+    }
 
     @Override
     public ILabel increaseAmount() {
@@ -56,5 +71,12 @@ public abstract class LabelSimpleAmount implements ILabel {
     @Override
     public String getAmountString() {
         return amount == 0 ? "" : Utilities.cutNumber(amount, 5);
+    }
+
+    @Override
+    public NBTTagCompound toNBTTagCompound() {
+        NBTTagCompound nbt = new NBTTagCompound();
+        nbt.setInteger(KEY_AMOUNT, amount);
+        return nbt;
     }
 }

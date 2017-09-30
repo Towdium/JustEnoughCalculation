@@ -4,10 +4,12 @@ import com.google.common.base.CaseFormat;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.gui.IWPicker;
 import me.towdium.jecalculation.client.gui.JecGui;
-import me.towdium.jecalculation.client.gui.guis.GuiPicker;
+import me.towdium.jecalculation.client.gui.guis.pickers.PickerSimple;
+import me.towdium.jecalculation.client.gui.guis.pickers.PickerUniversal;
 import me.towdium.jecalculation.core.labels.labels.LabelFluidStack;
 import me.towdium.jecalculation.core.labels.labels.LabelItemStack;
 import me.towdium.jecalculation.core.labels.labels.LabelOreDict;
+import me.towdium.jecalculation.core.labels.labels.LabelUniversal;
 import me.towdium.jecalculation.utils.Utilities.Relation;
 import me.towdium.jecalculation.utils.Utilities.ReversedIterator;
 import me.towdium.jecalculation.utils.wrappers.Pair;
@@ -248,10 +250,12 @@ public interface ILabel {
         static {
             INSTANCE = new RegistryEditor();
 
-            INSTANCE.register(GuiPicker.PLabelOreDict::new, "common.label.ore_dict",
+            INSTANCE.register(PickerSimple.OreDict::new, "common.label.ore_dict",
                     new LabelOreDict("ingotIron"));
-            INSTANCE.register(GuiPicker.PLabelFluidStack::new, "common.label.fluid_stack",
-                    new LabelFluidStack(new FluidStack(FluidRegistry.WATER, 1000), 1000));
+            INSTANCE.register(PickerSimple.FluidStack::new, "common.label.fluid_stack",
+                    new LabelFluidStack(FluidRegistry.WATER, 1000));
+            INSTANCE.register(PickerUniversal::new, "common.label.universal",
+                    new LabelUniversal("example", 1));
         }
 
         private ArrayList<Record> records = new ArrayList<>();

@@ -185,7 +185,11 @@ public class JecGui extends GuiContainer {
     }
 
     public void drawResource(Resource r, int xPos, int yPos) {
-        drawTexture(r.getResourceLocation(), xPos, yPos, r.getXPos(), r.getYPos(), r.getXSize(), r.getYSize());
+        drawResource(r, xPos, yPos, 0xFFFFFF);
+    }
+
+    public void drawResource(Resource r, int xPos, int yPos, int color) {
+        drawTexture(r.getResourceLocation(), xPos, yPos, r.getXPos(), r.getYPos(), r.getXSize(), r.getYSize(), color);
     }
 
     public void drawResourceContinuous(
@@ -198,7 +202,16 @@ public class JecGui extends GuiContainer {
 
     public void drawTexture(ResourceLocation l, int destXPos, int destYPos,
                             int sourceXPos, int sourceYPos, int sourceXSize, int sourceYSize) {
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        drawTexture(l, destXPos, destYPos, sourceXPos, sourceYPos, sourceXSize, sourceYSize, 0xFFFFFF);
+    }
+
+    public void drawTexture(ResourceLocation l, int destXPos, int destYPos,
+                            int sourceXPos, int sourceYPos, int sourceXSize, int sourceYSize, int color) {
+        float red = (color >> 16 & 0xFF) / 255.0F;
+        float green = (color >> 8 & 0xFF) / 255.0F;
+        float blue = (color & 0xFF) / 255.0F;
+        float alpha = (~(color >> 24) & 0xFF) / 255.0F;
+        GlStateManager.color(red, green, blue, alpha);
         mc.getTextureManager().bindTexture(l);
         drawTexturedModalRect(destXPos, destYPos, sourceXPos, sourceYPos, sourceXSize, sourceYSize);
     }
