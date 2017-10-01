@@ -76,4 +76,8 @@ public class LabelItemStack extends LabelSimpleAmount {
     public boolean equals(Object obj) {
         return obj instanceof LabelItemStack && itemStack.equals(((LabelItemStack) obj).itemStack);
     }
+
+    public ItemStack getItemStack() {
+        return itemStack;
+    }
 }

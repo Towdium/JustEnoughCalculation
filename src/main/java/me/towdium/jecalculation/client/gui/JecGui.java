@@ -341,9 +341,11 @@ public class JecGui extends GuiContainer {
             xPos -= 8;
             yPos -= 8;
         }
+        GlStateManager.enableDepth();
         RenderHelper.enableGUIStandardItemLighting();
         itemRender.renderItemIntoGUI(is, xPos, yPos);
         RenderHelper.disableStandardItemLighting();
+        GlStateManager.disableDepth();
     }
 
     public static class Font {

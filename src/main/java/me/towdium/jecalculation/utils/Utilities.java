@@ -96,6 +96,7 @@ public class Utilities {
         }
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public static class Circulator {
         int total, current;
 

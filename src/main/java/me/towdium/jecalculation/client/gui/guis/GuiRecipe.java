@@ -1,12 +1,17 @@
 package me.towdium.jecalculation.client.gui.guis;
 
+import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
 import me.towdium.jecalculation.client.gui.drawables.*;
 import me.towdium.jecalculation.core.labels.ILabel;
 import mezz.jei.api.gui.IRecipeLayout;
+import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.BiConsumer;
+import java.util.stream.IntStream;
 
 import static me.towdium.jecalculation.client.gui.drawables.WLabel.enumMode.EDITOR;
 
@@ -15,10 +20,15 @@ import static me.towdium.jecalculation.client.gui.drawables.WLabel.enumMode.EDIT
  * Date:   17-9-8.
  */
 public class GuiRecipe extends WContainer {
+    List<List<ItemStack>> disambiguation;
     WButton buttonSave = new WButtonIcon(26, 33, 20, 20, Resource.BTN_SAVE_N, Resource.BTN_SAVE_F, "recipe.save");
     WButton buttonCopy = new WButtonIcon(83, 33, 20, 20, Resource.BTN_COPY_N, Resource.BTN_COPY_F, "recipe.copy");
     WButton buttonDel = new WButtonIcon(64, 33, 20, 20, Resource.BTN_DEL_N, Resource.BTN_DEL_F, "recipe.clear");
     WButton buttonLabel = new WButtonIcon(45, 33, 20, 20, Resource.BTN_LABEL_N, Resource.BTN_LABEL_F, "recipe.label");
+    WButton buttonDisamb = new WButtonIcon(102, 33, 20, 20, Resource.BTN_DISAMB_N, Resource.BTN_DISAMB_F,
+            "recipe.disamb").setListenerLeft(() -> {
+        if (disambiguation != null) JecGui.displayGui(new GuiDisambiguation(disambiguation));
+    });
     WButton buttonYes = new WButtonIcon(7, 33, 20, 20, Resource.BTN_YES_N, Resource.BTN_YES_F, "recipe.confirm");
     WButton buttonNo = new WButtonIcon(26, 33, 20, 20, Resource.BTN_NO_N, Resource.BTN_NO_F, "recipe.abort");
     WLabelGroup groupInput = new WLabelGroup(28, 111, 7, 2, 20, 20, EDITOR);
@@ -41,39 +51,49 @@ public class GuiRecipe extends WContainer {
 
     public void setModeNewGroup(boolean b) {
         if (b) {
-            removeAll(buttonNew, buttonLabel, buttonDel, buttonCopy, buttonSave);
+            removeAll(buttonNew, buttonLabel, buttonDel, buttonCopy, buttonSave, buttonDisamb);
             addAll(buttonYes, buttonNo, textField);
         } else {
-            addAll(buttonNew, buttonLabel, buttonDel, buttonSave); // TODO buttonCopy
+            addAll(buttonNew, buttonLabel, buttonDel, buttonSave, buttonDisamb); // TODO buttonCopy
             removeAll(buttonYes, buttonNo, textField);
         }
     }
 
     public void transfer(IRecipeLayout recipe) {
-        ArrayList<ArrayList<ILabel>> buf = new ArrayList<>();
+        ArrayList<List<ItemStack>> buf = new ArrayList<>();
         ArrayList<ILabel> input = new ArrayList<>();
         ArrayList<ILabel> output = new ArrayList<>();
+
+        BiConsumer<ArrayList<ILabel>, ILabel> merge = (list, label) -> IntStream.range(0, list.size()).filter(i -> {
+            Optional<ILabel> l = ILabel.MERGER.merge(list.get(i), label, true);
+            boolean ret = l.isPresent();
+            if (ret) list.set(i, l.get());
+            return ret;
+        }).findAny().orElseGet(() -> {
+            list.add(label);
+            return -1;
+        });
 
         recipe.getFluidStacks().getGuiIngredients().forEach((i, g) -> {
             if (g.getAllIngredients().isEmpty()) return;
             ArrayList<ILabel> raw = new ArrayList<>();
             g.getAllIngredients().forEach(f -> raw.add(ILabel.CONVERTER_FLUID.toLabel(f)));
             List<ILabel> guessed = ILabel.CONVERTER_FLUID.toLabel(g.getAllIngredients());
-            (g.isInput() ? input : output).add(guessed.isEmpty() ?
-                    ILabel.CONVERTER_FLUID.toLabel(g.getAllIngredients().get(0)) : guessed.get(0));
-            buf.add(raw);
+            merge.accept(g.isInput() ? input : output,
+                    guessed.isEmpty() ? ILabel.CONVERTER_FLUID.toLabel(g.getAllIngredients().get(0)) : guessed.get(0));
         });
         recipe.getItemStacks().getGuiIngredients().forEach((i, g) -> {
             if (g.getAllIngredients().isEmpty()) return;
             ArrayList<ILabel> raw = new ArrayList<>();
             g.getAllIngredients().forEach(f -> raw.add(ILabel.CONVERTER_ITEM.toLabel(f)));
             List<ILabel> guessed = ILabel.CONVERTER_ITEM.toLabel(g.getAllIngredients());
-            (g.isInput() ? input : output).add(guessed.isEmpty() ?
-                    ILabel.CONVERTER_ITEM.toLabel(g.getAllIngredients().get(0)) : guessed.get(0));
-            buf.add(raw);
+            merge.accept(g.isInput() ? input : output,
+                    guessed.isEmpty() ? ILabel.CONVERTER_ITEM.toLabel(g.getAllIngredients().get(0)) : guessed.get(0));
+            buf.add(g.getAllIngredients());
         });
 
         groupInput.setLabel(input, 0);
         groupOutput.setLabel(output, 0);
+        disambiguation = buf;
     }
 }

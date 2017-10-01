@@ -12,7 +12,6 @@ import me.towdium.jecalculation.core.labels.labels.LabelOreDict;
 import me.towdium.jecalculation.core.labels.labels.LabelUniversal;
 import me.towdium.jecalculation.utils.Utilities.Relation;
 import me.towdium.jecalculation.utils.Utilities.ReversedIterator;
-import me.towdium.jecalculation.utils.wrappers.Pair;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -88,8 +87,7 @@ public interface ILabel {
      * implement on both side. So this class is created for merging
      * {@link ILabel label(s)}.
      * It uses singleton mode. First registerGuess merge functions, then use
-     * {@link #test(ILabel, ILabel)} and {@link #merge(ILabel, ILabel, boolean)}
-     * to operate the {@link ILabel}.
+     * {@link #merge(ILabel, ILabel, boolean)} to operate the {@link ILabel}.
      * For registering, see {@link RegistryDeserializer}.
      */
     class RegistryMerger {
@@ -98,6 +96,8 @@ public interface ILabel {
         static {
             INSTANCE = new RegistryMerger();
             // registerGuess functions here
+            INSTANCE.register("itemStack", "itemStack", RegistryMerger::mergeItemStackNItemStack);
+            INSTANCE.register("oreDict", "oreDict", RegistryMerger::mergeOreDictNOreDict);
         }
 
         private Relation<String, MergerFunction> functions = new Relation<>();
@@ -110,18 +110,40 @@ public interface ILabel {
             functions.add(a, b, func);
         }
 
-        public Pair<ILabel, ILabel> merge(ILabel a, ILabel b, boolean add) {
-            return functions.get(ILabel.getIdentifier(a), ILabel.getIdentifier(b))
-                    .orElse((x, y, f) -> new Pair<>(x, y)).merge(a, b, add);
+        static Optional<ILabel> mergeItemStackNItemStack(ILabel a, ILabel b, boolean add) {
+            if (a instanceof LabelItemStack && b instanceof LabelItemStack) {
+                LabelItemStack lisA = (LabelItemStack) a;
+                LabelItemStack lisB = (LabelItemStack) b;
+                ItemStack isA = lisA.getItemStack();
+                ItemStack isB = lisB.getItemStack();
+                if (isA.getItem() == isB.getItem() && isA.getItemDamage() == isB.getItemDamage() &&
+                        (isA.getTagCompound() == null ? !isB.hasTagCompound() :
+                                isA.getTagCompound().equals(isB.getTagCompound()))) {
+                    LabelItemStack ret = new LabelItemStack(lisA.getItemStack(),
+                            add ? lisA.getAmount() + lisB.getAmount() : lisA.getAmount() - lisB.getAmount());
+                    return Optional.of(ret);
+                }
+            }
+            return Optional.empty();
         }
 
-        public boolean test(ILabel a, ILabel b) {
-            Optional<MergerFunction> f = functions.get(ILabel.getIdentifier(a), ILabel.getIdentifier(b));
-            if (!f.isPresent()) return false;
-            else {
-                Pair<ILabel, ILabel> p = f.get().merge(a, b, true);
-                return (!(p.one == a && p.two == b) && !(p.two == a && p.one == a));
+        static Optional<ILabel> mergeOreDictNOreDict(ILabel a, ILabel b, boolean add) {
+            if (a instanceof LabelOreDict && b instanceof LabelOreDict) {
+                LabelOreDict lodA = (LabelOreDict) a;
+                LabelOreDict lodB = (LabelOreDict) b;
+                if (lodA.getName().equals(lodB.getName()))
+                    return Optional.of(new LabelOreDict(lodA.getName(),
+                            add ? lodA.getAmount() + lodB.getAmount() : lodA.getAmount() - lodB.getAmount()));
             }
+            return Optional.empty();
+        }
+
+        public Optional<ILabel> merge(ILabel a, ILabel b, boolean add) {
+            Optional<ILabel> ret = functions.get(ILabel.getIdentifier(a), ILabel.getIdentifier(b))
+                    .orElse((x, y, f) -> Optional.empty()).merge(a, b, add);
+            if (ret.isPresent() && (ret.get() == a || ret.get() == b))
+                throw new RuntimeException("Merger should not modify the given labels.");
+            return ret;
         }
 
         @FunctionalInterface
@@ -132,7 +154,7 @@ public interface ILabel {
              * @param add add together or cancel each other
              * @return merged {@link ILabel label(s)} if not changed (no matter order), they cannot merge.
              */
-            Pair<ILabel, ILabel> merge(ILabel a, ILabel b, boolean add);
+            Optional<ILabel> merge(ILabel a, ILabel b, boolean add);
         }
     }
 
