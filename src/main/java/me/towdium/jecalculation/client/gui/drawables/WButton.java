@@ -21,6 +21,7 @@ public abstract class WButton extends WTooltip {
     protected int xPos, yPos, xSize, ySize;
     protected Runnable lsnrLeft, lsnrRight;
     protected Utilities.Timer timer = new Utilities.Timer();
+    protected boolean disabled;
 
     public WButton(int xPos, int yPos, int xSize, int ySize, @Nullable String name) {
         super(name);
@@ -42,9 +43,10 @@ public abstract class WButton extends WTooltip {
 
     @Override
     public void onDraw(JecGui gui, int xMouse, int yMouse) {
+        super.onDraw(gui, xMouse, yMouse);
         boolean hovered = JecGui.mouseIn(xPos + 1, yPos + 1, xSize - 2, ySize - 2, xMouse, yMouse);
-        gui.drawResourceContinuous(hovered ? Resource.WGT_BUTTON_F : Resource.WGT_BUTTON_N, xPos, yPos,
-                xSize, ySize, 3, 3, 3, 3);
+        gui.drawResourceContinuous(disabled ? Resource.WGT_BUTTON_D :
+                (hovered ? Resource.WGT_BUTTON_F : Resource.WGT_BUTTON_N), xPos, yPos, xSize, ySize, 3, 3, 3, 3);
     }
 
     @Override
@@ -66,7 +68,12 @@ public abstract class WButton extends WTooltip {
     }
 
     @Override
-    boolean mouseIn(int xMouse, int yMouse) {
+    public boolean mouseIn(int xMouse, int yMouse) {
         return JecGui.mouseIn(xPos + 1, yPos + 1, xSize - 2, ySize - 2, xMouse, yMouse);
+    }
+
+    public WButton setDisabled(boolean b) {
+        disabled = b;
+        return this;
     }
 }

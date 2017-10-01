@@ -22,11 +22,12 @@ import static me.towdium.jecalculation.client.gui.drawables.WLabel.enumMode.EDIT
 public class GuiRecipe extends WContainer {
     List<List<ItemStack>> disambiguation;
     WButton buttonSave = new WButtonIcon(26, 33, 20, 20, Resource.BTN_SAVE_N, Resource.BTN_SAVE_F, "recipe.save");
-    WButton buttonCopy = new WButtonIcon(83, 33, 20, 20, Resource.BTN_COPY_N, Resource.BTN_COPY_F, "recipe.copy");
+    WButton buttonCopy = new WButtonIcon(83, 33, 20, 20, Resource.BTN_COPY_N, Resource.BTN_COPY_F, Resource.BTN_COPY_D,
+            "recipe.copy").setDisabled(true);
     WButton buttonDel = new WButtonIcon(64, 33, 20, 20, Resource.BTN_DEL_N, Resource.BTN_DEL_F, "recipe.clear");
     WButton buttonLabel = new WButtonIcon(45, 33, 20, 20, Resource.BTN_LABEL_N, Resource.BTN_LABEL_F, "recipe.label");
-    WButton buttonDisamb = new WButtonIcon(102, 33, 20, 20, Resource.BTN_DISAMB_N, Resource.BTN_DISAMB_F,
-            "recipe.disamb").setListenerLeft(() -> {
+    WButton buttonDisamb = new WButtonIcon(102, 33, 20, 20, Resource.BTN_DISAMB_N,
+            Resource.BTN_DISAMB_F, Resource.BTN_DISAMB_D, "recipe.disamb").setDisabled(true).setListenerLeft(() -> {
         if (disambiguation != null) JecGui.displayGui(new GuiDisambiguation(disambiguation));
     });
     WButton buttonYes = new WButtonIcon(7, 33, 20, 20, Resource.BTN_YES_N, Resource.BTN_YES_F, "recipe.confirm");
@@ -54,7 +55,7 @@ public class GuiRecipe extends WContainer {
             removeAll(buttonNew, buttonLabel, buttonDel, buttonCopy, buttonSave, buttonDisamb);
             addAll(buttonYes, buttonNo, textField);
         } else {
-            addAll(buttonNew, buttonLabel, buttonDel, buttonSave, buttonDisamb); // TODO buttonCopy
+            addAll(buttonNew, buttonLabel, buttonDel, buttonCopy, buttonSave, buttonDisamb); // TODO buttonCopy
             removeAll(buttonYes, buttonNo, textField);
         }
     }
@@ -95,5 +96,6 @@ public class GuiRecipe extends WContainer {
         groupInput.setLabel(input, 0);
         groupOutput.setLabel(output, 0);
         disambiguation = buf;
+        buttonDisamb.setDisabled(buf.isEmpty());
     }
 }

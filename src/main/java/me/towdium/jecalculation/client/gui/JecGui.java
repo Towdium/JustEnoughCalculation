@@ -149,7 +149,7 @@ public class JecGui extends GuiContainer {
 
     /**
      * @return if the event is canceled
-     * This function handles click outside the normal region,
+     * This function handles click outside the rNormal region,
      * especially the overlap with JEI overlay. It handles
      * mouse event before JEI.
      */
