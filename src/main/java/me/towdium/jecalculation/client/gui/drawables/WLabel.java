@@ -6,9 +6,11 @@ import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
 import me.towdium.jecalculation.core.labels.ILabel;
 import me.towdium.jecalculation.utils.IllegalPositionException;
+import me.towdium.jecalculation.utils.Utilities.Timer;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
+import java.util.stream.IntStream;
 
 /**
  * Author: towdium
@@ -27,6 +29,7 @@ public class WLabel implements IWidget {
     public int xPos, yPos, xSize, ySize;
     public ILabel label;
     public enumMode mode;
+    protected Timer timer = new Timer();
 
     public WLabel(int xPos, int yPos, int xSize, int ySize, enumMode mode) {
         this.xPos = xPos;
@@ -61,6 +64,22 @@ public class WLabel implements IWidget {
                         label.getToolTip(buf, mode == enumMode.EDITOR || mode == enumMode.RESULT));
             }
         }
+        if (mode == enumMode.EDITOR || mode == enumMode.SELECTOR) {
+            timer.setState(gui.hand != ILabel.EMPTY);
+            int color = 0xFFFFFF + (int) ((-Math.cos(timer.getTime() * Math.PI / 1500) + 1) * 0x40) * 0x1000000;
+            gui.drawRectangle(xPos + 1, yPos + 1, xSize - 2, ySize - 2, color);
+        }
+    }
+
+    @Override
+    public boolean onScroll(JecGui gui, int xMouse, int yMouse, int diff) {
+        if (mouseIn(xMouse, yMouse) && mode == enumMode.EDITOR && label != ILabel.EMPTY) {
+            IntStream.range(0, Math.abs(diff)).forEach(i -> {
+                if (JecGui.isShiftDown()) label = diff > 0 ? label.increaseAmountLarge() : label.decreaseAmountLarge();
+                else label = diff > 0 ? label.increaseAmount() : label.decreaseAmount();
+            });
+            return true;
+        } else return false;
     }
 
     @Override

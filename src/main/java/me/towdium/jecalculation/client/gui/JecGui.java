@@ -125,7 +125,7 @@ public class JecGui extends GuiContainer {
         root.onDraw(this, mouseX - guiLeft, mouseY - guiTop);
         GlStateManager.popMatrix();
         GlStateManager.pushMatrix();
-        GlStateManager.translate(mouseX - 8, mouseY - 8, 0);
+        GlStateManager.translate(mouseX - 8, mouseY - 8, 80);
         hand.drawLabel(this);
         GlStateManager.popMatrix();
         drawBufferedTooltip();
@@ -246,12 +246,14 @@ public class JecGui extends GuiContainer {
         BufferBuilder bufferbuilder = tessellator.getBuffer();
         GlStateManager.disableTexture2D();
         GlStateManager.color(f, f1, f2, f3);
+        GlStateManager.disableAlpha();
         bufferbuilder.begin(7, DefaultVertexFormats.POSITION);
         bufferbuilder.pos((double) xPos, (double) bottom, 0.0D).endVertex();
         bufferbuilder.pos((double) right, (double) bottom, 0.0D).endVertex();
         bufferbuilder.pos((double) right, (double) yPos, 0.0D).endVertex();
         bufferbuilder.pos((double) xPos, (double) yPos, 0.0D).endVertex();
         tessellator.draw();
+        GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();
     }
 

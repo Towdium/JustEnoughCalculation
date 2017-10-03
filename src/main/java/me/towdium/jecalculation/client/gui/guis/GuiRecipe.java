@@ -28,7 +28,10 @@ public class GuiRecipe extends WContainer {
     WButton buttonLabel = new WButtonIcon(45, 33, 20, 20, Resource.BTN_LABEL_N, Resource.BTN_LABEL_F, "recipe.label");
     WButton buttonDisamb = new WButtonIcon(102, 33, 20, 20, Resource.BTN_DISAMB_N,
             Resource.BTN_DISAMB_F, Resource.BTN_DISAMB_D, "recipe.disamb").setDisabled(true).setListenerLeft(() -> {
-        if (disambiguation != null) JecGui.displayGui(new GuiDisambiguation(disambiguation));
+        if (disambiguation != null) JecGui.displayGui(new GuiDisambiguation(disambiguation).setCallback(l -> {
+            JecGui.displayParent();
+            JecGui.getCurrent().hand = l;
+        }));
     });
     WButton buttonYes = new WButtonIcon(7, 33, 20, 20, Resource.BTN_YES_N, Resource.BTN_YES_F, "recipe.confirm");
     WButton buttonNo = new WButtonIcon(26, 33, 20, 20, Resource.BTN_NO_N, Resource.BTN_NO_F, "recipe.abort");
@@ -55,7 +58,7 @@ public class GuiRecipe extends WContainer {
             removeAll(buttonNew, buttonLabel, buttonDel, buttonCopy, buttonSave, buttonDisamb);
             addAll(buttonYes, buttonNo, textField);
         } else {
-            addAll(buttonNew, buttonLabel, buttonDel, buttonCopy, buttonSave, buttonDisamb); // TODO buttonCopy
+            addAll(buttonNew, buttonLabel, buttonDel, buttonCopy, buttonSave, buttonDisamb);
             removeAll(buttonYes, buttonNo, textField);
         }
     }
