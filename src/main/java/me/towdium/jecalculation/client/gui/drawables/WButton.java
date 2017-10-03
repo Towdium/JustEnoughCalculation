@@ -51,7 +51,7 @@ public abstract class WButton extends WTooltip {
 
     @Override
     public boolean onClicked(JecGui gui, int xMouse, int yMouse, int button) {
-        if (JecGui.mouseIn(xPos + 1, yPos + 1, xSize - 2, ySize - 2, xMouse, yMouse)) {
+        if (!disabled && JecGui.mouseIn(xPos + 1, yPos + 1, xSize - 2, ySize - 2, xMouse, yMouse)) {
             if (button == 0 && lsnrLeft != null) {
                 lsnrLeft.run();
                 Minecraft.getMinecraft().getSoundHandler().playSound(

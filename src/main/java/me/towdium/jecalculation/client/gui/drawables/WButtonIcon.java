@@ -27,6 +27,10 @@ public class WButtonIcon extends WButton {
         this(xPos, yPos, xSize, ySize, normal, focused, null, name);
     }
 
+    public WButtonIcon(int xPos, int yPos, int xSize, int ySize, Resource normal, Resource focused, Resource disabled) {
+        this(xPos, yPos, xSize, ySize, normal, focused, disabled, null);
+    }
+
     public WButtonIcon(int xPos, int yPos, int xSize, int ySize, Resource normal, Resource focused,
                        @Nullable Resource disabled, @Nullable String name) {
         super(xPos, yPos, xSize, ySize, name);

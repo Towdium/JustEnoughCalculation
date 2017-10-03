@@ -44,7 +44,7 @@ public class GuiRecipe extends WContainer {
 
     public GuiRecipe() {
         add(new WPanel());
-        add(new WSwitcher(7, 7, 162, 2));
+        add(new WSwitcher(7, 7, 162, 1));
         add(new WIcon(7, 63, 21, 20, Resource.ICN_OUTPUT_N, Resource.ICN_OUTPUT_F, "recipe.output"));
         add(new WIcon(7, 87, 21, 20, Resource.ICN_CATALYST_N, Resource.ICN_CATALYST_F, "recipe.catalyst"));
         add(new WIcon(7, 111, 21, 40, Resource.ICN_INPUT_N, Resource.ICN_INPUT_F, "recipe.input"));
