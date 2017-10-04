@@ -5,6 +5,8 @@ import me.towdium.jecalculation.client.gui.IWidget;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
 import me.towdium.jecalculation.utils.Utilities.Circulator;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -19,6 +21,7 @@ import java.util.stream.Stream;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
+@SideOnly(Side.CLIENT)
 public class WSwitcher implements IWidget {
     public static final int SIZE = 13;
 

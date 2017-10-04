@@ -4,6 +4,8 @@ import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.gui.IWidget;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Mouse;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -13,8 +15,9 @@ import java.util.function.Consumer;
  * Author: towdium
  * Date:   17-9-16.
  */
-@MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
+@SideOnly(Side.CLIENT)
 public class WScroll implements IWidget {
     public int xPos, yPos, ySize, current;
     public Consumer<Float> lsnrScroll;

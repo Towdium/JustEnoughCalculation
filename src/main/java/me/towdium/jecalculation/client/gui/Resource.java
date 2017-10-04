@@ -1,12 +1,20 @@
 package me.towdium.jecalculation.client.gui;
 
+import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
  * Author: towdium
  * Date:   17-8-17.
  */
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
+@SideOnly(Side.CLIENT)
 public class Resource {
     public static final ResourceLocation location = new ResourceLocation(
             JustEnoughCalculation.Reference.MODID, "textures/gui/resources.png");
@@ -60,6 +68,10 @@ public class Resource {
     public static final Resource ICN_LABEL_F = new Resource(70, 28, 14, 14);
     public static final Resource ICN_HELP_N = new Resource(84, 42, 14, 14);
     public static final Resource ICN_HELP_F = new Resource(84, 28, 14, 14);
+    public static final Resource ICN_STACK_N = new Resource(98, 42, 14, 14);
+    public static final Resource ICN_STACK_F = new Resource(98, 28, 14, 14);
+    public static final Resource ICN_TEXT_N = new Resource(112, 42, 14, 14);
+    public static final Resource ICN_TEXT_F = new Resource(112, 28, 14, 14);
     public static final Resource LBL_ORE_DICT = new Resource(0, 56, 16, 16);
     public static final Resource LBL_FLUID = new Resource(16, 56, 16, 16);
     public static final Resource LBL_UNIV_B = new Resource(32, 56, 16, 16);

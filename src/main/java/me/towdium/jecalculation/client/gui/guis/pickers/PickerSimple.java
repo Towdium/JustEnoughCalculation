@@ -1,5 +1,6 @@
 package me.towdium.jecalculation.client.gui.guis.pickers;
 
+import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.gui.IWPicker;
 import me.towdium.jecalculation.client.gui.Resource;
 import me.towdium.jecalculation.client.gui.drawables.*;
@@ -7,8 +8,11 @@ import me.towdium.jecalculation.core.labels.ILabel;
 import me.towdium.jecalculation.core.labels.labels.LabelFluidStack;
 import me.towdium.jecalculation.core.labels.labels.LabelOreDict;
 import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,6 +21,9 @@ import java.util.stream.Collectors;
  * Author: towdium
  * Date:   17-9-28.
  */
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
+@SideOnly(Side.CLIENT)
 public class PickerSimple extends IWPicker.Simple {
     /**
      * @param labels  labels to be displayed for selection
@@ -28,6 +35,7 @@ public class PickerSimple extends IWPicker.Simple {
         WTextField tf = new WTextField(25, 7, 90);
         add(new WSearch(l -> callback.value.accept(l), tf, ls));
         add(new WIcon(149, 7, 20, 20, Resource.ICN_HELP_N, Resource.ICN_HELP_F, l18nKey + ".help"));
+        add(new WIcon(7, 7, 20, 20, Resource.ICN_TEXT_N, Resource.ICN_TEXT_F, l18nKey + ".text"));
     }
 
     public static class FluidStack extends PickerSimple {

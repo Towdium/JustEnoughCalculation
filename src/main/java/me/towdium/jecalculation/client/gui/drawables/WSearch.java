@@ -3,6 +3,8 @@ package me.towdium.jecalculation.client.gui.drawables;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.core.labels.ILabel;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
@@ -15,6 +17,7 @@ import java.util.function.Consumer;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
+@SideOnly(Side.CLIENT)
 public class WSearch extends WContainer {
     WTextField tf;
     List<WLabelScroll> lss;

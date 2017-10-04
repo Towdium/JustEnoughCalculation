@@ -6,6 +6,8 @@ import me.towdium.jecalculation.core.labels.ILabel;
 import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -68,6 +70,7 @@ public class LabelItemStack extends LabelSimpleAmount {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void drawLabel(JecGui gui) {
         gui.drawItemStack(0, 0, itemStack, false);
     }

@@ -5,6 +5,8 @@ import me.towdium.jecalculation.client.gui.IWidget;
 import me.towdium.jecalculation.client.gui.JecGui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiTextField;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.Consumer;
@@ -15,6 +17,7 @@ import java.util.function.Consumer;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
+@SideOnly(Side.CLIENT)
 public class WTextField implements IWidget {
     protected int xPos, yPos, xSize;
     GuiTextField textField;

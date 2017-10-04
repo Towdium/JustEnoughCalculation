@@ -7,6 +7,8 @@ import me.towdium.jecalculation.client.gui.Resource;
 import me.towdium.jecalculation.core.labels.ILabel;
 import me.towdium.jecalculation.utils.IllegalPositionException;
 import me.towdium.jecalculation.utils.Utilities.Timer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ import java.util.stream.IntStream;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
+@SideOnly(Side.CLIENT)
 public class WLabel implements IWidget {
     static JecGui.Font font;
 

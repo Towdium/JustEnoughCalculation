@@ -11,6 +11,8 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -70,6 +72,7 @@ public class LabelOreDict extends LabelSimpleAmount {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void drawLabel(JecGui gui) {
         NonNullList<ItemStack> list = NonNullList.create();
         OreDictionary.getOres(name).forEach(is -> {

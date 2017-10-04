@@ -3,6 +3,8 @@ package me.towdium.jecalculation.client.gui.drawables;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.gui.IWidget;
 import me.towdium.jecalculation.client.gui.JecGui;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -12,6 +14,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
+@SideOnly(Side.CLIENT)
 public class WRectangle implements IWidget {
     public int xPos, yPos, xSize, ySize, color;
 

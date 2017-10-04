@@ -7,6 +7,8 @@ import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.init.SoundEvents;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -17,6 +19,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
+@SideOnly(Side.CLIENT)
 public abstract class WButton extends WTooltip {
     protected int xPos, yPos, xSize, ySize;
     protected Runnable lsnrLeft, lsnrRight;

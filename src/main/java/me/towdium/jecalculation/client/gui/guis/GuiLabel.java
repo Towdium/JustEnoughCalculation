@@ -11,6 +11,8 @@ import me.towdium.jecalculation.client.gui.drawables.WPage;
 import me.towdium.jecalculation.client.gui.drawables.WPanel;
 import me.towdium.jecalculation.core.labels.ILabel;
 import me.towdium.jecalculation.utils.wrappers.Single;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.Consumer;
@@ -21,6 +23,7 @@ import java.util.function.Consumer;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
+@SideOnly(Side.CLIENT)
 public class GuiLabel extends WContainer {
     WContainer container = new WContainer();
     Consumer<ILabel> callback;

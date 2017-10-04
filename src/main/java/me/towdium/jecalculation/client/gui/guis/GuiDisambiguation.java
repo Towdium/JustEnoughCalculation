@@ -1,11 +1,15 @@
 package me.towdium.jecalculation.client.gui.guis;
 
+import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.gui.IWPicker;
 import me.towdium.jecalculation.client.gui.Resource;
 import me.towdium.jecalculation.client.gui.drawables.*;
 import me.towdium.jecalculation.core.labels.ILabel;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,6 +18,9 @@ import java.util.stream.Collectors;
  * Author: towdium
  * Date:   17-9-16.
  */
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
+@SideOnly(Side.CLIENT)
 public class GuiDisambiguation extends IWPicker.Simple {
     protected WLabelScroll lsUp;
     protected WLabelScroll lsDown;

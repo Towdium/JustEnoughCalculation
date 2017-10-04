@@ -3,6 +3,8 @@ package me.towdium.jecalculation.client.gui.drawables;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.utils.Utilities.L18n;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -10,8 +12,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * Author: towdium
  * Date:   17-9-16.
  */
-@MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
+@SideOnly(Side.CLIENT)
 public class WButtonText extends WButton {
     public WButtonText(int xPos, int yPos, int xSize, int ySize, String name) {
         super(xPos, yPos, xSize, ySize, name);

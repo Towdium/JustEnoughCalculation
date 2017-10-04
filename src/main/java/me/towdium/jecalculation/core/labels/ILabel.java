@@ -17,6 +17,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
@@ -73,6 +75,7 @@ public interface ILabel {
 
     NBTTagCompound toNBTTagCompound();
 
+    @SideOnly(Side.CLIENT)
     default void drawLabel(JecGui gui, int xPos, int yPos, boolean center) {
         GlStateManager.pushMatrix();
         GlStateManager.translate(center ? xPos - 8 : xPos, center ? yPos - 8 : yPos, 0);

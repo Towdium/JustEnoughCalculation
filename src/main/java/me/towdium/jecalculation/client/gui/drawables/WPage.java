@@ -7,6 +7,8 @@ import me.towdium.jecalculation.client.gui.Resource;
 import me.towdium.jecalculation.core.labels.ILabel;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.Utilities.L18n;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -14,8 +16,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * Author: towdium
  * Date:   17-9-16.
  */
-@MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
+@SideOnly(Side.CLIENT)
 public class WPage implements IWidget {
 
 

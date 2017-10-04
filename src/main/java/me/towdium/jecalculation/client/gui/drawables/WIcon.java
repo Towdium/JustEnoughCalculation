@@ -3,6 +3,8 @@ package me.towdium.jecalculation.client.gui.drawables;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -13,6 +15,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
+@SideOnly(Side.CLIENT)
 public class WIcon extends WTooltip {
     public int xPos, yPos, xSize, ySize;
     public Resource normal, focused;

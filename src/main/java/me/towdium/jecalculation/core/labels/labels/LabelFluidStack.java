@@ -8,6 +8,8 @@ import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -89,6 +91,7 @@ public class LabelFluidStack implements ILabel {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void drawLabel(JecGui gui) {
         gui.drawResource(Resource.LBL_FLUID, 0, 0);
         gui.drawFluid(fluid.getFluid(), 2, 2, 12, 12);

@@ -3,6 +3,8 @@ package me.towdium.jecalculation.client.gui.drawables;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.gui.IWidget;
 import me.towdium.jecalculation.client.gui.JecGui;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
@@ -14,6 +16,7 @@ import java.util.List;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
+@SideOnly(Side.CLIENT)
 public class WContainer implements IWidget {
     protected List<IWidget> widgets = new ArrayList<>();
     protected JecGui gui;

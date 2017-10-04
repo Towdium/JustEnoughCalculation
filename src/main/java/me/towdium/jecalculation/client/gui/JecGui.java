@@ -23,6 +23,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.client.config.GuiUtils;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -41,6 +43,7 @@ import java.util.function.Function;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
+@SideOnly(Side.CLIENT)
 public class JecGui extends GuiContainer {
     public static final int COLOR_GUI_GREY = 0xFFA1A1A1;
     public static final int COLOR_TEXT_RED = 0xFF0000;

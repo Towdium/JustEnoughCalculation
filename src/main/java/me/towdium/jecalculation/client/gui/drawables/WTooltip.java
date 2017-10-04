@@ -5,6 +5,8 @@ import me.towdium.jecalculation.client.gui.IWidget;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.Utilities.L18n;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -17,6 +19,7 @@ import java.util.List;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
+@SideOnly(Side.CLIENT)
 public abstract class WTooltip implements IWidget {
     @Nullable
     public String name;

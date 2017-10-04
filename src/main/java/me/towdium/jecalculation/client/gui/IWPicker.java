@@ -1,15 +1,22 @@
 package me.towdium.jecalculation.client.gui;
 
+import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.gui.drawables.WContainer;
 import me.towdium.jecalculation.core.labels.ILabel;
 import me.towdium.jecalculation.utils.wrappers.Single;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.Consumer;
 
 /**
  * Author: towdium
  * Date:   17-9-28.
  */
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
+@SideOnly(Side.CLIENT)
 public interface IWPicker extends IWidget {
     IWPicker setCallback(Consumer<ILabel> callback);
 

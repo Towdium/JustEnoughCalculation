@@ -4,6 +4,8 @@ import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
 import me.towdium.jecalculation.client.gui.drawables.*;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -13,8 +15,9 @@ import static me.towdium.jecalculation.client.gui.drawables.WLabel.enumMode.*;
  * Author: towdium
  * Date:   8/14/17.
  */
-@MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
+@SideOnly(Side.CLIENT)
 public class GuiCalculator extends WContainer {
     public GuiCalculator() {
         add(new WPanel());

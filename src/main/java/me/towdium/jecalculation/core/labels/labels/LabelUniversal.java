@@ -6,6 +6,8 @@ import me.towdium.jecalculation.client.gui.Resource;
 import me.towdium.jecalculation.core.labels.ILabel;
 import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -48,6 +50,7 @@ public class LabelUniversal extends LabelSimpleAmount {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void drawLabel(JecGui gui) {
         gui.drawResource(Resource.LBL_UNIV_B, 0, 0);
         gui.drawResource(Resource.LBL_UNIV_F, 0, 0, (name.hashCode() * 0x131723) & 0xFFFFFF);

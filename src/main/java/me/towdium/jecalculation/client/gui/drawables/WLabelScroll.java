@@ -4,6 +4,8 @@ import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.core.labels.ILabel;
 import me.towdium.jecalculation.utils.Utilities;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
+@SideOnly(Side.CLIENT)
 public class WLabelScroll extends WContainer {
     protected List<ILabel> labels = new ArrayList<>();
     protected List<ILabel> filtered = new ArrayList<>();

@@ -4,6 +4,8 @@ import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.gui.IWidget;
 import me.towdium.jecalculation.core.labels.ILabel;
 import me.towdium.jecalculation.utils.wrappers.Single;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
@@ -17,6 +19,7 @@ import java.util.stream.IntStream;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
+@SideOnly(Side.CLIENT)
 public class WLabelGroup extends WContainer {
     ArrayList<WLabel> labels = new ArrayList<>();
 
