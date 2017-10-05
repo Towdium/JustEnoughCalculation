@@ -1,8 +1,11 @@
 package me.towdium.jecalculation.client.gui;
 
 import mcp.MethodsReturnNonnullByDefault;
+import me.towdium.jecalculation.JustEnoughCalculation;
+import me.towdium.jecalculation.client.gui.guis.GuiCalculator;
 import me.towdium.jecalculation.core.labels.ILabel;
 import me.towdium.jecalculation.jei.JecPlugin;
+import me.towdium.jecalculation.network.ProxyClient;
 import me.towdium.jecalculation.utils.IllegalPositionException;
 import me.towdium.jecalculation.utils.wrappers.Single;
 import me.towdium.jecalculation.utils.wrappers.Triple;
@@ -21,8 +24,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.client.config.GuiUtils;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -44,6 +52,7 @@ import java.util.function.Function;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
+@Mod.EventBusSubscriber
 public class JecGui extends GuiContainer {
     public static final int COLOR_GUI_GREY = 0xFFA1A1A1;
     public static final int COLOR_TEXT_RED = 0xFF0000;
@@ -148,6 +157,20 @@ public class JecGui extends GuiContainer {
         int diff = Mouse.getEventDWheel() / 120;
         if (diff != 0) root.onScroll(this, Mouse.getEventX() * width / mc.displayWidth - guiLeft,
                 height - Mouse.getEventY() * height / mc.displayHeight - 1 - guiTop, diff);
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public void onMouseClick(GuiScreenEvent.MouseInputEvent.Pre event) {
+        if (event.getGui() instanceof JecGui) {
+            GuiScreen gui = event.getGui();
+            event.setCanceled(((JecGui) gui).handleMouseEvent());
+        }
+    }
+
+    @SubscribeEvent
+    public void onKey(InputEvent.KeyInputEvent event) {
+        if (ProxyClient.keyOpenGui.isPressed() && JustEnoughCalculation.side != JustEnoughCalculation.enumSide.SERVER)
+            JecGui.displayGui(new GuiCalculator());
     }
 
     /**
