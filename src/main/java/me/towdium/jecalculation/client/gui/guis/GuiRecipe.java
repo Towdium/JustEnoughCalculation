@@ -3,7 +3,7 @@ package me.towdium.jecalculation.client.gui.guis;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
 import me.towdium.jecalculation.client.gui.drawables.*;
-import me.towdium.jecalculation.core.labels.ILabel;
+import me.towdium.jecalculation.core.label.ILabel;
 import mezz.jei.api.gui.IRecipeLayout;
 import net.minecraft.item.ItemStack;
 
@@ -86,17 +86,21 @@ public class GuiRecipe extends WContainer {
             if (g.getAllIngredients().isEmpty()) return;
             ArrayList<ILabel> raw = new ArrayList<>();
             g.getAllIngredients().forEach(f -> raw.add(ILabel.CONVERTER_FLUID.toLabel(f)));
-            List<ILabel> guessed = ILabel.CONVERTER_FLUID.toLabel(g.getAllIngredients());
-            merge.accept(g.isInput() ? input : output,
-                    guessed.isEmpty() ? ILabel.CONVERTER_FLUID.toLabel(g.getAllIngredients().get(0)) : guessed.get(0));
+            if (g.isInput()) {
+                List<ILabel> guessed = ILabel.CONVERTER_FLUID.toLabel(g.getAllIngredients());
+                merge.accept(input, guessed.isEmpty() ?
+                        ILabel.CONVERTER_FLUID.toLabel(g.getAllIngredients().get(0)) : guessed.get(0));
+            } else merge.accept(output, ILabel.CONVERTER_FLUID.toLabel(g.getAllIngredients().get(0)));
         });
         recipe.getItemStacks().getGuiIngredients().forEach((i, g) -> {
             if (g.getAllIngredients().isEmpty()) return;
             ArrayList<ILabel> raw = new ArrayList<>();
             g.getAllIngredients().forEach(f -> raw.add(ILabel.CONVERTER_ITEM.toLabel(f)));
-            List<ILabel> guessed = ILabel.CONVERTER_ITEM.toLabel(g.getAllIngredients());
-            merge.accept(g.isInput() ? input : output,
-                    guessed.isEmpty() ? ILabel.CONVERTER_ITEM.toLabel(g.getAllIngredients().get(0)) : guessed.get(0));
+            if (g.isInput()) {
+                List<ILabel> guessed = ILabel.CONVERTER_ITEM.toLabel(g.getAllIngredients());
+                merge.accept(input, guessed.isEmpty() ?
+                        ILabel.CONVERTER_ITEM.toLabel(g.getAllIngredients().get(0)) : guessed.get(0));
+            } else merge.accept(output, ILabel.CONVERTER_ITEM.toLabel(g.getAllIngredients().get(0)));
             buf.add(g.getAllIngredients());
         });
 

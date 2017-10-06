@@ -9,7 +9,7 @@ import me.towdium.jecalculation.client.gui.IWidget;
 import me.towdium.jecalculation.client.gui.drawables.WContainer;
 import me.towdium.jecalculation.client.gui.drawables.WPage;
 import me.towdium.jecalculation.client.gui.drawables.WPanel;
-import me.towdium.jecalculation.core.labels.ILabel;
+import me.towdium.jecalculation.core.label.ILabel;
 import me.towdium.jecalculation.utils.wrappers.Single;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;

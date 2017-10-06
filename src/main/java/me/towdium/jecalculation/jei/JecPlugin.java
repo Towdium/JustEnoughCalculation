@@ -4,7 +4,7 @@ import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.guis.GuiRecipe;
-import me.towdium.jecalculation.core.labels.ILabel;
+import me.towdium.jecalculation.core.label.ILabel;
 import mezz.jei.api.IJeiRuntime;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.IModRegistry;
@@ -15,6 +15,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -43,6 +45,7 @@ public class JecPlugin implements IModPlugin {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void register(IModRegistry registry) {
         registry.getRecipeTransferRegistry().addUniversalRecipeTransferHandler(new TransferHandler());
     }
@@ -52,6 +55,7 @@ public class JecPlugin implements IModPlugin {
         runtime = jeiRuntime;
     }
 
+    @SideOnly(Side.CLIENT)
     public static class TransferHandler implements IRecipeTransferHandler {
         @Override
         public Class getContainerClass() {
