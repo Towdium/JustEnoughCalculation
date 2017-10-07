@@ -2,7 +2,7 @@ package me.towdium.jecalculation.client.gui.drawables;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.gui.JecGui;
-import me.towdium.jecalculation.core.label.ILabel;
+import me.towdium.jecalculation.data.label.ILabel;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 

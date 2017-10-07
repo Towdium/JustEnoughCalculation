@@ -1,10 +1,10 @@
-package me.towdium.jecalculation.core.label.labels;
+package me.towdium.jecalculation.data.label.labels;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
-import me.towdium.jecalculation.core.label.ILabel;
+import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.creativetab.CreativeTabs;
@@ -52,6 +52,7 @@ public class LabelOreDict extends LabelSimpleAmount {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public String getDisplayName() {
         return Utilities.L18n.format("label.ore_dict.name", name);
     }
@@ -98,6 +99,7 @@ public class LabelOreDict extends LabelSimpleAmount {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public List<String> getToolTip(List<String> existing, boolean detailed) {
         super.getToolTip(existing, detailed);
         existing.add(FORMAT_BLUE + FORMAT_ITALIC + JustEnoughCalculation.Reference.MODNAME);

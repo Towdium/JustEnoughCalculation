@@ -1,8 +1,8 @@
-package me.towdium.jecalculation.core.label.labels;
+package me.towdium.jecalculation.data.label.labels;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.gui.JecGui;
-import me.towdium.jecalculation.core.label.ILabel;
+import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -45,6 +45,7 @@ public class LabelItemStack extends LabelSimpleAmount {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public List<String> getToolTip(List<String> existing, boolean detailed) {
         super.getToolTip(existing, detailed);
         existing.add(FORMAT_BLUE + FORMAT_ITALIC + Utilities.getModName(itemStack));
@@ -52,6 +53,7 @@ public class LabelItemStack extends LabelSimpleAmount {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public String getDisplayName() {
         return itemStack.getDisplayName();
     }
@@ -77,7 +79,9 @@ public class LabelItemStack extends LabelSimpleAmount {
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof LabelItemStack && itemStack.equals(((LabelItemStack) obj).itemStack);
+        return obj instanceof LabelItemStack
+                && itemStack.equals(((LabelItemStack) obj).itemStack)
+                && amount == ((LabelItemStack) obj).amount;
     }
 
     public ItemStack getItemStack() {

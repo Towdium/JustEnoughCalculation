@@ -1,4 +1,4 @@
-package me.towdium.jecalculation.core.label;
+package me.towdium.jecalculation.data.label;
 
 import com.google.common.base.CaseFormat;
 import mcp.MethodsReturnNonnullByDefault;
@@ -6,10 +6,10 @@ import me.towdium.jecalculation.client.gui.IWPicker;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.guis.pickers.PickerSimple;
 import me.towdium.jecalculation.client.gui.guis.pickers.PickerUniversal;
-import me.towdium.jecalculation.core.label.labels.LabelFluidStack;
-import me.towdium.jecalculation.core.label.labels.LabelItemStack;
-import me.towdium.jecalculation.core.label.labels.LabelOreDict;
-import me.towdium.jecalculation.core.label.labels.LabelUniversal;
+import me.towdium.jecalculation.data.label.labels.LabelFluidStack;
+import me.towdium.jecalculation.data.label.labels.LabelItemStack;
+import me.towdium.jecalculation.data.label.labels.LabelOreDict;
+import me.towdium.jecalculation.data.label.labels.LabelUniversal;
 import me.towdium.jecalculation.utils.Utilities.Relation;
 import me.towdium.jecalculation.utils.Utilities.ReversedIterator;
 import net.minecraft.client.renderer.GlStateManager;
@@ -57,6 +57,7 @@ public interface ILabel {
 
     String getAmountString();
 
+    @SideOnly(Side.CLIENT)
     String getDisplayName();
 
     static String getIdentifier(ILabel c) {
@@ -302,7 +303,6 @@ public interface ILabel {
         public List<Record> getRecords() {
             return records;
         }
-
 
         public static class Record {
             public Supplier<IWPicker> editor;

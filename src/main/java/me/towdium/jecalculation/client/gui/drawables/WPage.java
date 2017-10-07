@@ -4,7 +4,7 @@ import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.gui.IWidget;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
-import me.towdium.jecalculation.core.label.ILabel;
+import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.Utilities.L18n;
 import net.minecraftforge.fml.relauncher.Side;

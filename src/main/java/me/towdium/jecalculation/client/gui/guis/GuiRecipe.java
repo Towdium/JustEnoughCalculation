@@ -3,7 +3,7 @@ package me.towdium.jecalculation.client.gui.guis;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
 import me.towdium.jecalculation.client.gui.drawables.*;
-import me.towdium.jecalculation.core.label.ILabel;
+import me.towdium.jecalculation.data.label.ILabel;
 import mezz.jei.api.gui.IRecipeLayout;
 import net.minecraft.item.ItemStack;
 

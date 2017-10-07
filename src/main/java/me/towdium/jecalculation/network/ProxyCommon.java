@@ -5,6 +5,8 @@ package me.towdium.jecalculation.network;
  * Date:   8/10/17.
  */
 public class ProxyCommon {
+
+
     public void initPre() {
     }
 

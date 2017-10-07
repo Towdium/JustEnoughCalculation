@@ -1,6 +1,6 @@
-package me.towdium.jecalculation.core;
+package me.towdium.jecalculation.data;
 
-import me.towdium.jecalculation.core.label.ILabel;
+import me.towdium.jecalculation.data.label.ILabel;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 

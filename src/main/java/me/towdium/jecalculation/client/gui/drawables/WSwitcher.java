@@ -49,7 +49,7 @@ public class WSwitcher implements IWidget {
                 Resource.WGT_ARR_R_D).setListenerLeft(() -> move(false));
         wRect = new WRectangle(xPos + SIZE, yPos, xSize - 2 * SIZE, SIZE, JecGui.COLOR_GUI_GREY);
         wText = new WText(xPos + SIZE, yPos, xSize - 2 * SIZE, SIZE, JecGui.Font.DEFAULT_SHADOW,
-                () -> keys.get(index.index()));
+                () -> keys.get(index.current()));
         index = new Circulator(keys.size());
         if (keys.size() == 1) {
             left.setDisabled(true);
@@ -58,10 +58,10 @@ public class WSwitcher implements IWidget {
     }
 
     protected void move(boolean forward) {
-        if (forward) index.next();
-        else index.prev();
+        if (forward) index.move(1);
+        else index.move(-1);
 
-        if (listener != null) listener.accept(index.index());
+        if (listener != null) listener.accept(index.current());
     }
 
     @Override

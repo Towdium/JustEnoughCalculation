@@ -5,7 +5,7 @@ import me.towdium.jecalculation.client.gui.IWPicker;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
 import me.towdium.jecalculation.client.gui.drawables.*;
-import me.towdium.jecalculation.core.label.labels.LabelUniversal;
+import me.towdium.jecalculation.data.label.labels.LabelUniversal;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 

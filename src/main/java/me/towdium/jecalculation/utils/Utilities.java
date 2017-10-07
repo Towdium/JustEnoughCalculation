@@ -1,5 +1,6 @@
 package me.towdium.jecalculation.utils;
 
+import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import me.towdium.jecalculation.utils.wrappers.Single;
 import net.minecraft.client.resources.I18n;
@@ -8,8 +9,12 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.StringEscapeUtils;
 
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
@@ -19,7 +24,9 @@ import java.util.stream.StreamSupport;
  * Author: Towdium
  * Date:   2016/6/25.
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "UnusedReturnValue"})
+@MethodsReturnNonnullByDefault
+@ParametersAreNonnullByDefault
 public class Utilities {
     final static int[] scaleTable = {9, 99, 999, 9999, 99999, 999999, 9999999, 99999999, 999999999, Integer.MAX_VALUE};
     static Map<String, String> dictionary = new HashMap<>();
@@ -59,6 +66,7 @@ public class Utilities {
     }
 
     // MOD NAME
+    @Nullable
     public static String getModName(ItemStack stack) {
         ResourceLocation tmp = stack.getItem().getRegistryName();
         if (tmp == null) return null;
@@ -110,17 +118,32 @@ public class Utilities {
         }
 
         public int next() {
-            current = current + 1 == total ? 0 : current + 1;
-            return current;
+            return current + 1 == total ? 0 : current + 1;
         }
 
         public int prev() {
-            current = current == 0 ? total - 1 : current - 1;
+            return current == 0 ? total - 1 : current - 1;
+        }
+
+        public Circulator move(int steps) {
+            current += steps;
+            if (current < 0) current += (-current) / total * total + total;
+            else current = current % total;
+            return this;
+        }
+
+        public int current() {
             return current;
         }
 
-        public int index() {
-            return current;
+        public Circulator set(int index) {
+            if (index >= 0 && index < total) current = index;
+            else throw new RuntimeException(String.format("Expected: [0, %d), given: %d.", total, index));
+            return this;
+        }
+
+        public Circulator copy() {
+            return new Circulator(total).set(current);
         }
     }
 
@@ -170,6 +193,7 @@ public class Utilities {
         }
     }
 
+    @SideOnly(Side.CLIENT)
     public static class L18n {
         public static Pair<String, Boolean> search(String translateKey, Object... parameters) {
             Pair<String, Boolean> ret = new Pair<>(null, null);
@@ -182,6 +206,26 @@ public class Utilities {
 
         public static String format(String translateKey, Object... parameters) {
             return search(translateKey, parameters).one;
+        }
+    }
+
+    public static class Recent<T> {
+        LinkedList<T> data = new LinkedList<>();
+        int limit;
+
+        public Recent(int limit) {
+            this.limit = limit;
+        }
+
+        public void push(T obj) {
+            data.removeIf(t -> t.equals(obj));
+            data.push(obj);
+            if (data.size() > limit) data.pop();
+        }
+
+        public List<T> toList() {
+            //noinspection unchecked
+            return (List<T>) data.clone();
         }
     }
 }

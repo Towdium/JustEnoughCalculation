@@ -1,9 +1,9 @@
-package me.towdium.jecalculation.core.label.labels;
+package me.towdium.jecalculation.data.label.labels;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
-import me.towdium.jecalculation.core.label.ILabel;
+import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.Fluid;
@@ -67,6 +67,7 @@ public class LabelFluidStack implements ILabel {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public String getDisplayName() {
         return fluid.getLocalizedName();
     }
@@ -85,6 +86,7 @@ public class LabelFluidStack implements ILabel {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public List<String> getToolTip(List<String> existing, boolean detailed) {
         existing.add(FORMAT_BLUE + FORMAT_ITALIC + Utilities.getModName(fluid));
         return existing;
@@ -95,5 +97,12 @@ public class LabelFluidStack implements ILabel {
     public void drawLabel(JecGui gui) {
         gui.drawResource(Resource.LBL_FLUID, 0, 0);
         gui.drawFluid(fluid.getFluid(), 2, 2, 12, 12);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof LabelFluidStack
+                && fluid.equals(((LabelFluidStack) obj).fluid)
+                && amount == ((LabelFluidStack) obj).amount;
     }
 }

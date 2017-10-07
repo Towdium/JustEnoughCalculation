@@ -1,9 +1,11 @@
-package me.towdium.jecalculation.core.label.labels;
+package me.towdium.jecalculation.data.label.labels;
 
 import mcp.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.core.label.ILabel;
+import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -62,6 +64,7 @@ public abstract class LabelSimpleAmount implements ILabel {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public List<String> getToolTip(List<String> existing, boolean detailed) {
         if (detailed) existing.add(FORMAT_GREY +
                 Utilities.L18n.format("label.common.tooltip.amount", Integer.toString(amount)));
@@ -69,6 +72,7 @@ public abstract class LabelSimpleAmount implements ILabel {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public String getAmountString() {
         return amount == 0 ? "" : Utilities.cutNumber(amount, 5);
     }

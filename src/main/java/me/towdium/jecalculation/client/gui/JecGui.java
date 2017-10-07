@@ -3,7 +3,7 @@ package me.towdium.jecalculation.client.gui;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.client.gui.guis.GuiCalculator;
-import me.towdium.jecalculation.core.label.ILabel;
+import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.jei.JecPlugin;
 import me.towdium.jecalculation.network.ProxyClient;
 import me.towdium.jecalculation.utils.IllegalPositionException;
