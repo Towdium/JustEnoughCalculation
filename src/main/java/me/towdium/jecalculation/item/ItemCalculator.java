@@ -92,8 +92,7 @@ public class ItemCalculator extends Item {
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
-        if (JustEnoughCalculation.side != JustEnoughCalculation.enumSide.SERVER)
-            JustEnoughCalculation.proxy.displayCalculator();
+        if (worldIn.isRemote) JustEnoughCalculation.proxy.displayCalculator();
         return super.onItemRightClick(worldIn, playerIn, handIn);
     }
 }

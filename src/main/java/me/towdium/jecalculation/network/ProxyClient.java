@@ -6,25 +6,26 @@ import me.towdium.jecalculation.command.JecCommand;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Author: towdium
  * Date:   8/10/17.
  */
-public class ProxyClient extends ProxyCommon {
+@SideOnly(Side.CLIENT)
+public class ProxyClient implements IProxy {
     public static final KeyBinding keyOpenGui =
             new KeyBinding("key.open_gui", org.lwjgl.input.Keyboard.KEY_F, "key.category");
 
     @Override
     public void initPost() {
-        super.initPost();
         ClientCommandHandler.instance.registerCommand(new JecCommand());
         new JecGui(null, new GuiCalculator());
     }
 
     @Override
     public void init() {
-        super.init();
         ClientRegistry.registerKeyBinding(keyOpenGui);
     }
 
