@@ -121,7 +121,7 @@ public class GuiEditor extends JECGuiContainer {
                 }
             }
         });
-        buttonRight = new JECGuiButton(41, guiLeft + 90, guiTop + 7, 14, 20, ">", false).setLsnRight(() -> {
+        buttonRight = new JECGuiButton(41, guiLeft + 90, guiTop + 7, 14, 20, ">", false).setLsnLeft(() -> {
             if (customName == null) {
                 if (group + 1 >= PlayerRecordHelper.getSizeGroup()) {
                     group = 0;
