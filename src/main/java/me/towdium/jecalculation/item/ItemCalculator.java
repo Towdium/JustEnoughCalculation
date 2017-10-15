@@ -2,6 +2,7 @@ package me.towdium.jecalculation.item;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
+import me.towdium.jecalculation.JustEnoughCalculation.enumSide;
 import me.towdium.jecalculation.utils.IllegalPositionException;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
@@ -92,7 +93,7 @@ public class ItemCalculator extends Item {
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
-        if (worldIn.isRemote) JustEnoughCalculation.proxy.displayCalculator();
+        if (JustEnoughCalculation.side != enumSide.CLIENT) JustEnoughCalculation.proxy.displayCalculator();
         return super.onItemRightClick(worldIn, playerIn, handIn);
     }
 }

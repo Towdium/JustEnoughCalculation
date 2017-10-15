@@ -14,7 +14,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class JecConfig {
     @Config.Comment("Set to true to force client mode: no item and recipe allowed, use key bindings instead.")
     @Config.LangKey("config.force_client")
-    public static boolean forceClient = false;
+    public static boolean clientMode = false;
 
     @SuppressWarnings("unused")
     @Mod.EventBusSubscriber

@@ -1,5 +1,6 @@
 package me.towdium.jecalculation.utils;
 
+import com.google.common.collect.ImmutableList;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import me.towdium.jecalculation.utils.wrappers.Single;
@@ -16,6 +17,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -226,6 +228,59 @@ public class Utilities {
         public List<T> toList() {
             //noinspection unchecked
             return (List<T>) data.clone();
+        }
+    }
+
+    /**
+     * Immutable non-duplicated list builder
+     */
+    public static class INDListBuilder<T> {
+        public ImmutableList.Builder<T> builder = ImmutableList.builder();
+        public HashSet<T> set = new HashSet<>();
+
+        public void add(T obj) {
+            if (set.add(obj)) builder.add(obj);
+        }
+
+        public ImmutableList<T> build() {
+            return builder.build();
+        }
+    }
+
+    public static class OrderedHashMap<K, V> {
+        public HashMap<K, Integer> index = new HashMap<>();
+        public List<Pair<K, V>> value = new ArrayList<>();
+
+        public void put(K key, V value) {
+            if (index.containsKey(key)) this.value.set(index.get(key), new Pair<>(key, value));
+            else {
+                index.put(key, this.value.size());
+                this.value.add(new Pair<>(key, value));
+            }
+        }
+
+        public Optional<V> get(int index) {
+            Pair<K, V> p = value.get(index);
+            return Optional.ofNullable(p == null ? null : p.two);
+        }
+
+        public Optional<V> get(K key) {
+            Integer i = index.get(key);
+            return Optional.ofNullable(i == null ? null : value.get(i).two);
+        }
+
+        public int getIndex(K key) {
+            Integer ret = index.get(key);
+            return ret == null ? -1 : ret;
+        }
+
+        public Optional<K> getKey(int index) {
+            Pair<K, V> ret = value.get(index);
+            return Optional.ofNullable(ret == null ? null : ret.one);
+        }
+
+        public void forEach(BiConsumer<K, V> func) {
+            value.forEach(p -> func.accept(p.one, p.two));
         }
     }
 }

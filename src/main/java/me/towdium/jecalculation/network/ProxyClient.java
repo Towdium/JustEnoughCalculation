@@ -9,14 +9,15 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import static org.lwjgl.input.Keyboard.KEY_NONE;
+
 /**
  * Author: towdium
  * Date:   8/10/17.
  */
 @SideOnly(Side.CLIENT)
 public class ProxyClient implements IProxy {
-    public static final KeyBinding keyOpenGui =
-            new KeyBinding("key.open_gui", org.lwjgl.input.Keyboard.KEY_F, "key.category");
+    public static final KeyBinding keyOpenGui = new KeyBinding("key.open_gui", KEY_NONE, "key.category");
 
     @Override
     public void initPost() {

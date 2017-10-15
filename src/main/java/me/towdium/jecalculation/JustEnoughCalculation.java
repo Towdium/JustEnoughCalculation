@@ -1,16 +1,12 @@
 package me.towdium.jecalculation;
 
 import mcp.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.command.JecCommand;
 import me.towdium.jecalculation.network.IProxy;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.network.NetworkCheckHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
@@ -49,7 +45,7 @@ public class JustEnoughCalculation {
     @NetworkCheckHandler
     public static boolean networkCheck(Map<String, String> mods, Side s) {
         if (s == Side.SERVER) {
-            if (mods.containsKey(Reference.MODID) && !JecConfig.forceClient) side = enumSide.BOTH;
+            if (mods.containsKey(Reference.MODID) && !JecConfig.clientMode) side = enumSide.BOTH;
             else side = enumSide.CLIENT;
             return true;
         } else return mods.containsKey(Reference.MODID);
@@ -71,20 +67,10 @@ public class JustEnoughCalculation {
         proxy.initPost();
     }
 
-    @Mod.EventHandler
-    public static void onServerStart(FMLServerStartingEvent event) {
-        event.registerServerCommand(new JecCommand());
-    }
-
     public static class Reference {
         public static final String MODID = "jecalculation";
         public static final String MODNAME = "Just Enough Calculation";
         public static final String VERSION = "@VERSION@";
-    }
-
-    @SubscribeEvent
-    public static void onJoinServer(PlayerEvent.PlayerLoggedInEvent event) {
-        JustEnoughCalculation.logger.info("Join world");
     }
 
     public enum enumSide {

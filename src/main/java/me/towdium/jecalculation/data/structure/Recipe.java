@@ -1,12 +1,16 @@
-package me.towdium.jecalculation.data;
+package me.towdium.jecalculation.data.structure;
 
 import me.towdium.jecalculation.data.label.ILabel;
+import me.towdium.jecalculation.utils.IllegalPositionException;
+import me.towdium.jecalculation.utils.wrappers.Single;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -23,6 +27,7 @@ public class Recipe {
     ILabel[] input;
     ILabel[] catalyst;
     ILabel[] output;
+    int hashcode;
 
     public Recipe(NBTTagCompound nbt) {
         this(readNbtList(nbt.getTagList(KEY_INPUT, 10)),
@@ -44,6 +49,14 @@ public class Recipe {
         this.input = convert.apply(input, 16);
         this.catalyst = convert.apply(catalyst, 8);
         this.output = convert.apply(output, 8);
+
+        Single<Integer> hash = new Single<>(0);
+        Consumer<ILabel[]> hasher = (ls) -> Arrays.stream(ls)
+                .filter(Objects::nonNull).forEach(i -> hash.value ^= i.hashCode());
+        hasher.accept(input);
+        hasher.accept(catalyst);
+        hasher.accept(output);
+        hashcode = hash.value;
     }
 
     static private List<ILabel> readNbtList(NBTTagList list) {
@@ -51,6 +64,24 @@ public class Recipe {
                 .filter(n -> n instanceof NBTTagCompound)
                 .map(n -> ILabel.DESERIALIZER.deserialize((NBTTagCompound) n))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public int hashCode() {
+        return hashcode;
+    }
+
+    public ILabel[] getLabel(enumIoType type) {
+        switch (type) {
+            case INPUT:
+                return input;
+            case OUTPUT:
+                return output;
+            case CATALYST:
+                return catalyst;
+            default:
+                throw new IllegalPositionException();
+        }
     }
 
     public NBTTagCompound serialize() {
@@ -64,5 +95,13 @@ public class Recipe {
         ret.setTag(KEY_CATALYST, convert.apply(catalyst));
         ret.setTag(KEY_OUTPUT, convert.apply(output));
         return ret;
+    }
+
+    public enum enumIoType {
+        INPUT, OUTPUT, CATALYST;
+
+        public int getSize() {
+            return this == INPUT ? 16 : 8;
+        }
     }
 }

@@ -59,6 +59,12 @@ public class LabelUniversal extends LabelSimpleAmount {
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof LabelUniversal && name.equals(((LabelUniversal) obj).name);
+        return obj instanceof LabelUniversal
+                && name.equals(((LabelUniversal) obj).name) && amount == ((LabelUniversal) obj).amount;
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode() ^ amount;
     }
 }
