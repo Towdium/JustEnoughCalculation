@@ -11,24 +11,23 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
 repositories {
-    maven {
-        url "http://dvs1.progwml6.com/files/maven"
-    }
+    maven { url = "http://dvs1.progwml6.com/files/maven" }
 }
 
 version = "${mc_version}-${proj_version}"
-group = "me.towdium.jecalculation" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = "me.towdium.jecalculation"
 archivesBaseName = "jecalculation"
 
-sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+sourceCompatibility = targetCompatibility = '1.8'
 compileJava {
     sourceCompatibility = targetCompatibility = '1.8'
 }
 
 minecraft {
-    version = "1.12.1-14.22.0.2460"
+    version = "1.12.2-14.23.3.2669"
     runDir = "run"
-    mappings = "snapshot_20170624"
+    mappings = "snapshot_20180410"
+    replace '@VERSION@', project.version
 }
 
 dependencies {
@@ -37,19 +36,14 @@ dependencies {
 }
 
 processResources {
-    // this will ensure that this task is redone when the versions change.
     inputs.property "version", project.version
     inputs.property "mcversion", project.minecraft.version
 
-    // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
-                
-        // replace version and mcversion
         expand 'version':project.version, 'mcversion':project.minecraft.version
     }
         
-    // copy everything else except the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
