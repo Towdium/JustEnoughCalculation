@@ -36,7 +36,7 @@ public class JecCommand extends CommandBase {
         if (args.length == 0 || args[0].toLowerCase().equals("help")) {
             Commands.commandHelp.execute(server, sender, cut(args));
         } else {
-            SubCommand cmd = Commands.commands.get(args[0].toLowerCase());
+            ISubCommand cmd = Commands.commands.get(args[0].toLowerCase());
             if (cmd != null) {
                 cmd.execute(server, sender, cut(args));
             } else {
@@ -64,10 +64,10 @@ public class JecCommand extends CommandBase {
         if (args.length == 1) {
             return getListOfStringsMatchingLastWord(args, Commands.commands.keySet());
         } else {
-            Single<SubCommand> sub = new Single<>(null);
+            Single<ISubCommand> sub = new Single<>(null);
             Commands.commands.values().stream().filter(c -> c.getName().equals(cmd))
                     .findFirst().ifPresent(sub::push);
-            return sub.value == null ? sub.value.getTabCompletions(server, sender, cut(args), targetPos)
+            return sub.value != null ? sub.value.getTabCompletions(server, sender, cut(args), targetPos)
                     : Collections.emptyList();
         }
     }

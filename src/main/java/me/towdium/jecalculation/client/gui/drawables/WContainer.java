@@ -19,7 +19,6 @@ import java.util.List;
 @SideOnly(Side.CLIENT)
 public class WContainer implements IWidget {
     protected List<IWidget> widgets = new ArrayList<>();
-    protected JecGui gui;
 
     public void add(IWidget w) {
         widgets.add(w);

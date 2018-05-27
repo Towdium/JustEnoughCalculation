@@ -29,7 +29,6 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.client.config.GuiUtils;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
@@ -54,7 +53,7 @@ import java.util.function.Function;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
-@Mod.EventBusSubscriber
+
 public class JecGui extends GuiContainer {
     public static final int COLOR_GUI_GREY = 0xFFA1A1A1;
     public static final int COLOR_TEXT_RED = 0xFF0000;
@@ -161,15 +160,15 @@ public class JecGui extends GuiContainer {
                 height - Mouse.getEventY() * height / mc.displayHeight - 1 - guiTop, diff);
     }
 
-    @SubscribeEvent(priority = EventPriority.HIGH)
-    public void onMouseClick(GuiScreenEvent.MouseInputEvent.Pre event) {
+    @SubscribeEvent(priority = EventPriority.HIGHEST) // TODO check effect
+    public static void onMouseClick(GuiScreenEvent.MouseInputEvent.Pre event) {
         if (event.getGui() instanceof JecGui) {
             GuiScreen gui = event.getGui();
             event.setCanceled(((JecGui) gui).handleMouseEvent());
         }
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(receiveCanceled = true)
     public static void onKey(InputEvent.KeyInputEvent event) {
         if (ProxyClient.keyOpenGui.isPressed()) {
             if (JustEnoughCalculation.side == enumSide.CLIENT) JecGui.displayGui(new GuiCalculator());

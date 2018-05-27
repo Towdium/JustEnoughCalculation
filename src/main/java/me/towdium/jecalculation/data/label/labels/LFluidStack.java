@@ -20,23 +20,24 @@ import java.util.List;
  */
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class LabelFluidStack implements ILabel {
+public class LFluidStack implements ILabel {
+    public static final String IDENTIFIER = "fluidStack";
     public static final String KEY_FLUID = "name";
     public static final String KEY_AMOUNT = "amount";
 
     FluidStack fluid;
     int amount;
 
-    public LabelFluidStack(FluidStack fluid, int amount) {
+    public LFluidStack(FluidStack fluid, int amount) {
         this.fluid = fluid;
         this.amount = amount;
     }
 
-    public LabelFluidStack(Fluid fluid, int amount) {
+    public LFluidStack(Fluid fluid, int amount) {
         this(new FluidStack(fluid, 1000), amount);
     }
 
-    public LabelFluidStack(NBTTagCompound nbt) {
+    public LFluidStack(NBTTagCompound nbt) {
         fluid = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag(KEY_FLUID));
         amount = nbt.getInteger(KEY_AMOUNT);
     }
@@ -73,14 +74,19 @@ public class LabelFluidStack implements ILabel {
     }
 
     @Override
+    public String getIdentifier() {
+        return IDENTIFIER;
+    }
+
+    @Override
     public ILabel copy() {
-        return new LabelFluidStack(fluid, amount);
+        return new LFluidStack(fluid, amount);
     }
 
     @Override
     public NBTTagCompound toNBTTagCompound() {
         NBTTagCompound ret = new NBTTagCompound();
-        ret.setTag(KEY_AMOUNT, fluid.writeToNBT(new NBTTagCompound()));
+        ret.setTag(KEY_FLUID, fluid.writeToNBT(new NBTTagCompound()));  // TODO check
         ret.setInteger(KEY_AMOUNT, amount);
         return ret;
     }
@@ -101,8 +107,8 @@ public class LabelFluidStack implements ILabel {
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof LabelFluidStack
-                && fluid.equals(((LabelFluidStack) obj).fluid) && amount == ((LabelFluidStack) obj).amount;
+        return obj instanceof LFluidStack
+                && fluid.equals(((LFluidStack) obj).fluid) && amount == ((LFluidStack) obj).amount;
     }
 
     @Override

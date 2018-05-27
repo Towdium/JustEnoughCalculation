@@ -26,27 +26,32 @@ import java.util.stream.Collectors;
  */
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class LabelOreDict extends LabelSimpleAmount {
+public class LOreDict extends LabelSimpleAmount {
+    public static final String IDENTIFIER = "oreDict";
     public static final String KEY_NAME = "name";
     public static final String KEY_AMOUNT = "amount";
 
+    static {
+
+    }
+
     protected String name;
 
-    public LabelOreDict(String name) {
+    public LOreDict(String name) {
         this(name, 1);
     }
 
-    public LabelOreDict(String name, int amount) {
+    public LOreDict(String name, int amount) {
         super(amount);
         this.name = name;
     }
 
-    public LabelOreDict(LabelOreDict lod) {
+    public LOreDict(LOreDict lod) {
         super(lod);
         this.name = lod.name;
     }
 
-    public LabelOreDict(NBTTagCompound nbt) {
+    public LOreDict(NBTTagCompound nbt) {
         super(nbt);
         name = nbt.getString(KEY_NAME);
     }
@@ -64,12 +69,17 @@ public class LabelOreDict extends LabelSimpleAmount {
             for (int i : OreDictionary.getOreIDs(is))
                 if (!ids.contains(i)) ids.remove(i);
         });
-        return ids.stream().map(i -> new LabelOreDict(OreDictionary.getOreName(i))).collect(Collectors.toList());
+        return ids.stream().map(i -> new LOreDict(OreDictionary.getOreName(i))).collect(Collectors.toList());
     }
 
     @Override
-    public LabelOreDict copy() {
-        return new LabelOreDict(this);
+    public String getIdentifier() {
+        return IDENTIFIER;
+    }
+
+    @Override
+    public LOreDict copy() {
+        return new LOreDict(this);
     }
 
     @Override
@@ -113,8 +123,8 @@ public class LabelOreDict extends LabelSimpleAmount {
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof LabelOreDict
-                && amount == ((LabelOreDict) obj).amount && name.equals(((LabelOreDict) obj).name);
+        return obj instanceof LOreDict
+                && amount == ((LOreDict) obj).amount && name.equals(((LOreDict) obj).name);
     }
 
     public String getName() {

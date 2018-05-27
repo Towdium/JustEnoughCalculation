@@ -3,6 +3,7 @@ package me.towdium.jecalculation.network;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.guis.GuiCalculator;
 import me.towdium.jecalculation.command.JecCommand;
+import me.towdium.jecalculation.data.label.ILabel;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -16,22 +17,25 @@ import static org.lwjgl.input.Keyboard.KEY_NONE;
  * Date:   8/10/17.
  */
 @SideOnly(Side.CLIENT)
-public class ProxyClient implements IProxy {
+public class ProxyClient extends ProxyServer {
     public static final KeyBinding keyOpenGui = new KeyBinding("key.open_gui", KEY_NONE, "key.category");
 
     @Override
     public void initPost() {
+        super.initPost();
         ClientCommandHandler.instance.registerCommand(new JecCommand());
-        new JecGui(null, new GuiCalculator());
+        ILabel.initClient();
     }
 
     @Override
     public void init() {
+        super.init();
         ClientRegistry.registerKeyBinding(keyOpenGui);
     }
 
     @Override
     public void displayCalculator() {
+        super.displayCalculator();
         JecGui.displayGui(new GuiCalculator());
     }
 }

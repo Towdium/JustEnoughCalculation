@@ -1,11 +1,12 @@
 package me.towdium.jecalculation.utils;
 
-import com.google.common.collect.ImmutableList;
 import mcp.MethodsReturnNonnullByDefault;
+import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import me.towdium.jecalculation.utils.wrappers.Single;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Loader;
@@ -19,6 +20,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -83,6 +85,10 @@ public class Utilities {
         String name = stack.getFluid().getName();
         if (name.equals("lava") || name.equals("water")) return "Minecraft";
         else return dictionary.get(stack.getFluid().getStill().toString().split(":")[0]);
+    }
+
+    public static NBTTagCompound getTag(ItemStack is) {
+        return is.getOrCreateSubCompound(JustEnoughCalculation.Reference.MODID);
     }
 
     public static boolean contains(String s1, String s2) {
@@ -213,14 +219,20 @@ public class Utilities {
 
     public static class Recent<T> {
         LinkedList<T> data = new LinkedList<>();
+        BiPredicate<T, T> tester;
         int limit;
+
+        public Recent(BiPredicate<T, T> tester, int limit) {
+            this.tester = tester;
+            this.limit = limit;
+        }
 
         public Recent(int limit) {
             this.limit = limit;
         }
 
         public void push(T obj) {
-            data.removeIf(t -> t.equals(obj));
+            data.removeIf(t -> tester != null ? tester.test(t, obj) : t.equals(obj));
             data.push(obj);
             if (data.size() > limit) data.pop();
         }
@@ -228,22 +240,6 @@ public class Utilities {
         public List<T> toList() {
             //noinspection unchecked
             return (List<T>) data.clone();
-        }
-    }
-
-    /**
-     * Immutable non-duplicated list builder
-     */
-    public static class INDListBuilder<T> {
-        public ImmutableList.Builder<T> builder = ImmutableList.builder();
-        public HashSet<T> set = new HashSet<>();
-
-        public void add(T obj) {
-            if (set.add(obj)) builder.add(obj);
-        }
-
-        public ImmutableList<T> build() {
-            return builder.build();
         }
     }
 

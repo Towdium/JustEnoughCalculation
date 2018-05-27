@@ -17,7 +17,7 @@ import java.util.List;
  */
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public interface SubCommand {
+public interface ISubCommand {
     String getName();
 
     String getUsage(ICommandSender sender);

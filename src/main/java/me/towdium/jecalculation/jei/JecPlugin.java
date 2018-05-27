@@ -29,15 +29,13 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class JecPlugin implements IModPlugin {
-    public static final ILabel.RegistryConverterItem registryItem = ILabel.RegistryConverterItem.INSTANCE;
-    public static final ILabel.RegistryConverterFluid registryFluid = ILabel.RegistryConverterFluid.INSTANCE;
     public static IJeiRuntime runtime;
 
     public static ILabel getLabelUnderMouse() {
         Object o = runtime.getIngredientListOverlay().getIngredientUnderMouse();
         if (o == null) return ILabel.EMPTY;
-        else if (o instanceof ItemStack) return registryItem.toLabel(((ItemStack) o));
-        else if (o instanceof FluidStack) return registryFluid.toLabel(((FluidStack) o));
+        else if (o instanceof ItemStack) return ILabel.CONVERTER_ITEM.toLabel(((ItemStack) o));
+        else if (o instanceof FluidStack) return ILabel.CONVERTER_FLUID.toLabel(((FluidStack) o));
         else {
             JustEnoughCalculation.logger.warn("Unsupported ingredient type detected: " + o.getClass());
             return ILabel.EMPTY;
@@ -80,6 +78,4 @@ public class JecPlugin implements IModPlugin {
             } else return null;
         }
     }
-
-
 }

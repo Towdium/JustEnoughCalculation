@@ -3,11 +3,11 @@ package me.towdium.jecalculation.data.structure;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.structure.Recipe.enumIoType;
 import me.towdium.jecalculation.utils.Utilities;
-import me.towdium.jecalculation.utils.Utilities.INDListBuilder;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -24,31 +24,23 @@ public class User {
     public static final String KEY_RECENT = "recent";
 
     public Recipes recipes;
-    public Recent recents;
+    public Recent recent;  // client mode only
 
     public User() {
         recipes = new Recipes();
-        recents = new Recent();
+        recent = new Recent();
     }
 
     public User(NBTTagCompound nbt) {
         recipes = new Recipes(nbt.getTagList(KEY_RECIPE, 10));
-        recents = new Recent(nbt.getTagList(KEY_RECENT, 10));
+        recent = new Recent(nbt.getTagList(KEY_RECENT, 10));
     }
 
     public NBTTagCompound serialize() {
         NBTTagCompound ret = new NBTTagCompound();
         ret.setTag(KEY_RECIPE, recipes.serialize());
-        ret.setTag(KEY_RECENT, recents.serialize());
+        ret.setTag(KEY_RECENT, recent.serialize());
         return ret;
-    }
-
-    public List<Recipe> search(String group, ILabel label, enumIoType type) {
-        INDListBuilder<Recipe> builder = new INDListBuilder<>();
-        IntStream.range(0, type.getSize()).forEach(i -> recipes.get(group).ifPresent(rs -> rs.forEach(r -> {
-            ILabel.MERGER.merge(label, r.getLabel(type)[i], true).ifPresent(l -> builder.add(r));
-        })));
-        return builder.build();
     }
 
     public static class Recipes {
@@ -81,15 +73,21 @@ public class User {
         public void set(String group, int index, Recipe recipe) {
             records.get(group).orElseGet(() -> {
                 throw new RuntimeException("Group not found: " + group + ".");
-            })
-                    .set(index, recipe);
+            }).set(index, recipe);
         }
 
         public void remove(String group, int index) {
             records.get(group).orElseGet(() -> {
                 throw new RuntimeException("Group not found: " + group + ".");
-            })
-                    .remove(index);
+            }).remove(index);
+        }
+
+        public List<Recipe> search(String group, ILabel label, enumIoType type) {
+            HashSet<Recipe> set = new HashSet<>();
+            IntStream.range(0, type.getSize()).forEach(i -> get(group).ifPresent(rs -> rs.forEach(r -> {
+                ILabel.MERGER.merge(label, r.getLabel(type)[i], true).ifPresent(l -> set.add(r));
+            })));
+            return new ArrayList<>(set);
         }
 
         public void forEach(BiConsumer<String, List<Recipe>> consumer) {
@@ -116,6 +114,7 @@ public class User {
 
     public static class Recent {
         Utilities.Recent<ILabel> record = new Utilities.Recent<>(9);
+        public static final String IDENTIFIER = "recent";
 
         public Recent(NBTTagList nbt) {
             List<ILabel> ls = StreamSupport.stream(nbt.spliterator(), false)
@@ -137,8 +136,7 @@ public class User {
         }
 
         public List<ILabel> getRecords() {
-            List<ILabel> labels = record.toList();
-            return labels.subList(1, labels.size());
+            return record.toList();
         }
 
         public NBTTagList serialize() {

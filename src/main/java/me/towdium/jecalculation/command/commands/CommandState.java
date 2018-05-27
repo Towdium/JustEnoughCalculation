@@ -2,8 +2,7 @@ package me.towdium.jecalculation.command.commands;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
-import me.towdium.jecalculation.command.SubCommand;
-import net.minecraft.command.CommandException;
+import me.towdium.jecalculation.command.ISubCommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -16,7 +15,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
  */
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class CommandState implements SubCommand {
+public class CommandState implements ISubCommand {
     @Override
     public String getName() {
         return "state";
@@ -28,7 +27,7 @@ public class CommandState implements SubCommand {
     }
 
     @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
         sender.sendMessage(new TextComponentTranslation("command.state.desc", JustEnoughCalculation.side.toString()));
     }
 }

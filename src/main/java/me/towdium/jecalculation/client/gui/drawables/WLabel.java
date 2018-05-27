@@ -12,6 +12,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
+import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
 /**
@@ -32,6 +33,7 @@ public class WLabel implements IWidget {
     public int xPos, yPos, xSize, ySize;
     public ILabel label;
     public enumMode mode;
+    public Consumer<ILabel> lsnrUpdate;
     protected Timer timer = new Timer();
 
     public WLabel(int xPos, int yPos, int xSize, int ySize, enumMode mode) {
@@ -49,6 +51,7 @@ public class WLabel implements IWidget {
 
     public void setLabel(ILabel label) {
         this.label = label;
+        notifyLsnr();
     }
 
     @Override
@@ -81,6 +84,7 @@ public class WLabel implements IWidget {
                 if (JecGui.isShiftDown()) label = diff > 0 ? label.increaseAmountLarge() : label.decreaseAmountLarge();
                 else label = diff > 0 ? label.increaseAmount() : label.decreaseAmount();
             });
+            notifyLsnr();
             return true;
         } else return false;
     }
@@ -93,15 +97,18 @@ public class WLabel implements IWidget {
                     if (gui.hand != label.EMPTY) {
                         label = gui.hand;
                         gui.hand = label.EMPTY;
+                        notifyLsnr();
                         return true;
                     } else if (label != label.EMPTY) {
                         if (button == 0) {
                             if (JecGui.isShiftDown()) label = label.increaseAmountLarge();
                             else label = label.increaseAmount();
+                            notifyLsnr();
                             return true;
                         } else if (button == 1) {
                             if (JecGui.isShiftDown()) label = label.decreaseAmountLarge();
                             else label = label.decreaseAmount();
+                            notifyLsnr();
                             return true;
                         }
                     } else return false;
@@ -115,6 +122,7 @@ public class WLabel implements IWidget {
                 case SELECTOR:
                     label = gui.hand;
                     gui.hand = label.EMPTY;
+                    notifyLsnr();
                     return true;
                 default:
                     throw new IllegalPositionException();
@@ -122,10 +130,19 @@ public class WLabel implements IWidget {
         } else return false;
     }
 
+    public WLabel setLsnrUpdate(Consumer<ILabel> lsnr) {
+        lsnrUpdate = lsnr;
+        return this;
+    }
+
     public boolean mouseIn(int x, int y) {
         int xx = x - xPos;
         int yy = y - yPos;
         return xx >= 0 && xx < xSize && yy >= 0 && yy < ySize;
+    }
+
+    void notifyLsnr() {
+        if (lsnrUpdate != null) lsnrUpdate.accept(label);
     }
 
     public enum enumMode {

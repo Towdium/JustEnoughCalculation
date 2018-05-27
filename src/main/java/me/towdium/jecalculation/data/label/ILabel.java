@@ -1,15 +1,14 @@
 package me.towdium.jecalculation.data.label;
 
-import com.google.common.base.CaseFormat;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.gui.IWPicker;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.guis.pickers.PickerSimple;
 import me.towdium.jecalculation.client.gui.guis.pickers.PickerUniversal;
-import me.towdium.jecalculation.data.label.labels.LabelFluidStack;
-import me.towdium.jecalculation.data.label.labels.LabelItemStack;
-import me.towdium.jecalculation.data.label.labels.LabelOreDict;
-import me.towdium.jecalculation.data.label.labels.LabelUniversal;
+import me.towdium.jecalculation.data.label.labels.LFluidStack;
+import me.towdium.jecalculation.data.label.labels.LItemStack;
+import me.towdium.jecalculation.data.label.labels.LOreDict;
+import me.towdium.jecalculation.data.label.labels.LString;
 import me.towdium.jecalculation.utils.Utilities.Relation;
 import me.towdium.jecalculation.utils.Utilities.ReversedIterator;
 import net.minecraft.client.renderer.GlStateManager;
@@ -36,12 +35,12 @@ import java.util.stream.Collectors;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public interface ILabel {
-    RegistryMerger MERGER = RegistryMerger.INSTANCE;
-    RegistryDeserializer DESERIALIZER = RegistryDeserializer.INSTANCE;
-    RegistryConverterItem CONVERTER_ITEM = RegistryConverterItem.INSTANCE;
-    RegistryConverterFluid CONVERTER_FLUID = RegistryConverterFluid.INSTANCE;
-    RegistryEditor EDITOR = RegistryEditor.INSTANCE;
-    ILabel EMPTY = new LabelItemStack(ItemStack.EMPTY, 0);
+    RegistryMerger MERGER = new RegistryMerger();
+    RegistrySerializer DESERIALIZER = new RegistrySerializer();
+    RegistryConverterItem CONVERTER_ITEM = new RegistryConverterItem();
+    RegistryConverterFluid CONVERTER_FLUID = new RegistryConverterFluid();
+    RegistryEditor EDITOR = new RegistryEditor();
+    ILabel EMPTY = new LItemStack(ItemStack.EMPTY, 0);
 
     String FORMAT_BLUE = "\u00A79";
     String FORMAT_GREY = "\u00A78";
@@ -60,14 +59,11 @@ public interface ILabel {
     @SideOnly(Side.CLIENT)
     String getDisplayName();
 
-    static String getIdentifier(ILabel c) {
-        return getIdentifier(c.getClass());
-    }
-
-    static String getIdentifier(Class<? extends ILabel> c) {
-        String s = c.getSimpleName();
-        if (s.startsWith("Label")) s = s.substring(5);
-        return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, s);
+    static void initServer() {
+        DESERIALIZER.register(LFluidStack.IDENTIFIER, LFluidStack::new);
+        DESERIALIZER.register(LItemStack.IDENTIFIER, LItemStack::new);
+        DESERIALIZER.register(LOreDict.IDENTIFIER, LOreDict::new);
+        DESERIALIZER.register(LString.IDENTIFIER, LString::new);
     }
 
     List<String> getToolTip(List<String> existing, boolean detailed);
@@ -75,6 +71,17 @@ public interface ILabel {
     ILabel copy();
 
     NBTTagCompound toNBTTagCompound();
+
+    static void initClient() {
+        CONVERTER_ITEM.register(LOreDict::guess);
+        EDITOR.register(PickerSimple.FluidStack::new, "fluid_stack", new LFluidStack(FluidRegistry.WATER, 1000));
+        EDITOR.register(PickerSimple.OreDict::new, "ore_dict", new LOreDict("ingotIron"));
+        EDITOR.register(PickerUniversal::new, "string", new LString("example", 1));
+        MERGER.register("itemStack", "itemStack", ILabel.RegistryMerger::mergeItemStackNItemStack);
+        MERGER.register("oreDict", "oreDict", ILabel.RegistryMerger::mergeOreDictNOreDict);
+    }
+
+    String getIdentifier();
 
     @SideOnly(Side.CLIENT)
     default void drawLabel(JecGui gui, int xPos, int yPos, boolean center) {
@@ -92,20 +99,10 @@ public interface ILabel {
      * {@link ILabel label(s)}.
      * It uses singleton mode. First registerGuess merge functions, then use
      * {@link #merge(ILabel, ILabel, boolean)} to operate the {@link ILabel}.
-     * For registering, see {@link RegistryDeserializer}.
+     * For registering, see {@link RegistrySerializer}.
      */
     class RegistryMerger {
-        public static final RegistryMerger INSTANCE;
-
-        static {
-            INSTANCE = new RegistryMerger();
-            // registerGuess functions here
-            INSTANCE.register("itemStack", "itemStack", RegistryMerger::mergeItemStackNItemStack);
-            INSTANCE.register("oreDict", "oreDict", RegistryMerger::mergeOreDictNOreDict);
-        }
-
         private Relation<String, MergerFunction> functions = new Relation<>();
-
 
         private RegistryMerger() {
         }
@@ -115,15 +112,15 @@ public interface ILabel {
         }
 
         static Optional<ILabel> mergeItemStackNItemStack(ILabel a, ILabel b, boolean add) {
-            if (a instanceof LabelItemStack && b instanceof LabelItemStack) {
-                LabelItemStack lisA = (LabelItemStack) a;
-                LabelItemStack lisB = (LabelItemStack) b;
+            if (a instanceof LItemStack && b instanceof LItemStack) {
+                LItemStack lisA = (LItemStack) a;
+                LItemStack lisB = (LItemStack) b;
                 ItemStack isA = lisA.getItemStack();
                 ItemStack isB = lisB.getItemStack();
                 if (isA.getItem() == isB.getItem() && isA.getItemDamage() == isB.getItemDamage() &&
                         (isA.getTagCompound() == null ? !isB.hasTagCompound() :
                                 isA.getTagCompound().equals(isB.getTagCompound()))) {
-                    LabelItemStack ret = new LabelItemStack(lisA.getItemStack(),
+                    LItemStack ret = new LItemStack(lisA.getItemStack(),
                             add ? lisA.getAmount() + lisB.getAmount() : lisA.getAmount() - lisB.getAmount());
                     return Optional.of(ret);
                 }
@@ -132,18 +129,18 @@ public interface ILabel {
         }
 
         static Optional<ILabel> mergeOreDictNOreDict(ILabel a, ILabel b, boolean add) {
-            if (a instanceof LabelOreDict && b instanceof LabelOreDict) {
-                LabelOreDict lodA = (LabelOreDict) a;
-                LabelOreDict lodB = (LabelOreDict) b;
+            if (a instanceof LOreDict && b instanceof LOreDict) {
+                LOreDict lodA = (LOreDict) a;
+                LOreDict lodB = (LOreDict) b;
                 if (lodA.getName().equals(lodB.getName()))
-                    return Optional.of(new LabelOreDict(lodA.getName(),
+                    return Optional.of(new LOreDict(lodA.getName(),
                             add ? lodA.getAmount() + lodB.getAmount() : lodA.getAmount() - lodB.getAmount()));
             }
             return Optional.empty();
         }
 
         public Optional<ILabel> merge(ILabel a, ILabel b, boolean add) {
-            Optional<ILabel> ret = functions.get(ILabel.getIdentifier(a), ILabel.getIdentifier(b))
+            Optional<ILabel> ret = functions.get(a.getIdentifier(), b.getIdentifier())
                     .orElse((x, y, f) -> Optional.empty()).merge(a, b, add);
             if (ret.isPresent() && (ret.get() == a || ret.get() == b))
                 throw new RuntimeException("Merger should not modify the given label.");
@@ -167,22 +164,13 @@ public interface ILabel {
      * Here you can find the identifier and deserializer of one type.
      * For {@link ILabel} operations, see {@link RegistryMerger}
      */
-    class RegistryDeserializer {
+    class RegistrySerializer {
         public static final String KEY_IDENTIFIER = "identifier";
         public static final String KEY_CONTENT = "content";
-        public static final RegistryDeserializer INSTANCE;
-
-        static {
-            INSTANCE = new RegistryDeserializer();
-
-            INSTANCE.register(ILabel.getIdentifier(LabelOreDict.class), LabelOreDict::new);
-            INSTANCE.register(ILabel.getIdentifier(LabelItemStack.class), LabelItemStack::new);
-            INSTANCE.register(ILabel.getIdentifier(LabelFluidStack.class), LabelFluidStack::new);
-        }
 
         private HashMap<String, Function<NBTTagCompound, ILabel>> idToData = new HashMap<>();
 
-        private RegistryDeserializer() {
+        private RegistrySerializer() {
         }
 
         public void register(String identifier, Function<NBTTagCompound, ILabel> deserializer) {
@@ -211,7 +199,7 @@ public interface ILabel {
 
         public NBTTagCompound serialize(ILabel label) {
             NBTTagCompound ret = new NBTTagCompound();
-            ret.setString(KEY_CONTENT, ILabel.getIdentifier(label));
+            ret.setString(KEY_IDENTIFIER, label.getIdentifier());
             ret.setTag(KEY_CONTENT, label.toNBTTagCompound());
             return ret;
         }
@@ -238,58 +226,32 @@ public interface ILabel {
                     .collect(Collectors.toList());
         }
 
-        void register(Function<List<T>, List<ILabel>> handler) {
+        public void register(Function<List<T>, List<ILabel>> handler) {
             handlers.add(handler);
         }
     }
 
     class RegistryConverterItem extends RegistryConverter<ItemStack> {
-        public static final RegistryConverterItem INSTANCE;
-
-        static {
-            INSTANCE = new RegistryConverterItem();
-
-            INSTANCE.register(LabelOreDict::guess);
-        }
-
         private RegistryConverterItem() {
         }
 
         @Override
         public ILabel toLabel(ItemStack ingredient) {
-            return new LabelItemStack(ingredient);
+            return new LItemStack(ingredient);
         }
     }
 
     class RegistryConverterFluid extends RegistryConverter<FluidStack> {
-        public static final RegistryConverterFluid INSTANCE;
-
-        static {
-            INSTANCE = new RegistryConverterFluid();
-        }
-
         private RegistryConverterFluid() {
         }
 
         @Override
         public ILabel toLabel(FluidStack ingredient) {
-            return new LabelFluidStack(new FluidStack(ingredient.getFluid(), 1000), ingredient.amount);
+            return new LFluidStack(new FluidStack(ingredient.getFluid(), 1000), ingredient.amount);
         }
     }
 
     class RegistryEditor {
-        public static final RegistryEditor INSTANCE;
-
-        static {
-            INSTANCE = new RegistryEditor();
-
-            INSTANCE.register(PickerSimple.OreDict::new, "common.label.ore_dict",
-                    new LabelOreDict("ingotIron"));
-            INSTANCE.register(PickerSimple.FluidStack::new, "common.label.fluid_stack",
-                    new LabelFluidStack(FluidRegistry.WATER, 1000));
-            INSTANCE.register(PickerUniversal::new, "common.label.universal",
-                    new LabelUniversal("example", 1));
-        }
 
         private ArrayList<Record> records = new ArrayList<>();
 
@@ -297,7 +259,7 @@ public interface ILabel {
         }
 
         public void register(Supplier<IWPicker> editor, String unlocalizedName, ILabel representation) {
-            records.add(new Record(editor, unlocalizedName, representation));
+            records.add(new Record(editor, "common.label." + unlocalizedName, representation));
         }
 
         public List<Record> getRecords() {

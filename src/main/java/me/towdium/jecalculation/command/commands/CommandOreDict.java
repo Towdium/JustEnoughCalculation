@@ -1,8 +1,7 @@
 package me.towdium.jecalculation.command.commands;
 
 import mcp.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.command.SubCommand;
-import net.minecraft.command.CommandException;
+import me.towdium.jecalculation.command.ISubCommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
@@ -17,7 +16,7 @@ import java.util.Arrays;
  */
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class CommandOreDict implements SubCommand {
+public class CommandOreDict implements ISubCommand {
     @Override
     public String getName() {
         return "ore";
@@ -29,7 +28,7 @@ public class CommandOreDict implements SubCommand {
     }
 
     @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
         if (args.length == 0) {
             Arrays.stream(OreDictionary.getOreNames()).forEach(s -> sender.sendMessage(new TextComponentString(s)));
         } // TODO error handling

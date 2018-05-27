@@ -16,7 +16,7 @@ import java.util.HashMap;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class Commands {
-    public static final HashMap<String, SubCommand> commands;
+    public static final HashMap<String, ISubCommand> commands;
 
     public static final CommandHelp commandHelp = new CommandHelp();
     public static final CommandState commandState = new CommandState();
@@ -32,7 +32,7 @@ public class Commands {
         add(commandUuid);
     }
 
-    static void add(SubCommand c) {
+    static void add(ISubCommand c) {
         commands.put(c.getName(), c);
     }
 }

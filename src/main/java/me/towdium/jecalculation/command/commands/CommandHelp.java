@@ -2,8 +2,7 @@ package me.towdium.jecalculation.command.commands;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.command.Commands;
-import me.towdium.jecalculation.command.SubCommand;
-import net.minecraft.command.CommandException;
+import me.towdium.jecalculation.command.ISubCommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
@@ -18,7 +17,7 @@ import java.util.Comparator;
  */
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class CommandHelp implements SubCommand {
+public class CommandHelp implements ISubCommand {
     @Override
     public String getName() {
         return "help";
@@ -30,14 +29,14 @@ public class CommandHelp implements SubCommand {
     }
 
     @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
         if (args.length != 0) {
             sender.sendMessage(new TextComponentTranslation("command.common.unexpected_arg", String.join(" ", args)));
             return;
         }
 
         sender.sendMessage(new TextComponentTranslation("command.help.list"));
-        Commands.commands.values().stream().sorted(Comparator.comparing(SubCommand::getName))
+        Commands.commands.values().stream().sorted(Comparator.comparing(ISubCommand::getName))
                 .forEachOrdered(c -> sender.sendMessage(new TextComponentString(c.getUsage(sender))));
     }
 }

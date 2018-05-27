@@ -5,7 +5,7 @@ import me.towdium.jecalculation.client.gui.IWPicker;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
 import me.towdium.jecalculation.client.gui.drawables.*;
-import me.towdium.jecalculation.data.label.labels.LabelUniversal;
+import me.towdium.jecalculation.data.label.labels.LString;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -32,7 +32,7 @@ public class PickerUniversal extends IWPicker.Simple {
         add(new WIcon(7, 7, 20, 20, Resource.ICN_TEXT_N, Resource.ICN_TEXT_F, "picker_universal.text_create"));
         add(new WLine(36));
         add(new WButtonIcon(95, 7, 20, 20, Resource.BTN_YES_N, Resource.BTN_YES_F).setListenerLeft(() -> {
-            if (!create.getText().equals("")) callback.value.accept(new LabelUniversal(create.getText(), 1));
+            if (!create.getText().equals("")) callback.value.accept(new LString(create.getText(), 1));
         }));
         add(create);
 
