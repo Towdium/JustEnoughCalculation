@@ -3,7 +3,9 @@ package me.towdium.jecalculation.client.gui.guis;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
 import me.towdium.jecalculation.client.gui.drawables.*;
+import me.towdium.jecalculation.data.ControllerClient;
 import me.towdium.jecalculation.data.label.ILabel;
+import me.towdium.jecalculation.data.structure.Recipe;
 import mezz.jei.api.gui.IRecipeLayout;
 import net.minecraft.item.ItemStack;
 
@@ -37,23 +39,30 @@ public class GuiRecipe extends WContainer {
             JecGui.getCurrent().hand = l;
         }));
     });
-    WButton buttonYes = new WButtonIcon(7, 33, 20, 20, Resource.BTN_YES_N, Resource.BTN_YES_F, "recipe.confirm");
-    WButton buttonNo = new WButtonIcon(26, 33, 20, 20, Resource.BTN_NO_N, Resource.BTN_NO_F, "recipe.abort");
+    WSwitcher switcherGroup = new WSwitcher(7, 7, 162, ControllerClient.getGroups());  // TODO
+    WTextField textField = new WTextField(49, 33, 119);
+    WButton buttonNo = new WButtonIcon(26, 33, 20, 20, Resource.BTN_NO_N, Resource.BTN_NO_F, "recipe.abort")
+            .setListenerLeft(() -> setModeNewGroup(false));
+    WButton buttonYes = new WButtonIcon(7, 33, 20, 20, Resource.BTN_YES_N, Resource.BTN_YES_F, "recipe.confirm")
+            .setListenerLeft(() -> {
+                switcherGroup.setTemp(textField.getText());
+                textField.setText("");
+                setModeNewGroup(false);
+            });
     WLabelGroup groupInput = new WLabelGroup(28, 111, 7, 2, 20, 20, EDITOR);
     WLabelGroup groupCatalyst = new WLabelGroup(28, 87, 7, 1, 20, 20, EDITOR);
     WLabelGroup groupOutput = new WLabelGroup(28, 63, 7, 1, 20, 20, EDITOR);
-    WTextField textField = new WTextField(49, 33, 119);
+
     WButton buttonNew = new WButtonIcon(7, 33, 20, 20, Resource.BTN_NEW_N, Resource.BTN_NEW_F, "recipe.new")
             .setListenerLeft(() -> setModeNewGroup(true));
 
     public GuiRecipe() {
         add(new WPanel());
-        add(new WSwitcher(7, 7, 162, 1));
         add(new WIcon(7, 63, 21, 20, Resource.ICN_OUTPUT_N, Resource.ICN_OUTPUT_F, "recipe.output"));
         add(new WIcon(7, 87, 21, 20, Resource.ICN_CATALYST_N, Resource.ICN_CATALYST_F, "recipe.catalyst"));
         add(new WIcon(7, 111, 21, 40, Resource.ICN_INPUT_N, Resource.ICN_INPUT_F, "recipe.input"));
         add(new WLine(57));
-        addAll(groupInput, groupCatalyst, groupOutput);
+        addAll(groupInput, groupCatalyst, groupOutput, switcherGroup);
         setModeNewGroup(false);
     }
 
@@ -108,5 +117,9 @@ public class GuiRecipe extends WContainer {
         groupOutput.setLabel(output, 0);
         disambiguation = buf;
         buttonDisamb.setDisabled(buf.isEmpty());
+    }
+
+    Recipe toRecipe() {
+        return new Recipe(groupInput.getLabels(), groupCatalyst.getLabels(), groupOutput.getLabels());
     }
 }

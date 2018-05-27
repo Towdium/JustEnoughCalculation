@@ -59,7 +59,7 @@ public class LOreDict extends LabelSimpleAmount {
     @Override
     @SideOnly(Side.CLIENT)
     public String getDisplayName() {
-        return Utilities.L18n.format("label.ore_dict.name", name);
+        return Utilities.I18n.format("label.ore_dict.name", name);
     }
 
     public static List<ILabel> guess(List<ItemStack> iss) {

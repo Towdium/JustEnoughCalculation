@@ -4,7 +4,7 @@ import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.gui.IWidget;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.utils.Utilities;
-import me.towdium.jecalculation.utils.Utilities.L18n;
+import me.towdium.jecalculation.utils.Utilities.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -34,7 +34,7 @@ public abstract class WTooltip implements IWidget {
         if (name != null) {
             timer.setState(mouseIn(xMouse, yMouse));
             if (timer.getTime() > 500) {
-                String str = getSuffix().stream().map(s -> L18n.search(String.join(".", "gui", name, s)))
+                String str = getSuffix().stream().map(s -> I18n.search(String.join(".", "gui", name, s)))
                         .filter(p -> p.two).findFirst().map(p -> p.one)
                         .orElse(JecGui.ALWAYS_TOOLTIP ? String.join(".", "gui", name, getSuffix().get(0)) : null);
                 if (str != null) gui.drawTooltip(xMouse, yMouse, str);

@@ -2,7 +2,7 @@ package me.towdium.jecalculation.client.gui.drawables;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.gui.JecGui;
-import me.towdium.jecalculation.utils.Utilities.L18n;
+import me.towdium.jecalculation.utils.Utilities.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -24,7 +24,7 @@ public class WButtonText extends WButton {
     public void onDraw(JecGui gui, int xMouse, int yMouse) {
         super.onDraw(gui, xMouse, yMouse);
         int textColor = mouseIn(xMouse, yMouse) ? 16777120 : 0;
-        String text = L18n.format(String.join(".", "gui", name, "text"));
+        String text = I18n.format(String.join(".", "gui", name, "text"));
         int strWidth = gui.getFontRenderer().getStringWidth(text);
         int ellipsisWidth = gui.getFontRenderer().getStringWidth("...");
         String str = text;

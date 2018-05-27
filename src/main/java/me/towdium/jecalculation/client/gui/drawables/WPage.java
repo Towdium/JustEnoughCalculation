@@ -6,7 +6,7 @@ import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.utils.Utilities;
-import me.towdium.jecalculation.utils.Utilities.L18n;
+import me.towdium.jecalculation.utils.Utilities.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -42,7 +42,7 @@ public class WPage implements IWidget {
         record.representation.drawLabel(gui, index * 24 + 4, -17, false);
         timer.setState(JecGui.mouseIn(index * 24, -21, 24, 21, xMouse, yMouse));
         if (timer.getTime() > 1000)
-            gui.drawTooltip(xMouse, yMouse, L18n.format("gui." + record.localizeKey));
+            gui.drawTooltip(xMouse, yMouse, I18n.format("gui." + record.localizeKey));
     }
 
     @Override

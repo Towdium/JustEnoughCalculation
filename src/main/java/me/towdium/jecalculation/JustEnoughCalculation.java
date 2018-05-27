@@ -3,6 +3,8 @@ package me.towdium.jecalculation;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.network.IProxy;
+import me.towdium.jecalculation.network.packets.PSyncCalculator;
+import me.towdium.jecalculation.network.packets.PSyncRecord;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -57,6 +59,8 @@ public class JustEnoughCalculation {
     public static void initPre(FMLPreInitializationEvent event) {
         network = NetworkRegistry.INSTANCE.newSimpleChannel(Reference.MODID);
         MinecraftForge.EVENT_BUS.register(JecGui.class);
+        network.registerMessage(PSyncCalculator.class, PSyncCalculator.class, 0, Side.SERVER);
+        network.registerMessage(PSyncRecord.class, PSyncRecord.class, 1, Side.CLIENT);
         proxy.initPre();
     }
 

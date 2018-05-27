@@ -17,6 +17,7 @@ import java.util.stream.IntStream;
 /**
  * Author: towdium
  * Date:   17-8-19.
+ * Widget to select page with button for left and right
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -30,7 +31,6 @@ public class WSwitcher extends WContainer {
     protected WText wText;
     protected List<String> keys;
     protected Circulator index;
-    @Nullable
     protected String temp;
     public Consumer<Integer> listener;
 
@@ -45,17 +45,20 @@ public class WSwitcher extends WContainer {
         this.yPos = yPos;
         this.keys = keys;
         left = new WButtonIcon(xPos, yPos, SIZE, SIZE, Resource.WGT_ARR_L_N, Resource.WGT_ARR_L_F,
-                Resource.WGT_ARR_L_D).setListenerLeft(() -> move(false));
+                Resource.WGT_ARR_L_D).setListenerLeft(() -> {
+            if (temp == null) move(false);
+            else setTemp(null);
+        });
         right = new WButtonIcon(xPos + xSize - SIZE, yPos, SIZE, SIZE, Resource.WGT_ARR_R_N, Resource.WGT_ARR_R_F,
-                Resource.WGT_ARR_R_D).setListenerLeft(() -> move(true));
+                Resource.WGT_ARR_R_D).setListenerLeft(() -> {
+            if (temp == null) move(true);
+            else setTemp(null);
+        });
         wRect = new WRectangle(xPos + SIZE, yPos, xSize - 2 * SIZE, SIZE, JecGui.COLOR_GUI_GREY);
         wText = new WText(xPos + SIZE, yPos, xSize - 2 * SIZE, SIZE, JecGui.Font.DEFAULT_SHADOW,
                 () -> temp == null ? keys.get(index.current()) : temp);
         index = new Circulator(keys.size());
-        if (keys.size() == 1) {
-            left.setDisabled(true);
-            right.setDisabled(true);
-        }
+        refresh();
         addAll(left, right, wRect, wText);
     }
 
@@ -64,8 +67,7 @@ public class WSwitcher extends WContainer {
             if (forward) index.move(1);
             else index.move(-1);
         } else temp = null;
-
-        if (listener != null) listener.accept(getIndex());
+        notifyLsnr();
     }
 
     public WSwitcher setListener(Consumer<Integer> listener) {
@@ -75,7 +77,8 @@ public class WSwitcher extends WContainer {
 
     public void setTemp(@Nullable String temp) {
         this.temp = temp;
-        if (listener != null) listener.accept(getIndex());
+        notifyLsnr();
+        refresh();
     }
 
     public int getIndex() {
@@ -84,5 +87,15 @@ public class WSwitcher extends WContainer {
 
     public String getText() {
         return temp == null ? keys.get(index.current()) : temp;
+    }
+
+    public void refresh() {
+        boolean b = temp == null && keys.size() < 2;
+        left.setDisabled(b);
+        right.setDisabled(b);
+    }
+
+    public void notifyLsnr() {
+        if (listener != null) listener.accept(getIndex());
     }
 }

@@ -43,12 +43,17 @@ public class WTextField implements IWidget {
     @Override
     public boolean onKey(JecGui gui, char ch, int code) {
         boolean ret = textField.textboxKeyTyped(ch, code);
-        if (ret && lsnrText != null) lsnrText.accept(textField.getText());
+        if (ret) notifyLsnr();
         return ret;
     }
 
     public String getText() {
         return textField.getText();
+    }
+
+    public void setText(String s) {
+        textField.setText(s);
+        notifyLsnr();
     }
 
     @SuppressWarnings("UnusedReturnValue")
@@ -60,5 +65,9 @@ public class WTextField implements IWidget {
     public WTextField setColor(int color) {
         textField.setTextColor(color);
         return this;
+    }
+
+    void notifyLsnr() {
+        if (lsnrText != null) lsnrText.accept(textField.getText());
     }
 }

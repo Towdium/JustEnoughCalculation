@@ -11,6 +11,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
@@ -43,6 +44,10 @@ public class WLabelGroup extends WContainer {
 
     public Optional<WLabel> getLabelAt(int xMouse, int yMouse) {
         return labels.stream().filter(w -> w.mouseIn(xMouse, yMouse)).findFirst();
+    }
+
+    public List<ILabel> getLabels() {
+        return labels.stream().map(WLabel::getLabel).collect(Collectors.toList());
     }
 
     public void setLabel(List<ILabel> labels, int start) {

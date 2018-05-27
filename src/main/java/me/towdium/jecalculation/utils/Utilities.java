@@ -2,9 +2,11 @@ package me.towdium.jecalculation.utils;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
+import me.towdium.jecalculation.item.ItemCalculator;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import me.towdium.jecalculation.utils.wrappers.Single;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
@@ -93,6 +95,18 @@ public class Utilities {
 
     public static boolean contains(String s1, String s2) {
         return s1.contains(s2);
+    }
+
+    public static Optional<ItemStack> getStack() {
+        InventoryPlayer inv = Minecraft.getMinecraft().player.inventory;
+        ItemStack is = inv.getCurrentItem();
+        if (is.getItem() instanceof ItemCalculator) return Optional.of(is);
+        is = inv.offHandInventory.get(0);
+        return Optional.ofNullable(is.getItem() instanceof ItemCalculator ? is : null);
+    }
+
+    public static void setStack(ItemStack is) {
+
     }
 
     public static class Timer {
@@ -202,10 +216,10 @@ public class Utilities {
     }
 
     @SideOnly(Side.CLIENT)
-    public static class L18n {
+    public static class I18n {
         public static Pair<String, Boolean> search(String translateKey, Object... parameters) {
             Pair<String, Boolean> ret = new Pair<>(null, null);
-            String buffer = I18n.format(translateKey, parameters);
+            String buffer = net.minecraft.client.resources.I18n.format(translateKey, parameters);
             ret.two = !buffer.equals(translateKey);
             buffer = StringEscapeUtils.unescapeJava(buffer);
             ret.one = buffer.replace("\t", "    ");
@@ -277,6 +291,14 @@ public class Utilities {
 
         public void forEach(BiConsumer<K, V> func) {
             value.forEach(p -> func.accept(p.one, p.two));
+        }
+
+        public Stream<Pair<K, V>> stream() {
+            return value.stream();
+        }
+
+        public int size() {
+            return value.size();
         }
     }
 }

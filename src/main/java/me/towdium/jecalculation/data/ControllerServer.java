@@ -3,7 +3,10 @@ package me.towdium.jecalculation.data;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.structure.User;
-import me.towdium.jecalculation.utils.wrappers.Pair;
+import me.towdium.jecalculation.network.packets.PSyncRecord;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.event.entity.player.PlayerEvent.LoadFromFile;
 import net.minecraftforge.event.entity.player.PlayerEvent.SaveToFile;
 import net.minecraftforge.fml.common.Mod;
@@ -12,6 +15,7 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.io.*;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -23,29 +27,46 @@ import java.util.UUID;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class ControllerServer {
-    static HashMap<UUID, Pair<Boolean, User>> records;
+    static HashMap<UUID, User> records = new HashMap<>();
 
     @SubscribeEvent
     public static void onJoin(PlayerLoggedInEvent e) {
-        JustEnoughCalculation.logger.info(String.format("Player join, name: %s, remote: %b, uuid: %s",
-                e.player.getName(), e.player.world.isRemote, e.player.getUniqueID()));
+        JustEnoughCalculation.network.sendTo(new PSyncRecord(records.get(e.player.getUniqueID())),
+                (EntityPlayerMP) e.player);
     }
 
     @SubscribeEvent
     public static void onQuit(PlayerLoggedOutEvent e) {
-        JustEnoughCalculation.logger.info(String.format("Player quit, name: %s, remote: %b",
-                e.player.getName(), e.player.world.isRemote));
+        records.remove(e.player.getUniqueID());
     }
 
     @SubscribeEvent
     public static void onLoad(LoadFromFile e) {
-        JustEnoughCalculation.logger.info(String.format("Player load, name: %s, remote: %b",
-                e.getEntityPlayer().getName(), e.getEntityPlayer().world.isRemote));
+        try {
+            FileInputStream stream = new FileInputStream(e.getPlayerFile("jeca"));
+            NBTTagCompound tag = CompressedStreamTools.readCompressed(stream);
+            records.put(UUID.fromString(e.getPlayerUUID()), new User(tag));
+        } catch (FileNotFoundException ex) {
+            JustEnoughCalculation.logger.info("Record not found for "
+                    + e.getEntityPlayer().getDisplayNameString());
+            records.put(UUID.fromString(e.getPlayerUUID()), new User());
+        } catch (IOException | IllegalArgumentException ex) {
+            JustEnoughCalculation.logger.warn("Fail to load records for "
+                    + e.getEntityPlayer().getDisplayNameString());
+        }
     }
 
     @SubscribeEvent
     public static void onSave(SaveToFile e) {
-        JustEnoughCalculation.logger.info(String.format("Player save, name: %s, remote: %b",
-                e.getEntityPlayer().getName(), e.getEntityPlayer().world.isRemote));
+        try {
+            File file = e.getPlayerFile("jeca");
+            User user = records.get(UUID.fromString(e.getPlayerUUID()));
+            NBTTagCompound tag = user.serialize();
+            FileOutputStream fos = new FileOutputStream(file);
+            CompressedStreamTools.writeCompressed(tag, fos);
+        } catch (Exception ex) {
+            JustEnoughCalculation.logger.warn("Fail to save records for "
+                    + e.getEntityPlayer().getDisplayNameString());
+        }
     }
 }

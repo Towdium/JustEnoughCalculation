@@ -12,6 +12,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 /**
  * Author: towdium
  * Date:   17-9-15.
+ * Base panel of GUIs
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault

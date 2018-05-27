@@ -41,7 +41,7 @@ public class LString extends LabelSimpleAmount {
     @Override
     @SideOnly(Side.CLIENT)
     public String getDisplayName() {
-        return Utilities.L18n.format("label.universal.name", name);
+        return Utilities.I18n.format("label.universal.name", name);
     }
 
     @Override
