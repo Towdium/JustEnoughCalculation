@@ -1,7 +1,6 @@
 package me.towdium.jecalculation.jei;
 
 import mcp.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.guis.GuiRecipe;
 import me.towdium.jecalculation.data.label.ILabel;
@@ -13,8 +12,6 @@ import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -33,13 +30,7 @@ public class JecPlugin implements IModPlugin {
 
     public static ILabel getLabelUnderMouse() {
         Object o = runtime.getIngredientListOverlay().getIngredientUnderMouse();
-        if (o == null) return ILabel.EMPTY;
-        else if (o instanceof ItemStack) return ILabel.CONVERTER_ITEM.toLabel(((ItemStack) o));
-        else if (o instanceof FluidStack) return ILabel.CONVERTER_FLUID.toLabel(((FluidStack) o));
-        else {
-            JustEnoughCalculation.logger.warn("Unsupported ingredient type detected: " + o.getClass());
-            return ILabel.EMPTY;
-        }
+        return ILabel.Converter.from(o);
     }
 
     @Override

@@ -23,23 +23,19 @@ import java.util.List;
 public class LFluidStack implements ILabel {
     public static final String IDENTIFIER = "fluidStack";
     public static final String KEY_FLUID = "name";
-    public static final String KEY_AMOUNT = "amount";
 
     FluidStack fluid;
-    int amount;
 
-    public LFluidStack(FluidStack fluid, int amount) {
+    public LFluidStack(FluidStack fluid) {
         this.fluid = fluid;
-        this.amount = amount;
     }
 
     public LFluidStack(Fluid fluid, int amount) {
-        this(new FluidStack(fluid, 1000), amount);
+        this.fluid = new FluidStack(fluid, amount);
     }
 
     public LFluidStack(NBTTagCompound nbt) {
         fluid = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag(KEY_FLUID));
-        amount = nbt.getInteger(KEY_AMOUNT);
     }
 
     @Override
@@ -64,7 +60,8 @@ public class LFluidStack implements ILabel {
 
     @Override
     public String getAmountString() {
-        return amount >= 1000 ? Utilities.cutNumber(amount / 1000f, 4) + "B" : Integer.toString(amount) + "mB";
+        return fluid.amount >= 1000 ? Utilities.cutNumber(fluid.amount / 1000f, 4) + "B"
+                : Integer.toString(fluid.amount) + "mB";
     }
 
     @Override
@@ -80,14 +77,13 @@ public class LFluidStack implements ILabel {
 
     @Override
     public ILabel copy() {
-        return new LFluidStack(fluid, amount);
+        return new LFluidStack(fluid);
     }
 
     @Override
     public NBTTagCompound toNBTTagCompound() {
         NBTTagCompound ret = new NBTTagCompound();
         ret.setTag(KEY_FLUID, fluid.writeToNBT(new NBTTagCompound()));  // TODO check
-        ret.setInteger(KEY_AMOUNT, amount);
         return ret;
     }
 
@@ -107,12 +103,11 @@ public class LFluidStack implements ILabel {
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof LFluidStack
-                && fluid.equals(((LFluidStack) obj).fluid) && amount == ((LFluidStack) obj).amount;
+        return obj instanceof LFluidStack && fluid.equals(((LFluidStack) obj).fluid);
     }
 
     @Override
     public int hashCode() {
-        return fluid.hashCode() ^ amount;
+        return fluid.hashCode();
     }
 }

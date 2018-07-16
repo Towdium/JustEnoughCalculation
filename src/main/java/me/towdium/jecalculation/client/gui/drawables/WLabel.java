@@ -12,7 +12,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
-import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
 /**
@@ -33,7 +32,7 @@ public class WLabel implements IWidget {
     public int xPos, yPos, xSize, ySize;
     public ILabel label;
     public enumMode mode;
-    public Consumer<ILabel> lsnrUpdate;
+    public Runnable lsnrUpdate;
     protected Timer timer = new Timer();
 
     public WLabel(int xPos, int yPos, int xSize, int ySize, enumMode mode) {
@@ -130,7 +129,7 @@ public class WLabel implements IWidget {
         } else return false;
     }
 
-    public WLabel setLsnrUpdate(Consumer<ILabel> lsnr) {
+    public WLabel setLsnrUpdate(Runnable lsnr) {
         lsnrUpdate = lsnr;
         return this;
     }
@@ -142,7 +141,7 @@ public class WLabel implements IWidget {
     }
 
     void notifyLsnr() {
-        if (lsnrUpdate != null) lsnrUpdate.accept(label);
+        if (lsnrUpdate != null) lsnrUpdate.run();
     }
 
     public enum enumMode {

@@ -16,6 +16,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -62,14 +63,32 @@ public class LOreDict extends LabelSimpleAmount {
         return Utilities.I18n.format("label.ore_dict.name", name);
     }
 
-    public static List<ILabel> guess(List<ItemStack> iss) {
-        HashSet<Integer> ids = new HashSet<>();
-        for (int i : OreDictionary.getOreIDs(iss.get(0))) ids.add(i);
-        iss.forEach(is -> {
-            for (int i : OreDictionary.getOreIDs(is))
-                if (!ids.contains(i)) ids.remove(i);
-        });
-        return ids.stream().map(i -> new LOreDict(OreDictionary.getOreName(i))).collect(Collectors.toList());
+    public static List<ILabel> guess(List<ILabel> iss) {
+        ILabel l = iss.get(0);
+        if (iss.size() > 1 && l instanceof LItemStack) {
+            HashSet<Integer> ids = new HashSet<>();
+            int amount = ((LItemStack) l).getAmount();
+            for (int i : OreDictionary.getOreIDs(((LItemStack) l).itemStack))
+                if (check(i, iss)) ids.add(i);
+            return ids.stream().map(i -> new LOreDict(OreDictionary.getOreName(i), amount))
+                    .collect(Collectors.toList());
+        } else return new ArrayList<>();
+    }
+
+    private static boolean check(int id, List<ILabel> labels) {
+        NonNullList<ItemStack> ores = OreDictionary.getOres(OreDictionary.getOreName(id));
+        for (ItemStack ore : ores) if (!check(ore, labels)) return false;
+        return true;
+    }
+
+    private static boolean check(ItemStack ore, List<ILabel> labels) {
+        int amount = 0;
+        for (ILabel label : labels) {
+            if (label instanceof LItemStack &&
+                    OreDictionary.itemMatches(ore, ((LItemStack) label).itemStack, false)) amount++;
+            if (amount > (ore.getItemDamage() == OreDictionary.WILDCARD_VALUE ? 0 : 1)) return true;
+        }
+        return false;
     }
 
     @Override

@@ -45,8 +45,8 @@ public class GuiCalculator extends WContainer {
         refresh();
         List<ILabel> recent = ControllerClient.getRecent();
         if (recent.size() > 0) wLabel.setLabel(ControllerClient.getRecent().get(0));
-        wLabel.setLsnrUpdate(l -> {
-            ControllerClient.setRecent(l);
+        wLabel.setLsnrUpdate(() -> {
+            ControllerClient.setRecent(wLabel.label);
             refresh();
         });
     }

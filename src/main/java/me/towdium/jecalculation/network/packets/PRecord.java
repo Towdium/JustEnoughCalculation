@@ -9,14 +9,14 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class PSyncRecord implements IMessage, IMessageHandler<PSyncRecord, IMessage> {
+public class PRecord implements IMessage, IMessageHandler<PRecord, IMessage> {
     User user;
 
-    public PSyncRecord(User user) {
+    public PRecord(User user) {
         this.user = user;
     }
 
-    public PSyncRecord() {
+    public PRecord() {
     }
 
     @Override
@@ -31,7 +31,7 @@ public class PSyncRecord implements IMessage, IMessageHandler<PSyncRecord, IMess
     }
 
     @Override
-    public IMessage onMessage(PSyncRecord message, MessageContext ctx) {
+    public IMessage onMessage(PRecord message, MessageContext ctx) {
         ControllerClient.syncFromServer(message.user);
         return null;
     }

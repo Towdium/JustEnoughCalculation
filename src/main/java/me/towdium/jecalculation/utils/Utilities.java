@@ -46,6 +46,12 @@ public class Utilities {
         }
     }
 
+    public static boolean stackEqual(ItemStack a, ItemStack b) {
+        return a.getItem() == b.getItem() && a.getItemDamage() == b.getItemDamage() &&
+                ((a.getTagCompound() == null && b.getTagCompound() == null) ||
+                        (a.getTagCompound() != null && a.getTagCompound().equals(b.getTagCompound())));
+    }
+
     // FLOAT FORMATTING
     public static String cutNumber(float f, int size) {
         BiFunction<Float, Integer, String> form = (fl, len) -> {

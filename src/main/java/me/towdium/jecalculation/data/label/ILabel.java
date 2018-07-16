@@ -19,6 +19,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,10 +36,9 @@ import java.util.stream.Collectors;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public interface ILabel {
-    RegistryMerger MERGER = new RegistryMerger();
-    RegistrySerializer DESERIALIZER = new RegistrySerializer();
-    RegistryConverterItem CONVERTER_ITEM = new RegistryConverterItem();
-    RegistryConverterFluid CONVERTER_FLUID = new RegistryConverterFluid();
+    Merger MERGER = new Merger();
+    Serializer DESERIALIZER = new Serializer();
+    Converter CONVERTER = new Converter();
     RegistryEditor EDITOR = new RegistryEditor();
     ILabel EMPTY = new LItemStack(ItemStack.EMPTY, 0);
 
@@ -73,12 +73,12 @@ public interface ILabel {
     NBTTagCompound toNBTTagCompound();
 
     static void initClient() {
-        CONVERTER_ITEM.register(LOreDict::guess);
+        CONVERTER.register(LOreDict::guess);
         EDITOR.register(PickerSimple.FluidStack::new, "fluid_stack", new LFluidStack(FluidRegistry.WATER, 1000));
         EDITOR.register(PickerSimple.OreDict::new, "ore_dict", new LOreDict("ingotIron"));
         EDITOR.register(PickerUniversal::new, "string", new LString("example", 1));
-        MERGER.register("itemStack", "itemStack", ILabel.RegistryMerger::mergeItemStackNItemStack);
-        MERGER.register("oreDict", "oreDict", ILabel.RegistryMerger::mergeOreDictNOreDict);
+        MERGER.register("itemStack", "itemStack", Merger::mergeItemStackNItemStack);
+        MERGER.register("oreDict", "oreDict", Merger::mergeOreDictNOreDict);
     }
 
     String getIdentifier();
@@ -99,12 +99,12 @@ public interface ILabel {
      * {@link ILabel label(s)}.
      * It uses singleton mode. First registerGuess merge functions, then use
      * {@link #merge(ILabel, ILabel, boolean)} to operate the {@link ILabel}.
-     * For registering, see {@link RegistrySerializer}.
+     * For registering, see {@link Serializer}.
      */
-    class RegistryMerger {
+    class Merger {
         private Relation<String, MergerFunction> functions = new Relation<>();
 
-        private RegistryMerger() {
+        private Merger() {
         }
 
         public void register(String a, String b, MergerFunction func) {
@@ -162,15 +162,15 @@ public interface ILabel {
     /**
      * This class is used to registerGuess an {@link ILabel} type.
      * Here you can find the identifier and deserializer of one type.
-     * For {@link ILabel} operations, see {@link RegistryMerger}
+     * For {@link ILabel} operations, see {@link Merger}
      */
-    class RegistrySerializer {
+    class Serializer {
         public static final String KEY_IDENTIFIER = "identifier";
         public static final String KEY_CONTENT = "content";
 
         private HashMap<String, Function<NBTTagCompound, ILabel>> idToData = new HashMap<>();
 
-        private RegistrySerializer() {
+        private Serializer() {
         }
 
         public void register(String identifier, Function<NBTTagCompound, ILabel> deserializer) {
@@ -205,49 +205,28 @@ public interface ILabel {
         }
     }
 
-    abstract class RegistryConverter<T> {
-        List<Function<List<T>, List<ILabel>>> handlers = new ArrayList<>();
+    class Converter {
+        ArrayList<Function<List<ILabel>, List<ILabel>>> handlers = new ArrayList<>();
 
-        private RegistryConverter() {
+        public static ILabel from(@Nullable Object o) {
+            if (o == null) return ILabel.EMPTY;
+            else if (o instanceof ItemStack) return new LItemStack((ItemStack) o);
+            else if (o instanceof FluidStack) return new LFluidStack((FluidStack) o);
+            else throw new RuntimeException("Unrecognized ingredient type: " + o.getClass());
         }
 
-        /**
-         * @param ingredient the ingredient, possibly itemStack or FluidStack
-         * @return the identical representation
-         */
-        public abstract ILabel toLabel(T ingredient);
-
-        /**
-         * @param ingredients the list of ingredient, possibly itemStack or FluidStack
-         * @return list of guessed representation, sorted by possibility
-         */
-        public List<ILabel> toLabel(List<T> ingredients) {
-            return new ReversedIterator<>(handlers).stream().flatMap(h -> h.apply(ingredients).stream())
-                    .collect(Collectors.toList());
-        }
-
-        public void register(Function<List<T>, List<ILabel>> handler) {
+        public void register(Function<List<ILabel>, List<ILabel>> handler) {
             handlers.add(handler);
         }
-    }
 
-    class RegistryConverterItem extends RegistryConverter<ItemStack> {
-        private RegistryConverterItem() {
+        public ILabel first(List<ILabel> labels) {
+            List<ILabel> guess = guess(labels);
+            return guess.isEmpty() ? labels.get(0) : guess.get(0);
         }
 
-        @Override
-        public ILabel toLabel(ItemStack ingredient) {
-            return new LItemStack(ingredient);
-        }
-    }
-
-    class RegistryConverterFluid extends RegistryConverter<FluidStack> {
-        private RegistryConverterFluid() {
-        }
-
-        @Override
-        public ILabel toLabel(FluidStack ingredient) {
-            return new LFluidStack(new FluidStack(ingredient.getFluid(), 1000), ingredient.amount);
+        public List<ILabel> guess(List<ILabel> labels) {
+            return new ReversedIterator<>(handlers).stream().flatMap(h -> h.apply(labels).stream())
+                    .collect(Collectors.toList());
         }
     }
 

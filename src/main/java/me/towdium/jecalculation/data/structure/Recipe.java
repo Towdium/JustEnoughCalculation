@@ -43,12 +43,13 @@ public class Recipe {
         BiFunction<ILabel[], Integer, ILabel[]> convert = (ls, i) -> {
             ILabel[] ret = new ILabel[i];
             if (ls.length > i) throw new RuntimeException("Too many labels");
-            System.arraycopy(ls, 0, this.input, 0, Math.min(i, ls.length));
+            System.arraycopy(ls, 0, ret, 0, ls.length);
+            for (int j = ls.length; j < i; j++) ret[j] = ILabel.EMPTY;
             return ret;
         };
-        this.input = convert.apply(input, 16);
-        this.catalyst = convert.apply(catalyst, 8);
-        this.output = convert.apply(output, 8);
+        this.input = convert.apply(input, 14);
+        this.catalyst = convert.apply(catalyst, 7);
+        this.output = convert.apply(output, 7);
 
         Single<Integer> hash = new Single<>(0);
         Consumer<ILabel[]> hasher = (ls) -> Arrays.stream(ls)

@@ -5,13 +5,11 @@ import me.towdium.jecalculation.client.gui.IWPicker;
 import me.towdium.jecalculation.client.gui.Resource;
 import me.towdium.jecalculation.client.gui.drawables.*;
 import me.towdium.jecalculation.data.label.ILabel;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Author: towdium
@@ -23,13 +21,12 @@ import java.util.stream.Collectors;
 public class GuiDisambiguation extends IWPicker.Simple {
     protected WLabelScroll lsUp;
     protected WLabelScroll lsDown;
-    protected List<List<ItemStack>> record;
+    protected List<List<ILabel>> record;
 
-    public GuiDisambiguation(List<List<ItemStack>> record) {
+    public GuiDisambiguation(List<List<ILabel>> record) {
         lsUp = new WLabelScroll(25, 48, 7, 3, WLabel.enumMode.PICKER, true);
         lsDown = new WLabelScroll(25, 105, 7, 3, WLabel.enumMode.PICKER, true);
-        this.record = record.stream().filter(iss -> !ILabel.CONVERTER_ITEM.toLabel(iss).isEmpty())
-                .distinct().collect(Collectors.toList());
+        this.record = record;
         WTextField tf = new WTextField(25, 24, 90);
 
         add(new WPanel());
@@ -42,8 +39,10 @@ public class GuiDisambiguation extends IWPicker.Simple {
         setPage(0);
     }
 
-    protected void setPage(int n) {
-        lsUp.setLabels(record.get(n).stream().map(ILabel.CONVERTER_ITEM::toLabel).collect(Collectors.toList()));
-        lsDown.setLabels(ILabel.CONVERTER_ITEM.toLabel(record.get(n)));
+    protected void setPage(int n) {  // TODO
+        lsUp.setLabels(record.get(n));
+        lsDown.setLabels(ILabel.CONVERTER.guess(record.get(n)));
+        //lsUp.setLabels(record.get(n).stream().map(ILabel.CONVERTER_ITEM::toLabel).collect(Collectors.toList()));
+        //lsDown.setLabels(ILabel.CONVERTER_ITEM.toLabel(record.get(n)));
     }
 }

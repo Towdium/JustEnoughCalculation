@@ -9,13 +9,13 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class PSyncCalculator implements IMessage, IMessageHandler<PSyncCalculator, IMessage> {
+public class PCalculator implements IMessage, IMessageHandler<PCalculator, IMessage> {
     ItemStack stack;
 
-    public PSyncCalculator() {
+    public PCalculator() {
     }
 
-    public PSyncCalculator(ItemStack stack) {
+    public PCalculator(ItemStack stack) {
         this.stack = stack;
     }
 
@@ -30,7 +30,7 @@ public class PSyncCalculator implements IMessage, IMessageHandler<PSyncCalculato
     }
 
     @Override
-    public IMessage onMessage(PSyncCalculator message, MessageContext ctx) {
+    public IMessage onMessage(PCalculator message, MessageContext ctx) {
         InventoryPlayer inventory = ctx.getServerHandler().player.inventory;
         ItemStack calculator = inventory.getCurrentItem();
         if (!calculator.isEmpty() && calculator.getItem() instanceof ItemCalculator) {

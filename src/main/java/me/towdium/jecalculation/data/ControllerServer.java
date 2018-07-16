@@ -2,8 +2,9 @@ package me.towdium.jecalculation.data;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
+import me.towdium.jecalculation.data.structure.Recipe;
 import me.towdium.jecalculation.data.structure.User;
-import me.towdium.jecalculation.network.packets.PSyncRecord;
+import me.towdium.jecalculation.network.packets.PRecord;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
@@ -14,6 +15,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.*;
 import java.util.HashMap;
@@ -29,9 +31,22 @@ import java.util.UUID;
 public class ControllerServer {
     static HashMap<UUID, User> records = new HashMap<>();
 
+    /**
+     * @param uuid   User UUID
+     * @param group  Recipe group, crate when not exist
+     * @param index  Recipe group, -1 for add
+     * @param recipe Recipe content, null for remove
+     */
+    public static void modify(UUID uuid, String group, int index, @Nullable Recipe recipe) {
+        User.Recipes rs = records.get(uuid).recipes;
+        if (recipe == null) rs.remove(group, index);
+        else if (index == -1) rs.add(group, recipe);
+        else rs.set(group, index, recipe);
+    }
+
     @SubscribeEvent
     public static void onJoin(PlayerLoggedInEvent e) {
-        JustEnoughCalculation.network.sendTo(new PSyncRecord(records.get(e.player.getUniqueID())),
+        JustEnoughCalculation.network.sendTo(new PRecord(records.get(e.player.getUniqueID())),
                 (EntityPlayerMP) e.player);
     }
 

@@ -4,7 +4,8 @@ import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.structure.Recipe;
 import me.towdium.jecalculation.data.structure.User;
-import me.towdium.jecalculation.network.packets.PSyncCalculator;
+import me.towdium.jecalculation.network.packets.PCalculator;
+import me.towdium.jecalculation.network.packets.PRecipe;
 import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -43,17 +44,17 @@ public class ControllerClient {
 
     public static void addRecipe(String group, Recipe recipe) {
         getRecord().recipes.add(group, recipe);
-        // TODO sync
+        JustEnoughCalculation.network.sendToServer(new PRecipe(group, -1, recipe));
     }
 
     public static void setRecipe(String group, int index, Recipe recipe) {
         getRecord().recipes.set(group, index, recipe);
-        // TODO sync
+        JustEnoughCalculation.network.sendToServer(new PRecipe(group, index, recipe));
     }
 
     public static void removeRecipe(String group, int index) {
         getRecord().recipes.remove(group, index);
-        // TODO sync
+        JustEnoughCalculation.network.sendToServer(new PRecipe(group, index, null));
     }
 
     /**
@@ -96,7 +97,7 @@ public class ControllerClient {
                 User.Recent recent = new User.Recent(Utilities.getTag(is).getTagList(User.Recent.IDENTIFIER, 10));
                 recent.push(label);
                 Utilities.getTag(is).setTag(User.Recent.IDENTIFIER, recent.serialize());
-                JustEnoughCalculation.network.sendToServer(new PSyncCalculator(is));
+                JustEnoughCalculation.network.sendToServer(new PCalculator(is));
             });
         }
     }
