@@ -1,14 +1,14 @@
 package me.towdium.jecalculation.data.label;
 
 import mcp.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.client.gui.IWPicker;
-import me.towdium.jecalculation.client.gui.JecGui;
-import me.towdium.jecalculation.client.gui.guis.pickers.PickerSimple;
-import me.towdium.jecalculation.client.gui.guis.pickers.PickerUniversal;
 import me.towdium.jecalculation.data.label.labels.LFluidStack;
 import me.towdium.jecalculation.data.label.labels.LItemStack;
 import me.towdium.jecalculation.data.label.labels.LOreDict;
 import me.towdium.jecalculation.data.label.labels.LString;
+import me.towdium.jecalculation.gui.IWPicker;
+import me.towdium.jecalculation.gui.JecGui;
+import me.towdium.jecalculation.gui.guis.pickers.PickerSimple;
+import me.towdium.jecalculation.gui.guis.pickers.PickerUniversal;
 import me.towdium.jecalculation.utils.Utilities.Relation;
 import me.towdium.jecalculation.utils.Utilities.ReversedIterator;
 import net.minecraft.client.renderer.GlStateManager;

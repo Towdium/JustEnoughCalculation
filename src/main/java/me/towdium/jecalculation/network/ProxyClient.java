@@ -1,9 +1,9 @@
 package me.towdium.jecalculation.network;
 
-import me.towdium.jecalculation.client.gui.JecGui;
-import me.towdium.jecalculation.client.gui.guis.GuiCalculator;
 import me.towdium.jecalculation.command.JecCommand;
 import me.towdium.jecalculation.data.label.ILabel;
+import me.towdium.jecalculation.gui.JecGui;
+import me.towdium.jecalculation.gui.guis.GuiCalculator;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;

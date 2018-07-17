@@ -1,7 +1,7 @@
 package me.towdium.jecalculation;
 
 import mcp.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.client.gui.JecGui;
+import me.towdium.jecalculation.gui.JecGui;
 import me.towdium.jecalculation.network.IProxy;
 import me.towdium.jecalculation.network.packets.PCalculator;
 import me.towdium.jecalculation.network.packets.PRecipe;
