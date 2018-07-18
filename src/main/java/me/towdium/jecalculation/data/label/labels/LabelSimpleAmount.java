@@ -64,6 +64,12 @@ public abstract class LabelSimpleAmount implements ILabel {
     }
 
     @Override
+    public ILabel invertAmount() {
+        amount *= -1;
+        return this;
+    }
+
+    @Override
     @SideOnly(Side.CLIENT)
     public List<String> getToolTip(List<String> existing, boolean detailed) {
         if (detailed) existing.add(FORMAT_GREY +

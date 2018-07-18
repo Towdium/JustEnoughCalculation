@@ -1,7 +1,7 @@
 package me.towdium.jecalculation.command;
 
 import mcp.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.utils.wrappers.Single;
+import me.towdium.jecalculation.utils.wrappers.Wrapper;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -64,7 +64,7 @@ public class JecCommand extends CommandBase {
         if (args.length == 1) {
             return getListOfStringsMatchingLastWord(args, Commands.commands.keySet());
         } else {
-            Single<ISubCommand> sub = new Single<>(null);
+            Wrapper<ISubCommand> sub = new Wrapper<>(null);
             Commands.commands.values().stream().filter(c -> c.getName().equals(cmd))
                     .findFirst().ifPresent(sub::push);
             return sub.value != null ? sub.value.getTabCompletions(server, sender, cut(args), targetPos)

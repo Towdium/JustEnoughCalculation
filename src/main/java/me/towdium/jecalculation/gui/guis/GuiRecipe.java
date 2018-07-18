@@ -1,12 +1,13 @@
 package me.towdium.jecalculation.gui.guis;
 
+import me.towdium.jecalculation.algorithm.CostList;
 import me.towdium.jecalculation.data.ControllerClient;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.structure.Recipe;
 import me.towdium.jecalculation.gui.JecGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.gui.drawables.*;
-import me.towdium.jecalculation.utils.wrappers.Pair;
+import me.towdium.jecalculation.utils.wrappers.Triple;
 import mezz.jei.api.gui.IRecipeLayout;
 
 import java.util.*;
@@ -91,29 +92,34 @@ public class GuiRecipe extends WContainer {
     }
 
     public void transfer(IRecipeLayout recipe) {
-        ArrayList<Pair<ILabel, List<ILabel>>> input = new ArrayList<>();
-        ArrayList<Pair<ILabel, List<ILabel>>> output = new ArrayList<>();
+        // item disamb raw
+        ArrayList<Triple<ILabel, CostList, CostList>> input = new ArrayList<>();
+        ArrayList<Triple<ILabel, CostList, CostList>> output = new ArrayList<>();
         HashMap<Integer, List<ILabel>> disamb = new HashMap<>();
 
-        BiConsumer<ArrayList<Pair<ILabel, List<ILabel>>>, List<ILabel>> merge = (dst, list) -> {
+        BiConsumer<ArrayList<Triple<ILabel, CostList, CostList>>, List<ILabel>> merge = (dst, list) -> {
             if (list.isEmpty()) return;
             dst.stream().filter(p -> {
-                boolean ret = p.two.equals(list);
-                if (ret) ILabel.MERGER.merge(p.one, ILabel.CONVERTER.first(list), true).ifPresent(i -> p.one = i);
-                return ret;
+                CostList cl = new CostList(list);
+                if (p.three.equals(cl)) {
+                    ILabel.MERGER.merge(p.one, ILabel.CONVERTER.first(list), true).ifPresent(i -> p.one = i.one);
+                    p.two.merge(cl, true);
+                    return true;
+                } else return false;
             }).findAny().orElseGet(() -> {
-                Pair<ILabel, List<ILabel>> ret = new Pair<>(ILabel.CONVERTER.first(list), list);
+                Triple<ILabel, CostList, CostList> ret = new Triple<>(
+                        ILabel.CONVERTER.first(list), new CostList(list), new CostList(list));
                 dst.add(ret);
                 return ret;
             });
         };
 
-        BiFunction<ArrayList<Pair<ILabel, List<ILabel>>>, Integer, ArrayList<ILabel>> sort = (src, offset) -> {
+        BiFunction<ArrayList<Triple<ILabel, CostList, CostList>>, Integer, ArrayList<ILabel>> sort = (src, offset) -> {
             ArrayList<ILabel> ret = new ArrayList<>();
             for (int i = 0; i < src.size(); i++) {
-                Pair<ILabel, List<ILabel>> p = src.get(i);
+                Triple<ILabel, CostList, CostList> p = src.get(i);
                 ret.add(p.one);
-                if (!ILabel.CONVERTER.guess(p.two).isEmpty()) disamb.put(i + offset, p.two);
+                if (!ILabel.CONVERTER.guess(p.three.getLabels()).isEmpty()) disamb.put(i + offset, p.two.getLabels());
             }
             return ret;
         };

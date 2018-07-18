@@ -10,7 +10,7 @@ import me.towdium.jecalculation.gui.IWidget;
 import me.towdium.jecalculation.gui.drawables.WContainer;
 import me.towdium.jecalculation.gui.drawables.WPage;
 import me.towdium.jecalculation.gui.drawables.WPanel;
-import me.towdium.jecalculation.utils.wrappers.Single;
+import me.towdium.jecalculation.utils.wrappers.Wrapper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -39,7 +39,7 @@ public class GuiLabel extends WContainer {
 
     public GuiLabel(Consumer<ILabel> callback) {
         this.callback = callback;
-        Single<Integer> index = new Single<>(0);
+        Wrapper<Integer> index = new Wrapper<>(0);
         ILabel.EDITOR.getRecords().forEach(r -> {
             int i = index.value;
             add(new WPage(i, r, false).setListener(() -> refresh(i)));

@@ -3,7 +3,7 @@ package me.towdium.jecalculation.gui.drawables;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.IWidget;
-import me.towdium.jecalculation.utils.wrappers.Single;
+import me.towdium.jecalculation.utils.wrappers.Wrapper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -55,7 +55,7 @@ public class WLabelGroup extends WContainer {
     }
 
     public void setLabel(List<ILabel> labels, int start) {
-        Single<Integer> i = new Single<>(start);
+        Wrapper<Integer> i = new Wrapper<>(start);
         this.labels.forEach(l -> l.setLabel(i.value < labels.size() ? labels.get(i.value++) : ILabel.EMPTY));
     }
 

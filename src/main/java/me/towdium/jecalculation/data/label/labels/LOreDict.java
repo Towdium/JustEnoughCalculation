@@ -31,6 +31,7 @@ public class LOreDict extends LabelSimpleAmount {
     public static final String IDENTIFIER = "oreDict";
     public static final String KEY_NAME = "name";
     public static final String KEY_AMOUNT = "amount";
+    public static final boolean MODE_FORCE = false;
 
     static {
 
@@ -65,7 +66,7 @@ public class LOreDict extends LabelSimpleAmount {
 
     public static List<ILabel> guess(List<ILabel> iss) {
         ILabel l = iss.get(0);
-        if (iss.size() > 1 && l instanceof LItemStack) {
+        if ((MODE_FORCE || iss.size() > 1) && l instanceof LItemStack) {
             HashSet<Integer> ids = new HashSet<>();
             int amount = ((LItemStack) l).getAmount();
             for (int i : OreDictionary.getOreIDs(((LItemStack) l).itemStack))
@@ -75,19 +76,18 @@ public class LOreDict extends LabelSimpleAmount {
         } else return new ArrayList<>();
     }
 
+    // check labels in the list suitable for the ore id
     private static boolean check(int id, List<ILabel> labels) {
         NonNullList<ItemStack> ores = OreDictionary.getOres(OreDictionary.getOreName(id));
         for (ItemStack ore : ores) if (!check(ore, labels)) return false;
         return true;
     }
 
+    // check the recorded ore item is in the list
     private static boolean check(ItemStack ore, List<ILabel> labels) {
-        int amount = 0;
-        for (ILabel label : labels) {
-            if (label instanceof LItemStack &&
-                    OreDictionary.itemMatches(ore, ((LItemStack) label).itemStack, false)) amount++;
-            if (amount > (ore.getItemDamage() == OreDictionary.WILDCARD_VALUE ? 0 : 1)) return true;
-        }
+        for (ILabel label : labels)
+            if (label instanceof LItemStack && OreDictionary.itemMatches(ore, ((LItemStack) label).itemStack, false))
+                return true;
         return false;
     }
 

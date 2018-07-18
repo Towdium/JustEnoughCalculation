@@ -59,6 +59,12 @@ public class LFluidStack implements ILabel {
     }
 
     @Override
+    public ILabel invertAmount() {
+        fluid.amount *= -1;
+        return this;
+    }
+
+    @Override
     public String getAmountString() {
         return fluid.amount >= 1000 ? Utilities.cutNumber(fluid.amount / 1000f, 4) + "B"
                 : Integer.toString(fluid.amount) + "mB";

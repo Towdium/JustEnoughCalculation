@@ -33,9 +33,9 @@ public class LString extends LabelSimpleAmount {
         this.name = name;
     }
 
-    public LString(LString lu) {
-        super(lu);
-        name = lu.name;
+    public LString(LString label) {
+        super(label);
+        name = label.name;
     }
 
     @Override

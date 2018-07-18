@@ -2,7 +2,7 @@ package me.towdium.jecalculation.data.structure;
 
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.utils.IllegalPositionException;
-import me.towdium.jecalculation.utils.wrappers.Single;
+import me.towdium.jecalculation.utils.wrappers.Wrapper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
@@ -51,7 +51,7 @@ public class Recipe {
         this.catalyst = convert.apply(catalyst, 7);
         this.output = convert.apply(output, 7);
 
-        Single<Integer> hash = new Single<>(0);
+        Wrapper<Integer> hash = new Wrapper<>(0);
         Consumer<ILabel[]> hasher = (ls) -> Arrays.stream(ls)
                 .filter(Objects::nonNull).forEach(i -> hash.value ^= i.hashCode());
         hasher.accept(input);

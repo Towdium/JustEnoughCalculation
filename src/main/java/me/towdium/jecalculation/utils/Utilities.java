@@ -4,7 +4,7 @@ import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.item.ItemCalculator;
 import me.towdium.jecalculation.utils.wrappers.Pair;
-import me.towdium.jecalculation.utils.wrappers.Single;
+import me.towdium.jecalculation.utils.wrappers.Wrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
@@ -212,7 +212,7 @@ public class Utilities {
         public Optional<R> get(T a, T b) {
             int ah = a.hashCode();
             int bh = b.hashCode();
-            Single<R> ret = new Single<>(null);
+            Wrapper<R> ret = new Wrapper<>(null);
             if (ah == bh)
                 ret.push(data.get(new Pair<>(a, b))).push(data.get(new Pair<>(b, a)));
             else

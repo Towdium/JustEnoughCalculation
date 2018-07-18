@@ -8,8 +8,8 @@ import me.towdium.jecalculation.gui.guis.GuiCalculator;
 import me.towdium.jecalculation.jei.JecPlugin;
 import me.towdium.jecalculation.network.ProxyClient;
 import me.towdium.jecalculation.utils.IllegalPositionException;
-import me.towdium.jecalculation.utils.wrappers.Single;
 import me.towdium.jecalculation.utils.wrappers.Triple;
+import me.towdium.jecalculation.utils.wrappers.Wrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
@@ -309,7 +309,7 @@ public class JecGui extends GuiContainer {
     }
 
     private void drawText(float xPos, float yPos, Font f, Function<String, Integer> indenter, String... text) {
-        Single<Integer> y = new Single<>(0);
+        Wrapper<Integer> y = new Wrapper<>(0);
         boolean unicode = fontRenderer.getUnicodeFlag();
         if (!f.unicode) fontRenderer.setUnicodeFlag(false);
         GlStateManager.pushMatrix();

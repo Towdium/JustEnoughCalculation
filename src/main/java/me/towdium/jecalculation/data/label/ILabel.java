@@ -11,6 +11,7 @@ import me.towdium.jecalculation.gui.guis.pickers.PickerSimple;
 import me.towdium.jecalculation.gui.guis.pickers.PickerUniversal;
 import me.towdium.jecalculation.utils.Utilities.Relation;
 import me.towdium.jecalculation.utils.Utilities.ReversedIterator;
+import me.towdium.jecalculation.utils.wrappers.Pair;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -53,6 +54,8 @@ public interface ILabel {
     ILabel decreaseAmount();
 
     ILabel decreaseAmountLarge();
+
+    ILabel invertAmount();
 
     String getAmountString();
 
@@ -112,7 +115,7 @@ public interface ILabel {
         }
 
         static Optional<ILabel> mergeItemStackNItemStack(ILabel a, ILabel b, boolean add) {
-            if (a instanceof LItemStack && b instanceof LItemStack) {
+            if (a instanceof LItemStack && b instanceof LItemStack && a != ILabel.EMPTY && b != ILabel.EMPTY) {
                 LItemStack lisA = (LItemStack) a;
                 LItemStack lisB = (LItemStack) b;
                 ItemStack isA = lisA.getItemStack();
@@ -122,7 +125,7 @@ public interface ILabel {
                                 isA.getTagCompound().equals(isB.getTagCompound()))) {
                     LItemStack ret = new LItemStack(lisA.getItemStack(),
                             add ? lisA.getAmount() + lisB.getAmount() : lisA.getAmount() - lisB.getAmount());
-                    return Optional.of(ret);
+                    return Optional.of(ret.getAmount() == 0 ? ILabel.EMPTY : ret);
                 }
             }
             return Optional.empty();
@@ -139,12 +142,12 @@ public interface ILabel {
             return Optional.empty();
         }
 
-        public Optional<ILabel> merge(ILabel a, ILabel b, boolean add) {
+        public Optional<Pair<ILabel, ILabel>> merge(ILabel a, ILabel b, boolean add) {
             Optional<ILabel> ret = functions.get(a.getIdentifier(), b.getIdentifier())
                     .orElse((x, y, f) -> Optional.empty()).merge(a, b, add);
-            if (ret.isPresent() && (ret.get() == a || ret.get() == b))
+            if (ret.isPresent() && ret.get() != ILabel.EMPTY && (ret.get() == a || ret.get() == b))
                 throw new RuntimeException("Merger should not modify the given label.");
-            return ret;
+            return ret.map(i -> new Pair<>(i, add ? b.copy().invertAmount() : b.copy()));
         }
 
         @FunctionalInterface
@@ -153,7 +156,8 @@ public interface ILabel {
              * @param a   an {@link ILabel} to merge
              * @param b   another {@link ILabel} to merge
              * @param add add together or cancel each other
-             * @return merged {@link ILabel label(s)} if not changed (no matter order), they cannot merge.
+             * @return an optional {@link Pair pair} of {@link ILabel label(s)}.
+             * If empty, the labels cannot merge, otherwise returns difference and common elements
              */
             Optional<ILabel> merge(ILabel a, ILabel b, boolean add);
         }

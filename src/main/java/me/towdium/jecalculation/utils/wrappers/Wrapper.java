@@ -8,27 +8,27 @@ import java.util.function.Predicate;
  * Author: Towdium
  * Date:   2016/7/1.
  */
-public class Single<T> {
+public class Wrapper<T> {
     public T value;
     public Predicate<T> predicate = t -> true;
 
-    public Single(T value) {
+    public Wrapper(T value) {
         this.value = value;
     }
 
-    public Single<T> push(@Nullable T value) {
+    public Wrapper<T> push(@Nullable T value) {
         if (value != null && predicate.test(value))
             this.value = value;
         return this;
     }
 
-    public Single<T> ifPresent(Consumer<T> c) {
+    public Wrapper<T> ifPresent(Consumer<T> c) {
         if (value != null)
             c.accept(value);
         return this;
     }
 
-    public Single<T> ifPresentNot(Runnable r) {
+    public Wrapper<T> ifPresentNot(Runnable r) {
         if (value == null)
             r.run();
         return this;
