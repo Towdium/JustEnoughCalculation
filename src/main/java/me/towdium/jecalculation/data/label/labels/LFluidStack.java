@@ -2,7 +2,7 @@ package me.towdium.jecalculation.data.label.labels;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
-import me.towdium.jecalculation.gui.JecGui;
+import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.nbt.NBTTagCompound;
@@ -102,7 +102,7 @@ public class LFluidStack implements ILabel {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void drawLabel(JecGui gui) {
+    public void drawLabel(JecaGui gui) {
         gui.drawResource(Resource.LBL_FLUID, 0, 0);
         gui.drawFluid(fluid.getFluid(), 2, 2, 12, 12);
     }

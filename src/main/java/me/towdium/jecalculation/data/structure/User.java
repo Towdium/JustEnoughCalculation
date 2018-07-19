@@ -8,10 +8,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -93,11 +94,31 @@ public class User {
         }
 
         public List<Recipe> search(String group, ILabel label, enumIoType type) {
-            HashSet<Recipe> set = new HashSet<>();
-            IntStream.range(0, type.getSize()).forEach(i -> get(group).ifPresent(rs -> rs.forEach(r -> {
-                ILabel.MERGER.merge(label, r.getLabel(type)[i], true).ifPresent(l -> set.add(r));
-            })));
-            return new ArrayList<>(set);
+            return search(records.get(group).map(Collection::stream).orElseGet(Stream::empty),
+                    r -> IntStream.range(0, type.getSize()).anyMatch(i ->
+                            ILabel.MERGER.merge(label, r.getLabel(type)[i], true).isPresent()));
+        }
+
+        public List<Recipe> search(String group, String label, enumIoType type) {
+            return search(records.get(group).map(Collection::stream).orElseGet(Stream::empty),
+                    r -> IntStream.range(0, type.getSize()).anyMatch(i ->
+                            Utilities.contains(r.getLabel(type)[i].getDisplayName(), label)));
+        }
+
+        public List<Recipe> search(ILabel label, enumIoType type) {
+            return search(records.stream().flatMap(i -> i.two.stream()),
+                    r -> IntStream.range(0, type.getSize()).anyMatch(i ->
+                            ILabel.MERGER.merge(label, r.getLabel(type)[i], true).isPresent()));
+        }
+
+        public List<Recipe> search(String label, enumIoType type) {
+            return search(records.stream().flatMap(i -> i.two.stream()),
+                    r -> IntStream.range(0, type.getSize()).anyMatch(i ->
+                            Utilities.contains(r.getLabel(type)[i].getDisplayName(), label)));
+        }
+
+        private List<Recipe> search(Stream<Recipe> list, Predicate<Recipe> pre) {
+            return list.filter(pre).collect(Collectors.toCollection(ArrayList::new));
         }
 
         public void forEach(BiConsumer<String, List<Recipe>> consumer) {
@@ -123,7 +144,8 @@ public class User {
     }
 
     public static class Recent {
-        Utilities.Recent<ILabel> record = new Utilities.Recent<>(9);
+        Utilities.Recent<ILabel> record = new Utilities.Recent<>((a, b) ->
+                a == ILabel.EMPTY || a.equals(b), 9);
         public static final String IDENTIFIER = "recent";
 
         public Recent(NBTTagList nbt) {

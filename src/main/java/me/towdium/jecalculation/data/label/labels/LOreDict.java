@@ -3,7 +3,7 @@ package me.towdium.jecalculation.data.label.labels;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.label.ILabel;
-import me.towdium.jecalculation.gui.JecGui;
+import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.client.renderer.GlStateManager;
@@ -32,10 +32,6 @@ public class LOreDict extends LabelSimpleAmount {
     public static final String KEY_NAME = "name";
     public static final String KEY_AMOUNT = "amount";
     public static final boolean MODE_FORCE = false;
-
-    static {
-
-    }
 
     protected String name;
 
@@ -103,7 +99,7 @@ public class LOreDict extends LabelSimpleAmount {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void drawLabel(JecGui gui) {
+    public void drawLabel(JecaGui gui) {
         NonNullList<ItemStack> list = NonNullList.create();
         OreDictionary.getOres(name).forEach(is -> {
             if (is.getItemDamage() == OreDictionary.WILDCARD_VALUE) {

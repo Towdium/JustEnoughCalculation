@@ -3,7 +3,7 @@ package me.towdium.jecalculation.gui.drawables;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.IWidget;
-import me.towdium.jecalculation.gui.JecGui;
+import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.utils.IllegalPositionException;
 import me.towdium.jecalculation.utils.Utilities.Timer;
@@ -22,11 +22,11 @@ import java.util.stream.IntStream;
 @MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class WLabel implements IWidget {
-    static JecGui.Font font;
+    static JecaGui.Font font;
 
     static {
-        font = JecGui.Font.DEFAULT_HALF.copy();
-        font.align = JecGui.Font.enumAlign.RIGHT;
+        font = JecaGui.Font.DEFAULT_HALF.copy();
+        font.align = JecaGui.Font.enumAlign.RIGHT;
     }
 
     public int xPos, yPos, xSize, ySize;
@@ -50,11 +50,12 @@ public class WLabel implements IWidget {
 
     public void setLabel(ILabel label) {
         this.label = label;
-        notifyLsnr();
+        if (mode == enumMode.EDITOR || mode == enumMode.SELECTOR)
+            notifyLsnr();
     }
 
     @Override
-    public void onDraw(JecGui gui, int xMouse, int yMouse) {
+    public void onDraw(JecaGui gui, int xMouse, int yMouse) {
         gui.drawResourceContinuous(Resource.WGT_SLOT, xPos, yPos, xSize, ySize, 3, 3, 3, 3);
         label.drawLabel(gui, xPos + xSize / 2, yPos + ySize / 2, true);
         if (mode == enumMode.RESULT || mode == enumMode.EDITOR)
@@ -77,10 +78,10 @@ public class WLabel implements IWidget {
     }
 
     @Override
-    public boolean onScroll(JecGui gui, int xMouse, int yMouse, int diff) {
+    public boolean onScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
         if (mouseIn(xMouse, yMouse) && mode == enumMode.EDITOR && label != ILabel.EMPTY) {
             IntStream.range(0, Math.abs(diff)).forEach(i -> {
-                if (JecGui.isShiftDown()) label = diff > 0 ? label.increaseAmountLarge() : label.decreaseAmountLarge();
+                if (JecaGui.isShiftDown()) label = diff > 0 ? label.increaseAmountLarge() : label.decreaseAmountLarge();
                 else label = diff > 0 ? label.increaseAmount() : label.decreaseAmount();
             });
             notifyLsnr();
@@ -89,7 +90,7 @@ public class WLabel implements IWidget {
     }
 
     @Override
-    public boolean onClicked(JecGui gui, int xMouse, int yMouse, int button) {
+    public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
         if (mouseIn(xMouse, yMouse)) {
             switch (mode) {
                 case EDITOR:
@@ -100,12 +101,12 @@ public class WLabel implements IWidget {
                         return true;
                     } else if (label != label.EMPTY) {
                         if (button == 0) {
-                            if (JecGui.isShiftDown()) label = label.increaseAmountLarge();
+                            if (JecaGui.isShiftDown()) label = label.increaseAmountLarge();
                             else label = label.increaseAmount();
                             notifyLsnr();
                             return true;
                         } else if (button == 1) {
-                            if (JecGui.isShiftDown()) label = label.decreaseAmountLarge();
+                            if (JecaGui.isShiftDown()) label = label.decreaseAmountLarge();
                             else label = label.decreaseAmount();
                             notifyLsnr();
                             return true;
@@ -115,7 +116,7 @@ public class WLabel implements IWidget {
                     return false;
                 case PICKER:
                     if (label != label.EMPTY) {
-                        gui.hand = label.copy();
+                        notifyLsnr();
                         return true;
                     } else return false;
                 case SELECTOR:
@@ -158,7 +159,7 @@ public class WLabel implements IWidget {
          */
         PICKER,
         /**
-         * Slots to select items, eg. in calculate and search gui. No amount displayed.
+         * Slots to put labels into. No amount displayed.
          */
         SELECTOR
     }

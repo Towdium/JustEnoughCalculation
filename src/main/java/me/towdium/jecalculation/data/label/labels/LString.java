@@ -2,7 +2,7 @@ package me.towdium.jecalculation.data.label.labels;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
-import me.towdium.jecalculation.gui.JecGui;
+import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.nbt.NBTTagCompound;
@@ -63,7 +63,7 @@ public class LString extends LabelSimpleAmount {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void drawLabel(JecGui gui) {
+    public void drawLabel(JecaGui gui) {
         gui.drawResource(Resource.LBL_UNIV_B, 0, 0);
         gui.drawResource(Resource.LBL_UNIV_F, 0, 0, (name.hashCode() * 0x131723) & 0xFFFFFF);
     }

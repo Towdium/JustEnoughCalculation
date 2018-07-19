@@ -46,8 +46,12 @@ public class WLabelGroup extends WContainer {
         if (w instanceof WLabel) labels.remove(w);
     }
 
-    public Optional<WLabel> getLabelAt(int xMouse, int yMouse) {
-        return labels.stream().filter(w -> w.mouseIn(xMouse, yMouse)).findFirst();
+    public ILabel getLabelAt(int index) {
+        return labels.get(index).getLabel();
+    }
+
+    public Optional<ILabel> getLabelAt(int xMouse, int yMouse) {
+        return labels.stream().filter(w -> w.mouseIn(xMouse, yMouse)).findFirst().map(WLabel::getLabel);
     }
 
     public List<ILabel> getLabels() {

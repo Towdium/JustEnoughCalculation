@@ -2,7 +2,7 @@ package me.towdium.jecalculation.data.label.labels;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
-import me.towdium.jecalculation.gui.JecGui;
+import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -78,7 +78,7 @@ public class LItemStack extends LabelSimpleAmount {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void drawLabel(JecGui gui) {
+    public void drawLabel(JecaGui gui) {
         gui.drawItemStack(0, 0, itemStack, false);
     }
 

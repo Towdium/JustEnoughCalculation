@@ -2,7 +2,7 @@ package me.towdium.jecalculation.jei;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
-import me.towdium.jecalculation.gui.JecGui;
+import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.guis.GuiRecipe;
 import mezz.jei.api.IJeiRuntime;
 import mezz.jei.api.IModPlugin;
@@ -48,7 +48,7 @@ public class JecPlugin implements IModPlugin {
     public static class TransferHandler implements IRecipeTransferHandler {
         @Override
         public Class getContainerClass() {
-            return JecGui.ContainerTransfer.class;
+            return JecaGui.ContainerTransfer.class;
         }
 
         @Nullable
@@ -56,13 +56,13 @@ public class JecPlugin implements IModPlugin {
         public IRecipeTransferError transferRecipe(
                 Container container, IRecipeLayout recipeLayout, EntityPlayer player,
                 boolean maxTransfer, boolean doTransfer) {
-            if (doTransfer && container instanceof JecGui.JecContainer) {
-                JecGui gui = ((JecGui.JecContainer) container).getGui();
+            if (doTransfer && container instanceof JecaGui.JecContainer) {
+                JecaGui gui = ((JecaGui.JecContainer) container).getGui();
                 if (gui.root instanceof GuiRecipe) {
                     ((GuiRecipe) gui.root).transfer(recipeLayout);
                 } else {
                     GuiRecipe guiRecipe = new GuiRecipe();
-                    JecGui.displayGui(true, true, guiRecipe);
+                    JecaGui.displayGui(true, true, guiRecipe);
                     guiRecipe.transfer(recipeLayout);
                 }
                 return null;

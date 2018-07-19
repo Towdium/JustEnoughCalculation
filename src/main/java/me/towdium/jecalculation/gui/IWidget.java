@@ -11,17 +11,17 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public interface IWidget {
-    void onDraw(JecGui gui, int xMouse, int yMouse);
+    void onDraw(JecaGui gui, int xMouse, int yMouse);
 
-    default boolean onClicked(JecGui gui, int xMouse, int yMouse, int button) {
+    default boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
         return false;
     }
 
-    default boolean onKey(JecGui gui, char ch, int code) {
+    default boolean onKey(JecaGui gui, char ch, int code) {
         return false;
     }
 
-    default boolean onScroll(JecGui gui, int xMouse, int yMouse, int diff) {
+    default boolean onScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
         return false;
     }
 }

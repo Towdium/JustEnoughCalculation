@@ -3,7 +3,7 @@ package me.towdium.jecalculation.gui.guis;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.ControllerClient;
 import me.towdium.jecalculation.data.label.ILabel;
-import me.towdium.jecalculation.gui.JecGui;
+import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.gui.drawables.*;
 import net.minecraftforge.fml.relauncher.Side;
@@ -27,13 +27,14 @@ public class GuiCalculator extends WContainer {
         add(new WPanel());
         add(new WTextField(61, 7, 64));
         add(new WButtonIcon(7, 7, 20, 20, Resource.BTN_LABEL_N, Resource.BTN_LABEL_F, "calculator.label")
-                .setListenerLeft(() -> JecGui.displayGui(new GuiLabel(l -> {
-                    JecGui.displayParent();
-                    JecGui.getCurrent().hand = l;
+                .setListenerLeft(() -> JecaGui.displayGui(new GuiLabel(l -> {
+                    JecaGui.displayParent();
+                    JecaGui.getCurrent().hand = l;
                 }))));
         add(new WButtonIcon(130, 7, 20, 20, Resource.BTN_NEW_N, Resource.BTN_NEW_F, "calculator.recipe")
-                .setListenerLeft(() -> JecGui.displayGui(true, true, new GuiRecipe())));
-        add(new WButtonIcon(149, 7, 20, 20, Resource.BTN_SEARCH_N, Resource.BTN_SEARCH_F, "calculator.search"));
+                .setListenerLeft(() -> JecaGui.displayGui(true, true, new GuiRecipe())));
+        add(new WButtonIcon(149, 7, 20, 20, Resource.BTN_SEARCH_N, Resource.BTN_SEARCH_F, "calculator.search")
+                .setListenerLeft(() -> JecaGui.displayGui(new GuiSearch())));
         add(new WLabelGroup(7, 87, 9, 4, WLabel.enumMode.RESULT));
         add(wRecent);
         add(wLabel);
@@ -47,6 +48,7 @@ public class GuiCalculator extends WContainer {
             ControllerClient.setRecent(wLabel.label);
             refresh();
         });
+        wRecent.setLsnrUpdate(l -> JecaGui.getCurrent().hand = wRecent.getLabelAt(l));
     }
 
     void refresh() {

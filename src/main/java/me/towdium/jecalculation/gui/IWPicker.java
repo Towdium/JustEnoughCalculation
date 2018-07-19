@@ -3,7 +3,6 @@ package me.towdium.jecalculation.gui;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.drawables.WContainer;
-import me.towdium.jecalculation.utils.wrappers.Wrapper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -21,11 +20,11 @@ public interface IWPicker extends IWidget {
     IWPicker setCallback(Consumer<ILabel> callback);
 
     class Simple extends WContainer implements IWPicker {
-        protected Wrapper<Consumer<ILabel>> callback = new Wrapper<>(null);
+        protected Consumer<ILabel> callback;
 
         @Override
         public IWPicker setCallback(Consumer<ILabel> callback) {
-            this.callback.value = callback;
+            this.callback = callback;
             return this;
         }
     }

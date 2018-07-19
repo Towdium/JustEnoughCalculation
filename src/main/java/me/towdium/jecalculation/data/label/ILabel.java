@@ -6,7 +6,7 @@ import me.towdium.jecalculation.data.label.labels.LItemStack;
 import me.towdium.jecalculation.data.label.labels.LOreDict;
 import me.towdium.jecalculation.data.label.labels.LString;
 import me.towdium.jecalculation.gui.IWPicker;
-import me.towdium.jecalculation.gui.JecGui;
+import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.guis.pickers.PickerSimple;
 import me.towdium.jecalculation.gui.guis.pickers.PickerUniversal;
 import me.towdium.jecalculation.utils.Utilities.Relation;
@@ -41,7 +41,7 @@ public interface ILabel {
     Serializer DESERIALIZER = new Serializer();
     Converter CONVERTER = new Converter();
     RegistryEditor EDITOR = new RegistryEditor();
-    ILabel EMPTY = new LItemStack(ItemStack.EMPTY, 0);
+    ILabel EMPTY = new LEmpty();
 
     String FORMAT_BLUE = "\u00A79";
     String FORMAT_GREY = "\u00A78";
@@ -67,6 +67,7 @@ public interface ILabel {
         DESERIALIZER.register(LItemStack.IDENTIFIER, LItemStack::new);
         DESERIALIZER.register(LOreDict.IDENTIFIER, LOreDict::new);
         DESERIALIZER.register(LString.IDENTIFIER, LString::new);
+        DESERIALIZER.register(LEmpty.IDENTIFIER, i -> EMPTY);
     }
 
     List<String> getToolTip(List<String> existing, boolean detailed);
@@ -87,14 +88,14 @@ public interface ILabel {
     String getIdentifier();
 
     @SideOnly(Side.CLIENT)
-    default void drawLabel(JecGui gui, int xPos, int yPos, boolean center) {
+    default void drawLabel(JecaGui gui, int xPos, int yPos, boolean center) {
         GlStateManager.pushMatrix();
         GlStateManager.translate(center ? xPos - 8 : xPos, center ? yPos - 8 : yPos, 0);
         drawLabel(gui);
         GlStateManager.popMatrix();
     }
 
-    void drawLabel(JecGui gui);
+    void drawLabel(JecaGui gui);
 
     /**
      * Since {@link ILabel} merging is bidirectional, it is redundant to
@@ -115,7 +116,7 @@ public interface ILabel {
         }
 
         static Optional<ILabel> mergeItemStackNItemStack(ILabel a, ILabel b, boolean add) {
-            if (a instanceof LItemStack && b instanceof LItemStack && a != ILabel.EMPTY && b != ILabel.EMPTY) {
+            if (a instanceof LItemStack && b instanceof LItemStack) {
                 LItemStack lisA = (LItemStack) a;
                 LItemStack lisB = (LItemStack) b;
                 ItemStack isA = lisA.getItemStack();
@@ -196,9 +197,7 @@ public interface ILabel {
          */
         public ILabel deserialize(NBTTagCompound nbt) {
             String s = nbt.getString(KEY_IDENTIFIER);
-            ILabel e = idToData.get(s).apply(nbt.getCompoundTag(KEY_CONTENT));
-            if (e != ILabel.EMPTY) return e;
-            else throw new RuntimeException("Fail to deserialize label type: " + s);
+            return idToData.get(s).apply(nbt.getCompoundTag(KEY_CONTENT));
         }
 
         public NBTTagCompound serialize(ILabel label) {
@@ -259,6 +258,72 @@ public interface ILabel {
                 this.localizeKey = localizeKey;
                 this.representation = representation;
             }
+        }
+    }
+
+    class LEmpty implements ILabel {
+        public static final String IDENTIFIER = "empty";
+
+        private LEmpty() {
+        }
+
+        @Override
+        public ILabel increaseAmount() {
+            return this;
+        }
+
+        @Override
+        public ILabel increaseAmountLarge() {
+            return this;
+        }
+
+        @Override
+        public ILabel decreaseAmount() {
+            return this;
+        }
+
+        @Override
+        public ILabel decreaseAmountLarge() {
+            return this;
+        }
+
+        @Override
+        public ILabel invertAmount() {
+            return this;
+        }
+
+        @Override
+        public String getAmountString() {
+            return "";
+        }
+
+        @Override
+        public String getDisplayName() {
+            return "";
+        }
+
+        @Override
+        public List<String> getToolTip(List<String> existing, boolean detailed) {
+            return new ArrayList<>();
+        }
+
+        @Override
+        public ILabel copy() {
+            return this;
+        }
+
+        @Override
+        public NBTTagCompound toNBTTagCompound() {
+            return new NBTTagCompound();
+        }
+
+        @Override
+        public String getIdentifier() {
+            return IDENTIFIER;
+        }
+
+        @Override
+        public void drawLabel(JecaGui gui) {
         }
     }
 }

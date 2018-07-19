@@ -2,7 +2,7 @@ package me.towdium.jecalculation.network;
 
 import me.towdium.jecalculation.command.JecCommand;
 import me.towdium.jecalculation.data.label.ILabel;
-import me.towdium.jecalculation.gui.JecGui;
+import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.guis.GuiCalculator;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.client.ClientCommandHandler;
@@ -36,6 +36,6 @@ public class ProxyClient extends ProxyServer {
     @Override
     public void displayCalculator() {
         super.displayCalculator();
-        JecGui.displayGui(new GuiCalculator());
+        JecaGui.displayGui(new GuiCalculator());
     }
 }

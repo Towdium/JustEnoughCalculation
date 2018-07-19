@@ -1,7 +1,7 @@
 package me.towdium.jecalculation.gui.drawables;
 
 import mcp.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.gui.JecGui;
+import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.utils.Utilities.Circulator;
 import net.minecraftforge.fml.relauncher.Side;
@@ -53,8 +53,8 @@ public class WSwitcher extends WContainer {
             if (temp == null) move(true);
             else setTemp(null);
         });
-        wRect = new WRectangle(xPos + SIZE, yPos, xSize - 2 * SIZE, SIZE, JecGui.COLOR_GUI_GREY);
-        wText = new WText(xPos + SIZE, yPos, xSize - 2 * SIZE, SIZE, JecGui.Font.DEFAULT_SHADOW,
+        wRect = new WRectangle(xPos + SIZE, yPos, xSize - 2 * SIZE, SIZE, JecaGui.COLOR_GUI_GREY);
+        wText = new WText(xPos + SIZE, yPos, xSize - 2 * SIZE, SIZE, JecaGui.Font.DEFAULT_SHADOW,
                 () -> temp == null ? keys.get(index.current()) : temp);
         index = new Circulator(keys.size());
         refresh();

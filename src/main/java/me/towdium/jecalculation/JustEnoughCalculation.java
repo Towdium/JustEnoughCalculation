@@ -1,7 +1,7 @@
 package me.towdium.jecalculation;
 
 import mcp.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.gui.JecGui;
+import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.network.IProxy;
 import me.towdium.jecalculation.network.packets.PCalculator;
 import me.towdium.jecalculation.network.packets.PRecipe;
@@ -59,7 +59,7 @@ public class JustEnoughCalculation {
     @Mod.EventHandler
     public static void initPre(FMLPreInitializationEvent event) {
         network = NetworkRegistry.INSTANCE.newSimpleChannel(Reference.MODID);
-        MinecraftForge.EVENT_BUS.register(JecGui.class);
+        MinecraftForge.EVENT_BUS.register(JecaGui.class);
         network.registerMessage(PCalculator.class, PCalculator.class, 0, Side.SERVER);
         network.registerMessage(PRecord.class, PRecord.class, 1, Side.CLIENT);
         network.registerMessage(PRecipe.class, PRecipe.class, 2, Side.SERVER);

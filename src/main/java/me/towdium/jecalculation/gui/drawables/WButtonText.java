@@ -1,7 +1,7 @@
 package me.towdium.jecalculation.gui.drawables;
 
 import mcp.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.gui.JecGui;
+import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.utils.Utilities.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -21,7 +21,7 @@ public class WButtonText extends WButton {
     }
 
     @Override
-    public void onDraw(JecGui gui, int xMouse, int yMouse) {
+    public void onDraw(JecaGui gui, int xMouse, int yMouse) {
         super.onDraw(gui, xMouse, yMouse);
         int textColor = mouseIn(xMouse, yMouse) ? 16777120 : 0;
         String text = I18n.format(String.join(".", "gui", name, "text"));
@@ -30,7 +30,7 @@ public class WButtonText extends WButton {
         String str = text;
         if (strWidth > xSize - 6 && strWidth > ellipsisWidth)
             str = gui.getFontRenderer().trimStringToWidth(text, xSize - 6 - ellipsisWidth).trim() + "...";
-        JecGui.Font f = JecGui.Font.DEFAULT_SHADOW.copy();
+        JecaGui.Font f = JecaGui.Font.DEFAULT_SHADOW.copy();
         f.color = textColor;
         gui.drawText(xPos, yPos, xSize, ySize, f, str);
     }

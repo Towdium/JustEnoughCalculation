@@ -4,7 +4,7 @@ import me.towdium.jecalculation.algorithm.CostList;
 import me.towdium.jecalculation.data.ControllerClient;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.structure.Recipe;
-import me.towdium.jecalculation.gui.JecGui;
+import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.gui.drawables.*;
 import me.towdium.jecalculation.utils.wrappers.Triple;
@@ -27,10 +27,10 @@ public class GuiRecipe extends WContainer {
     WLabelGroup groupCatalyst = new WLabelGroup(28, 87, 7, 1, 20, 20, WLabel.enumMode.EDITOR);
     WButton buttonDisamb = new WButtonIcon(102, 33, 20, 20, Resource.BTN_DISAMB_N,
             Resource.BTN_DISAMB_F, Resource.BTN_DISAMB_D, "recipe.disamb").setDisabled(true).setListenerLeft(() -> {
-        if (disambiguation != null) JecGui.displayGui(new GuiDisambiguation(new ArrayList<>(disambiguation.values()))
+        if (disambiguation != null) JecaGui.displayGui(new GuiDisambiguation(new ArrayList<>(disambiguation.values()))
                 .setCallback(l -> {
-                    JecGui.displayParent();
-                    JecGui.getCurrent().hand = l;
+                    JecaGui.displayParent();
+                    JecaGui.getCurrent().hand = l;
                 }));
     });
     WLabelGroup groupInput = new WLabelGroup(28, 111, 7, 2, 20, 20, WLabel.enumMode.EDITOR).setLsnrUpdate(i -> {
@@ -44,14 +44,14 @@ public class GuiRecipe extends WContainer {
     WButton buttonClear = new WButtonIcon(64, 33, 20, 20, Resource.BTN_DEL_N, Resource.BTN_DEL_F, "recipe.clear")
             .setListenerLeft(this::clear);
     WButton buttonLabel = new WButtonIcon(45, 33, 20, 20, Resource.BTN_LABEL_N, Resource.BTN_LABEL_F, "recipe.label")
-            .setListenerLeft(() -> JecGui.displayGui(new GuiLabel((l) -> {
-                JecGui.displayParent();
-                JecGui.getCurrent().hand = l;
+            .setListenerLeft(() -> JecaGui.displayGui(new GuiLabel((l) -> {
+                JecaGui.displayParent();
+                JecaGui.getCurrent().hand = l;
             })));
     WButton buttonSave = new WButtonIcon(26, 33, 20, 20, Resource.BTN_SAVE_N, Resource.BTN_SAVE_F, "recipe.save")
             .setListenerLeft(() -> {
                 ControllerClient.addRecipe(switcherGroup.getText(), toRecipe());
-                JecGui.displayParent();
+                JecaGui.displayParent();
             });
     WTextField textField = new WTextField(49, 33, 119);
     WButton buttonNew = new WButtonIcon(7, 33, 20, 20, Resource.BTN_NEW_N, Resource.BTN_NEW_F, "recipe.new")

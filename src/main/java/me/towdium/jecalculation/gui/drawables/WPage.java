@@ -3,7 +3,7 @@ package me.towdium.jecalculation.gui.drawables;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.IWidget;
-import me.towdium.jecalculation.gui.JecGui;
+import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.Utilities.I18n;
@@ -35,19 +35,19 @@ public class WPage implements IWidget {
     }
 
     @Override
-    public void onDraw(JecGui gui, int xMouse, int yMouse) {
+    public void onDraw(JecaGui gui, int xMouse, int yMouse) {
         Resource resource = focused ? (index == 0 ? Resource.WGT_PAGER_F0 : Resource.WGT_PAGER_FN)
                 : Resource.WGT_PAGER_N;
         gui.drawResourceContinuous(resource, index * 24, -21, 24, 25, 4, 4, 4, 4);
         record.representation.drawLabel(gui, index * 24 + 4, -17, false);
-        timer.setState(JecGui.mouseIn(index * 24, -21, 24, 21, xMouse, yMouse));
+        timer.setState(JecaGui.mouseIn(index * 24, -21, 24, 21, xMouse, yMouse));
         if (timer.getTime() > 1000)
             gui.drawTooltip(xMouse, yMouse, I18n.format("gui." + record.localizeKey));
     }
 
     @Override
-    public boolean onClicked(JecGui gui, int xMouse, int yMouse, int button) {
-        boolean ret = JecGui.mouseIn(index * 24, -21, 24, 21, xMouse, yMouse) && listener != null && !focused;
+    public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
+        boolean ret = JecaGui.mouseIn(index * 24, -21, 24, 21, xMouse, yMouse) && listener != null && !focused;
         if (ret) listener.run();
         return ret;
     }
