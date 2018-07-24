@@ -151,7 +151,7 @@ public class WLabel implements IWidget {
          */
         EDITOR,
         /**
-         * Slots to display calculate/search result. Rounded amount displayed.
+         * Slots to display calculate/getRecipes result. Rounded amount displayed.
          */
         RESULT,
         /**

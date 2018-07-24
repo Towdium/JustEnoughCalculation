@@ -76,8 +76,9 @@ public class WLabelScroll extends WContainer {
         return filtered.size() != 0;
     }
 
-    public void setLsnrUpdate(Consumer<Integer> lsnr) {
+    public WLabelScroll setLsnrUpdate(Consumer<Integer> lsnr) {
         lsnrUpdate = lsnr;
+        return this;
     }
 
     public ILabel getLabelAt(int index) {

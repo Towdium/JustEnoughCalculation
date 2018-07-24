@@ -10,7 +10,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -24,7 +23,7 @@ import java.util.stream.IntStream;
 @SideOnly(Side.CLIENT)
 public class WSwitcher extends WContainer {
     public static final int SIZE = 13;
-    public Consumer<Integer> listener;
+    public Runnable listener;
     protected int xPos, xSize, yPos;
     protected WButton left, right;
     protected WRectangle wRect;
@@ -69,7 +68,7 @@ public class WSwitcher extends WContainer {
         notifyLsnr();
     }
 
-    public WSwitcher setListener(Consumer<Integer> listener) {
+    public WSwitcher setListener(Runnable listener) {
         this.listener = listener;
         return this;
     }
@@ -95,6 +94,6 @@ public class WSwitcher extends WContainer {
     }
 
     public void notifyLsnr() {
-        if (listener != null) listener.accept(getIndex());
+        if (listener != null) listener.run();
     }
 }

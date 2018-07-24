@@ -7,6 +7,7 @@ import me.towdium.jecalculation.data.structure.User;
 import me.towdium.jecalculation.network.packets.PCalculator;
 import me.towdium.jecalculation.network.packets.PRecipe;
 import me.towdium.jecalculation.utils.Utilities;
+import me.towdium.jecalculation.utils.wrappers.Triple;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.Mod;
@@ -72,20 +73,16 @@ public class ControllerClient {
         recordWorld = null;
     }
 
-    public static List<Recipe> search(String group, ILabel label, Recipe.enumIoType type) {
-        return getRecord().recipes.search(group, label, type);
+    public static List<Triple<Recipe, String, Integer>> getRecipes() {
+        return getRecord().recipes.getRecipes();
     }
 
-    public static List<Recipe> search(String group, String label, Recipe.enumIoType type) {
-        return getRecord().recipes.search(group, label, type);
+    public static List<Triple<Recipe, String, Integer>> getRecipes(String group) {
+        return getRecord().recipes.getRecipes(group);
     }
 
-    public static List<Recipe> search(ILabel label, Recipe.enumIoType type) {
-        return getRecord().recipes.search(label, type);
-    }
-
-    public static List<Recipe> search(String label, Recipe.enumIoType type) {
-        return getRecord().recipes.search(label, type);
+    public static List<Triple<Recipe, String, Integer>> getRecipes(ILabel label, Recipe.enumIoType type) {
+        return getRecord().recipes.getRecipes(label, type);
     }
 
     public static List<ILabel> getRecent() {

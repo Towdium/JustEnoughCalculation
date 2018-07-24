@@ -65,6 +65,10 @@ public class GuiRecipe extends WContainer {
     WButton buttonNo = new WButtonIcon(26, 33, 20, 20, Resource.BTN_NO_N, Resource.BTN_NO_F, "recipe.cancel")
             .setListenerLeft(() -> setModeNewGroup(false));
 
+    public GuiRecipe(String group, int index) {
+        // TODO
+    }
+
     public GuiRecipe() {
         add(new WPanel());
         add(new WIcon(7, 63, 21, 20, Resource.ICN_OUTPUT_N, Resource.ICN_OUTPUT_F, "recipe.output"));

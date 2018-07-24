@@ -4,11 +4,11 @@ import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.structure.Recipe.enumIoType;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
+import me.towdium.jecalculation.utils.wrappers.Triple;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -87,38 +87,37 @@ public class User {
             return records.stream();
         }
 
+        public Stream<Triple<Recipe, String, Integer>> flatStream() {
+            return records.stream().flatMap(i ->
+                    IntStream.range(0, i.two.size()).mapToObj(j -> new Triple<>(i.two.get(j), i.one, j)));
+        }
+
+        public Stream<Triple<Recipe, String, Integer>> flatStream(String group) {
+            return records.get(group).map(i -> IntStream.range(0, i.size()).mapToObj(j ->
+                    new Triple<>(i.get(j), group, j))).orElseGet(Stream::empty);
+        }
+
         public void remove(String group, int index) {
             records.get(group).orElseGet(() -> {
                 throw new RuntimeException("Group not found: " + group + ".");
             }).remove(index);
         }
 
-        public List<Recipe> search(String group, ILabel label, enumIoType type) {
-            return search(records.get(group).map(Collection::stream).orElseGet(Stream::empty),
-                    r -> IntStream.range(0, type.getSize()).anyMatch(i ->
-                            ILabel.MERGER.merge(label, r.getLabel(type)[i], true).isPresent()));
+        public List<Triple<Recipe, String, Integer>> getRecipes() {
+            return flatStream().collect(Collectors.toCollection(ArrayList::new));
         }
 
-        public List<Recipe> search(String group, String label, enumIoType type) {
-            return search(records.get(group).map(Collection::stream).orElseGet(Stream::empty),
-                    r -> IntStream.range(0, type.getSize()).anyMatch(i ->
-                            Utilities.contains(r.getLabel(type)[i].getDisplayName(), label)));
+        public List<Triple<Recipe, String, Integer>> getRecipes(String group) {
+            return flatStream(group).collect(Collectors.toCollection(ArrayList::new));
         }
 
-        public List<Recipe> search(ILabel label, enumIoType type) {
-            return search(records.stream().flatMap(i -> i.two.stream()),
-                    r -> IntStream.range(0, type.getSize()).anyMatch(i ->
-                            ILabel.MERGER.merge(label, r.getLabel(type)[i], true).isPresent()));
+        public List<Triple<Recipe, String, Integer>> getRecipes(ILabel label, enumIoType type) {
+            return getRecipes(flatStream(), r -> IntStream.range(0, type.getSize()).anyMatch(i ->
+                    ILabel.MERGER.merge(label, r.getLabel(type)[i], true).isPresent()));
         }
 
-        public List<Recipe> search(String label, enumIoType type) {
-            return search(records.stream().flatMap(i -> i.two.stream()),
-                    r -> IntStream.range(0, type.getSize()).anyMatch(i ->
-                            Utilities.contains(r.getLabel(type)[i].getDisplayName(), label)));
-        }
-
-        private List<Recipe> search(Stream<Recipe> list, Predicate<Recipe> pre) {
-            return list.filter(pre).collect(Collectors.toCollection(ArrayList::new));
+        private List<Triple<Recipe, String, Integer>> getRecipes(Stream<Triple<Recipe, String, Integer>> list, Predicate<Recipe> pre) {
+            return list.filter(i -> pre.test(i.one)).collect(Collectors.toCollection(ArrayList::new));
         }
 
         public void forEach(BiConsumer<String, List<Recipe>> consumer) {
