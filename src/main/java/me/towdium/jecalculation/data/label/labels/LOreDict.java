@@ -31,7 +31,7 @@ public class LOreDict extends LabelSimpleAmount {
     public static final String IDENTIFIER = "oreDict";
     public static final String KEY_NAME = "name";
     public static final String KEY_AMOUNT = "amount";
-    public static final boolean MODE_FORCE = false;
+    public static final boolean MODE_FORCE = true;
 
     protected String name;
 

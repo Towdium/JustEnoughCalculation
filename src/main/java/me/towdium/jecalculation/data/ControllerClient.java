@@ -18,8 +18,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -39,8 +39,8 @@ public class ControllerClient {
 
     public static List<String> getGroups() {
         User user = getRecord();
-        if (user.recipes.size() != 0) return user.recipes.stream().map(p -> p.one).collect(Collectors.toList());
-        else return Collections.singletonList(Utilities.I18n.format("common.default"));
+        if (user.recipes.size() != 0) return user.recipes.stream().map(Map.Entry::getKey).collect(Collectors.toList());
+        else return new ArrayList<>();
     }
 
     public static void addRecipe(String group, Recipe recipe) {
@@ -71,6 +71,10 @@ public class ControllerClient {
     @SubscribeEvent
     public static void onLogOut(ClientDisconnectionFromServerEvent event) {
         recordWorld = null;
+    }
+
+    public static Recipe getRecipe(String group, int index) {
+        return getRecord().recipes.getRecipe(group, index);
     }
 
     public static List<Triple<Recipe, String, Integer>> getRecipes() {

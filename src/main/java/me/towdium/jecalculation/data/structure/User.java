@@ -3,14 +3,14 @@ package me.towdium.jecalculation.data.structure;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.structure.Recipe.enumIoType;
 import me.towdium.jecalculation.utils.Utilities;
-import me.towdium.jecalculation.utils.wrappers.Pair;
 import me.towdium.jecalculation.utils.wrappers.Triple;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -50,7 +50,7 @@ public class User {
         public static final String KEY_NAME = "name";
         public static final String KEY_CONTENT = "content";
 
-        Utilities.OrderedHashMap<String, List<Recipe>> records = new Utilities.OrderedHashMap<>();
+        LinkedHashMap<String, List<Recipe>> records = new LinkedHashMap<>();
 
         public Recipes() {
         }
@@ -66,41 +66,46 @@ public class User {
         }
 
         public void add(String group, Recipe recipe) {
-            records.get(group).orElseGet(() -> {
-                ArrayList<Recipe> ret = new ArrayList<>();
-                records.put(group, ret);
-                return ret;
-            }).add(recipe);
+            if (records.containsKey(group)) {
+                records.get(group).add(recipe);
+            } else {
+                ArrayList<Recipe> l = new ArrayList<>();
+                l.add(recipe);
+                records.put(group, l);
+            }
         }
 
         public void set(String group, int index, Recipe recipe) {
-            records.get(group).orElseGet(() -> {
-                throw new RuntimeException("Group not found: " + group + ".");
-            }).set(index, recipe);
+            records.get(group).set(index, recipe);
         }
 
         public int size() {
             return records.size();
         }
 
-        public Stream<Pair<String, List<Recipe>>> stream() {
-            return records.stream();
+        public Stream<Map.Entry<String, List<Recipe>>> stream() {
+            return records.entrySet().stream();
         }
 
         public Stream<Triple<Recipe, String, Integer>> flatStream() {
-            return records.stream().flatMap(i ->
-                    IntStream.range(0, i.two.size()).mapToObj(j -> new Triple<>(i.two.get(j), i.one, j)));
+            return records.entrySet().stream().flatMap(i ->
+                    IntStream.range(0, i.getValue().size()).mapToObj(j ->
+                            new Triple<>(i.getValue().get(j), i.getKey(), j)));
         }
 
         public Stream<Triple<Recipe, String, Integer>> flatStream(String group) {
-            return records.get(group).map(i -> IntStream.range(0, i.size()).mapToObj(j ->
-                    new Triple<>(i.get(j), group, j))).orElseGet(Stream::empty);
+            List<Recipe> l = records.get(group);
+            return IntStream.range(0, l.size()).mapToObj(j -> new Triple<>(l.get(j), group, j));
         }
 
         public void remove(String group, int index) {
-            records.get(group).orElseGet(() -> {
-                throw new RuntimeException("Group not found: " + group + ".");
-            }).remove(index);
+            List<Recipe> l = records.get(group);
+            l.remove(index);
+            if (l.isEmpty()) records.remove(group);
+        }
+
+        public Recipe getRecipe(String group, int index) {
+            return getGroup(group).get(index);
         }
 
         public List<Triple<Recipe, String, Integer>> getRecipes() {
@@ -124,7 +129,7 @@ public class User {
             records.forEach(consumer);
         }
 
-        public Optional<List<Recipe>> get(String group) {
+        public List<Recipe> getGroup(String group) {
             return records.get(group);
         }
 

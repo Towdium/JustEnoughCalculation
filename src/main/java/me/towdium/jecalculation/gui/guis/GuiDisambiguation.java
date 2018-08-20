@@ -25,10 +25,10 @@ public class GuiDisambiguation extends IWPicker.Simple {
     protected List<List<ILabel>> record;
 
     public GuiDisambiguation(List<List<ILabel>> record) {
+        this.record = record;
         lsUp = new WLabelScroll(25, 48, 7, 3, WLabel.enumMode.PICKER, true);
         lsDown = new WLabelScroll(25, 105, 7, 3, WLabel.enumMode.PICKER, true);
         switcher = new WSwitcher(7, 7, 162, this.record.size()).setListener(() -> setPage(switcher.getIndex()));
-        this.record = record;
         WTextField tf = new WTextField(25, 24, 90);
 
         add(new WPanel());
