@@ -41,7 +41,7 @@ public class PickerSimple extends IWPicker.Simple {
     public static class FluidStack extends PickerSimple {
         public FluidStack() {
             super(FluidRegistry.getRegisteredFluids().entrySet().stream()
-                            .map(e -> new LFluidStack(e.getValue(), 1000)).collect(Collectors.toList()),
+                            .map(e -> new LFluidStack(1000, e.getValue())).collect(Collectors.toList()),
                     "picker_fluid_stack");
         }
     }

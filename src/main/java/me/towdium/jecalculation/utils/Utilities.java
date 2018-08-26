@@ -7,12 +7,12 @@ import me.towdium.jecalculation.utils.wrappers.Pair;
 import me.towdium.jecalculation.utils.wrappers.Wrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -34,16 +34,6 @@ import java.util.stream.StreamSupport;
 @ParametersAreNonnullByDefault
 public class Utilities {
     final static int[] scaleTable = {9, 99, 999, 9999, 99999, 999999, 9999999, 99999999, 999999999, Integer.MAX_VALUE};
-    static Map<String, String> dictionary = new HashMap<>();
-
-    static {
-        Map<String, ModContainer> modMap = Loader.instance().getIndexedModList();
-        for (Map.Entry<String, ModContainer> modEntry : modMap.entrySet()) {
-            String lowercaseId = modEntry.getKey().toLowerCase(Locale.ENGLISH);
-            String modName = modEntry.getValue().getName();
-            dictionary.put(lowercaseId, modName);
-        }
-    }
 
     public static boolean stackEqual(ItemStack a, ItemStack b) {
         return a.getItem() == b.getItem() && a.getItemDamage() == b.getItemDamage() &&
@@ -78,20 +68,17 @@ public class Utilities {
 
     // MOD NAME
     @Nullable
-    public static String getModName(ItemStack stack) {
-        ResourceLocation tmp = stack.getItem().getRegistryName();
+    public static String getModName(Item item) {
+        ResourceLocation tmp = item.getRegistryName();
         if (tmp == null) return null;
-
-        String name = tmp.toString();
-        name = name.substring(0, name.indexOf(":"));
-        if (name.equals("minecraft")) return "Minecraft";
-        else return dictionary.get(name);
+        String id = tmp.getResourceDomain();
+        return id.equals("minecraft") ? "Minecraft" : Loader.instance().getIndexedModList().get(id).getName();
     }
 
-    public static String getModName(FluidStack stack) {
-        String name = stack.getFluid().getName();
+    public static String getModName(Fluid fluid) {
+        String name = fluid.getName();
         if (name.equals("lava") || name.equals("water")) return "Minecraft";
-        else return dictionary.get(stack.getFluid().getStill().toString().split(":")[0]);
+        else return Loader.instance().getIndexedModList().get(fluid.getStill().getResourceDomain()).getName();
     }
 
     public static NBTTagCompound getTag(ItemStack is) {

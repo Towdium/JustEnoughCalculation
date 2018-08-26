@@ -9,6 +9,7 @@ import me.towdium.jecalculation.gui.IWPicker;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.guis.pickers.PickerSimple;
 import me.towdium.jecalculation.gui.guis.pickers.PickerUniversal;
+import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.Utilities.Relation;
 import me.towdium.jecalculation.utils.Utilities.ReversedIterator;
 import me.towdium.jecalculation.utils.wrappers.Pair;
@@ -57,6 +58,17 @@ public interface ILabel {
 
     ILabel invertAmount();
 
+    static void initClient() {
+        CONVERTER.register(LOreDict::guess);
+        EDITOR.register(PickerSimple.FluidStack::new, "fluid_stack", new LFluidStack(1000, FluidRegistry.WATER));
+        EDITOR.register(PickerSimple.OreDict::new, "ore_dict", new LOreDict("ingotIron"));
+        EDITOR.register(PickerUniversal::new, "string", new LString("example", 1));
+        MERGER.register("itemStack", "itemStack", LItemStack::merge);
+        MERGER.register("oreDict", "oreDict", LOreDict::mergeOreDict);
+    }
+
+    int getAmount();
+
     String getAmountString();
 
     @SideOnly(Side.CLIENT)
@@ -76,14 +88,7 @@ public interface ILabel {
 
     NBTTagCompound toNBTTagCompound();
 
-    static void initClient() {
-        CONVERTER.register(LOreDict::guess);
-        EDITOR.register(PickerSimple.FluidStack::new, "fluid_stack", new LFluidStack(FluidRegistry.WATER, 1000));
-        EDITOR.register(PickerSimple.OreDict::new, "ore_dict", new LOreDict("ingotIron"));
-        EDITOR.register(PickerUniversal::new, "string", new LString("example", 1));
-        MERGER.register("itemStack", "itemStack", Merger::mergeItemStackNItemStack);
-        MERGER.register("oreDict", "oreDict", Merger::mergeOreDictNOreDict);
-    }
+    void setAmount(int amount);
 
     String getIdentifier();
 
@@ -113,34 +118,6 @@ public interface ILabel {
 
         public void register(String a, String b, MergerFunction func) {
             functions.add(a, b, func);
-        }
-
-        static Optional<ILabel> mergeItemStackNItemStack(ILabel a, ILabel b, boolean add) {
-            if (a instanceof LItemStack && b instanceof LItemStack) {
-                LItemStack lisA = (LItemStack) a;
-                LItemStack lisB = (LItemStack) b;
-                ItemStack isA = lisA.getItemStack();
-                ItemStack isB = lisB.getItemStack();
-                if (isA.getItem() == isB.getItem() && isA.getItemDamage() == isB.getItemDamage() &&
-                        (isA.getTagCompound() == null ? !isB.hasTagCompound() :
-                                isA.getTagCompound().equals(isB.getTagCompound()))) {
-                    LItemStack ret = new LItemStack(lisA.getItemStack(),
-                            add ? lisA.getAmount() + lisB.getAmount() : lisA.getAmount() - lisB.getAmount());
-                    return Optional.of(ret.getAmount() == 0 ? ILabel.EMPTY : ret);
-                }
-            }
-            return Optional.empty();
-        }
-
-        static Optional<ILabel> mergeOreDictNOreDict(ILabel a, ILabel b, boolean add) {
-            if (a instanceof LOreDict && b instanceof LOreDict) {
-                LOreDict lodA = (LOreDict) a;
-                LOreDict lodB = (LOreDict) b;
-                if (lodA.getName().equals(lodB.getName()))
-                    return Optional.of(new LOreDict(lodA.getName(),
-                            add ? lodA.getAmount() + lodB.getAmount() : lodA.getAmount() - lodB.getAmount()));
-            }
-            return Optional.empty();
         }
 
         public Optional<Pair<ILabel, ILabel>> merge(ILabel a, ILabel b, boolean add) {
@@ -293,6 +270,15 @@ public interface ILabel {
         }
 
         @Override
+        public int getAmount() {
+            return 0;
+        }
+
+        @Override
+        public void setAmount(int amount) {
+        }
+
+        @Override
         public String getAmountString() {
             return "";
         }
@@ -324,6 +310,99 @@ public interface ILabel {
 
         @Override
         public void drawLabel(JecaGui gui) {
+        }
+    }
+
+    abstract class Impl implements ILabel {
+        public static final String KEY_AMOUNT = "amount";
+        protected int amount;
+
+        public Impl(int amount) {
+            this.amount = amount;
+        }
+
+        public Impl(Impl lsa) {
+            this(lsa.amount);
+        }
+
+        public Impl(NBTTagCompound nbt) {
+            amount = nbt.getInteger(KEY_AMOUNT);
+        }
+
+        protected int getMultiplier() {
+            return 1;
+        }
+
+        @Override
+        public ILabel increaseAmount() {
+            setAmount(getAmount() + getMultiplier());
+            return this;
+        }
+
+        @Override
+        public ILabel increaseAmountLarge() {
+            setAmount(getAmount() + 10 * getMultiplier());
+            return this;
+        }
+
+        @Override
+        public ILabel decreaseAmount() {
+            if (getAmount() <= getMultiplier()) return ILabel.EMPTY;
+            else {
+                setAmount(getAmount() - getMultiplier());
+                return this;
+            }
+        }
+
+        @Override
+        public ILabel decreaseAmountLarge() {
+            if (getAmount() <= 10 * getMultiplier()) return ILabel.EMPTY;
+            else {
+                setAmount(getAmount() - 10 * getMultiplier());
+                return this;
+            }
+        }
+
+        @Override
+        public ILabel invertAmount() {
+            setAmount(-getAmount());
+            return this;
+        }
+
+        @Override
+        @SideOnly(Side.CLIENT)
+        public List<String> getToolTip(List<String> existing, boolean detailed) {
+            if (detailed) existing.add(FORMAT_GREY +
+                    Utilities.I18n.format("label.common.tooltip.amount", Integer.toString(getAmount())));
+            return existing;
+        }
+
+        @Override
+        public NBTTagCompound toNBTTagCompound() {
+            NBTTagCompound nbt = new NBTTagCompound();
+            nbt.setInteger(KEY_AMOUNT, amount);
+            return nbt;
+        }
+
+        @Override
+        public int getAmount() {
+            return amount;
+        }
+
+        @Override
+        public void setAmount(int amount) {
+            this.amount = amount;
+        }
+
+        @Override
+        @SideOnly(Side.CLIENT)
+        public String getAmountString() {
+            return getAmount() == 0 ? "" : Utilities.cutNumber(getAmount(), 5);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof Impl && amount == ((Impl) obj).amount;
         }
     }
 }

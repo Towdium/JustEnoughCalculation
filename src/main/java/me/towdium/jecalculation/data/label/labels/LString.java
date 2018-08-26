@@ -17,7 +17,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
  */
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class LString extends LabelSimpleAmount {
+public class LString extends ILabel.Impl {
     public static final String KEY_NAME = "name";
     public static final String IDENTIFIER = "string";
 
