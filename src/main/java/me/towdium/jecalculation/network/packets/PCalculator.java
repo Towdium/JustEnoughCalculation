@@ -11,7 +11,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class PCalculator implements IMessage, IMessageHandler<PCalculator, IMessage> {
+public class PCalculator implements IMessage {
     ItemStack stack;
 
     public PCalculator() {
@@ -31,21 +31,23 @@ public class PCalculator implements IMessage, IMessageHandler<PCalculator, IMess
         ByteBufUtils.writeItemStack(buf, stack);
     }
 
-    @Override
-    public IMessage onMessage(PCalculator message, MessageContext ctx) {
-        IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
-        mainThread.addScheduledTask(() -> {
-            InventoryPlayer inventory = ctx.getServerHandler().player.inventory;
-            ItemStack calculator = inventory.getCurrentItem();
-            if (!calculator.isEmpty() && calculator.getItem() instanceof ItemCalculator) {
-                inventory.setInventorySlotContents(inventory.currentItem, message.stack);
-                return;
-            }
-            calculator = inventory.offHandInventory.get(0);
-            if (!calculator.isEmpty() && calculator.getItem() instanceof ItemCalculator) {
-                inventory.offHandInventory.set(0, message.stack);
-            }
-        });
-        return null;
+    public static class Handler implements IMessageHandler<PCalculator, IMessage> {
+        @Override
+        public IMessage onMessage(PCalculator message, MessageContext ctx) {
+            IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
+            mainThread.addScheduledTask(() -> {
+                InventoryPlayer inventory = ctx.getServerHandler().player.inventory;
+                ItemStack calculator = inventory.getCurrentItem();
+                if (!calculator.isEmpty() && calculator.getItem() instanceof ItemCalculator) {
+                    inventory.setInventorySlotContents(inventory.currentItem, message.stack);
+                    return;
+                }
+                calculator = inventory.offHandInventory.get(0);
+                if (!calculator.isEmpty() && calculator.getItem() instanceof ItemCalculator) {
+                    inventory.offHandInventory.set(0, message.stack);
+                }
+            });
+            return null;
+        }
     }
 }

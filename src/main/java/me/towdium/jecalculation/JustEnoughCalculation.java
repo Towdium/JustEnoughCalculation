@@ -57,7 +57,7 @@ public class JustEnoughCalculation {
     @Mod.EventHandler
     public static void initPre(FMLPreInitializationEvent event) {
         network = NetworkRegistry.INSTANCE.newSimpleChannel(Reference.MODID);
-        network.registerMessage(PCalculator.class, PCalculator.class, 0, Side.SERVER);
+        network.registerMessage(PCalculator.Handler.class, PCalculator.class, 0, Side.SERVER);
         network.registerMessage(PRecord.Handler.class, PRecord.class, 1, Side.CLIENT);
         network.registerMessage(PRecipe.Handler.class, PRecipe.class, 2, Side.SERVER);
         proxy.initPre();

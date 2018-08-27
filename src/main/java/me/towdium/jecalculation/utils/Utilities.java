@@ -221,6 +221,7 @@ public class Utilities {
     public static class I18n {
         public static Pair<String, Boolean> search(String translateKey, Object... parameters) {
             Pair<String, Boolean> ret = new Pair<>(null, null);
+            translateKey = "jecharacters." + translateKey;
             String buffer = net.minecraft.client.resources.I18n.format(translateKey, parameters);
             ret.two = !buffer.equals(translateKey);
             buffer = StringEscapeUtils.unescapeJava(buffer);
