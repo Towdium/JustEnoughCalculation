@@ -1,6 +1,6 @@
 package me.towdium.jecalculation.algorithm;
 
-import me.towdium.jecalculation.data.ControllerClient;
+import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.structure.Recipe;
 import me.towdium.jecalculation.utils.wrappers.Pair;
@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 public class CostList {
     List<ILabel> labels;
-    int hash;
 
     public CostList() {
         labels = new ArrayList<>();
@@ -47,7 +46,7 @@ public class CostList {
                 if (i == j) continue;
                 if (strict) {
                     ILabel tmp = labels.get(i).copy().invertAmount();
-                    if (tmp.equals(labels.get(i))) {
+                    if (tmp.equals(labels.get(j))) {
                         labels.set(i, ILabel.EMPTY);
                         labels.set(j, ILabel.EMPTY);
                     }
@@ -67,17 +66,14 @@ public class CostList {
     public boolean equals(Object obj) {
         if (obj instanceof CostList) {
             CostList c = (CostList) obj;
-            if (hash != c.hash) return false;
             CostList m = c.copy();
-            m.merge(this, false, true);
-            return m.labels.isEmpty();
+            return m.merge(this, false, true).labels.isEmpty();
         } else return false;
     }
 
     public CostList copy() {
         CostList ret = new CostList();
         ret.labels = labels.stream().map(ILabel::copy).collect(Collectors.toList());
-        ret.hash = hash;
         return ret;
     }
 
@@ -95,7 +91,7 @@ public class CostList {
 
     @Override
     public int hashCode() {
-        hash = 0;
+        int hash = 0;
         for (ILabel i : labels) hash ^= i.hashCode();
         return hash;
     }
@@ -131,7 +127,7 @@ public class CostList {
             for (; index < labels.size(); index++) {
                 ILabel label = labels.get(index);
                 if (label.getAmount() >= 0) continue;
-                Optional<Recipe> recipe = ControllerClient.getRecipe(label, Recipe.enumIoType.OUTPUT);
+                Optional<Recipe> recipe = Controller.getRecipe(label, Recipe.enumIoType.OUTPUT);
                 if (recipe.isPresent()) return recipe.get();
             }
             return null;

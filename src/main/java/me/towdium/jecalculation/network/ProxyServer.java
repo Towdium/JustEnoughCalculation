@@ -1,7 +1,7 @@
 package me.towdium.jecalculation.network;
 
 
-import me.towdium.jecalculation.data.capacity.JecaCapability;
+import me.towdium.jecalculation.data.capability.JecaCapability;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.structure.Recipes;
 import net.minecraftforge.common.capabilities.CapabilityManager;

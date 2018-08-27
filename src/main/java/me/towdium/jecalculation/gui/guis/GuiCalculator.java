@@ -1,7 +1,7 @@
 package me.towdium.jecalculation.gui.guis;
 
 import mcp.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.data.ControllerClient;
+import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
@@ -42,17 +42,17 @@ public class GuiCalculator extends WContainer {
         add(new WIcon(151, 31, 18, 18, Resource.ICN_RECENT_N, Resource.ICN_RECENT_F, "calculator.history"));
         add(new WSwitcher(7, 56, 162, 5));
         refresh();
-        List<ILabel> recent = ControllerClient.getRecent();
-        if (recent.size() > 0) wLabel.setLabel(ControllerClient.getRecent().get(0));
+        List<ILabel> recent = Controller.getRecent();
+        if (recent.size() > 0) wLabel.setLabel(Controller.getRecent().get(0));
         wLabel.setLsnrUpdate(() -> {
-            ControllerClient.setRecent(wLabel.label);
+            Controller.setRecent(wLabel.label);
             refresh();
         });
         wRecent.setLsnrUpdate(l -> JecaGui.getCurrent().hand = wRecent.getLabelAt(l));
     }
 
     void refresh() {
-        List<ILabel> recent = ControllerClient.getRecent();
+        List<ILabel> recent = Controller.getRecent();
         if (recent.size() > 1) wRecent.setLabel(recent.subList(1, recent.size()), 0);
     }
 }

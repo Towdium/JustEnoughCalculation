@@ -2,7 +2,7 @@ package me.towdium.jecalculation.utils;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
-import me.towdium.jecalculation.data.capacity.JecaCapability;
+import me.towdium.jecalculation.data.capability.JecaCapability;
 import me.towdium.jecalculation.data.structure.Recipes;
 import me.towdium.jecalculation.item.ItemCalculator;
 import me.towdium.jecalculation.utils.wrappers.Pair;

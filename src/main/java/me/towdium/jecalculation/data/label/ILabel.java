@@ -79,7 +79,6 @@ public interface ILabel {
 
     String getAmountString();
 
-    @SideOnly(Side.CLIENT)
     String getDisplayName();
 
     List<String> getToolTip(List<String> existing, boolean detailed);
@@ -317,6 +316,11 @@ public interface ILabel {
         public static final String KEY_AMOUNT = "amount";
         protected int amount;
 
+        @Override
+        public String toString() {
+            return getDisplayName() + 'x' + getAmount();
+        }
+
         public Impl(int amount) {
             this.amount = amount;
         }
@@ -381,7 +385,7 @@ public interface ILabel {
         @SideOnly(Side.CLIENT)
         public List<String> getToolTip(List<String> existing, boolean detailed) {
             if (detailed) existing.add(FORMAT_GREY +
-                    Utilities.I18n.format("label.common.tooltip.amount", Integer.toString(getAmount())));
+                    Utilities.I18n.format("label.common.tooltip.amount", getAmountString()));
             return existing;
         }
 

@@ -1,4 +1,4 @@
-package me.towdium.jecalculation.data.capacity;
+package me.towdium.jecalculation.data.capability;
 
 import me.towdium.jecalculation.data.structure.Recipes;
 import net.minecraft.nbt.NBTTagList;

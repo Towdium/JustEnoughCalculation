@@ -1,26 +1,32 @@
 package me.towdium.jecalculation.data;
 
 import me.towdium.jecalculation.JustEnoughCalculation;
-import me.towdium.jecalculation.data.capacity.JecaCapability;
+import me.towdium.jecalculation.data.capability.JecaCapability;
+import me.towdium.jecalculation.data.capability.JecaCapacityProvider;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.structure.Recents;
 import me.towdium.jecalculation.data.structure.Recipe;
 import me.towdium.jecalculation.data.structure.Recipes;
 import me.towdium.jecalculation.network.packets.PCalculator;
 import me.towdium.jecalculation.network.packets.PRecipe;
+import me.towdium.jecalculation.network.packets.PRecord;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Triple;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,9 +42,8 @@ import java.util.stream.Collectors;
  * Author: towdium
  * Date:   17-10-15.
  */
-@SideOnly(Side.CLIENT)
-@Mod.EventBusSubscriber(Side.CLIENT)
-public class ControllerClient {
+@Mod.EventBusSubscriber
+public class Controller {
     public static final String KEY_RECIPES = "recipes";
     public static final String KEY_RECENTS = "recents";
     static Recipes recipesClient;
@@ -72,11 +77,6 @@ public class ControllerClient {
         getRecord().remove(group, index);
         if (JustEnoughCalculation.side == JustEnoughCalculation.enumSide.BOTH)
             JustEnoughCalculation.network.sendToServer(new PRecipe(group, index, null));
-    }
-
-    @SubscribeEvent
-    public static void onLogOut(ClientDisconnectionFromServerEvent event) {
-        writeToLocal();
     }
 
     public static Recipe getRecipe(String group, int index) {
@@ -148,5 +148,31 @@ public class ControllerClient {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    // client side
+    @SubscribeEvent
+    public static void onLogOut(ClientDisconnectionFromServerEvent event) {
+        writeToLocal();
+    }
+
+    // server side
+    @SubscribeEvent
+    public static void onJoin(PlayerEvent.PlayerLoggedInEvent e) {
+        JustEnoughCalculation.network.sendTo(new PRecord(Utilities.getRecipes(e.player)), (EntityPlayerMP) e.player);
+    }
+
+    @SubscribeEvent
+    public static void onAttachCapability(AttachCapabilitiesEvent<Entity> e) {
+        if (e.getObject() instanceof EntityPlayer) {
+            e.addCapability(new ResourceLocation(JustEnoughCalculation.Reference.MODID, "record"),
+                    new JecaCapacityProvider(new Recipes()));
+        }
+    }
+
+    @SubscribeEvent
+    public void cloneCapabilitiesEvent(net.minecraftforge.event.entity.player.PlayerEvent.Clone e) {
+        Recipes ro = Utilities.getRecipes(e.getOriginal());
+        Utilities.getRecipes(e.getEntityPlayer()).deserialize(ro.serialize());
     }
 }

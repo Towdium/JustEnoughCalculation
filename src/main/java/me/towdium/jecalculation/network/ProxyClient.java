@@ -1,7 +1,7 @@
 package me.towdium.jecalculation.network;
 
 import me.towdium.jecalculation.command.JecCommand;
-import me.towdium.jecalculation.data.ControllerClient;
+import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
@@ -27,7 +27,7 @@ public class ProxyClient extends ProxyServer {
         super.initPost();
         ClientCommandHandler.instance.registerCommand(new JecCommand());
         ILabel.initClient();
-        ControllerClient.loadFromLocal();
+        Controller.loadFromLocal();
     }
 
     @Override
