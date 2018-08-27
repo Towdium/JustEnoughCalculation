@@ -126,6 +126,11 @@ public class LOreDict extends ILabel.Impl {
     }
 
     @Override
+    public boolean matches(Object l) {
+        return l instanceof LOreDict && name.equals(((LOreDict) l).name);
+    }
+
+    @Override
     public LOreDict copy() {
         return new LOreDict(this);
     }
@@ -167,12 +172,6 @@ public class LOreDict extends ILabel.Impl {
     @Override
     public int hashCode() {
         return name.hashCode() ^ amount;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof LOreDict
-                && amount == ((LOreDict) obj).amount && name.equals(((LOreDict) obj).name);
     }
 
     public String getName() {

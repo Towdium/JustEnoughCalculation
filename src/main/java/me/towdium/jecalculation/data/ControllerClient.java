@@ -91,11 +91,11 @@ public class ControllerClient {
         return getRecord().getRecipes(group);
     }
 
-    public static List<Triple<Recipe, String, Integer>> getRecipes(ILabel label, Recipe.enumIoType type) {
-        return getRecord().getRecipes(label, type);
+    public static Optional<Recipe> getRecipe(ILabel label, Recipe.enumIoType type) {
+        return getRecord().getRecipe(label, type);
     }
 
-    public static List<ILabel> getRecent() {
+    public static List<ILabel> getRecent() {  // TODO reduce usage of it since it reads nbt again
         if (JustEnoughCalculation.side == JustEnoughCalculation.enumSide.CLIENT)
             return recentsClient.getRecords();
         else {

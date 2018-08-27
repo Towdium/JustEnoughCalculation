@@ -117,6 +117,16 @@ public class LItemStack extends ILabel.Impl {
     }
 
     @Override
+    public boolean matches(Object l) {
+        if (l instanceof LItemStack) {
+            LItemStack lis = (LItemStack) l;
+            return (nbt == null ? lis.nbt == null : nbt.equals(lis.nbt))
+                    && (cap == null ? lis.cap == null : cap.equals(lis.cap))
+                    && meta == lis.meta && item == lis.item;
+        } else return false;
+    }
+
+    @Override
     public ILabel copy() {
         return new LItemStack(this);
     }
@@ -140,15 +150,8 @@ public class LItemStack extends ILabel.Impl {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof LItemStack) {
-            LItemStack lis = (LItemStack) obj;
-            return super.equals(obj) && lis.item == item && lis.meta == meta && lis.nbt.equals(nbt);
-        } else return false;
-    }
-
-    @Override
     public int hashCode() {
-        return meta ^ item.getUnlocalizedName().hashCode() ^ (nbt == null ? 0 : nbt.hashCode());
+        return (nbt == null ? 0 : nbt.hashCode()) ^ (cap == null ? 0 : cap.hashCode())
+                ^ meta ^ item.getUnlocalizedName().hashCode() ^ amount;
     }
 }

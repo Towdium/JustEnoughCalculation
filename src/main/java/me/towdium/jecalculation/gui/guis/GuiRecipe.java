@@ -136,8 +136,8 @@ public class GuiRecipe extends WContainer {
             dst.stream().filter(p -> {
                 CostList cl = new CostList(list);
                 if (p.three.equals(cl)) {
-                    ILabel.MERGER.merge(p.one, ILabel.CONVERTER.first(list), true).ifPresent(i -> p.one = i.one);
-                    p.two.merge(cl, true);
+                    ILabel.MERGER.merge(p.one, ILabel.CONVERTER.first(list), true).ifPresent(i -> p.one = i);
+                    p.two.merge(cl, true, true);
                     return true;
                 } else return false;
             }).findAny().orElseGet(() -> {
@@ -153,7 +153,8 @@ public class GuiRecipe extends WContainer {
             for (int i = 0; i < src.size(); i++) {
                 Triple<ILabel, CostList, CostList> p = src.get(i);
                 ret.add(p.one);
-                if (!ILabel.CONVERTER.guess(p.three.getLabels()).isEmpty()) disamb.put(i + offset, p.two.getLabels());
+                if (src != output && !ILabel.CONVERTER.guess(p.three.getLabels()).isEmpty())
+                    disamb.put(i + offset, p.two.getLabels());
             }
             return ret;
         };

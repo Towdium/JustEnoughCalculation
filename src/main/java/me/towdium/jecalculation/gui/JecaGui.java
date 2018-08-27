@@ -158,8 +158,8 @@ public class JecaGui extends GuiContainer {
         root.onDraw(this, mouseX - guiLeft, mouseY - guiTop);
         GlStateManager.popMatrix();
         GlStateManager.pushMatrix();
-        GlStateManager.translate(mouseX - 8, mouseY - 8, 80);
-        hand.drawLabel(this);
+        GlStateManager.translate(0, 0, 80);
+        hand.drawLabel(this, mouseX, mouseY, true);
         GlStateManager.popMatrix();
         drawBufferedTooltip();
         GlStateManager.enableLighting();
