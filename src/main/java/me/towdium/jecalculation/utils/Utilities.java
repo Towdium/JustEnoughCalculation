@@ -2,14 +2,18 @@ package me.towdium.jecalculation.utils;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
+import me.towdium.jecalculation.data.capacity.JecaCapability;
+import me.towdium.jecalculation.data.structure.Recipes;
 import me.towdium.jecalculation.item.ItemCalculator;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import me.towdium.jecalculation.utils.wrappers.Wrapper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.Loader;
@@ -96,6 +100,11 @@ public class Utilities {
         if (is.getItem() instanceof ItemCalculator) return Optional.of(is);
         is = inv.offHandInventory.get(0);
         return Optional.ofNullable(is.getItem() instanceof ItemCalculator ? is : null);
+    }
+
+    public static Recipes getRecipes(EntityPlayer player) {
+        //noinspection ConstantConditions
+        return player.getCapability(JecaCapability.CAPABILITY_RECORD, EnumFacing.UP);
     }
 
     public static void setStack(ItemStack is) {

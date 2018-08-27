@@ -4,6 +4,8 @@ import io.netty.buffer.ByteBuf;
 import me.towdium.jecalculation.item.ItemCalculator;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IThreadListener;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -31,16 +33,19 @@ public class PCalculator implements IMessage, IMessageHandler<PCalculator, IMess
 
     @Override
     public IMessage onMessage(PCalculator message, MessageContext ctx) {
-        InventoryPlayer inventory = ctx.getServerHandler().player.inventory;
-        ItemStack calculator = inventory.getCurrentItem();
-        if (!calculator.isEmpty() && calculator.getItem() instanceof ItemCalculator) {
-            inventory.setInventorySlotContents(inventory.currentItem, message.stack);
-            return null;
-        }
-        calculator = inventory.offHandInventory.get(0);
-        if (!calculator.isEmpty() && calculator.getItem() instanceof ItemCalculator) {
-            inventory.offHandInventory.set(0, message.stack);
-        }
+        IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
+        mainThread.addScheduledTask(() -> {
+            InventoryPlayer inventory = ctx.getServerHandler().player.inventory;
+            ItemStack calculator = inventory.getCurrentItem();
+            if (!calculator.isEmpty() && calculator.getItem() instanceof ItemCalculator) {
+                inventory.setInventorySlotContents(inventory.currentItem, message.stack);
+                return;
+            }
+            calculator = inventory.offHandInventory.get(0);
+            if (!calculator.isEmpty() && calculator.getItem() instanceof ItemCalculator) {
+                inventory.offHandInventory.set(0, message.stack);
+            }
+        });
         return null;
     }
 }

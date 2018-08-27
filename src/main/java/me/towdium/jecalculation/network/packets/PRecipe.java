@@ -1,17 +1,17 @@
 package me.towdium.jecalculation.network.packets;
 
 import io.netty.buffer.ByteBuf;
-import me.towdium.jecalculation.data.ControllerServer;
 import me.towdium.jecalculation.data.structure.Recipe;
+import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.IThreadListener;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-import java.util.UUID;
-
-public class PRecipe implements IMessage, IMessageHandler<PRecipe, IMessage> {
+public class PRecipe implements IMessage {
     static final String KEY_GROUP = "group";
     static final String KEY_INDEX = "index";
     static final String KEY_RECIPE = "recipe";
@@ -47,10 +47,13 @@ public class PRecipe implements IMessage, IMessageHandler<PRecipe, IMessage> {
         ByteBufUtils.writeTag(buf, tag);
     }
 
-    @Override
-    public IMessage onMessage(PRecipe message, MessageContext ctx) {
-        UUID uuid = ctx.getServerHandler().player.getUniqueID();
-        ControllerServer.modify(uuid, message.group, message.index, message.recipe);
-        return null;
+    public static class Handler implements IMessageHandler<PRecipe, IMessage> {
+        @Override
+        public IMessage onMessage(PRecipe message, MessageContext ctx) {
+            IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
+            mainThread.addScheduledTask(() -> Utilities.getRecipes(ctx.getServerHandler().player)
+                    .modify(message.group, message.index, message.recipe));
+            return null;
+        }
     }
 }

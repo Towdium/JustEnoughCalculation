@@ -1,12 +1,10 @@
 package me.towdium.jecalculation;
 
 import mcp.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.network.IProxy;
 import me.towdium.jecalculation.network.packets.PCalculator;
 import me.towdium.jecalculation.network.packets.PRecipe;
 import me.towdium.jecalculation.network.packets.PRecord;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -33,8 +31,8 @@ import java.util.Map;
         modid = JustEnoughCalculation.Reference.MODID,
         name = JustEnoughCalculation.Reference.MODNAME,
         version = JustEnoughCalculation.Reference.VERSION,
-        dependencies = "required-after:jei@[4.7.6.89,)",
-        clientSideOnly = true
+        dependencies = "required-after:jei@[4.7.6.89,)"
+        //clientSideOnly = true
 )
 public class JustEnoughCalculation {
     @Mod.Instance(JustEnoughCalculation.Reference.MODID)
@@ -59,10 +57,9 @@ public class JustEnoughCalculation {
     @Mod.EventHandler
     public static void initPre(FMLPreInitializationEvent event) {
         network = NetworkRegistry.INSTANCE.newSimpleChannel(Reference.MODID);
-        MinecraftForge.EVENT_BUS.register(JecaGui.class);
         network.registerMessage(PCalculator.class, PCalculator.class, 0, Side.SERVER);
-        network.registerMessage(PRecord.class, PRecord.class, 1, Side.CLIENT);
-        network.registerMessage(PRecipe.class, PRecipe.class, 2, Side.SERVER);
+        network.registerMessage(PRecord.Handler.class, PRecord.class, 1, Side.CLIENT);
+        network.registerMessage(PRecipe.Handler.class, PRecipe.class, 2, Side.SERVER);
         proxy.initPre();
     }
 

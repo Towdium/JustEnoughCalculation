@@ -1,10 +1,11 @@
 package me.towdium.jecalculation.network;
 
 import me.towdium.jecalculation.command.JecCommand;
+import me.towdium.jecalculation.data.ControllerClient;
 import me.towdium.jecalculation.data.label.ILabel;
-import me.towdium.jecalculation.gui.JecaGui;
-import me.towdium.jecalculation.gui.guis.GuiCalculator;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -20,11 +21,13 @@ import static org.lwjgl.input.Keyboard.KEY_NONE;
 public class ProxyClient extends ProxyServer {
     public static final KeyBinding keyOpenGui = new KeyBinding("key.open_gui", KEY_NONE, "key.category");
 
+
     @Override
     public void initPost() {
         super.initPost();
         ClientCommandHandler.instance.registerCommand(new JecCommand());
         ILabel.initClient();
+        ControllerClient.loadFromLocal();
     }
 
     @Override
@@ -34,8 +37,12 @@ public class ProxyClient extends ProxyServer {
     }
 
     @Override
-    public void displayCalculator() {
-        super.displayCalculator();
-        JecaGui.displayGui(new GuiCalculator());
+    public void runOnSide(Runnable r, Side s) {
+        if (s == Side.CLIENT) r.run();
+    }
+
+    @Override
+    public EntityPlayer getPlayer() {
+        return Minecraft.getMinecraft().player;
     }
 }
