@@ -30,7 +30,7 @@ public class WSearch extends WContainer {
         addAll(lss);
         for (WLabelScroll i : lss)
             i.setLsnrUpdate(j -> {
-                if (clbk != null) clbk.accept(i.getLabelAt(j).copy());
+                if (clbk != null) clbk.accept(i.getLabelAt(j));
             });
     }
 }

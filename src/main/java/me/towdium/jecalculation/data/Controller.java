@@ -22,10 +22,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
 
 import java.io.File;
@@ -50,8 +51,12 @@ public class Controller {
     static Recents recentsClient;
 
     static Recipes getRecord() {
-        //noinspection ConstantConditions
-        return Minecraft.getMinecraft().player.getCapability(JecaCapability.CAPABILITY_RECORD, EnumFacing.UP);
+        if (JustEnoughCalculation.side == JustEnoughCalculation.enumSide.BOTH)
+            //noinspection ConstantConditions
+            return Minecraft.getMinecraft().player.getCapability(JecaCapability.CAPABILITY_RECORD, EnumFacing.UP);
+        else return recipesClient;
+
+
     }
 
     public static List<String> getGroups() {
@@ -158,7 +163,7 @@ public class Controller {
 
     // server side
     @SubscribeEvent
-    public static void onJoin(PlayerEvent.PlayerLoggedInEvent e) {
+    public static void onJoin(PlayerLoggedInEvent e) {
         JustEnoughCalculation.network.sendTo(new PRecord(Utilities.getRecipes(e.player)), (EntityPlayerMP) e.player);
     }
 
@@ -171,7 +176,7 @@ public class Controller {
     }
 
     @SubscribeEvent
-    public void cloneCapabilitiesEvent(net.minecraftforge.event.entity.player.PlayerEvent.Clone e) {
+    public void onCloneCapability(PlayerEvent.Clone e) {
         Recipes ro = Utilities.getRecipes(e.getOriginal());
         Utilities.getRecipes(e.getEntityPlayer()).deserialize(ro.serialize());
     }

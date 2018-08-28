@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
-public class PickerSimple extends IWPicker.Simple {
+public class PickerSimple extends IWPicker.Impl {
     /**
      * @param labels  label to be displayed for selection
      * @param l18nKey localization key for help string,
@@ -32,7 +32,7 @@ public class PickerSimple extends IWPicker.Simple {
      */
     public PickerSimple(List<ILabel> labels, String l18nKey) {
         WLabelScroll ls = new WLabelScroll(7, 33, 8, 7, WLabel.enumMode.PICKER, true).setLabels(labels);
-        WTextField tf = new WTextField(25, 7, 90);
+        WTextField tf = new WTextField(26, 7, 90);
         add(new WSearch(l -> callback.accept(l), tf, ls));
         add(new WIcon(149, 7, 20, 20, Resource.ICN_HELP_N, Resource.ICN_HELP_F, l18nKey + ".help"));
         add(new WIcon(7, 7, 20, 20, Resource.ICN_TEXT_N, Resource.ICN_TEXT_F, l18nKey + ".text"));

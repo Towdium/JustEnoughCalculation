@@ -3,6 +3,7 @@ package me.towdium.jecalculation.gui.drawables;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.IWidget;
 import me.towdium.jecalculation.gui.JecaGui;
+import me.towdium.jecalculation.utils.Utilities;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -48,19 +49,22 @@ public class WContainer implements IWidget {
 
     @Override
     public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
-        for (IWidget w : widgets) if (w.onClicked(gui, xMouse, yMouse, button)) return true;
+        Utilities.ReversedIterator<IWidget> i = new Utilities.ReversedIterator<>(widgets);
+        while (i.hasNext()) if (i.next().onClicked(gui, xMouse, yMouse, button)) return true;
         return false;
     }
 
     @Override
     public boolean onKey(JecaGui gui, char ch, int code) {
-        for (IWidget w : widgets) if (w.onKey(gui, ch, code)) return true;
+        Utilities.ReversedIterator<IWidget> i = new Utilities.ReversedIterator<>(widgets);
+        while (i.hasNext()) if (i.next().onKey(gui, ch, code)) return true;
         return false;
     }
 
     @Override
     public boolean onScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
-        for (IWidget w : widgets) if (w.onScroll(gui, xMouse, yMouse, diff)) return true;
+        Utilities.ReversedIterator<IWidget> i = new Utilities.ReversedIterator<>(widgets);
+        while (i.hasNext()) if (i.next().onScroll(gui, xMouse, yMouse, diff)) return true;
         return false;
     }
 

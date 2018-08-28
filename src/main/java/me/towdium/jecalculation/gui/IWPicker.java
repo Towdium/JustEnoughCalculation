@@ -19,7 +19,7 @@ import java.util.function.Consumer;
 public interface IWPicker extends IWidget {
     IWPicker setCallback(Consumer<ILabel> callback);
 
-    class Simple extends WContainer implements IWPicker {
+    class Impl extends WContainer implements IWPicker {
         protected Consumer<ILabel> callback;
 
         @Override

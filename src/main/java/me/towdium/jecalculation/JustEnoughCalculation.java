@@ -31,8 +31,8 @@ import java.util.Map;
         modid = JustEnoughCalculation.Reference.MODID,
         name = JustEnoughCalculation.Reference.MODNAME,
         version = JustEnoughCalculation.Reference.VERSION,
-        dependencies = "required-after:jei@[4.7.6.89,)"
-        //clientSideOnly = true
+        dependencies = "required-after:jei@[4.7.6.89,)",
+        clientSideOnly = true
 )
 public class JustEnoughCalculation {
     @Mod.Instance(JustEnoughCalculation.Reference.MODID)

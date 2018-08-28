@@ -258,5 +258,9 @@ public class Utilities {
             //noinspection unchecked
             return (List<T>) data.clone();
         }
+
+        public void clear() {
+            data.clear();
+        }
     }
 }

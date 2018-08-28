@@ -44,7 +44,10 @@ public class PRecord implements IMessage {
         public IMessage onMessage(PRecord message, MessageContext ctx) {
             Minecraft.getMinecraft().addScheduledTask(() -> {
                 EntityPlayer player = JustEnoughCalculation.proxy.getPlayer();
-                if (player != null) Utilities.getRecipes(player).deserialize(message.recipes);
+                if (player != null) {
+                    Recipes recipes = Utilities.getRecipes(player);
+                    recipes.deserialize(message.recipes);
+                }
             });
             return null;
         }
