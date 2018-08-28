@@ -35,6 +35,5 @@ public class PickerUniversal extends IWPicker.Simple {
             if (!create.getText().equals("")) callback.accept(new LString(create.getText(), 1));
         }));
         add(create);
-
     }
 }

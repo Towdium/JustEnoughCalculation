@@ -45,9 +45,10 @@ public class CostList {
             for (int j = 0; j < labels.size(); j++) {
                 if (i == j) continue;
                 if (strict) {
-                    ILabel tmp = labels.get(i).copy().invertAmount();
-                    if (tmp.equals(labels.get(j))) {
-                        labels.set(i, ILabel.EMPTY);
+                    ILabel a = labels.get(i);
+                    ILabel b = labels.get(j);
+                    if (a.matches(b)) {
+                        labels.set(i, a.setAmount(a.getAmount() + b.getAmount()));
                         labels.set(j, ILabel.EMPTY);
                     }
                 } else {

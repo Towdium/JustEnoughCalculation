@@ -33,7 +33,7 @@ public class WScroll implements IWidget {
 
     @Override
     public void onDraw(JecaGui gui, int xMouse, int yMouse) {
-        if (Mouse.isButtonDown(0) && drag) setCurrent(yMouse - yPos - 9);
+        if (Mouse.isButtonDown(0) && drag) setCurrent(yMouse - yPos - 9, true);
         else drag = false;
 
         gui.drawResourceContinuous(Resource.WGT_SLOT, xPos, yPos, 14, ySize, 3, 3, 3, 3);
@@ -43,19 +43,19 @@ public class WScroll implements IWidget {
     @Override
     public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
         drag = mouseIn(xMouse, yMouse);
-        if (drag) setCurrent(yMouse - yPos - 9);
+        if (drag) setCurrent(yMouse - yPos - 9, true);
         return drag;
     }
 
-    private void setCurrent(int pos) {
+    private void setCurrent(int pos, boolean notify) {
         current = pos;
         if (current < 0) current = 0;
         if (current > ySize - 17) current = ySize - 17;
-        if (lsnrScroll != null) lsnrScroll.accept(current / (ySize - 17f));
+        if (notify && lsnrScroll != null) lsnrScroll.accept(current / (ySize - 17f));
     }
 
     public void setCurrent(float ratio) {
-        setCurrent((int) ((ySize - 17) * ratio));
+        setCurrent((int) ((ySize - 17) * ratio), false);
     }
 
     public boolean mouseIn(int xMouse, int yMouse) {

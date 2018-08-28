@@ -146,7 +146,7 @@ public class GuiRecipe extends WContainer {
             CostList cl = new CostList(list);
             if (p.three.equals(cl)) {
                 ILabel.MERGER.merge(p.one, ILabel.CONVERTER.first(list), true).ifPresent(i -> p.one = i);
-                p.two.merge(cl, true, true);
+                p.two = p.two.merge(cl, true, true);
                 return true;
             } else return false;
         }).findAny().orElseGet(() -> {

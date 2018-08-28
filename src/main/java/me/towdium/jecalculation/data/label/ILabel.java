@@ -89,7 +89,7 @@ public interface ILabel {
 
     String getIdentifier();
 
-    void setAmount(int amount);
+    ILabel setAmount(int amount);
 
     boolean matches(Object l);
 
@@ -274,7 +274,8 @@ public interface ILabel {
         }
 
         @Override
-        public void setAmount(int amount) {
+        public ILabel setAmount(int amount) {
+            return this;
         }
 
         @Override
@@ -402,8 +403,10 @@ public interface ILabel {
         }
 
         @Override
-        public void setAmount(int amount) {
+        public ILabel setAmount(int amount) {
+            if (amount == 0) return ILabel.EMPTY;
             this.amount = amount;
+            return this;
         }
 
         @Override

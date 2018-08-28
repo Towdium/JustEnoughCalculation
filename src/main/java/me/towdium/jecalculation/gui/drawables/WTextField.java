@@ -32,7 +32,8 @@ public class WTextField implements IWidget {
 
     @Override
     public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
-        return textField.mouseClicked(xMouse, yMouse, button);
+        textField.mouseClicked(xMouse, yMouse, button);
+        return false;
     }
 
     @Override
