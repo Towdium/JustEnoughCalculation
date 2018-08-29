@@ -11,6 +11,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.List;
 
 /**
  * Author: towdium
@@ -41,8 +42,6 @@ public class WPage implements IWidget {
         gui.drawResourceContinuous(resource, index * 24, -21, 24, 25, 4, 4, 4, 4);
         record.representation.drawLabel(gui, index * 24 + 4, -17, false);
         timer.setState(JecaGui.mouseIn(index * 24, -21, 24, 21, xMouse, yMouse));
-        if (timer.getTime() > 1000)
-            gui.drawTooltip(xMouse, yMouse, I18n.format("gui." + record.localizeKey));
     }
 
     @Override
@@ -50,6 +49,12 @@ public class WPage implements IWidget {
         boolean ret = JecaGui.mouseIn(index * 24, -21, 24, 21, xMouse, yMouse) && listener != null && !focused;
         if (ret) listener.run();
         return ret;
+    }
+
+    @Override
+    public boolean onTooltip(JecaGui gui, int xMouse, int yMouse, List<String> tooltip) {
+        if (timer.getTime() > 1000) tooltip.add(I18n.format("gui." + record.localizeKey));
+        return false;
     }
 
     public WPage setListener(Runnable r) {

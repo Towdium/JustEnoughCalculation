@@ -68,4 +68,10 @@ public class WContainer implements IWidget {
         return false;
     }
 
+    @Override
+    public boolean onTooltip(JecaGui gui, int xMouse, int yMouse, List<String> tooltip) {
+        Utilities.ReversedIterator<IWidget> i = new Utilities.ReversedIterator<>(widgets);
+        while (i.hasNext()) if (i.next().onTooltip(gui, xMouse, yMouse, tooltip)) return true;
+        return false;
+    }
 }

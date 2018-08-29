@@ -33,6 +33,7 @@ public class Resource {
     public static final Resource BTN_DEL_F = new Resource(70, 0, 14, 14);
     public static final Resource BTN_YES_N = new Resource(84, 14, 14, 14);
     public static final Resource BTN_YES_F = new Resource(84, 0, 14, 14);
+    public static final Resource BTN_YES_D = new Resource(228, 14, 14, 14);
     public static final Resource BTN_NO_N = new Resource(98, 14, 14, 14);
     public static final Resource BTN_NO_F = new Resource(98, 0, 14, 14);
     public static final Resource BTN_NO_D = new Resource(228, 0, 14, 14);

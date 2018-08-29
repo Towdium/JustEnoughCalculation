@@ -9,9 +9,10 @@ import me.towdium.jecalculation.utils.IllegalPositionException;
 import me.towdium.jecalculation.utils.Utilities.Timer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.input.Keyboard;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.IntStream;
 
 /**
@@ -63,12 +64,6 @@ public class WLabel implements IWidget {
                     (int) (font.size * gui.getFontRenderer().FONT_HEIGHT), font, label.getAmountString());
         if (mouseIn(xMouse, yMouse)) {
             gui.drawRectangle(xPos + 1, yPos + 1, xSize - 2, ySize - 2, 0x80FFFFFF);
-            if (label != ILabel.EMPTY) {
-                ArrayList<String> buf = new ArrayList<>();
-                buf.add(label.getDisplayName());
-                gui.drawTooltip(xMouse, yMouse,
-                        label.getToolTip(buf, mode == enumMode.EDITOR || mode == enumMode.RESULT));
-            }
         }
         if (mode == enumMode.EDITOR || mode == enumMode.SELECTOR) {
             timer.setState(gui.hand != ILabel.EMPTY);
@@ -78,12 +73,21 @@ public class WLabel implements IWidget {
     }
 
     @Override
+    public boolean onTooltip(JecaGui gui, int xMouse, int yMouse, List<String> tooltip) {
+        if (mouseIn(xMouse, yMouse)) {
+            if (label != ILabel.EMPTY) {
+                tooltip.add(label.getDisplayName());
+                label.getToolTip(tooltip, mode == enumMode.EDITOR || mode == enumMode.RESULT);
+            }
+        }
+        return false;
+    }
+
+    @Override
     public boolean onScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
         if (mouseIn(xMouse, yMouse) && mode == enumMode.EDITOR && label != ILabel.EMPTY) {
-            IntStream.range(0, Math.abs(diff)).forEach(i -> {
-                if (JecaGui.isShiftDown()) label = diff > 0 ? label.increaseAmountLarge() : label.decreaseAmountLarge();
-                else label = diff > 0 ? label.increaseAmount() : label.decreaseAmount();
-            });
+            IntStream.range(0, Math.abs(diff)).forEach(i ->
+                    label = diff > 0 ? label.increaseAmount() : label.decreaseAmount());
             notifyLsnr();
             return true;
         } else return false;
@@ -101,14 +105,18 @@ public class WLabel implements IWidget {
                         return true;
                     } else if (label != label.EMPTY) {
                         if (button == 0) {
-                            if (JecaGui.isShiftDown()) label = label.increaseAmountLarge();
-                            else label = label.increaseAmount();
-                            notifyLsnr();
+                            if (JecaGui.isShiftDown()) gui.root.add(new WAmount());
+                            else {
+                                label = label.increaseAmount();
+                                notifyLsnr();
+                            }
                             return true;
                         } else if (button == 1) {
-                            if (JecaGui.isShiftDown()) label = label.decreaseAmountLarge();
-                            else label = label.decreaseAmount();
-                            notifyLsnr();
+                            if (JecaGui.isShiftDown()) gui.root.add(new WAmount());
+                            else {
+                                label = label.decreaseAmount();
+                                notifyLsnr();
+                            }
                             return true;
                         }
                     } else return false;
@@ -162,5 +170,50 @@ public class WLabel implements IWidget {
          * Slots to put labels into. No amount displayed.
          */
         SELECTOR
+    }
+
+    class WAmount extends WContainer {
+        public WAmount() {
+            WLabel w = WLabel.this;
+            int xAlign = w.xPos + w.xSize;
+            WLabel wl = new WLabel(w.xPos, w.yPos, w.xSize, w.ySize, enumMode.SELECTOR);
+            wl.setLabel(w.getLabel());
+            WTextField wtf = new WTextField(xAlign + 10, w.yPos + w.ySize / 2 - WTextField.HEIGHT / 2, 50);
+            WButton wby = new WButtonIcon(xAlign + 60, w.yPos, 20, 20, Resource.BTN_YES_N, Resource.BTN_YES_F,
+                    Resource.BTN_YES_D).setListenerLeft(() -> {
+                w.setLabel(wl.getLabel().setAmount(
+                        wtf.getText().isEmpty() ? 0 : Integer.parseInt(wtf.getText())));
+                JecaGui.getCurrent().root.remove(this);
+            });
+            WButton wbn = new WButtonIcon(xAlign + 79, w.yPos, 20, 20, Resource.BTN_NO_N, Resource.BTN_NO_F)
+                    .setListenerLeft(() -> {
+                        w.setLabel(ILabel.EMPTY);
+                        JecaGui.getCurrent().root.remove(this);
+                    });
+            wtf.setText(Integer.toString(w.getLabel().getAmount()));
+            wtf.setLsnrText(i -> {
+                try {
+                    Integer.parseInt(wtf.getText());
+                    wtf.setColor(JecaGui.COLOR_TEXT_WHITE);
+                    wby.setDisabled(false);
+                } catch (NumberFormatException e) {
+                    boolean acceptable = wtf.getText().isEmpty();
+                    wtf.setColor(acceptable ? JecaGui.COLOR_TEXT_WHITE : JecaGui.COLOR_TEXT_RED);
+                    wby.setDisabled(!acceptable);
+                }
+            });
+            add(new WPanel(w.xPos - 5, w.yPos - 5, w.xSize + 110, w.ySize + 10));
+            add(new WText(xAlign + 3, w.yPos + 5, JecaGui.Font.DEFAULT_NO_SHADOW, "x"));
+            addAll(wl, wtf, wby, wbn);
+        }
+
+        @Override
+        public boolean onKey(JecaGui gui, char ch, int code) {
+            if (super.onKey(gui, ch, code)) return true;
+            if (code == Keyboard.KEY_ESCAPE) {
+                gui.root.remove(this);
+                return true;
+            } else return false;
+        }
     }
 }

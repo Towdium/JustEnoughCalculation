@@ -23,7 +23,7 @@ public interface IWPicker extends IWidget {
         protected Consumer<ILabel> callback;
 
         @Override
-        public IWPicker setCallback(Consumer<ILabel> callback) {
+        public Impl setCallback(Consumer<ILabel> callback) {
             this.callback = callback;
             return this;
         }

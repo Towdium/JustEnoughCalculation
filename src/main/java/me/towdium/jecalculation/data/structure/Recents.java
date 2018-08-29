@@ -9,6 +9,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+/**
+ * Author: towdium
+ * Date:   18-8-28.
+ */
+
 public class Recents {
     public static final String IDENTIFIER = "recent";
     Utilities.Recent<ILabel> record = new Utilities.Recent<>((a, b) ->

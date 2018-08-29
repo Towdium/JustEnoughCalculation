@@ -6,6 +6,11 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 
+/**
+ * Author: towdium
+ * Date:   18-8-28.
+ */
+
 public class JecaCapability implements Capability.IStorage<Recipes> {
     @CapabilityInject(Recipes.class)
     public static final Capability<Recipes> CAPABILITY_RECORD = null;

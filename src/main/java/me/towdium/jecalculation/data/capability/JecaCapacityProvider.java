@@ -10,6 +10,11 @@ import net.minecraftforge.common.util.INBTSerializable;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+/**
+ * Author: towdium
+ * Date:   18-8-28.
+ */
+
 public class JecaCapacityProvider implements ICapabilityProvider, INBTSerializable<NBTTagList> {
     Recipes record;
 

@@ -50,11 +50,7 @@ public interface ILabel {
 
     ILabel increaseAmount();
 
-    ILabel increaseAmountLarge();
-
     ILabel decreaseAmount();
-
-    ILabel decreaseAmountLarge();
 
     ILabel invertAmount();
 
@@ -249,17 +245,7 @@ public interface ILabel {
         }
 
         @Override
-        public ILabel increaseAmountLarge() {
-            return this;
-        }
-
-        @Override
         public ILabel decreaseAmount() {
-            return this;
-        }
-
-        @Override
-        public ILabel decreaseAmountLarge() {
             return this;
         }
 
@@ -353,25 +339,10 @@ public interface ILabel {
         }
 
         @Override
-        public ILabel increaseAmountLarge() {
-            setAmount(getAmount() + 10 * getMultiplier());
-            return this;
-        }
-
-        @Override
         public ILabel decreaseAmount() {
             if (getAmount() <= getMultiplier()) return ILabel.EMPTY;
             else {
                 setAmount(getAmount() - getMultiplier());
-                return this;
-            }
-        }
-
-        @Override
-        public ILabel decreaseAmountLarge() {
-            if (getAmount() <= 10 * getMultiplier()) return ILabel.EMPTY;
-            else {
-                setAmount(getAmount() - 10 * getMultiplier());
                 return this;
             }
         }

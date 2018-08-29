@@ -13,6 +13,11 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+/**
+ * Author: towdium
+ * Date:   18-8-28.
+ */
+
 public class Recipes {
     public static final String KEY_NAME = "name";
     public static final String KEY_CONTENT = "content";
