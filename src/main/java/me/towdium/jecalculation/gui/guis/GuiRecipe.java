@@ -7,6 +7,7 @@ import me.towdium.jecalculation.data.structure.Recipe;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.gui.drawables.*;
+import me.towdium.jecalculation.jei.JecPlugin;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import me.towdium.jecalculation.utils.wrappers.Triple;
@@ -44,7 +45,7 @@ public class GuiRecipe extends WContainer {
         refresh();
     });
     WLabelGroup groupOutput = new WLabelGroup(28, 63, 7, 1, 20, 20, WLabel.enumMode.EDITOR).setLsnrUpdate(i -> {
-        disambiguation.remove(i + 14);
+        disambiguation.remove(i + 21);
         refresh();
     });
     WButton buttonClear = new WButtonIcon(64, 33, 20, 20, Resource.BTN_DEL_N, Resource.BTN_DEL_F, "recipe.clear")
@@ -134,9 +135,18 @@ public class GuiRecipe extends WContainer {
                 ing.getGuiIngredients().forEach((i, g) -> merge(g.isInput() ? input : output,
                         g.getAllIngredients().stream().map(ILabel.Converter::from).collect(Collectors.toList()))));
 
+        // convert catalyst
+        List<ILabel> catalysts = JecPlugin.runtime.getRecipeRegistry().getRecipeCatalysts(recipe.getRecipeCategory())
+                .stream().map(ILabel.Converter::from).collect(Collectors.toList());
+        if (catalysts.size() == 1) groupCatalyst.setLabel(catalysts.get(0), 0);
+        else if (catalysts.size() > 1) {
+            groupCatalyst.setLabel(ILabel.CONVERTER.first(catalysts), 0);
+            disambiguation.put(14, catalysts);
+        }
+
         // generate disamb info according to content in list input/output
         groupInput.setLabel(sort(input, 0, true), 0);
-        groupOutput.setLabel(sort(output, 14, false), 0);
+        groupOutput.setLabel(sort(output, 21, false), 0);
         refresh();
     }
 

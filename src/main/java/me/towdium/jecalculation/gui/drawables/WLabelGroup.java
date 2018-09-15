@@ -58,8 +58,12 @@ public class WLabelGroup extends WContainer {
         return labels.stream().map(WLabel::getLabel).collect(Collectors.toList());
     }
 
+    public void setLabel(ILabel label, int index) {
+        labels.get(index).setLabel(label);
+    }
+
     public void setLabel(List<ILabel> labels, int start) {
-        Wrapper<Integer> i = new Wrapper<>(start);
+        Wrapper<Integer> i = new Wrapper<>(start);  // TODO simplify
         this.labels.forEach(l -> l.setLabel(i.value < labels.size() ? labels.get(i.value++) : ILabel.EMPTY));
     }
 

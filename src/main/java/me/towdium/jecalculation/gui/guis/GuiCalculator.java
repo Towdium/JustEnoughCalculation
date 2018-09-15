@@ -36,7 +36,7 @@ public class GuiCalculator extends WContainer {
             Resource.BTN_OUT_D, "calculator.output").setListenerLeft(() -> setMode(enumMode.OUTPUT));
     WButton btnInput = new WButtonIcon(7, 62, 20, 20, Resource.BTN_IN_N, Resource.BTN_IN_F,
             Resource.BTN_IN_D, "calculator.input").setListenerLeft(() -> setMode(enumMode.INPUT));
-    WTextField tfAmount = new WTextField(61, 7, 64);
+    WTextField tfAmount = new WTextField(60, 7, 65);
 
     public GuiCalculator() {
         lLabel.setLsnrUpdate(() -> {
@@ -56,11 +56,13 @@ public class GuiCalculator extends WContainer {
                 .setListenerLeft(() -> JecaGui.displayGui(true, true, new GuiRecipe())));
         add(new WButtonIcon(149, 7, 20, 20, Resource.BTN_SEARCH_N, Resource.BTN_SEARCH_F, "calculator.search")
                 .setListenerLeft(() -> JecaGui.displayGui(new GuiSearch())));
+        add(new WText(53, 13, JecaGui.Font.DEFAULT_NO_SHADOW, "x"));
         add(new WLine(55));
         add(new WIcon(151, 31, 18, 18, Resource.ICN_RECENT_N, Resource.ICN_RECENT_F, "calculator.history"));
         addAll(lgRecent, lLabel, btnInput, btnOutput, btnCatalyst, btnSteps, lsResult, tfAmount);
         refreshRecent();
         setMode(enumMode.INPUT);
+        refreshCalculator();
     }
 
     void setMode(enumMode mode) {
@@ -74,6 +76,7 @@ public class GuiCalculator extends WContainer {
 
     void refreshRecent() {
         List<ILabel> recent = Controller.getRecent();
+        if (!recent.isEmpty()) lLabel.setLabel(recent.get(0));
         if (recent.size() > 1) lgRecent.setLabel(recent.subList(1, recent.size()), 0);
     }
 

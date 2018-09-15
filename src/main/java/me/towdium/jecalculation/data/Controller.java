@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
  * Date:   17-10-15.
  */
 @Mod.EventBusSubscriber
-public class Controller {
+public class Controller {  // TODO record calculate amount
     public static final String KEY_RECIPES = "recipes";
     public static final String KEY_RECENTS = "recents";
     static Recipes recipesClient;
@@ -55,8 +55,6 @@ public class Controller {
             //noinspection ConstantConditions
             return Minecraft.getMinecraft().player.getCapability(JecaCapability.CAPABILITY_RECORD, EnumFacing.UP);
         else return recipesClient;
-
-
     }
 
     public static List<String> getGroups() {

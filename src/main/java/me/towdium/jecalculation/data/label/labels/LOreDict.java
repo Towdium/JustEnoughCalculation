@@ -60,13 +60,27 @@ public class LOreDict extends ILabel.Impl {
         return Utilities.I18n.format("label.ore_dict.name", name);
     }
 
-    public static Optional<ILabel> mergeOreDict(ILabel a, ILabel b, boolean add) {
+    public static Optional<ILabel> merge(ILabel a, ILabel b, boolean add) {
         if (a instanceof LOreDict && b instanceof LOreDict) {
             LOreDict lodA = (LOreDict) a;
             LOreDict lodB = (LOreDict) b;
             if (lodA.getName().equals(lodB.getName()))
                 return Optional.of(new LOreDict(lodA.getName(),
                         add ? lodA.getAmount() + lodB.getAmount() : lodA.getAmount() - lodB.getAmount()));
+        } else if ((a instanceof LOreDict && b instanceof LItemStack)
+                || a instanceof LItemStack && b instanceof LOreDict) {
+            LItemStack lis;
+            LOreDict lor;
+            if (a instanceof LOreDict) {
+                lis = (LItemStack) b;
+                lor = (LOreDict) a;
+            } else {
+                lis = (LItemStack) a;
+                lor = (LOreDict) b;
+            }
+            return OreDictionary.getOres(lor.name).stream().map(o -> Converter.from(o).multiply(lor.amount))
+                    .map(i -> LItemStack.merge(i, lis, add)).filter(Optional::isPresent)
+                    .findAny().flatMap(i -> i);
         }
         return Optional.empty();
     }

@@ -81,7 +81,8 @@ public class LItemStack extends ILabel.Impl {
             LItemStack lisB = (LItemStack) b;
             boolean wildcard = lisA.meta == OreDictionary.WILDCARD_VALUE
                     || lisB.meta == OreDictionary.WILDCARD_VALUE;
-            if ((lisA.cap == null ? lisB.cap == null : lisA.cap.equals(lisB.cap))
+            if (lisA.item == lisB.item
+                    && (lisA.cap == null ? lisB.cap == null : lisA.cap.equals(lisB.cap))
                     && (lisA.nbt == null ? lisB.nbt == null : lisA.nbt.equals(lisB.nbt))
                     && (lisA.meta == lisB.meta || wildcard)) {
                 LItemStack ret = new LItemStack(lisA);

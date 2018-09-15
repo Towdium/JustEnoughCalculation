@@ -108,6 +108,11 @@ public class Recipe {
         return Arrays.stream(getLabel(type)).anyMatch(i -> ILabel.MERGER.merge(label, i, true).isPresent());
     }
 
+    public int multiplier(ILabel label, enumIoType type) {
+        return Arrays.stream(getLabel(type)).filter(i -> ILabel.MERGER.merge(label, i, true).isPresent()).findAny()
+                .map(i -> (i.getAmount() + Math.abs(label.getAmount()) - 1) / i.getAmount()).orElse(0);
+    }
+
     public enum enumIoType {
         INPUT, OUTPUT, CATALYST;
 

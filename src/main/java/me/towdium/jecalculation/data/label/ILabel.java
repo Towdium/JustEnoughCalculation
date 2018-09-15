@@ -52,18 +52,19 @@ public interface ILabel {
 
     ILabel decreaseAmount();
 
-    ILabel invertAmount();
-
-    int getAmount();
-
     static void initClient() {
         CONVERTER.register(LOreDict::guess);
         EDITOR.register(PickerSimple.FluidStack::new, "fluid_stack", new LFluidStack(1000, FluidRegistry.WATER));
         EDITOR.register(PickerSimple.OreDict::new, "ore_dict", new LOreDict("ingotIron"));
         EDITOR.register(PickerPlaceholder::new, "placeholder", new LPlaceholder("example", 1, true));
         MERGER.register("itemStack", "itemStack", LItemStack::merge);
-        MERGER.register("oreDict", "oreDict", LOreDict::mergeOreDict);
+        MERGER.register("oreDict", "oreDict", LOreDict::merge);
+        MERGER.register("itemStack", "oreDict", LOreDict::merge);
     }
+
+    int getAmount();
+
+    ILabel multiply(int i);
 
     static void initServer() {
         DESERIALIZER.register(LFluidStack.IDENTIFIER, LFluidStack::new);
@@ -175,6 +176,11 @@ public interface ILabel {
         }
     }
 
+    /**
+     * Provides support to convert between different types of labels.
+     * For example, guess oreDict from list of labels.
+     * It can also convert ItemStack or FluidStack to ILabel
+     */
     class Converter {
         ArrayList<Function<List<ILabel>, List<ILabel>>> handlers = new ArrayList<>();
 
@@ -250,7 +256,7 @@ public interface ILabel {
         }
 
         @Override
-        public ILabel invertAmount() {
+        public ILabel multiply(int i) {
             return this;
         }
 
@@ -347,8 +353,8 @@ public interface ILabel {
         }
 
         @Override
-        public ILabel invertAmount() {
-            setAmount(-getAmount());
+        public ILabel multiply(int i) {
+            setAmount(i * getAmount());
             return this;
         }
 

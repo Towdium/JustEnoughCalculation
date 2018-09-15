@@ -51,8 +51,6 @@ public class WLabel implements IWidget {
 
     public void setLabel(ILabel label) {
         this.label = label;
-        //if (mode == enumMode.EDITOR || mode == enumMode.SELECTOR)
-        //   notifyLsnr();
     }
 
     @Override

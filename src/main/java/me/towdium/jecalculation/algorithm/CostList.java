@@ -8,6 +8,8 @@ import me.towdium.jecalculation.utils.wrappers.Pair;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static me.towdium.jecalculation.data.structure.Recipe.enumIoType.OUTPUT;
+
 public class CostList {
     List<ILabel> labels;
 
@@ -16,23 +18,23 @@ public class CostList {
     }
 
     public CostList(ILabel label) {
-        labels = Collections.singletonList(label.copy().invertAmount());
+        labels = Collections.singletonList(label.copy().multiply(-1));
     }
 
     public CostList(List<ILabel> labels) {
-        this.labels = labels.stream().map(i -> i.copy().invertAmount()).collect(Collectors.toList());
+        this.labels = labels.stream().map(i -> i.copy().multiply(-1)).collect(Collectors.toList());
     }
 
     public CostList(List<ILabel> positive, List<ILabel> negative) {
         labels = positive.stream().map(ILabel::copy).collect(Collectors.toList());
         negative.forEach(i -> {
             ILabel l = i.copy();
-            labels.add(l.invertAmount());
+            labels.add(l.multiply(-1));
         });
     }
 
     public CostList(Recipe recipe) {
-        this(Arrays.stream(recipe.getLabel(Recipe.enumIoType.OUTPUT))
+        this(Arrays.stream(recipe.getLabel(OUTPUT))
                         .filter(i -> i != ILabel.EMPTY).collect(Collectors.toList()),
                 Arrays.stream(recipe.getLabel(Recipe.enumIoType.INPUT))
                         .filter(i -> i != ILabel.EMPTY).collect(Collectors.toList()));
@@ -41,9 +43,13 @@ public class CostList {
     @SuppressWarnings("UnusedReturnValue")
     public CostList merge(CostList costList, boolean add, boolean strict) {
         CostList ret = copy();
-        costList.labels.forEach(i -> ret.labels.add(add ? i.copy() : i.copy().invertAmount()));
+        costList.labels.forEach(i -> ret.labels.add(add ? i.copy() : i.copy().multiply(-1)));
         ret.cancel(strict);
         return ret;
+    }
+
+    public void multiply(int i) {
+        labels = labels.stream().map(j -> j.multiply(i)).collect(Collectors.toList());
     }
 
     private void cancel(boolean strict) {
@@ -111,29 +117,30 @@ public class CostList {
         public Calculator() {
             HashSet<CostList> set = new HashSet<>();
             set.add(CostList.this);
-            Recipe next = find(true);
+            Pair<Recipe, Integer> next = find(true);
             while (next != null) {
                 CostList original = getCurrent();
-                CostList difference = new CostList(next);
+                CostList difference = new CostList(next.one);
+                difference.multiply(next.two);
                 CostList result = original.merge(difference, true, false);
                 if (set.contains(result)) next = find(false);
                 else {
                     set.add(result);
                     procedure.add(new Pair<>(result, difference));
-                    addCatalyst(next.getLabel(Recipe.enumIoType.CATALYST));
+                    addCatalyst(next.one.getLabel(Recipe.enumIoType.CATALYST));
                     next = find(true);
                 }
             }
         }
 
-        private Recipe find(boolean reset) {
+        private Pair<Recipe, Integer> find(boolean reset) {
             if (reset) index = 0;
             List<ILabel> labels = getCurrent().labels;
             for (; index < labels.size(); index++) {
                 ILabel label = labels.get(index);
                 if (label.getAmount() >= 0) continue;
-                Optional<Recipe> recipe = Controller.getRecipe(label, Recipe.enumIoType.OUTPUT);
-                if (recipe.isPresent()) return recipe.get();
+                Optional<Recipe> recipe = Controller.getRecipe(label, OUTPUT);
+                if (recipe.isPresent()) return new Pair<>(recipe.get(), recipe.get().multiplier(label, OUTPUT));
             }
             return null;
         }
@@ -143,7 +150,7 @@ public class CostList {
             for (ILabel i : labels) {
                 for (ILabel j : catalysts) {
                     if (j.matches(i)) {
-                        j.setAmount(j.getAmount() + i.getAmount());
+                        j.setAmount(Math.max(i.getAmount(), j.getAmount()));
                         continue LOOP;
                     }
                 }
@@ -161,7 +168,7 @@ public class CostList {
 
         public List<ILabel> getInputs() {
             return getCurrent().labels.stream().filter(i -> i.getAmount() < 0)
-                    .map(i -> i.copy().invertAmount()).collect(Collectors.toList());
+                    .map(i -> i.copy().multiply(-1)).collect(Collectors.toList());
         }
     }
 }
