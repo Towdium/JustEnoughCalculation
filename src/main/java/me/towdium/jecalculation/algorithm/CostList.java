@@ -15,8 +15,12 @@ public class CostList {
         labels = new ArrayList<>();
     }
 
+    public CostList(ILabel label) {
+        labels = Collections.singletonList(label.copy().invertAmount());
+    }
+
     public CostList(List<ILabel> labels) {
-        this.labels = labels.stream().map(ILabel::copy).collect(Collectors.toList());
+        this.labels = labels.stream().map(i -> i.copy().invertAmount()).collect(Collectors.toList());
     }
 
     public CostList(List<ILabel> positive, List<ILabel> negative) {
@@ -28,8 +32,10 @@ public class CostList {
     }
 
     public CostList(Recipe recipe) {
-        this(Arrays.asList(recipe.getLabel(Recipe.enumIoType.OUTPUT)),
-                Arrays.asList(recipe.getLabel(Recipe.enumIoType.INPUT)));
+        this(Arrays.stream(recipe.getLabel(Recipe.enumIoType.OUTPUT))
+                        .filter(i -> i != ILabel.EMPTY).collect(Collectors.toList()),
+                Arrays.stream(recipe.getLabel(Recipe.enumIoType.INPUT))
+                        .filter(i -> i != ILabel.EMPTY).collect(Collectors.toList()));
     }
 
     @SuppressWarnings("UnusedReturnValue")
@@ -87,7 +93,7 @@ public class CostList {
     }
 
     public Calculator calculate() {
-        return new Calculator(this);
+        return new Calculator();
     }
 
     @Override
@@ -97,21 +103,19 @@ public class CostList {
         return hash;
     }
 
-    public static class Calculator {
-        CostList start;
-        ArrayList<Pair<CostList, CostList>> procedure;
-        List<ILabel> catalysts;
+    public class Calculator {
+        ArrayList<Pair<CostList, CostList>> procedure = new ArrayList<>();
+        ArrayList<ILabel> catalysts = new ArrayList<>();
         private int index;
 
-        public Calculator(CostList cl) {
+        public Calculator() {
             HashSet<CostList> set = new HashSet<>();
-            start = cl;
-            set.add(start);
+            set.add(CostList.this);
             Recipe next = find(true);
             while (next != null) {
                 CostList original = getCurrent();
                 CostList difference = new CostList(next);
-                CostList result = original.merge(difference, false, false);
+                CostList result = original.merge(difference, true, false);
                 if (set.contains(result)) next = find(false);
                 else {
                     set.add(result);
@@ -148,7 +152,16 @@ public class CostList {
         }
 
         private CostList getCurrent() {
-            return procedure.isEmpty() ? start : procedure.get(procedure.size() - 1).one;
+            return procedure.isEmpty() ? CostList.this : procedure.get(procedure.size() - 1).one;
+        }
+
+        public List<ILabel> getCatalysts() {
+            return catalysts;
+        }
+
+        public List<ILabel> getInputs() {
+            return getCurrent().labels.stream().filter(i -> i.getAmount() < 0)
+                    .map(i -> i.copy().invertAmount()).collect(Collectors.toList());
         }
     }
 }
