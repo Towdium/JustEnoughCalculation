@@ -39,7 +39,7 @@ public class ItemCalculator extends Item {
         setMaxStackSize(1);
         setCreativeTab(CreativeTabs.TOOLS);
         setRegistryName("item_calculator");
-        setUnlocalizedName("item_calculator");
+        setTranslationKey("item_calculator");
     }
 
     @SubscribeEvent
@@ -73,15 +73,15 @@ public class ItemCalculator extends Item {
             NonNullList<ItemStack> stacks = NonNullList.create();
             item.getSubItems(CreativeTabs.SEARCH, stacks);
             for (ItemStack s : stacks) {
-                setModelLocation(item, s.getMetadata(), item.getUnlocalizedName(s).substring(5));
+                setModelLocation(item, s.getMetadata(), item.getTranslationKey(s).substring(5));
             }
         } else {
-            setModelLocation(item, 0, item.getUnlocalizedName().substring(5));
+            setModelLocation(item, 0, item.getTranslationKey().substring(5));
         }
     }
 
     @Override
-    public String getUnlocalizedName(ItemStack stack) {
+    public String getTranslationKey(ItemStack stack) {
         switch (stack.getMetadata()) {
             case 0:
                 return "item.item_calculator_crafting";

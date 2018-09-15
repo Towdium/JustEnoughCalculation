@@ -1,12 +1,12 @@
 package me.towdium.jecalculation.gui.drawables;
 
 import mcp.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.data.label.ILabel;
+import me.towdium.jecalculation.data.label.ILabel.RegistryEditor.Record;
 import me.towdium.jecalculation.gui.IWidget;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
-import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.Utilities.I18n;
+import me.towdium.jecalculation.utils.Utilities.Timer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -21,15 +21,13 @@ import java.util.List;
 @MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class WPage implements IWidget {
-
-
     protected int index;
-    protected ILabel.RegistryEditor.Record record;
-    protected Utilities.Timer timer = new Utilities.Timer();
+    protected Record record;
+    protected Timer timer = new Timer();
     protected boolean focused;
     protected Runnable listener;
 
-    public WPage(int index, ILabel.RegistryEditor.Record record, boolean focused) {
+    public WPage(int index, Record record, boolean focused) {
         this.index = index;
         this.record = record;
         this.focused = focused;
@@ -53,7 +51,7 @@ public class WPage implements IWidget {
 
     @Override
     public boolean onTooltip(JecaGui gui, int xMouse, int yMouse, List<String> tooltip) {
-        if (timer.getTime() > 1000) tooltip.add(I18n.format("gui." + record.localizeKey));
+        if (timer.getTime() > 1000 && !focused) tooltip.add(I18n.format("gui." + record.localizeKey));
         return false;
     }
 

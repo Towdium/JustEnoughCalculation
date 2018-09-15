@@ -355,14 +355,6 @@ public class JecaGui extends GuiContainer {
         drawText(xPos, yPos + yOffset, xSize, f, text);
     }
 
-//    public void drawTooltip(int xPos, int yPos, String... text) {
-//        drawTooltip(xPos, yPos, Arrays.asList(text));
-//    }
-//
-//    public void drawTooltip(int xPos, int yPos, List<String> text) {
-//        tooltipBuffer.add(new Triple<>(xPos + guiLeft, yPos + guiTop, text));
-//    }
-
     public void drawItemStack(int xPos, int yPos, ItemStack is, boolean centred) {
         if (centred) {
             xPos -= 8;

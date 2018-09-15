@@ -77,7 +77,7 @@ public interface ILabel {
 
     String getDisplayName();
 
-    List<String> getToolTip(List<String> existing, boolean detailed);
+    void getToolTip(List<String> existing, boolean detailed);
 
     ILabel copy();
 
@@ -275,8 +275,7 @@ public interface ILabel {
         }
 
         @Override
-        public List<String> getToolTip(List<String> existing, boolean detailed) {
-            return new ArrayList<>();
+        public void getToolTip(List<String> existing, boolean detailed) {
         }
 
         @Override
@@ -355,10 +354,9 @@ public interface ILabel {
 
         @Override
         @SideOnly(Side.CLIENT)
-        public List<String> getToolTip(List<String> existing, boolean detailed) {
+        public void getToolTip(List<String> existing, boolean detailed) {
             if (detailed) existing.add(FORMAT_GREY +
                     Utilities.I18n.format("label.common.tooltip.amount", getAmountString()));
-            return existing;
         }
 
         @Override

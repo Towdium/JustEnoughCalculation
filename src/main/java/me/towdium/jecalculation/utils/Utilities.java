@@ -75,14 +75,14 @@ public class Utilities {
     public static String getModName(Item item) {
         ResourceLocation tmp = item.getRegistryName();
         if (tmp == null) return null;
-        String id = tmp.getResourceDomain();
+        String id = tmp.getNamespace();
         return id.equals("minecraft") ? "Minecraft" : Loader.instance().getIndexedModList().get(id).getName();
     }
 
     public static String getModName(Fluid fluid) {
         String name = fluid.getName();
         if (name.equals("lava") || name.equals("water")) return "Minecraft";
-        else return Loader.instance().getIndexedModList().get(fluid.getStill().getResourceDomain()).getName();
+        else return Loader.instance().getIndexedModList().get(fluid.getStill().getNamespace()).getName();
     }
 
     public static NBTTagCompound getTag(ItemStack is) {

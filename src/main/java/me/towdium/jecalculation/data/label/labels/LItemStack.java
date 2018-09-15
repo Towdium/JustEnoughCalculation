@@ -99,10 +99,9 @@ public class LItemStack extends ILabel.Impl {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public List<String> getToolTip(List<String> existing, boolean detailed) {
+    public void getToolTip(List<String> existing, boolean detailed) {
         super.getToolTip(existing, detailed);
         existing.add(FORMAT_BLUE + FORMAT_ITALIC + Utilities.getModName(item));
-        return existing;
     }
 
     @Override
@@ -152,6 +151,6 @@ public class LItemStack extends ILabel.Impl {
     @Override
     public int hashCode() {
         return (nbt == null ? 0 : nbt.hashCode()) ^ (cap == null ? 0 : cap.hashCode())
-                ^ meta ^ item.getUnlocalizedName().hashCode() ^ amount;
+                ^ meta ^ item.getTranslationKey().hashCode() ^ amount;
     }
 }

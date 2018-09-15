@@ -19,7 +19,6 @@ import java.util.List;
 @MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class WContainer implements IWidget {
-    boolean modified = false;
     protected List<IWidget> widgets = new ArrayList<>();
 
     public void add(IWidget w) {

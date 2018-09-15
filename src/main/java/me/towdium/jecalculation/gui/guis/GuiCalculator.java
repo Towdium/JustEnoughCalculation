@@ -22,8 +22,21 @@ import java.util.List;
 public class GuiCalculator extends WContainer {
     WLabelGroup wRecent = new WLabelGroup(7, 31, 8, 1, WLabel.enumMode.PICKER);
     WLabel wLabel = new WLabel(31, 7, 20, 20, WLabel.enumMode.SELECTOR);
+    WButton btnSteps = new WButtonIcon(64, 62, 20, 20, Resource.BTN_LIST_N, Resource.BTN_LIST_F,
+            Resource.BTN_LIST_D, "calculator.step").setListenerLeft(() -> setMode(enumMode.STEPS));
+    WButton btnCatalyst = new WButtonIcon(45, 62, 20, 20, Resource.BTN_CAT_N, Resource.BTN_CAT_F,
+            Resource.BTN_CAT_D, "calculator.catalyst").setListenerLeft(() -> setMode(enumMode.CATALYST));
+    WButton btnOutput = new WButtonIcon(26, 62, 20, 20, Resource.BTN_OUT_N, Resource.BTN_OUT_F,
+            Resource.BTN_OUT_D, "calculator.output").setListenerLeft(() -> setMode(enumMode.OUTPUT));
+    WButton btnInput = new WButtonIcon(7, 62, 20, 20, Resource.BTN_IN_N, Resource.BTN_IN_F,
+            Resource.BTN_IN_D, "calculator.input").setListenerLeft(() -> setMode(enumMode.INPUT));
 
     public GuiCalculator() {
+        wLabel.setLsnrUpdate(() -> {
+            Controller.setRecent(wLabel.label);
+            refreshRecent();
+        });
+        wRecent.setLsnrUpdate(l -> JecaGui.getCurrent().hand = wRecent.getLabelAt(l));
         add(new WPanel());
         add(new WTextField(61, 7, 64));
         add(new WButtonIcon(7, 7, 20, 20, Resource.BTN_LABEL_N, Resource.BTN_LABEL_F, "calculator.label")
@@ -35,24 +48,27 @@ public class GuiCalculator extends WContainer {
                 .setListenerLeft(() -> JecaGui.displayGui(true, true, new GuiRecipe())));
         add(new WButtonIcon(149, 7, 20, 20, Resource.BTN_SEARCH_N, Resource.BTN_SEARCH_F, "calculator.search")
                 .setListenerLeft(() -> JecaGui.displayGui(new GuiSearch())));
-        add(new WLabelGroup(7, 87, 9, 4, WLabel.enumMode.RESULT));
-        add(wRecent);
-        add(wLabel);
-        add(new WLine(52));
+        add(new WLine(55));
         add(new WIcon(151, 31, 18, 18, Resource.ICN_RECENT_N, Resource.ICN_RECENT_F, "calculator.history"));
-        add(new WSwitcher(7, 56, 162, 5));
-        refresh();
-        List<ILabel> recent = Controller.getRecent();
-        if (recent.size() > 0) wLabel.setLabel(Controller.getRecent().get(0));
-        wLabel.setLsnrUpdate(() -> {
-            Controller.setRecent(wLabel.label);
-            refresh();
-        });
-        wRecent.setLsnrUpdate(l -> JecaGui.getCurrent().hand = wRecent.getLabelAt(l));
+        add(new WLabelScroll(7, 87, 8, 4, WLabel.enumMode.RESULT, true));
+        addAll(wRecent, wLabel, btnInput, btnOutput, btnCatalyst, btnSteps);
+        refreshRecent();
+        setMode(enumMode.INPUT);
     }
 
-    void refresh() {
+    void setMode(enumMode mode) {
+        btnInput.setDisabled(mode == enumMode.INPUT);
+        btnOutput.setDisabled(mode == enumMode.OUTPUT);
+        btnCatalyst.setDisabled(mode == enumMode.CATALYST);
+        btnSteps.setDisabled(mode == enumMode.STEPS);
+    }
+
+    void refreshRecent() {
         List<ILabel> recent = Controller.getRecent();
         if (recent.size() > 1) wRecent.setLabel(recent.subList(1, recent.size()), 0);
+    }
+
+    enum enumMode {
+        INPUT, OUTPUT, CATALYST, STEPS
     }
 }
