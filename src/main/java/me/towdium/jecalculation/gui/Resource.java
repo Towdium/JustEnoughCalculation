@@ -88,10 +88,13 @@ public class Resource {
     public static final Resource ICN_TEXT_F = new Resource(112, 28, 14, 14);
     public static final Resource ICN_MULTI_N = new Resource(126, 42, 14, 14);
     public static final Resource ICN_MULTI_F = new Resource(126, 28, 14, 14);
-    public static final Resource LBL_ORE_DICT = new Resource(0, 56, 16, 16);
+    public static final Resource LBL_FRAME = new Resource(0, 56, 16, 16);
     public static final Resource LBL_FLUID = new Resource(16, 56, 16, 16);
     public static final Resource LBL_UNIV_B = new Resource(32, 56, 16, 16);
     public static final Resource LBL_UNIV_F = new Resource(48, 56, 16, 16);
+    public static final Resource LBL_FR_UL = new Resource(64, 56, 16, 16);
+    public static final Resource LBL_FR_UR = new Resource(80, 56, 16, 16);
+    public static final Resource LBL_FR_LL = new Resource(96, 56, 16, 16);
 
     protected int xPos, yPos, xSize, ySize;
     protected ResourceLocation rl;

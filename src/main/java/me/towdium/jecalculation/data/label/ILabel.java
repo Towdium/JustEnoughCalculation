@@ -66,6 +66,10 @@ public interface ILabel {
 
     ILabel multiply(int i);
 
+    boolean acceptPercent();
+
+    ILabel setPercent(boolean p);
+
     static void initServer() {
         DESERIALIZER.register(LFluidStack.IDENTIFIER, LFluidStack::new);
         DESERIALIZER.register(LItemStack.IDENTIFIER, LItemStack::new);
@@ -88,6 +92,7 @@ public interface ILabel {
 
     ILabel setAmount(int amount);
 
+    // test two labels are exactly same except amount
     boolean matches(Object l);
 
     @SideOnly(Side.CLIENT)
@@ -261,6 +266,16 @@ public interface ILabel {
         }
 
         @Override
+        public boolean acceptPercent() {
+            return false;
+        }
+
+        @Override
+        public ILabel setPercent(boolean p) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
         public int getAmount() {
             return 0;
         }
@@ -306,7 +321,9 @@ public interface ILabel {
 
     abstract class Impl implements ILabel {
         public static final String KEY_AMOUNT = "amount";
+        public static final String KEY_PERCENT = "percent";
         protected int amount;
+        protected boolean percent;
 
         @Override
         public String toString() {
@@ -315,14 +332,18 @@ public interface ILabel {
 
         public Impl(int amount) {
             this.amount = amount;
+            percent = false;
         }
 
         public Impl(Impl lsa) {
-            this(lsa.amount);
+            amount = lsa.amount;
+            percent = lsa.percent;
         }
 
         public Impl(NBTTagCompound nbt) {
             amount = nbt.getInteger(KEY_AMOUNT);
+            percent = nbt.getBoolean(KEY_PERCENT)
+            ;
         }
 
         protected int getMultiplier() {
@@ -365,11 +386,18 @@ public interface ILabel {
                     Utilities.I18n.format("label.common.tooltip.amount", getAmountString()));
         }
 
-        @Override
-        public NBTTagCompound toNBTTagCompound() {
-            NBTTagCompound nbt = new NBTTagCompound();
-            nbt.setInteger(KEY_AMOUNT, amount);
-            return nbt;
+        protected static Optional<ILabel> merge(Impl a, Impl b, boolean add) {
+            Impl ret = a.copy();
+            boolean p = a.percent || b.percent;
+            int amountA = a.amount;
+            int amountB = b.amount;
+            if (p) {
+                if (!a.percent) amountA *= 100;
+                if (!b.percent) amountB *= 100;
+            }
+            ret.amount = add ? amountA + amountB : amountA - amountB;
+            ret.percent = p;
+            return Optional.of(ret.amount == 0 ? ILabel.EMPTY : ret);
         }
 
         @Override
@@ -385,14 +413,48 @@ public interface ILabel {
         }
 
         @Override
-        @SideOnly(Side.CLIENT)
-        public String getAmountString() {
-            return getAmount() == 0 ? "" : Utilities.cutNumber(getAmount(), 5);
+        public NBTTagCompound toNBTTagCompound() {
+            NBTTagCompound nbt = new NBTTagCompound();
+            nbt.setInteger(KEY_AMOUNT, amount);
+            nbt.setBoolean(KEY_PERCENT, percent);
+            return nbt;
+        }
+
+        @Override
+        public boolean acceptPercent() {
+            return true;
+        }
+
+        public ILabel setPercent(boolean p) {
+            if (!acceptPercent()) throw new UnsupportedOperationException();
+            if (p && !percent) {
+                amount *= 100;
+                percent = true;
+            } else if (!p && percent) {
+                amount = (amount + 99) / 100;
+                percent = false;
+            }
+            return this;
         }
 
         @Override
         public boolean equals(Object obj) {
             return obj instanceof Impl && amount == ((Impl) obj).amount && matches(obj);
+        }
+
+        @Override
+        @SideOnly(Side.CLIENT)
+        public String getAmountString() {
+            return getAmount() == 0 ? "" : (percent ? Utilities.cutNumber(getAmount(), 4) + "%"
+                    : Utilities.cutNumber(getAmount(), 5));
+        }
+
+        @Override
+        abstract public Impl copy();
+
+        @Override
+        public boolean matches(Object l) {
+            return l instanceof Impl && percent == ((Impl) l).percent;
         }
 
         abstract protected void drawLabel(JecaGui gui);

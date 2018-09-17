@@ -32,6 +32,11 @@ public class LFluidStack extends ILabel.Impl {
     NBTTagCompound nbt;
     FluidStack temp;
 
+    @Override
+    public boolean acceptPercent() {
+        return false;
+    }
+
     public LFluidStack(FluidStack fs) {
         this(fs.amount, fs.getFluid(), fs.tag);
     }
@@ -90,7 +95,7 @@ public class LFluidStack extends ILabel.Impl {
     }
 
     @Override
-    public ILabel copy() {
+    public LFluidStack copy() {
         return new LFluidStack(this);
     }
 

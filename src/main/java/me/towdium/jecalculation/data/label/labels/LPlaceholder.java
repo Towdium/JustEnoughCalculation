@@ -97,11 +97,11 @@ public class LPlaceholder extends ILabel.Impl {
 
     @Override
     public boolean matches(Object l) {
-        return l instanceof LPlaceholder && name.equals(((LPlaceholder) l).name);
+        return l instanceof LPlaceholder && name.equals(((LPlaceholder) l).name) && super.matches(l);
     }
 
     @Override
-    public ILabel copy() {
+    public LPlaceholder copy() {
         return new LPlaceholder(this);
     }
 

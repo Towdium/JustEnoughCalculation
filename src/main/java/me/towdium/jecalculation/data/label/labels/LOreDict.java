@@ -64,9 +64,9 @@ public class LOreDict extends ILabel.Impl {
         if (a instanceof LOreDict && b instanceof LOreDict) {
             LOreDict lodA = (LOreDict) a;
             LOreDict lodB = (LOreDict) b;
-            if (lodA.getName().equals(lodB.getName()))
-                return Optional.of(new LOreDict(lodA.getName(),
-                        add ? lodA.getAmount() + lodB.getAmount() : lodA.getAmount() - lodB.getAmount()));
+            if (lodA.getName().equals(lodB.getName())) {
+                return Impl.merge(lodA, lodB, add);
+            }
         } else if ((a instanceof LOreDict && b instanceof LItemStack)
                 || a instanceof LItemStack && b instanceof LOreDict) {
             LItemStack lis;
@@ -141,7 +141,7 @@ public class LOreDict extends ILabel.Impl {
 
     @Override
     public boolean matches(Object l) {
-        return l instanceof LOreDict && name.equals(((LOreDict) l).name);
+        return l instanceof LOreDict && name.equals(((LOreDict) l).name) && super.matches(l);
     }
 
     @Override
@@ -159,7 +159,7 @@ public class LOreDict extends ILabel.Impl {
             } else list.add(is);
         });
         long index = System.currentTimeMillis() / 1500;
-        gui.drawResource(Resource.LBL_ORE_DICT, 0, 0);
+        gui.drawResource(Resource.LBL_FRAME, 0, 0);
         GlStateManager.pushMatrix();
         GlStateManager.translate(1, 1, 0);
         GlStateManager.scale(14f / 16, 14f / 16, 1);
