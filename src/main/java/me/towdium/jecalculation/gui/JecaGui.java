@@ -27,6 +27,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.common.Mod;
@@ -118,10 +119,38 @@ public class JecaGui extends GuiContainer {
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST) // TODO check effect
-    public static void onMouseClick(GuiScreenEvent.MouseInputEvent.Pre event) {
+    public static void onMouse(GuiScreenEvent.MouseInputEvent.Pre event) {
         if (event.getGui() instanceof JecaGui) {
-            GuiScreen gui = event.getGui();
-            event.setCanceled(((JecaGui) gui).handleMouseEvent());
+            JecaGui gui = getCurrent();
+            int xMouse = Mouse.getEventX() * gui.width / gui.mc.displayWidth - gui.guiLeft;
+            int yMouse = gui.height - Mouse.getEventY() * gui.height / gui.mc.displayHeight - 1 - gui.guiTop;
+            int button = Mouse.getEventButton();
+
+            if (button == -1) {
+                int diff = Mouse.getEventDWheel() / 120;
+                gui.root.onScroll(gui, xMouse, yMouse, diff);
+            } else if (Mouse.getEventButtonState()) {
+                if (gui.root.onClicked(gui, xMouse, yMouse, button)) event.setCanceled(true);
+                else {
+                    if (button == 0) {
+                        if (gui.hand == ILabel.EMPTY) {
+                            ILabel e = JecPlugin.getLabelUnderMouse();
+                            if (e != ILabel.EMPTY) {
+                                gui.hand = e;
+                                event.setCanceled(true);
+                            }
+                        } else {
+                            gui.hand = ILabel.EMPTY;
+                            event.setCanceled(true);
+                        }
+                    } else if (Mouse.getEventButton() == 1) {
+                        if (gui.hand != ILabel.EMPTY) {
+                            gui.hand = ILabel.EMPTY;
+                            event.setCanceled(true);
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -130,6 +159,15 @@ public class JecaGui extends GuiContainer {
         if (ProxyClient.keyOpenGui.isPressed()) {
             if (JustEnoughCalculation.side == enumSide.CLIENT) JecaGui.displayGui(new GuiCalculator());
             else Minecraft.getMinecraft().player.sendMessage(new TextComponentTranslation("chat.server_mode"));
+        }
+    }
+
+    @SubscribeEvent
+    public static void onTooltip(RenderTooltipEvent.Pre event) {
+        if (Minecraft.getMinecraft().currentScreen instanceof JecaGui) {
+            JecaGui gui = getCurrent();
+            if (gui.root.onTooltip(gui, event.getX() - gui.guiLeft, event.getY() - gui.guiTop, new ArrayList<>())
+                    && event.getStack() != ItemStack.EMPTY) event.setCanceled(true);
         }
     }
 
@@ -144,11 +182,11 @@ public class JecaGui extends GuiContainer {
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+        drawDefaultBackground();
     }
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        drawDefaultBackground();
         super.drawScreen(mouseX, mouseY, partialTicks);
         GlStateManager.pushMatrix();
         GlStateManager.translate(guiLeft, guiTop, 0);
@@ -165,53 +203,6 @@ public class JecaGui extends GuiContainer {
         drawHoveringText(tooltip, mouseX, mouseY);
         GlStateManager.enableLighting();
         GlStateManager.enableDepth();
-    }
-
-    /**
-     * This function handles events within the interface.
-     * Specifically, handles mouse wheel within interface.
-     * Different from {@link #handleMouseEvent()}, which is
-     * used to handle mouse event outside.
-     */
-    @Override
-    public void handleMouseInput() throws IOException {
-        super.handleMouseInput();
-        int diff = Mouse.getEventDWheel() / 120;
-        if (diff != 0) root.onScroll(this, Mouse.getEventX() * width / mc.displayWidth - guiLeft,
-                height - Mouse.getEventY() * height / mc.displayHeight - 1 - guiTop, diff);
-    }
-
-    /**
-     * @return if the event is canceled
-     * This function handles click outside the rNormal region,
-     * especially the overlap with JEI overlay. It handles
-     * mouse event before JEI.
-     */
-    public boolean handleMouseEvent() {
-        int xMouse = Mouse.getEventX() * width / mc.displayWidth;
-        int yMouse = height - Mouse.getEventY() * height / mc.displayHeight - 1;
-        if (Mouse.getEventButtonState()) {
-            if (Mouse.getEventButton() == 0) {
-                if (hand == ILabel.EMPTY) {
-                    ILabel e = JecPlugin.getLabelUnderMouse();
-                    if (e != ILabel.EMPTY) {
-                        hand = e;
-                        return true;
-                    }
-                } else {
-                    if (!mouseIn(guiLeft, guiTop, width, height, xMouse, yMouse)) {
-                        hand = ILabel.EMPTY;
-                        return true;
-                    }
-                }
-            } else if (Mouse.getEventButton() == 1) {
-                if (hand != ILabel.EMPTY) {
-                    hand = ILabel.EMPTY;
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     public FontRenderer getFontRenderer() {
@@ -291,6 +282,7 @@ public class JecaGui extends GuiContainer {
         GlStateManager.enableTexture2D();
     }
 
+    // TODO remove text render and implement document render
     public void drawText(float xPos, float yPos, Font f, String... text) {
         Function<String, Integer> indenter;
         switch (f.align) {
@@ -368,21 +360,13 @@ public class JecaGui extends GuiContainer {
     }
 
     @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        super.mouseClicked(mouseX, mouseY, mouseButton);
-        root.onClicked(this, mouseX - guiLeft, mouseY - guiTop, mouseButton);
-    }
-
-    @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        if (!root.onKey(this, typedChar, keyCode)) {
-            if (keyCode == Keyboard.KEY_ESCAPE) {
-                if (hand != ILabel.EMPTY) hand = ILabel.EMPTY;
-                else if (parent != null) {
-                    Minecraft.getMinecraft().displayGuiScreen(parent);
-                } else super.keyTyped(typedChar, keyCode);
-            }
+        if (keyCode == Keyboard.KEY_ESCAPE && hand != ILabel.EMPTY) hand = ILabel.EMPTY;
+        else if (!root.onKey(this, typedChar, keyCode)) {
+            if (keyCode == Keyboard.KEY_ESCAPE && parent != null) displayParent();
+            else super.keyTyped(typedChar, keyCode);
         }
+
     }
 
     public static class Font {

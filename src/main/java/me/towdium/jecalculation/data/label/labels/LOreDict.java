@@ -6,7 +6,6 @@ import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.utils.Utilities;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -65,7 +64,7 @@ public class LOreDict extends ILabel.Impl {
             LOreDict lodA = (LOreDict) a;
             LOreDict lodB = (LOreDict) b;
             if (lodA.getName().equals(lodB.getName())) {
-                return Impl.merge(lodA, lodB, add);
+                return Impl.mergeUnchecked(lodA, lodB, add);
             }
         } else if ((a instanceof LOreDict && b instanceof LItemStack)
                 || a instanceof LItemStack && b instanceof LOreDict) {
@@ -159,12 +158,12 @@ public class LOreDict extends ILabel.Impl {
             } else list.add(is);
         });
         long index = System.currentTimeMillis() / 1500;
-        gui.drawResource(Resource.LBL_FRAME, 0, 0);
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(1, 1, 0);
-        GlStateManager.scale(14f / 16, 14f / 16, 1);
+        //GlStateManager.pushMatrix();
+        //GlStateManager.translate(1, 1, 0);
+        //GlStateManager.scale(14f / 16, 14f / 16, 1);
         gui.drawItemStack(0, 0, list.get((int) (index % list.size())), false);
-        GlStateManager.popMatrix();
+        //GlStateManager.popMatrix();
+        gui.drawResource(Resource.LBL_FRAME, 0, 0);
     }
 
     @Override

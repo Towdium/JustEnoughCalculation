@@ -171,36 +171,56 @@ public class WLabel implements IWidget {
     }
 
     class WAmount extends WContainer {
+        WLabel wl = new WLabel(xPos, yPos, xSize, ySize, enumMode.SELECTOR).setLsnrUpdate(this::update);
+        WTextField wtf = new WTextField(xPos + xSize + 10, yPos + ySize / 2 - WTextField.HEIGHT / 2, 50);
+        WButton bAmount = new WButtonText(xPos + xSize + 60, yPos, 20, 20, "#")
+                .setLsnrLeft(() -> setPercent(true));
+        WButton bPercent = new WButtonText(xPos + xSize + 60, yPos, 20, 20, "%")
+                .setLsnrLeft(() -> setPercent(false));
+        WButton bYes = new WButtonIcon(xPos + xSize + 83, yPos, 20, 20, Resource.BTN_YES).setLsnrLeft(() -> {
+            setLabel(wl.getLabel().setAmount(
+                    wtf.getText().isEmpty() ? 0 : Integer.parseInt(wtf.getText())));
+            JecaGui.getCurrent().root.remove(this);
+        });
+        WButton bNo = new WButtonIcon(xPos + xSize + 102, yPos, 20, 20, Resource.BTN_NO).setLsnrLeft(() -> {
+            setLabel(ILabel.EMPTY);
+            JecaGui.getCurrent().root.remove(this);
+        });
+
         public WAmount() {
-            WLabel w = WLabel.this;
-            int xAlign = w.xPos + w.xSize;
-            WLabel wl = new WLabel(w.xPos, w.yPos, w.xSize, w.ySize, enumMode.SELECTOR);
-            wl.setLabel(w.getLabel());
-            WTextField wtf = new WTextField(xAlign + 10, w.yPos + w.ySize / 2 - WTextField.HEIGHT / 2, 50);
-            WButton wby = new WButtonIcon(xAlign + 60, w.yPos, 20, 20, Resource.BTN_YES).setLsnrLeft(() -> {
-                w.setLabel(wl.getLabel().setAmount(
-                        wtf.getText().isEmpty() ? 0 : Integer.parseInt(wtf.getText())));
-                JecaGui.getCurrent().root.remove(this);
-            });
-            WButton wbn = new WButtonIcon(xAlign + 79, w.yPos, 20, 20, Resource.BTN_NO).setLsnrLeft(() -> {
-                w.setLabel(ILabel.EMPTY);
-                JecaGui.getCurrent().root.remove(this);
-            });
-            wtf.setText(Integer.toString(w.getLabel().getAmount()));
+            wl.setLabel(getLabel());
+            wtf.setText(Integer.toString(getLabel().getAmount()));
             wtf.setLsnrText(i -> {
                 try {
                     Integer.parseInt(wtf.getText());
                     wtf.setColor(JecaGui.COLOR_TEXT_WHITE);
-                    wby.setDisabled(false);
+                    bYes.setDisabled(false);
                 } catch (NumberFormatException e) {
                     boolean acceptable = wtf.getText().isEmpty();
                     wtf.setColor(acceptable ? JecaGui.COLOR_TEXT_WHITE : JecaGui.COLOR_TEXT_RED);
-                    wby.setDisabled(!acceptable);
+                    bYes.setDisabled(!acceptable);
                 }
             });
-            add(new WPanel(w.xPos - 5, w.yPos - 5, w.xSize + 110, w.ySize + 10));
-            add(new WText(xAlign + 3, w.yPos + 5, JecaGui.Font.DEFAULT_NO_SHADOW, "x"));
-            addAll(wl, wtf, wby, wbn);
+            add(new WPanel(xPos - 5, yPos - 5, xSize + 133, ySize + 10));
+            add(new WText(xPos + xSize + 3, yPos + 5, JecaGui.Font.DEFAULT_NO_SHADOW, "x"));
+            addAll(wl, wtf, bYes, bNo);
+            update();
+        }
+
+        private void update() {
+            bYes.setDisabled(!wl.getLabel().acceptPercent());
+            setPercent(false);
+        }
+
+        private void setPercent(boolean b) {
+            if (b) {
+                remove(bAmount);
+                add(bPercent);
+            } else {
+                remove(bPercent);
+                add(bAmount);
+            }
+            wl.getLabel().setPercent(b);
         }
 
         @Override

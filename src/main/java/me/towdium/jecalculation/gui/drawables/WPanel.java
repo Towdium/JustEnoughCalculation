@@ -42,6 +42,11 @@ public class WPanel implements IWidget {
         return mouseIn(xMouse, yMouse);
     }
 
+    @Override
+    public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
+        return mouseIn(xMouse, yMouse);
+    }
+
     public boolean mouseIn(int x, int y) {
         int xx = x - xPos;
         int yy = y - yPos;

@@ -15,7 +15,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
-public class WButtonText extends WButton {
+public class WButtonText extends WButton { // TODO need rework for text without need for localization
     public WButtonText(int xPos, int yPos, int xSize, int ySize, String name) {
         super(xPos, yPos, xSize, ySize, name);
     }
@@ -23,7 +23,7 @@ public class WButtonText extends WButton {
     @Override
     public void onDraw(JecaGui gui, int xMouse, int yMouse) {
         super.onDraw(gui, xMouse, yMouse);
-        int textColor = mouseIn(xMouse, yMouse) ? 16777120 : 0;
+        int textColor = mouseIn(xMouse, yMouse) ? 16777120 : 0xFFFFFF;
         String text = I18n.format(String.join(".", "gui", name, "text"));
         int strWidth = gui.getFontRenderer().getStringWidth(text);
         int ellipsisWidth = gui.getFontRenderer().getStringWidth("...");
