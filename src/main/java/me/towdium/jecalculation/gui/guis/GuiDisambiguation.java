@@ -33,9 +33,9 @@ public class GuiDisambiguation extends IWPicker.Impl {
 
         add(new WPanel());
         add(switcher);
-        add(new WIcon(149, 24, 20, 20, Resource.ICN_HELP_N, Resource.ICN_HELP_F, "disambiguation.help"));
-        add(new WIcon(7, 48, 18, 54, Resource.ICN_LIST_N, Resource.ICN_LIST_F, "disambiguation.list"));
-        add(new WIcon(7, 105, 18, 54, Resource.ICN_LABEL_N, Resource.ICN_LABEL_F, "disambiguation.label"));
+        add(new WIcon(149, 24, 20, 20, Resource.ICN_HELP, "disambiguation.help"));
+        add(new WIcon(7, 48, 18, 54, Resource.ICN_LIST, "disambiguation.list"));
+        add(new WIcon(7, 105, 18, 54, Resource.ICN_LABEL, "disambiguation.label"));
         add(new WSearch(i -> {
             if (callback != null) callback.accept(i.copy().increaseAmount());
         }, tf, lsUp, lsDown));

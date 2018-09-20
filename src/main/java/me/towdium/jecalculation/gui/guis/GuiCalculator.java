@@ -28,14 +28,14 @@ public class GuiCalculator extends WContainer {
     WLabelGroup lgRecent = new WLabelGroup(7, 31, 8, 1, WLabel.enumMode.PICKER);
     WLabel lLabel = new WLabel(31, 7, 20, 20, WLabel.enumMode.SELECTOR);
     WLabelScroll lsResult = new WLabelScroll(7, 87, 8, 4, WLabel.enumMode.RESULT, true);
-    WButton btnSteps = new WButtonIcon(64, 62, 20, 20, Resource.BTN_LIST_N, Resource.BTN_LIST_F,
-            Resource.BTN_LIST_D, "calculator.step").setListenerLeft(() -> setMode(enumMode.STEPS));
-    WButton btnCatalyst = new WButtonIcon(45, 62, 20, 20, Resource.BTN_CAT_N, Resource.BTN_CAT_F,
-            Resource.BTN_CAT_D, "calculator.catalyst").setListenerLeft(() -> setMode(enumMode.CATALYST));
-    WButton btnOutput = new WButtonIcon(26, 62, 20, 20, Resource.BTN_OUT_N, Resource.BTN_OUT_F,
-            Resource.BTN_OUT_D, "calculator.output").setListenerLeft(() -> setMode(enumMode.OUTPUT));
-    WButton btnInput = new WButtonIcon(7, 62, 20, 20, Resource.BTN_IN_N, Resource.BTN_IN_F,
-            Resource.BTN_IN_D, "calculator.input").setListenerLeft(() -> setMode(enumMode.INPUT));
+    WButton btnSteps = new WButtonIcon(64, 62, 20, 20, Resource.BTN_LIST, "calculator.step")
+            .setLsnrLeft(() -> setMode(enumMode.STEPS));
+    WButton btnCatalyst = new WButtonIcon(45, 62, 20, 20, Resource.BTN_CAT, "calculator.catalyst")
+            .setLsnrLeft(() -> setMode(enumMode.CATALYST));
+    WButton btnOutput = new WButtonIcon(26, 62, 20, 20, Resource.BTN_OUT, "calculator.output")
+            .setLsnrLeft(() -> setMode(enumMode.OUTPUT));
+    WButton btnInput = new WButtonIcon(7, 62, 20, 20, Resource.BTN_IN, "calculator.input")
+            .setLsnrLeft(() -> setMode(enumMode.INPUT));
     WTextField tfAmount = new WTextField(60, 7, 65);
 
     public GuiCalculator() {
@@ -47,18 +47,18 @@ public class GuiCalculator extends WContainer {
         lgRecent.setLsnrUpdate(l -> JecaGui.getCurrent().hand = lgRecent.getLabelAt(l));
         tfAmount.setLsnrText(s -> refreshCalculator());
         add(new WPanel());
-        add(new WButtonIcon(7, 7, 20, 20, Resource.BTN_LABEL_N, Resource.BTN_LABEL_F, "calculator.label")
-                .setListenerLeft(() -> JecaGui.displayGui(new GuiLabel(l -> {
+        add(new WButtonIcon(7, 7, 20, 20, Resource.BTN_LABEL, "calculator.label")
+                .setLsnrLeft(() -> JecaGui.displayGui(new GuiLabel(l -> {
                     JecaGui.displayParent();
                     JecaGui.getCurrent().hand = l;
                 }))));
-        add(new WButtonIcon(130, 7, 20, 20, Resource.BTN_NEW_N, Resource.BTN_NEW_F, "calculator.recipe")
-                .setListenerLeft(() -> JecaGui.displayGui(true, true, new GuiRecipe())));
-        add(new WButtonIcon(149, 7, 20, 20, Resource.BTN_SEARCH_N, Resource.BTN_SEARCH_F, "calculator.search")
-                .setListenerLeft(() -> JecaGui.displayGui(new GuiSearch())));
+        add(new WButtonIcon(130, 7, 20, 20, Resource.BTN_NEW, "calculator.recipe")
+                .setLsnrLeft(() -> JecaGui.displayGui(true, true, new GuiRecipe())));
+        add(new WButtonIcon(149, 7, 20, 20, Resource.BTN_SEARCH, "calculator.search")
+                .setLsnrLeft(() -> JecaGui.displayGui(new GuiSearch())));
         add(new WText(53, 13, JecaGui.Font.DEFAULT_NO_SHADOW, "x"));
         add(new WLine(55));
-        add(new WIcon(151, 31, 18, 18, Resource.ICN_RECENT_N, Resource.ICN_RECENT_F, "calculator.history"));
+        add(new WIcon(151, 31, 18, 18, Resource.ICN_RECENT, "calculator.history"));
         addAll(lgRecent, lLabel, btnInput, btnOutput, btnCatalyst, btnSteps, lsResult, tfAmount);
         refreshRecent();
         setMode(enumMode.INPUT);

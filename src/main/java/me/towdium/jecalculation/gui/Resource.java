@@ -18,6 +18,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class Resource {
     public static final ResourceLocation location = new ResourceLocation(
             JustEnoughCalculation.Reference.MODID, "textures/gui/resources.png");
+    // letters abbr for button & icon: N - normal, F - focused, D - disabled
+    // letters abbr for fuzzy related: N - normal, F - fuzzy
     public static final Resource BTN_LABEL_N = getIcon(0, 1);
     public static final Resource BTN_LABEL_F = getIcon(0, 0);
     public static final Resource BTN_NEW_N = getIcon(1, 1);
@@ -52,18 +54,21 @@ public class Resource {
     public static final Resource BTN_LIST_N = getIcon(12, 1);
     public static final Resource BTN_LIST_F = getIcon(12, 0);
     public static final Resource BTN_LIST_D = getIcon(12, 2);
-    public static final Resource BTN_META_E_N = getIcon(14, 0);
-    public static final Resource BTN_META_E_F = getIcon(13, 0);
-    public static final Resource BTN_META_D_N = getIcon(16, 0);
-    public static final Resource BTN_META_D_F = getIcon(15, 0);
-    public static final Resource BTN_NBT_E_N = getIcon(14, 1);
-    public static final Resource BTN_NBT_E_F = getIcon(13, 1);
-    public static final Resource BTN_NBT_D_N = getIcon(16, 1);
-    public static final Resource BTN_NBT_D_F = getIcon(15, 1);
-    public static final Resource BTN_CAP_E_N = getIcon(14, 2);
-    public static final Resource BTN_CAP_E_F = getIcon(13, 2);
-    public static final Resource BTN_CAP_D_N = getIcon(16, 2);
-    public static final Resource BTN_CAP_D_F = getIcon(15, 2);
+    public static final Resource BTN_META_N_N = getIcon(14, 0);
+    public static final Resource BTN_META_N_F = getIcon(13, 0);
+    public static final Resource BTN_META_F_N = getIcon(16, 0);
+    public static final Resource BTN_META_F_F = getIcon(15, 0);
+    public static final Resource BTN_META_D = getIcon(17, 0);
+    public static final Resource BTN_NBT_N_N = getIcon(14, 1);
+    public static final Resource BTN_NBT_N_F = getIcon(13, 1);
+    public static final Resource BTN_NBT_F_N = getIcon(16, 1);
+    public static final Resource BTN_NBT_F_F = getIcon(15, 1);
+    public static final Resource BTN_NBT_D = getIcon(17, 1);
+    public static final Resource BTN_CAP_N_N = getIcon(14, 2);
+    public static final Resource BTN_CAP_N_F = getIcon(13, 2);
+    public static final Resource BTN_CAP_F_N = getIcon(16, 2);
+    public static final Resource BTN_CAP_F_F = getIcon(15, 2);
+    public static final Resource BTN_CAP_D = getIcon(17, 2);
     public static final Resource WGT_BUTTON_N = new Resource(40, 232, 20, 20);
     public static final Resource WGT_BUTTON_F = new Resource(60, 232, 20, 20);
     public static final Resource WGT_BUTTON_D = new Resource(80, 232, 20, 20);
@@ -108,6 +113,38 @@ public class Resource {
     public static final Resource LBL_FR_UR = getLabel(5);
     public static final Resource LBL_FR_LL = getLabel(6);
 
+    public static final ResourceGroup BTN_LABEL = new ResourceGroup(BTN_LABEL_N, BTN_LABEL_F);
+    public static final ResourceGroup BTN_NEW = new ResourceGroup(BTN_NEW_N, BTN_NEW_F);
+    public static final ResourceGroup BTN_SEARCH = new ResourceGroup(BTN_SEARCH_N, BTN_SEARCH_F);
+    public static final ResourceGroup BTN_SAVE = new ResourceGroup(BTN_SAVE_N, BTN_SAVE_F);
+    public static final ResourceGroup BTN_COPY = new ResourceGroup(BTN_COPY_N, BTN_COPY_F, BTN_COPY_D);
+    public static final ResourceGroup BTN_DEL = new ResourceGroup(BTN_DEL_N, BTN_DEL_F);
+    public static final ResourceGroup BTN_YES = new ResourceGroup(BTN_YES_N, BTN_YES_F, BTN_YES_D);
+    public static final ResourceGroup BTN_NO = new ResourceGroup(BTN_NO_N, BTN_NO_F, BTN_NO_D);
+    public static final ResourceGroup BTN_DISAMB = new ResourceGroup(BTN_DISAMB_N, BTN_DISAMB_F, BTN_DISAMB_D);
+    public static final ResourceGroup BTN_IN = new ResourceGroup(BTN_IN_N, BTN_IN_F, BTN_IN_D);
+    public static final ResourceGroup BTN_OUT = new ResourceGroup(BTN_OUT_N, BTN_OUT_F, BTN_OUT_D);
+    public static final ResourceGroup BTN_CAT = new ResourceGroup(BTN_CAT_N, BTN_CAT_F, BTN_CAT_D);
+    public static final ResourceGroup BTN_LIST = new ResourceGroup(BTN_LIST_N, BTN_LIST_F, BTN_LIST_D);
+    public static final ResourceGroup BTN_META_N = new ResourceGroup(BTN_META_N_N, BTN_META_N_F, BTN_META_D);
+    public static final ResourceGroup BTN_CAP_N = new ResourceGroup(BTN_CAP_N_N, BTN_CAP_N_F, BTN_CAP_D);
+    public static final ResourceGroup BTN_NBT_N = new ResourceGroup(BTN_NBT_N_N, BTN_NBT_N_F, BTN_NBT_D);
+    public static final ResourceGroup BTN_META_F = new ResourceGroup(BTN_META_F_N, BTN_META_F_F, BTN_META_D);
+    public static final ResourceGroup BTN_CAP_F = new ResourceGroup(BTN_CAP_F_N, BTN_CAP_F_F, BTN_CAP_D);
+    public static final ResourceGroup BTN_NBT_F = new ResourceGroup(BTN_NBT_F_N, BTN_NBT_F_F, BTN_NBT_D);
+    public static final ResourceGroup WGT_ARR_L = new ResourceGroup(WGT_ARR_L_N, WGT_ARR_L_F, WGT_ARR_L_D);
+    public static final ResourceGroup WGT_ARR_R = new ResourceGroup(WGT_ARR_R_N, WGT_ARR_R_F, WGT_ARR_R_D);
+    public static final ResourceGroup ICN_RECENT = new ResourceGroup(ICN_RECENT_N, ICN_RECENT_F);
+    public static final ResourceGroup ICN_INPUT = new ResourceGroup(ICN_INPUT_N, ICN_INPUT_F);
+    public static final ResourceGroup ICN_OUTPUT = new ResourceGroup(ICN_OUTPUT_N, ICN_OUTPUT_F);
+    public static final ResourceGroup ICN_CATALYST = new ResourceGroup(ICN_CATALYST_N, ICN_CATALYST_F);
+    public static final ResourceGroup ICN_LIST = new ResourceGroup(ICN_LIST_N, ICN_LIST_F);
+    public static final ResourceGroup ICN_LABEL = new ResourceGroup(ICN_LABEL_N, ICN_LABEL_F);
+    public static final ResourceGroup ICN_HELP = new ResourceGroup(ICN_HELP_N, ICN_HELP_F);
+    public static final ResourceGroup ICN_STACK = new ResourceGroup(ICN_STACK_N, ICN_STACK_F);
+    public static final ResourceGroup ICN_TEXT = new ResourceGroup(ICN_TEXT_N, ICN_TEXT_F);
+    public static final ResourceGroup ICN_MULTI = new ResourceGroup(ICN_MULTI_N, ICN_MULTI_F);
+
     protected int xPos, yPos, xSize, ySize;
     protected ResourceLocation rl;
 
@@ -149,5 +186,22 @@ public class Resource {
 
     private static Resource getLabel(int x) {
         return new Resource(x * 16, 70, 16, 16);
+    }
+
+    public static class ResourceGroup {
+        public Resource normal;
+        public Resource focused;
+        public Resource disabled;
+
+        public ResourceGroup(Resource normal, Resource focused, Resource disabled) {
+            this.normal = normal;
+            this.focused = focused;
+            this.disabled = disabled;
+        }
+
+        public ResourceGroup(Resource normal, Resource focused) {
+            this.normal = normal;
+            this.focused = focused;
+        }
     }
 }

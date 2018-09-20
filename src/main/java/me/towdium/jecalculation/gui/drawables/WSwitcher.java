@@ -42,13 +42,11 @@ public class WSwitcher extends WContainer {
         this.xSize = xSize;
         this.yPos = yPos;
         this.keys = keys;
-        left = new WButtonIcon(xPos, yPos, SIZE, SIZE, Resource.WGT_ARR_L_N, Resource.WGT_ARR_L_F,
-                Resource.WGT_ARR_L_D).setListenerLeft(() -> {
+        left = new WButtonIcon(xPos, yPos, SIZE, SIZE, Resource.WGT_ARR_L).setLsnrLeft(() -> {
             if (temp == null) move(false);
             else setTemp(null);
         });
-        right = new WButtonIcon(xPos + xSize - SIZE, yPos, SIZE, SIZE, Resource.WGT_ARR_R_N, Resource.WGT_ARR_R_F,
-                Resource.WGT_ARR_R_D).setListenerLeft(() -> {
+        right = new WButtonIcon(xPos + xSize - SIZE, yPos, SIZE, SIZE, Resource.WGT_ARR_R).setLsnrLeft(() -> {
             if (temp == null) move(true);
             else setTemp(null);
         });

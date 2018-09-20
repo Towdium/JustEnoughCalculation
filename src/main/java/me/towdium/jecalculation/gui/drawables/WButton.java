@@ -34,12 +34,12 @@ public abstract class WButton extends WTooltip {
         this.ySize = ySize;
     }
 
-    public WButton setListenerLeft(Runnable r) {
+    public WButton setLsnrLeft(Runnable r) {
         lsnrLeft = r;
         return this;
     }
 
-    public WButton setListenerRight(Runnable r) {
+    public WButton setLsnrRight(Runnable r) {
         lsnrRight = r;
         return this;
     }

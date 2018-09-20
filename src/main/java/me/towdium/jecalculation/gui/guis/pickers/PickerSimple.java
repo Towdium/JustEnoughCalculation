@@ -34,8 +34,8 @@ public class PickerSimple extends IWPicker.Impl {
         WLabelScroll ls = new WLabelScroll(7, 33, 8, 7, WLabel.enumMode.PICKER, true).setLabels(labels);
         WTextField tf = new WTextField(26, 7, 90);
         add(new WSearch(l -> callback.accept(l), tf, ls));
-        add(new WIcon(149, 7, 20, 20, Resource.ICN_HELP_N, Resource.ICN_HELP_F, l18nKey + ".help"));
-        add(new WIcon(7, 7, 20, 20, Resource.ICN_TEXT_N, Resource.ICN_TEXT_F, l18nKey + ".text"));
+        add(new WIcon(149, 7, 20, 20, Resource.ICN_HELP, l18nKey + ".help"));
+        add(new WIcon(7, 7, 20, 20, Resource.ICN_TEXT, l18nKey + ".text"));
     }
 
     public static class FluidStack extends PickerSimple {

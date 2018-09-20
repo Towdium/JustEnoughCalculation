@@ -25,15 +25,13 @@ public class GuiRecipe extends WContainer {
     HashMap<Integer, List<ILabel>> disambiguation = new HashMap<>();
     WSwitcher switcherGroup = new WSwitcher(7, 7, 162, Controller.getGroups());
     WTextField textField = new WTextField(49, 33, 119);
-    WButton buttonCopy = new WButtonIcon(83, 33, 20, 20, Resource.BTN_COPY_N, Resource.BTN_COPY_F,
-            Resource.BTN_COPY_D, "recipe.copy").setDisabled(true).setListenerLeft(() -> {
+    WButton buttonCopy = new WButtonIcon(83, 33, 20, 20, Resource.BTN_COPY, "recipe.copy").setLsnrLeft(() -> {
         Controller.addRecipe(switcherGroup.getText(), toRecipe());
         JecaGui.displayParent();
     });
 
     WLabelGroup groupCatalyst = new WLabelGroup(28, 87, 7, 1, 20, 20, WLabel.enumMode.EDITOR);
-    WButton buttonDisamb = new WButtonIcon(121, 33, 20, 20, Resource.BTN_DISAMB_N,
-            Resource.BTN_DISAMB_F, Resource.BTN_DISAMB_D, "recipe.disamb").setDisabled(true).setListenerLeft(() -> {
+    WButton buttonDisamb = new WButtonIcon(121, 33, 20, 20, Resource.BTN_DISAMB, "recipe.disamb").setLsnrLeft(() -> {
         if (disambiguation != null) JecaGui.displayGui(new GuiDisambiguation(new ArrayList<>(disambiguation.values()))
                 .setCallback(l -> {
                     JecaGui.displayParent();
@@ -48,43 +46,38 @@ public class GuiRecipe extends WContainer {
         disambiguation.remove(i + 21);
         refresh();
     });
-    WButton buttonClear = new WButtonIcon(64, 33, 20, 20, Resource.BTN_DEL_N, Resource.BTN_DEL_F, "recipe.clear")
-            .setListenerLeft(this::clear);
-    WButton buttonLabel = new WButtonIcon(45, 33, 20, 20, Resource.BTN_LABEL_N, Resource.BTN_LABEL_F, "recipe.label")
-            .setListenerLeft(() -> JecaGui.displayGui(new GuiLabel((l) -> {
+    WButton buttonClear = new WButtonIcon(64, 33, 20, 20, Resource.BTN_DEL, "recipe.clear").setLsnrLeft(this::clear);
+    WButton buttonLabel = new WButtonIcon(45, 33, 20, 20, Resource.BTN_LABEL, "recipe.label")
+            .setLsnrLeft(() -> JecaGui.displayGui(new GuiLabel((l) -> {
                 JecaGui.displayParent();
                 JecaGui.getCurrent().hand = l;
             })));
-    WButton buttonSave = new WButtonIcon(26, 33, 20, 20, Resource.BTN_SAVE_N, Resource.BTN_SAVE_F, "recipe.save")
-            .setListenerLeft(() -> {
-                if (dest == null)
-                    Controller.addRecipe(switcherGroup.getText(), toRecipe());
-                else {
-                    if (textField.getText().equals(dest.one))
-                        Controller.setRecipe(dest.one, dest.two, toRecipe());
-                    else {
-                        Controller.removeRecipe(dest.one, dest.two);
-                        Controller.addRecipe(switcherGroup.getText(), toRecipe());
-                    }
-                }
-                JecaGui.displayParent();
-            });
-
-    WButton buttonNew = new WButtonIcon(7, 33, 20, 20, Resource.BTN_NEW_N, Resource.BTN_NEW_F, "recipe.new")
-            .setListenerLeft(() -> setModeNewGroup(true));
-    WButton buttonDel = new WButtonIcon(102, 33, 20, 20, Resource.BTN_NO_N, Resource.BTN_NO_F, Resource.BTN_NO_D,
-            "recipe.delete").setDisabled(true).setListenerLeft(() -> {
+    WButton buttonSave = new WButtonIcon(26, 33, 20, 20, Resource.BTN_SAVE, "recipe.save").setLsnrLeft(() -> {
+        if (dest == null)
+            Controller.addRecipe(switcherGroup.getText(), toRecipe());
+        else {
+            if (textField.getText().equals(dest.one))
+                Controller.setRecipe(dest.one, dest.two, toRecipe());
+            else {
+                Controller.removeRecipe(dest.one, dest.two);
+                Controller.addRecipe(switcherGroup.getText(), toRecipe());
+            }
+        }
+        JecaGui.displayParent();
+    });
+    WButton buttonDel = new WButtonIcon(102, 33, 20, 20, Resource.BTN_NO, "recipe.delete").setLsnrLeft(() -> {
         Controller.removeRecipe(dest.one, dest.two);
         JecaGui.displayParent();
     });
-    WButton buttonYes = new WButtonIcon(7, 33, 20, 20, Resource.BTN_YES_N, Resource.BTN_YES_F, "recipe.confirm")
-            .setListenerLeft(() -> {
-                switcherGroup.setTemp(textField.getText());
-                textField.setText("");
-                setModeNewGroup(false);
-            });
-    WButton buttonNo = new WButtonIcon(26, 33, 20, 20, Resource.BTN_NO_N, Resource.BTN_NO_F, "recipe.cancel")
-            .setListenerLeft(() -> setModeNewGroup(false));
+    WButton buttonNew = new WButtonIcon(7, 33, 20, 20, Resource.BTN_NEW, "recipe.new")
+            .setLsnrLeft(() -> setModeNewGroup(true));
+    WButton buttonYes = new WButtonIcon(7, 33, 20, 20, Resource.BTN_YES, "recipe.confirm").setLsnrLeft(() -> {
+        switcherGroup.setTemp(textField.getText());
+        textField.setText("");
+        setModeNewGroup(false);
+    });
+    WButton buttonNo = new WButtonIcon(26, 33, 20, 20, Resource.BTN_NO, "recipe.cancel")
+            .setLsnrLeft(() -> setModeNewGroup(false));
 
 
     public GuiRecipe(String group, int index) {
@@ -93,19 +86,21 @@ public class GuiRecipe extends WContainer {
         Recipe r = Controller.getRecipe(group, index);
         fromRecipe(r);
         switcherGroup.setIndex(Controller.getGroups().indexOf(group));
-        buttonCopy.setDisabled(false);
-        buttonDel.setDisabled(false);
+
     }
 
     public GuiRecipe() {
         add(new WPanel());
-        add(new WIcon(7, 63, 21, 20, Resource.ICN_OUTPUT_N, Resource.ICN_OUTPUT_F, "recipe.output"));
-        add(new WIcon(7, 87, 21, 20, Resource.ICN_CATALYST_N, Resource.ICN_CATALYST_F, "recipe.catalyst"));
-        add(new WIcon(7, 111, 21, 40, Resource.ICN_INPUT_N, Resource.ICN_INPUT_F, "recipe.input"));
+        add(new WIcon(7, 63, 21, 20, Resource.ICN_OUTPUT, "recipe.output"));
+        add(new WIcon(7, 87, 21, 20, Resource.ICN_CATALYST, "recipe.catalyst"));
+        add(new WIcon(7, 111, 21, 40, Resource.ICN_INPUT, "recipe.input"));
         add(new WLine(57));
         addAll(groupInput, groupCatalyst, groupOutput, switcherGroup);
         if (switcherGroup.getTexts().isEmpty()) switcherGroup.setTemp(Utilities.I18n.format("common.default"));
         setModeNewGroup(false);
+        buttonCopy.setDisabled(true);
+        buttonDel.setDisabled(true);
+        buttonDisamb.setDisabled(true);
     }
 
     public void setModeNewGroup(boolean b) {
