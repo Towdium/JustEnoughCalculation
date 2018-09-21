@@ -56,7 +56,7 @@ public class GuiCalculator extends WContainer {
                 .setLsnrLeft(() -> JecaGui.displayGui(true, true, new GuiRecipe())));
         add(new WButtonIcon(149, 7, 20, 20, Resource.BTN_SEARCH, "calculator.search")
                 .setLsnrLeft(() -> JecaGui.displayGui(new GuiSearch())));
-        add(new WText(53, 13, JecaGui.Font.DEFAULT_NO_SHADOW, "x"));
+        add(new WText(53, 13, JecaGui.Font.PLAIN, "x"));
         add(new WLine(55));
         add(new WIcon(151, 31, 18, 18, Resource.ICN_RECENT, "calculator.history"));
         addAll(lgRecent, lLabel, btnInput, btnOutput, btnCatalyst, btnSteps, lsResult, tfAmount);

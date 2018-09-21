@@ -8,9 +8,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Author: towdium
@@ -43,10 +40,5 @@ public class WButtonIcon extends WButton {
         super.onDraw(gui, xMouse, yMouse);
         Resource r = disabled ? rDisabled : (mouseIn(xMouse, yMouse) ? rFocused : rNormal);
         if (r != null) gui.drawResource(r, xPos + (xSize - r.getXSize()) / 2, yPos + (ySize - r.getYSize()) / 2);
-    }
-
-    @Override
-    protected List<String> getSuffix() {
-        return disabled ? Arrays.asList("disabled", "active") : Collections.singletonList("active");
     }
 }

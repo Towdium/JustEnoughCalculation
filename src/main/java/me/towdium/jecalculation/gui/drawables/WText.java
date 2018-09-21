@@ -7,7 +7,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.function.Supplier;
 
 /**
  * Author: towdium
@@ -19,44 +18,28 @@ import java.util.function.Supplier;
 public class WText implements IWidget {
     public static final int UNDEFINED = Integer.MAX_VALUE;
 
-    public int xPos, yPos, xSize, ySize;
+    public int xPos, yPos, xSize;
+    public boolean centred;
     public JecaGui.Font font;
-    public Supplier<String> key;
+    public String key;
 
     public WText(int xPos, int yPos, JecaGui.Font font, String key) {
-        this(xPos, yPos, UNDEFINED, UNDEFINED, font, key);
+        this(xPos, yPos, UNDEFINED, font, key, false);
     }
 
-    public WText(int xPos, int yPos, JecaGui.Font font, Supplier<String> key) {
-        this(xPos, yPos, UNDEFINED, UNDEFINED, font, key);
-    }
-
-    public WText(int xPos, int yPos, int xSize, JecaGui.Font font, String key) {
-        this(xPos, yPos, xSize, UNDEFINED, font, key);
-    }
-
-    public WText(int xPos, int yPos, int xSize, JecaGui.Font font, Supplier<String> key) {
-        this(xPos, yPos, xSize, UNDEFINED, font, key);
-    }
-
-    public WText(int xPos, int yPos, int xSize, int ySize, JecaGui.Font font, String key) {
-        this(xPos, yPos, xSize, UNDEFINED, font, () -> key);
-    }
-
-    public WText(int xPos, int yPos, int xSize, int ySize, JecaGui.Font font, Supplier<String> key) {
+    public WText(int xPos, int yPos, int xSize, JecaGui.Font font, String key, boolean centred) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.xSize = xSize;
-        this.ySize = ySize;
         this.font = font;
         this.key = key;
+        this.centred = centred;
     }
 
     @Override
     public void onDraw(JecaGui gui, int xMouse, int yMouse) {
-        String[] text = key.get().split("\n");
-        if (xSize == UNDEFINED) gui.drawText(xPos, yPos, font, text);
-        else if (ySize == UNDEFINED) gui.drawText(xPos, yPos, xSize, font, text);
-        else gui.drawText(xPos, yPos, xSize, ySize, font, text);
+        int x = xPos + (centred ? xSize / 2 - font.getTextWidth(key) / 2 : 0);
+        if (xSize == UNDEFINED) gui.drawText(x, yPos, font, key);
+        else gui.drawText(x, yPos, xSize, font, key);
     }
 }

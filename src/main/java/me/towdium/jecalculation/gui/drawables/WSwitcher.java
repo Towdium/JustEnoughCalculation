@@ -51,8 +51,7 @@ public class WSwitcher extends WContainer {
             else setTemp(null);
         });
         wRect = new WRectangle(xPos + SIZE, yPos, xSize - 2 * SIZE, SIZE, JecaGui.COLOR_GUI_GREY);
-        wText = new WText(xPos + SIZE, yPos, xSize - 2 * SIZE, SIZE, JecaGui.Font.DEFAULT_SHADOW,
-                () -> temp == null ? (keys.isEmpty() ? "" : keys.get(index.current())) : temp);
+        wText = new WText(xPos + SIZE, yPos + 2, xSize - 2 * SIZE, JecaGui.Font.SHADOW, "", true);
         index = new Circulator(keys.size());
         refresh();
         addAll(left, right, wRect, wText);
@@ -99,6 +98,7 @@ public class WSwitcher extends WContainer {
         boolean b = keys.size() < (temp == null ? 2 : 1);
         left.setDisabled(b);
         right.setDisabled(b);
+        wText.key = temp == null ? (keys.isEmpty() ? "" : keys.get(index.current())) : temp;
     }
 
     public void notifyLsnr() {

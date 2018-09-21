@@ -12,6 +12,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Author: towdium
@@ -75,8 +78,14 @@ public abstract class WButton extends WTooltip {
         return JecaGui.mouseIn(xPos + 1, yPos + 1, xSize - 2, ySize - 2, xMouse, yMouse);
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public WButton setDisabled(boolean b) {
         disabled = b;
         return this;
+    }
+
+    @Override
+    protected List<String> getSuffix() {
+        return disabled ? Arrays.asList("disabled", "active") : Collections.singletonList("active");
     }
 }
