@@ -11,7 +11,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
  * Date:   8/10/17.
  */
 @Config(modid = JustEnoughCalculation.Reference.MODID, name = "JustEnoughCalculation/main")
-public class JecConfig {
+public class JecaConfig {
     @Config.Comment("Set to true to force client mode: no item and recipe allowed, use key bindings instead.")
     @Config.LangKey("config.force_client")
     public static boolean clientMode = false;

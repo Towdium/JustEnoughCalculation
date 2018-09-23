@@ -2,19 +2,13 @@ package me.towdium.jecalculation.utils;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
-import me.towdium.jecalculation.data.capability.JecaCapability;
-import me.towdium.jecalculation.data.structure.Recipes;
-import me.towdium.jecalculation.item.ItemCalculator;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import me.towdium.jecalculation.utils.wrappers.Wrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fluids.Fluid;
@@ -85,24 +79,6 @@ public class Utilities {
         return is.getOrCreateSubCompound(JustEnoughCalculation.Reference.MODID);
     }
 
-    public static boolean contains(String s1, String s2) {
-        return s1.contains(s2);
-    }
-
-    // get calculator item in player inventory
-    public static Optional<ItemStack> getStack() {
-        InventoryPlayer inv = Minecraft.getMinecraft().player.inventory;
-        ItemStack is = inv.getCurrentItem();
-        if (is.getItem() instanceof ItemCalculator) return Optional.of(is);
-        is = inv.offHandInventory.get(0);
-        return Optional.ofNullable(is.getItem() instanceof ItemCalculator ? is : null);
-    }
-
-    public static Recipes getRecipes(EntityPlayer player) {
-        //noinspection ConstantConditions
-        return player.getCapability(JecaCapability.CAPABILITY_RECORD, EnumFacing.UP);
-    }
-
     public static class Timer {
         long time = System.currentTimeMillis();
         boolean running = false;
@@ -170,11 +146,6 @@ public class Utilities {
             i = l.listIterator(l.size());
         }
 
-        public ReversedIterator(ListIterator<T> i) {
-            while (i.hasNext()) i.next();
-            this.i = i;
-        }
-
         @Override
         public boolean hasNext() {
             return i.hasPrevious();
@@ -211,6 +182,10 @@ public class Utilities {
 
     @SideOnly(Side.CLIENT)
     public static class I18n {
+        public static boolean contains(String s1, String s2) {
+            return s1.contains(s2);
+        }
+
         public static Pair<String, Boolean> search(String translateKey, Object... parameters) {
             Pair<String, Boolean> ret = new Pair<>(null, null);
             translateKey = "jecharacters." + translateKey;

@@ -3,7 +3,7 @@ package me.towdium.jecalculation.gui.drawables;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
-import me.towdium.jecalculation.utils.Utilities;
+import me.towdium.jecalculation.utils.Utilities.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -76,7 +76,7 @@ public class WLabelScroll extends WContainer {
 
     public boolean setFilter(String str) {
         filter = str;
-        filtered = labels.stream().filter(l -> Utilities.contains(l.getDisplayName().toLowerCase(), str.toLowerCase()))
+        filtered = labels.stream().filter(l -> I18n.contains(l.getDisplayName().toLowerCase(), str.toLowerCase()))
                 .collect(Collectors.toList());
         scroll.setCurrent(0);
         update(0);

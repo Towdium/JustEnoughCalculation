@@ -1,8 +1,8 @@
 package me.towdium.jecalculation.data;
 
+import me.towdium.jecalculation.JecaCapability;
+import me.towdium.jecalculation.JecaItem;
 import me.towdium.jecalculation.JustEnoughCalculation;
-import me.towdium.jecalculation.data.capability.JecaCapability;
-import me.towdium.jecalculation.data.capability.JecaCapacityProvider;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.structure.Recents;
 import me.towdium.jecalculation.data.structure.Recipe;
@@ -16,6 +16,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
@@ -55,6 +56,14 @@ public class Controller {  // TODO record calculate amount
             //noinspection ConstantConditions
             return Minecraft.getMinecraft().player.getCapability(JecaCapability.CAPABILITY_RECORD, EnumFacing.UP);
         else return recipesClient;
+    }
+
+    static Optional<ItemStack> getStack() {
+        InventoryPlayer inv = Minecraft.getMinecraft().player.inventory;
+        ItemStack is = inv.getCurrentItem();
+        if (is.getItem() instanceof JecaItem) return Optional.of(is);
+        is = inv.offHandInventory.get(0);
+        return Optional.ofNullable(is.getItem() instanceof JecaItem ? is : null);
     }
 
     public static List<String> getGroups() {
@@ -103,7 +112,7 @@ public class Controller {  // TODO record calculate amount
             return recentsClient.getRecords();
         else {
             ArrayList<ILabel> ret = new ArrayList<>();
-            Optional<ItemStack> ois = Utilities.getStack();
+            Optional<ItemStack> ois = getStack();
             ois.ifPresent(is -> {
                 Recents recent = new Recents(Utilities.getTag(is).getTagList(Recents.IDENTIFIER, 10));
                 ret.addAll(recent.getRecords());
@@ -116,7 +125,7 @@ public class Controller {  // TODO record calculate amount
         if (JustEnoughCalculation.side == JustEnoughCalculation.enumSide.CLIENT)
             recentsClient.push(label);
         else {
-            Optional<ItemStack> ois = Utilities.getStack();
+            Optional<ItemStack> ois = getStack();
             ois.ifPresent(is -> {
                 Recents recent = new Recents(Utilities.getTag(is).getTagList(Recents.IDENTIFIER, 10));
                 recent.push(label);
@@ -162,20 +171,20 @@ public class Controller {  // TODO record calculate amount
     // server side
     @SubscribeEvent
     public static void onJoin(PlayerLoggedInEvent e) {
-        JustEnoughCalculation.network.sendTo(new PRecord(Utilities.getRecipes(e.player)), (EntityPlayerMP) e.player);
+        JustEnoughCalculation.network.sendTo(new PRecord(JecaCapability.getRecipes(e.player)), (EntityPlayerMP) e.player);
     }
 
     @SubscribeEvent
     public static void onAttachCapability(AttachCapabilitiesEvent<Entity> e) {
         if (e.getObject() instanceof EntityPlayer) {
             e.addCapability(new ResourceLocation(JustEnoughCalculation.Reference.MODID, "record"),
-                    new JecaCapacityProvider(new Recipes()));
+                    new JecaCapability.Provider(new Recipes()));
         }
     }
 
     @SubscribeEvent
     public void onCloneCapability(PlayerEvent.Clone e) {
-        Recipes ro = Utilities.getRecipes(e.getOriginal());
-        Utilities.getRecipes(e.getEntityPlayer()).deserialize(ro.serialize());
+        Recipes ro = JecaCapability.getRecipes(e.getOriginal());
+        JecaCapability.getRecipes(e.getEntityPlayer()).deserialize(ro.serialize());
     }
 }

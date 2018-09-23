@@ -1,8 +1,8 @@
 package me.towdium.jecalculation.network.packets;
 
 import io.netty.buffer.ByteBuf;
+import me.towdium.jecalculation.JecaCapability;
 import me.towdium.jecalculation.data.structure.Recipe;
-import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.WorldServer;
@@ -51,7 +51,7 @@ public class PRecipe implements IMessage {
         @Override
         public IMessage onMessage(PRecipe message, MessageContext ctx) {
             IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
-            mainThread.addScheduledTask(() -> Utilities.getRecipes(ctx.getServerHandler().player)
+            mainThread.addScheduledTask(() -> JecaCapability.getRecipes(ctx.getServerHandler().player)
                     .modify(message.group, message.index, message.recipe));
             return null;
         }

@@ -1,8 +1,7 @@
-package me.towdium.jecalculation.algorithm;
+package me.towdium.jecalculation.data.structure;
 
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
-import me.towdium.jecalculation.data.structure.Recipe;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 
 import java.util.*;

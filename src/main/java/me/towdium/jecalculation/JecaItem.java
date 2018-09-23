@@ -1,7 +1,6 @@
-package me.towdium.jecalculation.item;
+package me.towdium.jecalculation;
 
 import mcp.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.guis.GuiCalculator;
 import me.towdium.jecalculation.utils.IllegalPositionException;
@@ -31,10 +30,10 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 @Mod.EventBusSubscriber
-public class ItemCalculator extends Item {
-    public static ItemCalculator INSTANCE = new ItemCalculator();
+public class JecaItem extends Item {
+    public static JecaItem INSTANCE = new JecaItem();
 
-    private ItemCalculator() {
+    private JecaItem() {
         setHasSubtypes(true);
         setMaxStackSize(1);
         setCreativeTab(CreativeTabs.TOOLS);
@@ -97,6 +96,4 @@ public class ItemCalculator extends Item {
         JustEnoughCalculation.proxy.runOnSide(() -> JecaGui.displayGui(new GuiCalculator()), Side.CLIENT);
         return super.onItemRightClick(worldIn, playerIn, handIn);
     }
-
-
 }

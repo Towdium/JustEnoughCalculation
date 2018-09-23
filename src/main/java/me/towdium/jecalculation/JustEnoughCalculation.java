@@ -48,7 +48,7 @@ public class JustEnoughCalculation {
     @NetworkCheckHandler
     public static boolean networkCheck(Map<String, String> mods, Side s) {
         if (s == Side.SERVER) {
-            if (mods.containsKey(Reference.MODID) && !JecConfig.clientMode) side = enumSide.BOTH;
+            if (mods.containsKey(Reference.MODID) && !JecaConfig.clientMode) side = enumSide.BOTH;
             else side = enumSide.CLIENT;
             return true;
         } else return mods.containsKey(Reference.MODID);

@@ -1,7 +1,7 @@
 package me.towdium.jecalculation.network.packets;
 
 import io.netty.buffer.ByteBuf;
-import me.towdium.jecalculation.item.ItemCalculator;
+import me.towdium.jecalculation.JecaItem;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IThreadListener;
@@ -38,12 +38,12 @@ public class PCalculator implements IMessage {
             mainThread.addScheduledTask(() -> {
                 InventoryPlayer inventory = ctx.getServerHandler().player.inventory;
                 ItemStack calculator = inventory.getCurrentItem();
-                if (!calculator.isEmpty() && calculator.getItem() instanceof ItemCalculator) {
+                if (!calculator.isEmpty() && calculator.getItem() instanceof JecaItem) {
                     inventory.setInventorySlotContents(inventory.currentItem, message.stack);
                     return;
                 }
                 calculator = inventory.offHandInventory.get(0);
-                if (!calculator.isEmpty() && calculator.getItem() instanceof ItemCalculator) {
+                if (!calculator.isEmpty() && calculator.getItem() instanceof JecaItem) {
                     inventory.offHandInventory.set(0, message.stack);
                 }
             });

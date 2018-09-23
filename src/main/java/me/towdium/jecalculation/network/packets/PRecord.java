@@ -1,9 +1,9 @@
 package me.towdium.jecalculation.network.packets;
 
 import io.netty.buffer.ByteBuf;
+import me.towdium.jecalculation.JecaCapability;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.structure.Recipes;
-import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -45,7 +45,7 @@ public class PRecord implements IMessage {
             Minecraft.getMinecraft().addScheduledTask(() -> {
                 EntityPlayer player = JustEnoughCalculation.proxy.getPlayer();
                 if (player != null) {
-                    Recipes recipes = Utilities.getRecipes(player);
+                    Recipes recipes = JecaCapability.getRecipes(player);
                     recipes.deserialize(message.recipes);
                 }
             });

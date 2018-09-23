@@ -1,10 +1,10 @@
 package me.towdium.jecalculation.gui.guis;
 
 import mcp.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.algorithm.CostList;
-import me.towdium.jecalculation.algorithm.CostList.Calculator;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
+import me.towdium.jecalculation.data.structure.CostList;
+import me.towdium.jecalculation.data.structure.CostList.Calculator;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.gui.drawables.*;

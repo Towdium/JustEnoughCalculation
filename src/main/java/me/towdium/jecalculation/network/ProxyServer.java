@@ -1,7 +1,7 @@
 package me.towdium.jecalculation.network;
 
 
-import me.towdium.jecalculation.data.capability.JecaCapability;
+import me.towdium.jecalculation.JecaCapability;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.structure.Recipes;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -14,7 +14,7 @@ import net.minecraftforge.fml.relauncher.Side;
 public class ProxyServer implements IProxy {
     @Override
     public void initPre() {
-        CapabilityManager.INSTANCE.register(Recipes.class, new JecaCapability(), Recipes::new);
+        CapabilityManager.INSTANCE.register(Recipes.class, new JecaCapability.Storage(), Recipes::new);
     }
 
     @Override
