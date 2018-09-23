@@ -46,6 +46,7 @@ public class GuiCalculator extends WContainer {
         });
         lgRecent.setLsnrUpdate(l -> JecaGui.getCurrent().hand = lgRecent.getLabelAt(l));
         tfAmount.setLsnrText(s -> refreshCalculator());
+        add(new WHelp("calculator"));
         add(new WPanel());
         add(new WButtonIcon(7, 7, 20, 20, Resource.BTN_LABEL, "calculator.label")
                 .setLsnrLeft(() -> JecaGui.displayGui(new GuiLabel(l -> {

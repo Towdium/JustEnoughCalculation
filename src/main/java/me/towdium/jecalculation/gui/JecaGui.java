@@ -8,7 +8,7 @@ import me.towdium.jecalculation.gui.drawables.WContainer;
 import me.towdium.jecalculation.gui.guis.GuiCalculator;
 import me.towdium.jecalculation.jei.JecPlugin;
 import me.towdium.jecalculation.network.ProxyClient;
-import me.towdium.jecalculation.utils.FormattingEngine;
+import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -23,7 +23,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.fluids.Fluid;
@@ -262,13 +261,15 @@ public class JecaGui extends GuiContainer {
     }
 
     public void drawSplitText(float xPos, float yPos, int width, Font f, String s) {
+        drawSplitText(xPos, yPos, f, Utilities.I18n.wrap(s, width));
+    }
+
+    public void drawSplitText(float xPos, float yPos, Font f, List<String> ss) {
         drawText(xPos, yPos, f, () -> {
             int y = 0;
-            List<String> ss = FormattingEngine.wrapStringToWidth(s, width,
-                    i -> fontRenderer.getCharWidth((char) i), MinecraftForgeClient.getLocale());
             for (String i : ss) {
                 fontRenderer.drawString(i, 0, y, f.color, f.shadow);
-                y += fontRenderer.FONT_HEIGHT;
+                y += fontRenderer.FONT_HEIGHT + 1;
             }
         });
     }

@@ -14,8 +14,7 @@ import net.minecraftforge.fml.relauncher.Side;
 public class ProxyServer implements IProxy {
     @Override
     public void initPre() {
-        CapabilityManager.INSTANCE.register(Recipes.class,
-                new JecaCapability(), Recipes::new);
+        CapabilityManager.INSTANCE.register(Recipes.class, new JecaCapability(), Recipes::new);
     }
 
     @Override

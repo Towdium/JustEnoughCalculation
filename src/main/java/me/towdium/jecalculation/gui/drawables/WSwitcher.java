@@ -63,6 +63,7 @@ public class WSwitcher extends WContainer {
             else index.move(-1);
         } else temp = null;
         notifyLsnr();
+        refresh();
     }
 
     public WSwitcher setListener(Runnable listener) {
