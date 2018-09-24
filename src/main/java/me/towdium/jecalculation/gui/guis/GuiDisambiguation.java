@@ -2,9 +2,9 @@ package me.towdium.jecalculation.gui.guis;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
-import me.towdium.jecalculation.gui.IWPicker;
 import me.towdium.jecalculation.gui.Resource;
-import me.towdium.jecalculation.gui.drawables.*;
+import me.towdium.jecalculation.gui.guis.pickers.IPicker;
+import me.towdium.jecalculation.gui.widgets.*;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -18,7 +18,7 @@ import java.util.List;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
-public class GuiDisambiguation extends IWPicker.Impl {
+public class GuiDisambiguation extends IPicker.Impl implements IGui {
     protected WLabelScroll lsUp;
     protected WLabelScroll lsDown;
     protected WSwitcher switcher;
@@ -33,7 +33,6 @@ public class GuiDisambiguation extends IWPicker.Impl {
 
         add(new WPanel());
         add(switcher);
-        add(new WIcon(149, 24, 20, 20, Resource.ICN_HELP, "disambiguation.help"));
         add(new WIcon(7, 48, 18, 54, Resource.ICN_LIST, "disambiguation.list"));
         add(new WIcon(7, 105, 18, 54, Resource.ICN_LABEL, "disambiguation.label"));
         add(new WSearch(i -> {

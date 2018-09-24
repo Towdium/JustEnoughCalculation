@@ -6,8 +6,8 @@ import me.towdium.jecalculation.data.label.labels.LFluidStack;
 import me.towdium.jecalculation.data.label.labels.LItemStack;
 import me.towdium.jecalculation.data.label.labels.LOreDict;
 import me.towdium.jecalculation.data.label.labels.LPlaceholder;
-import me.towdium.jecalculation.gui.IWPicker;
 import me.towdium.jecalculation.gui.JecaGui;
+import me.towdium.jecalculation.gui.guis.pickers.IPicker;
 import me.towdium.jecalculation.gui.guis.pickers.PickerItemStack;
 import me.towdium.jecalculation.gui.guis.pickers.PickerPlaceholder;
 import me.towdium.jecalculation.gui.guis.pickers.PickerSimple;
@@ -50,6 +50,9 @@ public interface ILabel {
     String FORMAT_BLUE = "\u00A79";
     String FORMAT_GREY = "\u00A78";
     String FORMAT_ITALIC = "\u00A7o";
+
+    @Nullable
+    Object getRepresentation();
 
     ILabel increaseAmount();
 
@@ -231,7 +234,7 @@ public interface ILabel {
         private RegistryEditor() {
         }
 
-        public void register(Supplier<IWPicker> editor, String unlocalizedName, ILabel representation) {
+        public void register(Supplier<IPicker> editor, String unlocalizedName, ILabel representation) {
             records.add(new Record(editor, "common.label." + unlocalizedName, representation));
         }
 
@@ -240,11 +243,11 @@ public interface ILabel {
         }
 
         public static class Record {
-            public Supplier<IWPicker> editor;
+            public Supplier<IPicker> editor;
             public String localizeKey;
             public ILabel representation;
 
-            public Record(Supplier<IWPicker> editor, String localizeKey, ILabel representation) {
+            public Record(Supplier<IPicker> editor, String localizeKey, ILabel representation) {
                 this.editor = editor;
                 this.localizeKey = localizeKey;
                 this.representation = representation;
@@ -261,6 +264,12 @@ public interface ILabel {
         }
 
         private LEmpty() {
+        }
+
+        @Nullable
+        @Override
+        public Object getRepresentation() {
+            return null;
         }
 
         @Override

@@ -14,6 +14,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.HashSet;
 import java.util.List;
@@ -51,6 +52,19 @@ public class LOreDict extends ILabel.Impl {
     public LOreDict(NBTTagCompound nbt) {
         super(nbt);
         name = nbt.getString(KEY_NAME);
+    }
+
+    @Override
+    @Nonnull
+    public ItemStack getRepresentation() {
+        NonNullList<ItemStack> list = NonNullList.create();
+        OreDictionary.getOres(name).forEach(is -> {
+            if (is.getItemDamage() == OreDictionary.WILDCARD_VALUE) {
+                is.getItem().getSubItems(CreativeTabs.SEARCH, list);
+            } else list.add(is);
+        });
+        long index = System.currentTimeMillis() / 1500;
+        return list.get((int) (index % list.size()));
     }
 
     @Override
@@ -151,18 +165,7 @@ public class LOreDict extends ILabel.Impl {
     @Override
     @SideOnly(Side.CLIENT)
     public void drawLabel(JecaGui gui) {
-        NonNullList<ItemStack> list = NonNullList.create();
-        OreDictionary.getOres(name).forEach(is -> {
-            if (is.getItemDamage() == OreDictionary.WILDCARD_VALUE) {
-                is.getItem().getSubItems(CreativeTabs.SEARCH, list);
-            } else list.add(is);
-        });
-        long index = System.currentTimeMillis() / 1500;
-        //GlStateManager.pushMatrix();
-        //GlStateManager.translate(1, 1, 0);
-        //GlStateManager.scale(14f / 16, 14f / 16, 1);
-        gui.drawItemStack(0, 0, list.get((int) (index % list.size())), false);
-        //GlStateManager.popMatrix();
+        gui.drawItemStack(0, 0, getRepresentation(), false);
         gui.drawResource(Resource.LBL_FRAME, 0, 0);
     }
 

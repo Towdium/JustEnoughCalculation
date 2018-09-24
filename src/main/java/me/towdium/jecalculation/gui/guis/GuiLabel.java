@@ -6,10 +6,10 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.cache.Weigher;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
-import me.towdium.jecalculation.gui.IWidget;
-import me.towdium.jecalculation.gui.drawables.WContainer;
-import me.towdium.jecalculation.gui.drawables.WPage;
-import me.towdium.jecalculation.gui.drawables.WPanel;
+import me.towdium.jecalculation.gui.widgets.IWidget;
+import me.towdium.jecalculation.gui.widgets.WContainer;
+import me.towdium.jecalculation.gui.widgets.WPage;
+import me.towdium.jecalculation.gui.widgets.WPanel;
 import me.towdium.jecalculation.utils.wrappers.Wrapper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -24,7 +24,7 @@ import java.util.function.Consumer;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
-public class GuiLabel extends WContainer {
+public class GuiLabel extends WContainer implements IGui {
     WContainer container = new WContainer();
     Consumer<ILabel> callback;
     LoadingCache<Integer, IWidget> cache = CacheBuilder.newBuilder().concurrencyLevel(1)

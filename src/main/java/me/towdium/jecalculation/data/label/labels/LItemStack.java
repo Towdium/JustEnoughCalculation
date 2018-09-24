@@ -1,5 +1,6 @@
 package me.towdium.jecalculation.data.label.labels;
 
+import com.sun.istack.internal.NotNull;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
@@ -76,6 +77,9 @@ public class LItemStack extends ILabel.Impl {
         meta = lis.meta;
         nbt = lis.nbt;
         cap = lis.cap;
+        fMeta = lis.fMeta;
+        fNbt = lis.fNbt;
+        fCap = lis.fCap;
         temp = new ItemStack(item, 1, meta, cap);
         temp.setTagCompound(nbt);
     }
@@ -138,6 +142,12 @@ public class LItemStack extends ILabel.Impl {
     public void getToolTip(List<String> existing, boolean detailed) {
         super.getToolTip(existing, detailed);
         existing.add(FORMAT_BLUE + FORMAT_ITALIC + Utilities.getModName(item));
+    }
+
+    @NotNull
+    @Override
+    public ItemStack getRepresentation() {
+        return temp;
     }
 
     @Override

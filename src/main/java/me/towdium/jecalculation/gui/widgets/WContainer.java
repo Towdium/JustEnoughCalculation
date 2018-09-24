@@ -1,7 +1,6 @@
-package me.towdium.jecalculation.gui.drawables;
+package me.towdium.jecalculation.gui.widgets;
 
 import mcp.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.gui.IWidget;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.utils.Utilities;
 import net.minecraftforge.fml.relauncher.Side;
@@ -18,7 +17,7 @@ import java.util.List;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
-public class WContainer implements IWidget {
+public class WContainer implements IContainer {
     protected List<IWidget> widgets = new ArrayList<>();
 
     public void add(IWidget w) {

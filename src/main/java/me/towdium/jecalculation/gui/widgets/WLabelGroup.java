@@ -1,8 +1,7 @@
-package me.towdium.jecalculation.gui.drawables;
+package me.towdium.jecalculation.gui.widgets;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
-import me.towdium.jecalculation.gui.IWidget;
 import me.towdium.jecalculation.utils.wrappers.Wrapper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;

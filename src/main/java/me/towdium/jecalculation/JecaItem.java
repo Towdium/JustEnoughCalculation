@@ -93,7 +93,7 @@ public class JecaItem extends Item {
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
-        JustEnoughCalculation.proxy.runOnSide(() -> JecaGui.displayGui(new GuiCalculator()), Side.CLIENT);
+        JustEnoughCalculation.proxy.runOnSide(() -> JecaGui.displayGui(true, true, new GuiCalculator()), Side.CLIENT);
         return super.onItemRightClick(worldIn, playerIn, handIn);
     }
 }

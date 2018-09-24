@@ -7,7 +7,7 @@ import me.towdium.jecalculation.data.structure.CostList;
 import me.towdium.jecalculation.data.structure.CostList.Calculator;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
-import me.towdium.jecalculation.gui.drawables.*;
+import me.towdium.jecalculation.gui.widgets.*;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -22,7 +22,7 @@ import java.util.List;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
-public class GuiCalculator extends WContainer {
+public class GuiCalculator extends WContainer implements IGui {
     enumMode mode = enumMode.INPUT;
     Calculator calculator = null;
     WLabelGroup lgRecent = new WLabelGroup(7, 31, 8, 1, WLabel.enumMode.PICKER);
@@ -66,6 +66,11 @@ public class GuiCalculator extends WContainer {
         refreshCalculator();
     }
 
+    @Override
+    public void onVisible(JecaGui gui) {
+        refreshCalculator();
+    }
+
     void setMode(enumMode mode) {
         this.mode = mode;
         btnInput.setDisabled(mode == enumMode.INPUT);
@@ -103,7 +108,7 @@ public class GuiCalculator extends WContainer {
                     lsResult.setLabels(calculator.getInputs());
                     break;
                 case OUTPUT:
-                    lsResult.setLabels(new ArrayList<>());
+                    lsResult.setLabels(calculator.getOutputs());
                     break;
                 case CATALYST:
                     lsResult.setLabels(calculator.getCatalysts());

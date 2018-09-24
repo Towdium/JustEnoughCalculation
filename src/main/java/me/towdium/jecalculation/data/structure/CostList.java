@@ -169,5 +169,10 @@ public class CostList {
             return getCurrent().labels.stream().filter(i -> i.getAmount() < 0)
                     .map(i -> i.copy().multiply(-1)).collect(Collectors.toList());
         }
+
+        public List<ILabel> getOutputs() {
+            return getCurrent().labels.stream().filter(i -> i.getAmount() > 0)
+                    .map(ILabel::copy).collect(Collectors.toList());
+        }
     }
 }

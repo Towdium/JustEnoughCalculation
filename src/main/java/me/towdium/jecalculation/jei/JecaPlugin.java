@@ -25,7 +25,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @mezz.jei.api.JEIPlugin
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class JecPlugin implements IModPlugin {
+public class JecaPlugin implements IModPlugin {
     public static IJeiRuntime runtime;
 
     public static ILabel getLabelUnderMouse() {

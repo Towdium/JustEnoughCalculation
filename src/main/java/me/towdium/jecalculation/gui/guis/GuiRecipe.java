@@ -6,8 +6,8 @@ import me.towdium.jecalculation.data.structure.CostList;
 import me.towdium.jecalculation.data.structure.Recipe;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
-import me.towdium.jecalculation.gui.drawables.*;
-import me.towdium.jecalculation.jei.JecPlugin;
+import me.towdium.jecalculation.gui.widgets.*;
+import me.towdium.jecalculation.jei.JecaPlugin;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import me.towdium.jecalculation.utils.wrappers.Triple;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  * Author: towdium
  * Date:   17-9-8.
  */
-public class GuiRecipe extends WContainer {
+public class GuiRecipe extends WContainer implements IGui {
     Pair<String, Integer> dest;
     HashMap<Integer, List<ILabel>> disambiguation = new HashMap<>();
     WSwitcher switcherGroup = new WSwitcher(7, 7, 162, Controller.getGroups());
@@ -86,7 +86,8 @@ public class GuiRecipe extends WContainer {
         Recipe r = Controller.getRecipe(group, index);
         fromRecipe(r);
         switcherGroup.setIndex(Controller.getGroups().indexOf(group));
-
+        buttonCopy.setDisabled(false);
+        buttonDel.setDisabled(false);
     }
 
     public GuiRecipe() {
@@ -131,7 +132,7 @@ public class GuiRecipe extends WContainer {
                         g.getAllIngredients().stream().map(ILabel.Converter::from).collect(Collectors.toList()))));
 
         // convert catalyst
-        List<ILabel> catalysts = JecPlugin.runtime.getRecipeRegistry().getRecipeCatalysts(recipe.getRecipeCategory())
+        List<ILabel> catalysts = JecaPlugin.runtime.getRecipeRegistry().getRecipeCatalysts(recipe.getRecipeCategory())
                 .stream().map(ILabel.Converter::from).collect(Collectors.toList());
         if (catalysts.size() == 1) groupCatalyst.setLabel(catalysts.get(0), 0);
         else if (catalysts.size() > 1) {

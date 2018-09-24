@@ -1,12 +1,12 @@
-package me.towdium.jecalculation.gui.drawables;
+package me.towdium.jecalculation.gui.widgets;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
-import me.towdium.jecalculation.gui.IWidget;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.utils.IllegalPositionException;
 import me.towdium.jecalculation.utils.Utilities.Timer;
+import mezz.jei.api.recipe.IFocus;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 import static me.towdium.jecalculation.gui.JecaGui.Font.HALF;
+import static me.towdium.jecalculation.jei.JecaPlugin.runtime;
 
 /**
  * Author: towdium
@@ -100,7 +101,11 @@ public class WLabel implements IWidget {
                     return true;
                 } else return false;
             case RESULT:
-                return false;
+                Object rep = label.getRepresentation();
+                if (rep != null) {
+                    runtime.getRecipesGui().show(runtime.getRecipeRegistry().createFocus(IFocus.Mode.OUTPUT, rep));
+                    return true;
+                } else return false;
             case PICKER:
                 if (label != label.EMPTY) {
                     notifyLsnr();

@@ -1,6 +1,7 @@
-package me.towdium.jecalculation.gui;
+package me.towdium.jecalculation.gui.widgets;
 
 import mcp.MethodsReturnNonnullByDefault;
+import me.towdium.jecalculation.gui.JecaGui;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;

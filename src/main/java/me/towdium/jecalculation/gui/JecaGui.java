@@ -4,9 +4,9 @@ import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.JustEnoughCalculation.enumSide;
 import me.towdium.jecalculation.data.label.ILabel;
-import me.towdium.jecalculation.gui.drawables.WContainer;
 import me.towdium.jecalculation.gui.guis.GuiCalculator;
-import me.towdium.jecalculation.jei.JecPlugin;
+import me.towdium.jecalculation.gui.guis.IGui;
+import me.towdium.jecalculation.jei.JecaPlugin;
 import me.towdium.jecalculation.network.ProxyClient;
 import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.client.Minecraft;
@@ -58,14 +58,15 @@ public class JecaGui extends GuiContainer {
     public static final int COLOR_TEXT_WHITE = 0xFFFFFF;
     public static final boolean ALWAYS_TOOLTIP = false;
     public ILabel hand = ILabel.EMPTY;
-    public WContainer root;
+    protected static JecaGui last;
     protected JecaGui parent;
+    public IGui root;
 
-    public JecaGui(@Nullable JecaGui parent, WContainer root) {
+    public JecaGui(@Nullable JecaGui parent, IGui root) {
         this(parent, false, root);
     }
 
-    public JecaGui(@Nullable JecaGui parent, boolean acceptsTransfer, WContainer root) {
+    public JecaGui(@Nullable JecaGui parent, boolean acceptsTransfer, IGui root) {
         super(acceptsTransfer ? new ContainerTransfer() : new ContainerNonTransfer());
         this.parent = parent;
         this.root = root;
@@ -76,11 +77,11 @@ public class JecaGui extends GuiContainer {
         return xMouse > xPos && yMouse > yPos && xMouse <= xPos + xSize && yMouse <= yPos + ySize;
     }
 
-    public static void displayGui(WContainer root) {
+    public static void displayGui(IGui root) {
         displayGui(true, false, root);
     }
 
-    public static void displayGui(boolean updateParent, boolean acceptsTransfer, WContainer root) {
+    public static void displayGui(boolean updateParent, boolean acceptsTransfer, IGui root) {
         if (Minecraft.getMinecraft().isCallingFromMinecraftThread())
             displayGuiUnsafe(updateParent, acceptsTransfer, root);
     }
@@ -97,20 +98,25 @@ public class JecaGui extends GuiContainer {
         return ret;
     }
 
-    private static void displayGuiUnsafe(boolean updateParent, boolean acceptsTransfer, WContainer root) {
+    private static void displayGuiUnsafe(boolean updateParent, boolean acceptsTransfer, IGui root) {
         Minecraft mc = Minecraft.getMinecraft();
         JecaGui parent;
         if (mc.currentScreen == null) parent = null;
-        else if (!(mc.currentScreen instanceof JecaGui)) parent = getCurrent();
+        else if (!(mc.currentScreen instanceof JecaGui)) parent = last;
         else if (updateParent) parent = (JecaGui) mc.currentScreen;
         else parent = ((JecaGui) mc.currentScreen).parent;
         JecaGui toShow = new JecaGui(parent, acceptsTransfer, root);
+        root.onVisible(toShow);
+        last = toShow;
         mc.displayGuiScreen(toShow);
     }
 
     public static void displayParent() {
         if (Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
-            Minecraft.getMinecraft().displayGuiScreen(getCurrent().parent);
+            JecaGui gui = getCurrent().parent;
+            gui.root.onVisible(gui);
+            last = gui;
+            Minecraft.getMinecraft().displayGuiScreen(gui);
         }
     }
 
@@ -129,7 +135,7 @@ public class JecaGui extends GuiContainer {
             if (gui.root.onClicked(gui, xMouse, yMouse, button)) event.setCanceled(true);
             else if (button == 0) {
                 if (gui.hand == ILabel.EMPTY) {
-                    ILabel e = JecPlugin.getLabelUnderMouse();
+                    ILabel e = JecaPlugin.getLabelUnderMouse();
                     if (e != ILabel.EMPTY) {
                         gui.hand = e;
                         event.setCanceled(true);
@@ -150,7 +156,7 @@ public class JecaGui extends GuiContainer {
     @SubscribeEvent(receiveCanceled = true)
     public static void onKey(InputEvent.KeyInputEvent event) {
         if (ProxyClient.keyOpenGui.isPressed()) {
-            if (JustEnoughCalculation.side == enumSide.CLIENT) JecaGui.displayGui(new GuiCalculator());
+            if (JustEnoughCalculation.side == enumSide.CLIENT) JecaGui.displayGui(true, true, new GuiCalculator());
             else Minecraft.getMinecraft().player.sendMessage(new TextComponentTranslation("chat.server_mode"));
         }
     }

@@ -1,7 +1,6 @@
-package me.towdium.jecalculation.gui.drawables;
+package me.towdium.jecalculation.gui.widgets;
 
 import mcp.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.gui.IWidget;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.Utilities.I18n;

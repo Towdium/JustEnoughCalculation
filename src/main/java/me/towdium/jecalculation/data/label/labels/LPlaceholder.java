@@ -13,6 +13,7 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -87,6 +88,12 @@ public class LPlaceholder extends ILabel.Impl {
     @Override
     public int hashCode() {
         return name.hashCode() ^ amount;
+    }
+
+    @Nullable
+    @Override
+    public Object getRepresentation() {
+        return null;
     }
 
     @Override

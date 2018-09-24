@@ -4,9 +4,9 @@ import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.label.labels.LFluidStack;
 import me.towdium.jecalculation.data.label.labels.LOreDict;
-import me.towdium.jecalculation.gui.IWPicker;
 import me.towdium.jecalculation.gui.Resource;
-import me.towdium.jecalculation.gui.drawables.*;
+import me.towdium.jecalculation.gui.guis.IGui;
+import me.towdium.jecalculation.gui.widgets.*;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
-public class PickerSimple extends IWPicker.Impl {
+public class PickerSimple extends IPicker.Impl implements IGui {
     /**
      * @param labels  label to be displayed for selection
      * @param l18nKey localization key for help string,
@@ -34,7 +34,6 @@ public class PickerSimple extends IWPicker.Impl {
         WLabelScroll ls = new WLabelScroll(7, 33, 8, 7, WLabel.enumMode.PICKER, true).setLabels(labels);
         WTextField tf = new WTextField(26, 7, 90);
         add(new WSearch(l -> callback.accept(l), tf, ls));
-        add(new WIcon(149, 7, 20, 20, Resource.ICN_HELP, l18nKey + ".help"));
         add(new WIcon(7, 7, 20, 20, Resource.ICN_TEXT, l18nKey + ".text"));
     }
 

@@ -1,7 +1,6 @@
-package me.towdium.jecalculation.gui.drawables;
+package me.towdium.jecalculation.gui.widgets;
 
 import mcp.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.gui.IWidget;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.utils.Utilities.I18n;
@@ -33,7 +32,7 @@ public class WHelp extends WTooltip {
 
     @Override
     public boolean mouseIn(int xMouse, int yMouse) {
-        return JecaGui.mouseIn(-17, 0, 20, 20, xMouse, yMouse);
+        return JecaGui.mouseIn(-21, 0, 24, 24, xMouse, yMouse);
     }
 
     @Override
@@ -50,6 +49,12 @@ public class WHelp extends WTooltip {
             sPage.setListener(() -> tContent.setPage(sPage.getIndex()));
             WText tTitle = new WText(7, 7, JecaGui.Font.SHADOW, I18n.format("gui." + WHelp.this.key + ".title"));
             addAll(new WPanel(), new Icon(), tTitle, tContent, sPage);
+        }
+
+        @Override
+        public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
+            if (!super.onClicked(gui, xMouse, yMouse, button)) gui.root.remove(this);
+            return true;
         }
 
         public class Text implements IWidget {
@@ -113,7 +118,7 @@ public class WHelp extends WTooltip {
 
             @Override
             public boolean mouseIn(int xMouse, int yMouse) {
-                return JecaGui.mouseIn(-17, 0, 20, 20, xMouse, yMouse);
+                return JecaGui.mouseIn(-21, 0, 24, 24, xMouse, yMouse);
             }
 
             @Override
