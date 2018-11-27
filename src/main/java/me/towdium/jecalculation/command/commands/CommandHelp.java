@@ -30,12 +30,7 @@ public class CommandHelp implements ISubCommand {
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
-        if (args.length != 0) {
-            sender.sendMessage(new TextComponentTranslation("command.common.unexpected_arg", String.join(" ", args)));
-            return;
-        }
-
-        sender.sendMessage(new TextComponentTranslation("command.help.list"));
+        sender.sendMessage(new TextComponentTranslation(getKey("list")));
         Commands.commands.values().stream().sorted(Comparator.comparing(ISubCommand::getName))
                 .forEachOrdered(c -> sender.sendMessage(new TextComponentString(c.getUsage(sender))));
     }

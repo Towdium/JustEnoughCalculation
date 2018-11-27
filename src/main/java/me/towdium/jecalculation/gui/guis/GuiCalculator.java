@@ -63,7 +63,6 @@ public class GuiCalculator extends WContainer implements IGui {
         addAll(lgRecent, lLabel, btnInput, btnOutput, btnCatalyst, btnSteps, lsResult, tfAmount);
         refreshRecent();
         setMode(enumMode.INPUT);
-        refreshCalculator();
     }
 
     @Override

@@ -29,8 +29,6 @@ public class CommandOreDict implements ISubCommand {
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
-        if (args.length == 0) {
-            Arrays.stream(OreDictionary.getOreNames()).forEach(s -> sender.sendMessage(new TextComponentString(s)));
-        } // TODO error handling
+        Arrays.stream(OreDictionary.getOreNames()).forEach(s -> sender.sendMessage(new TextComponentString(s)));
     }
 }

@@ -31,7 +31,7 @@ public class LOreDict extends ILabel.Impl {
     public static final String IDENTIFIER = "oreDict";
     public static final String KEY_NAME = "name";
     public static final String KEY_AMOUNT = "amount";
-    public static final boolean MODE_FORCE = true;
+    public static final boolean MODE_FORCE = false;
 
     protected String name;
 
@@ -91,9 +91,12 @@ public class LOreDict extends ILabel.Impl {
                 lis = (LItemStack) a;
                 lor = (LOreDict) b;
             }
-            return OreDictionary.getOres(lor.name).stream().map(o -> Converter.from(o).multiply(lor.amount))
-                    .map(i -> LItemStack.merge(i, lis, add)).filter(Optional::isPresent)
-                    .findAny().flatMap(i -> i);
+            return OreDictionary.getOres(lor.name).stream()
+                    .map(o -> Converter.from(o).multiply(lor.amount))
+                    .map(i -> LItemStack.merge(i, lis, add))
+                    .filter(Optional::isPresent)
+                    .findAny().flatMap(i -> i)
+                    .map(i -> lor.copy().setAmount(i.getAmount()));
         }
         return Optional.empty();
     }

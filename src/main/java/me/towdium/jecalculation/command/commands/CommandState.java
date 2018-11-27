@@ -28,6 +28,6 @@ public class CommandState implements ISubCommand {
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
-        sender.sendMessage(new TextComponentTranslation("command.state.desc", JustEnoughCalculation.side.toString()));
+        sender.sendMessage(new TextComponentTranslation(getKey("desc"), JustEnoughCalculation.side.toString()));
     }
 }

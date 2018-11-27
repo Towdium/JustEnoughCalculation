@@ -42,10 +42,8 @@ public class GuiDisambiguation extends IPicker.Impl implements IGui {
         setPage(0);
     }
 
-    protected void setPage(int n) {  // TODO
+    protected void setPage(int n) {
         lsUp.setLabels(record.get(n));
         lsDown.setLabels(ILabel.CONVERTER.guess(record.get(n)));
-        //lsUp.setLabels(record.get(n).stream().map(ILabel.CONVERTER_ITEM::toLabel).collect(Collectors.toList()));
-        //lsDown.setLabels(ILabel.CONVERTER_ITEM.toLabel(record.get(n)));
     }
 }

@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
  * Date:   17-10-15.
  */
 @Mod.EventBusSubscriber
-public class Controller {  // TODO record calculate amount
+public class Controller {
     public static final String KEY_RECIPES = "recipes";
     public static final String KEY_RECENTS = "recents";
     static Recipes recipesClient;
@@ -107,7 +107,7 @@ public class Controller {  // TODO record calculate amount
         return getRecord().getRecipe(label, type);
     }
 
-    public static List<ILabel> getRecent() {  // TODO reduce usage of it since it reads nbt again
+    public static List<ILabel> getRecent() {
         if (JustEnoughCalculation.side == JustEnoughCalculation.enumSide.CLIENT)
             return recentsClient.getRecords();
         else {

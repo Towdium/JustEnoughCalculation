@@ -29,4 +29,8 @@ public interface ISubCommand {
             MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
         return Collections.emptyList();
     }
+
+    default String getKey(String key) {
+        return "jecharacters.command." + getName() + '.' + key;
+    }
 }

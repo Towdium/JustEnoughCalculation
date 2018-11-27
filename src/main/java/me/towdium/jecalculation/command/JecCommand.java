@@ -71,4 +71,9 @@ public class JecCommand extends CommandBase {
                     : Collections.emptyList();
         }
     }
+
+    @Override
+    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
+        return true;
+    }
 }
