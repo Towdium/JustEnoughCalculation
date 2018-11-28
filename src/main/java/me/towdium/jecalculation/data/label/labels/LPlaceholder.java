@@ -73,8 +73,8 @@ public class LPlaceholder extends ILabel.Impl {
     }
 
     @Override
-    public NBTTagCompound toNBTTagCompound() {
-        NBTTagCompound nbt = super.toNBTTagCompound();
+    public NBTTagCompound toNbt() {
+        NBTTagCompound nbt = super.toNbt();
         nbt.setString(KEY_NAME, name);
         return nbt;
     }

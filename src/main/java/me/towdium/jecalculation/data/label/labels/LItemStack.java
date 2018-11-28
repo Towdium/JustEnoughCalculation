@@ -16,6 +16,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
+import java.util.Objects;
 
 import static net.minecraftforge.oredict.OreDictionary.WILDCARD_VALUE;
 
@@ -32,10 +33,9 @@ public class LItemStack extends ILabel.Impl {
     public static final String KEY_META = "meta";
     public static final String KEY_NBT = "nbt";
     public static final String KEY_CAP = "cap";
-    public static final String KEY_FUZZY = "fuzzy";
-    public static final byte FUZZY_META = 0x1;
-    public static final byte FUZZY_CAP = 0x2;
-    public static final byte FUZZY_NBT = 0x4;
+    public static final String KEY_F_META = "fMeta";
+    public static final String KEY_F_CAP = "fCap";
+    public static final String KEY_F_NBT = "fNbt";
 
     Item item;
     int meta;
@@ -46,34 +46,28 @@ public class LItemStack extends ILabel.Impl {
     boolean fCap;
     transient ItemStack temp;
 
-    public LItemStack(int amount, Item item, int meta,
-                      @Nullable NBTTagCompound cap, @Nullable NBTTagCompound nbt, boolean percent) {
+    public LItemStack(int amount, Item item, int meta, @Nullable NBTTagCompound cap,
+                      @Nullable NBTTagCompound nbt, boolean percent) {
         super(amount, percent);
-        this.item = item;
-        this.meta = meta;
-        this.nbt = nbt == null ? null : nbt.copy();
-        this.cap = cap == null ? null : cap.copy();
-        temp = new ItemStack(item, 1, meta, cap);
-        temp.setTagCompound(nbt);
+        init(item, meta, cap, nbt, false, false, false);
     }
 
     // Convert from itemStack
     public LItemStack(ItemStack is) {
-        this(is.getCount(), is.getItem(), is.getItemDamage(), getCap(is), is.getTagCompound(), false);
+        super(is.getCount(), false);
+        init(is.getItem(), is.getItemDamage(), getCap(is), is.getTagCompound(), false, false, false);
     }
 
     public LItemStack(NBTTagCompound tag) {
         super(tag);
-        item = Item.getByNameOrId(tag.getString(KEY_ITEM));
-        meta = tag.getInteger(KEY_META);
-        cap = tag.hasKey(KEY_CAP) ? tag.getCompoundTag(KEY_CAP) : null;
-        nbt = tag.hasKey(KEY_NBT) ? tag.getCompoundTag(KEY_NBT) : null;
-        byte fuzzy = tag.getByte(KEY_FUZZY);
-        fMeta = (fuzzy & FUZZY_META) != 0;
-        fCap = (fuzzy & FUZZY_CAP) != 0;
-        fNbt = (fuzzy & FUZZY_NBT) != 0;
-        temp = new ItemStack(item, 1, meta, cap);
-        temp.setTagCompound(tag);
+        init(Item.getByNameOrId(tag.getString(KEY_ITEM)),
+                tag.getInteger(KEY_META),
+                tag.hasKey(KEY_CAP) ? tag.getCompoundTag(KEY_CAP) : null,
+                tag.hasKey(KEY_NBT) ? tag.getCompoundTag(KEY_NBT) : null,
+                tag.getBoolean(KEY_F_META),
+                tag.getBoolean(KEY_F_CAP),
+                tag.getBoolean(KEY_F_NBT)
+        );
     }
 
     private LItemStack(LItemStack lis) {
@@ -85,6 +79,19 @@ public class LItemStack extends ILabel.Impl {
         fMeta = lis.fMeta;
         fNbt = lis.fNbt;
         fCap = lis.fCap;
+        temp = lis.temp;
+    }
+
+    private void init(@Nullable Item item, int meta, @Nullable NBTTagCompound cap,
+                      @Nullable NBTTagCompound nbt, boolean fMeta, boolean fCap, boolean fNbt) {
+        Objects.requireNonNull(item);
+        this.item = item;
+        this.meta = meta;
+        this.cap = cap;
+        this.nbt = nbt;
+        this.fMeta = fMeta;
+        this.fCap = fCap;
+        this.fNbt = fNbt;
         temp = new ItemStack(item, 1, meta, cap);
         temp.setTagCompound(nbt);
     }
@@ -178,16 +185,17 @@ public class LItemStack extends ILabel.Impl {
     }
 
     @Override
-    public NBTTagCompound toNBTTagCompound() {
+    public NBTTagCompound toNbt() {
         ResourceLocation rl = Item.REGISTRY.getNameForObject(item);
-        if (rl == null) return ILabel.EMPTY.toNBTTagCompound();
-        NBTTagCompound ret = super.toNBTTagCompound();
+        if (rl == null) return ILabel.EMPTY.toNbt();
+        NBTTagCompound ret = super.toNbt();
         ret.setInteger(KEY_META, meta);
         ret.setString(KEY_ITEM, rl.toString());
         if (nbt != null) ret.setTag(KEY_NBT, nbt);
         if (cap != null) ret.setTag(KEY_CAP, cap);
-        int fuzzy = (fMeta ? FUZZY_META : 0) | (fCap ? FUZZY_CAP : 0) | (fNbt ? FUZZY_NBT : 0);
-        ret.setByte(KEY_FUZZY, (byte) fuzzy);
+        ret.setBoolean(KEY_F_META, fMeta);
+        ret.setBoolean(KEY_F_NBT, fNbt);
+        ret.setBoolean(KEY_F_CAP, fCap);
         return ret;
     }
 

@@ -100,7 +100,7 @@ public interface ILabel {
 
     ILabel copy();
 
-    NBTTagCompound toNBTTagCompound();
+    NBTTagCompound toNbt();
 
     String getIdentifier();
 
@@ -129,7 +129,6 @@ public interface ILabel {
         public void register(String a, String b, MergerFunction func) {
             functions.put(new Pair<>(a, b), func);
         }
-
 
         /**
          * @param a one label
@@ -215,7 +214,7 @@ public interface ILabel {
         public NBTTagCompound serialize(ILabel label) {
             NBTTagCompound ret = new NBTTagCompound();
             ret.setString(KEY_IDENTIFIER, label.getIdentifier());
-            ret.setTag(KEY_CONTENT, label.toNBTTagCompound());
+            ret.setTag(KEY_CONTENT, label.toNbt());
             return ret;
         }
     }
@@ -357,7 +356,7 @@ public interface ILabel {
         }
 
         @Override
-        public NBTTagCompound toNBTTagCompound() {
+        public NBTTagCompound toNbt() {
             return new NBTTagCompound();
         }
 
@@ -465,7 +464,7 @@ public interface ILabel {
         }
 
         @Override
-        public NBTTagCompound toNBTTagCompound() {
+        public NBTTagCompound toNbt() {
             NBTTagCompound nbt = new NBTTagCompound();
             nbt.setInteger(KEY_AMOUNT, amount);
             nbt.setBoolean(KEY_PERCENT, percent);
