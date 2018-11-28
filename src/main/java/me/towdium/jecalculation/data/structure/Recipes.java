@@ -98,8 +98,8 @@ public class Recipes {
         return flatStream(group).collect(Collectors.toCollection(ArrayList::new));
     }
 
-    public Optional<Recipe> getRecipe(ILabel label, Recipe.enumIoType type) {
-        return flatStream().map(i -> i.one).filter(i -> i.matches(label, type)).findFirst();
+    public Optional<Recipe> getRecipe(ILabel label) {
+        return flatStream().map(i -> i.one).filter(i -> i.matches(label)).findFirst();
     }
 
     public void forEach(BiConsumer<String, List<Recipe>> consumer) {

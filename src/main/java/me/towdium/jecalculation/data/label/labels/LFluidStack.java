@@ -53,7 +53,7 @@ public class LFluidStack extends ILabel.Impl {
     }
 
     public LFluidStack(int amount, Fluid fluid, @Nullable NBTTagCompound nbt) {
-        super(amount);
+        super(amount, false);
         this.fluid = fluid;
         this.nbt = nbt;
         temp = new FluidStack(fluid, amount, nbt);
@@ -77,7 +77,7 @@ public class LFluidStack extends ILabel.Impl {
     }
 
     @Override
-    public String getAmountString() {
+    public String getAmountString(boolean round) {
         return amount >= 1000 ? Utilities.cutNumber(amount / 1000f, 4) + "B"
                 : Integer.toString(amount) + "mB";
     }

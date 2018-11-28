@@ -12,7 +12,6 @@ import me.towdium.jecalculation.gui.guis.pickers.PickerItemStack;
 import me.towdium.jecalculation.gui.guis.pickers.PickerPlaceholder;
 import me.towdium.jecalculation.gui.guis.pickers.PickerSimple;
 import me.towdium.jecalculation.utils.Utilities;
-import me.towdium.jecalculation.utils.Utilities.Relation;
 import me.towdium.jecalculation.utils.Utilities.ReversedIterator;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import net.minecraft.client.renderer.GlStateManager;
@@ -30,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -64,11 +64,11 @@ public interface ILabel {
         EDITOR.register(PickerSimple.OreDict::new, "ore_dict", new LOreDict("ingotIron"));
         EDITOR.register(PickerPlaceholder::new, "placeholder", new LPlaceholder("example", 1, true));
         EDITOR.register(PickerItemStack::new, "item_stack", new LItemStack(new ItemStack(Items.IRON_PICKAXE)).setFMeta(true));
-        MERGER.register("itemStack", "itemStack", LItemStack::merge);
-        MERGER.register("oreDict", "oreDict", LOreDict::merge);
-        MERGER.register("itemStack", "oreDict", LOreDict::merge);
-        MERGER.register("fluidStack", "fluidStack", Impl::merge);
-        MERGER.register("fluidStack", "fluidStack", Impl::merge);
+        MERGER.register("itemStack", "itemStack", Impl.form(LItemStack.class, LItemStack.class, LItemStack::merge));
+        MERGER.register("oreDict", "oreDict", Impl.form(LOreDict.class, LOreDict.class, LOreDict::mergeOO));
+        MERGER.register("oreDict", "itemStack", Impl.form(LOreDict.class, LItemStack.class, LOreDict::mergeOI));
+        // MERGER.register("itemStack", "oreDict",  Impl.form(LOreDict.class, LItemStack.class, LOreDict::mergeIO));
+        // MERGER.register("fluidStack", "fluidStack", Impl::merge);  // TODO fluid and placeholder
     }
 
     int getAmount();
@@ -81,6 +81,8 @@ public interface ILabel {
     @SuppressWarnings("UnusedReturnValue")
     ILabel setPercent(boolean p);
 
+    boolean isPercent();
+
     static void initServer() {
         SERIALIZER.register(LFluidStack.IDENTIFIER, LFluidStack::new);
         SERIALIZER.register(LItemStack.IDENTIFIER, LItemStack::new);
@@ -89,7 +91,7 @@ public interface ILabel {
         SERIALIZER.register(LEmpty.IDENTIFIER, i -> EMPTY);
     }
 
-    String getAmountString();
+    String getAmountString(boolean round);
 
     String getDisplayName();
 
@@ -113,23 +115,38 @@ public interface ILabel {
      * Since {@link ILabel} merging is bidirectional, it is redundant to
      * implement on both side. So this class is created for merging
      * {@link ILabel label(s)}.
-     * It uses singleton mode. First registerGuess merge functions, then use
-     * {@link #merge(ILabel, ILabel, boolean)} to operate the {@link ILabel}.
+     * It uses singleton mode. First registerGuess mergeOO functions, then use
+     * {@link #merge(ILabel, ILabel)} to operate the {@link ILabel}.
      * For registering, see {@link Serializer}.
      */
     class Merger {
-        private Relation<String, MergerFunction> functions = new Relation<>();
+        private HashMap<Pair<String, String>, MergerFunction> functions = new HashMap<>();
 
         private Merger() {
         }
 
         public void register(String a, String b, MergerFunction func) {
-            functions.add(a, b, func);
+            functions.put(new Pair<>(a, b), func);
         }
 
-        public Optional<ILabel> merge(ILabel a, ILabel b, boolean add) {
-            Optional<ILabel> ret = functions.get(a.getIdentifier(), b.getIdentifier())
-                    .orElse((x, y, f) -> Optional.empty()).merge(a, b, add);
+
+        /**
+         * @param a requested label
+         * @param b supplied label
+         * @return merge result or empty
+         * This function ensures to generate same type if a and b are from same type
+         * If a is fuzzy, b is explicit, generates a is amount is negative, else generates b
+         * explicit type cannot request fuzzy type
+         */
+        public Optional<ILabel> merge(ILabel a, ILabel b) {
+            MergerFunction mf = functions.get(new Pair<>(a.getIdentifier(), b.getIdentifier()));
+            Optional<ILabel> ret;
+            if (mf != null) ret = mf.merge(a, b);
+            else {
+                mf = functions.get(new Pair<>(b.getIdentifier(), a.getIdentifier()));
+                if (mf == null) return Optional.empty();
+                ret = mf.merge(b, a);
+            }
             if (ret.isPresent() && ret.get() != ILabel.EMPTY && (ret.get() == a || ret.get() == b))
                 throw new RuntimeException("Merger should not modify the given label.");
             return ret;
@@ -138,13 +155,12 @@ public interface ILabel {
         @FunctionalInterface
         public interface MergerFunction {
             /**
-             * @param a   an {@link ILabel} to merge
-             * @param b   another {@link ILabel} to merge
-             * @param add add together or cancel each other
+             * @param a   an {@link ILabel} to mergeOO
+             * @param b   another {@link ILabel} to mergeOO
              * @return an optional {@link Pair pair} of {@link ILabel label(s)}.
-             * If empty, the labels cannot merge, otherwise returns difference and common elements
+             * If empty, the labels cannot mergeOO, otherwise returns difference and common elements
              */
-            Optional<ILabel> merge(ILabel a, ILabel b, boolean add);
+            Optional<ILabel> merge(ILabel a, ILabel b);
         }
     }
 
@@ -216,11 +232,13 @@ public interface ILabel {
             handlers.add(handler);
         }
 
+        // get most possible guess from labels
         public ILabel first(List<ILabel> labels) {
             List<ILabel> guess = guess(labels);
             return guess.isEmpty() ? labels.get(0) : guess.get(0);
         }
 
+        // to test if the labels can be converted to other labels (like oreDict)
         public List<ILabel> guess(List<ILabel> labels) {
             return new ReversedIterator<>(handlers).stream().flatMap(h -> h.apply(labels).stream())
                     .collect(Collectors.toList());
@@ -298,6 +316,11 @@ public interface ILabel {
         }
 
         @Override
+        public boolean isPercent() {
+            return false;
+        }
+
+        @Override
         public int getAmount() {
             return 0;
         }
@@ -308,7 +331,7 @@ public interface ILabel {
         }
 
         @Override
-        public String getAmountString() {
+        public String getAmountString(boolean round) {
             return "";
         }
 
@@ -352,9 +375,9 @@ public interface ILabel {
             return getDisplayName() + 'x' + getAmount();
         }
 
-        public Impl(int amount) {
+        public Impl(int amount, boolean percent) {
             this.amount = amount;
-            percent = false;
+            this.percent = percent;
         }
 
         public Impl(Impl lsa) {
@@ -364,8 +387,7 @@ public interface ILabel {
 
         public Impl(NBTTagCompound nbt) {
             amount = nbt.getInteger(KEY_AMOUNT);
-            percent = nbt.getBoolean(KEY_PERCENT)
-            ;
+            percent = nbt.getBoolean(KEY_PERCENT);
         }
 
         protected int getMultiplier() {
@@ -401,30 +423,26 @@ public interface ILabel {
             return this;
         }
 
+        protected static Merger.MergerFunction form(Class a, Class b, BiPredicate<ILabel, ILabel> p) {
+            return (c, d) -> {
+                if (c == EMPTY || d == EMPTY) return Optional.empty();
+                if (a.isInstance(c) && b.isInstance(d) && p.test(c, d)) {
+                    int amountC = c.isPercent() ? c.getAmount() : c.getAmount() * 100;
+                    int amountD = d.isPercent() ? d.getAmount() : d.getAmount() * 100;
+                    int amount = amountC + amountD;
+                    int amountI = (amount > 0 ? amount + 99 : amount - 99) / 100;
+                    if (amount == 0) return Optional.of(EMPTY);
+                    else if (amount > 0) return Optional.of(d.copy().setAmount(d.isPercent() ? amount : amountI));
+                    else return Optional.of(c.copy().setAmount(c.isPercent() ? amount : amountI));
+                } else return Optional.empty();
+            };
+        }
+
         @Override
         @SideOnly(Side.CLIENT)
         public void getToolTip(List<String> existing, boolean detailed) {
             if (detailed) existing.add(FORMAT_GREY +
-                    Utilities.I18n.format("label.common.tooltip.amount", getAmountString()));
-        }
-
-        public static Optional<ILabel> merge(ILabel a, ILabel b, boolean add) {
-            if (a instanceof Impl && b instanceof Impl && a.matches(b)) return mergeUnchecked((Impl) a, (Impl) b, add);
-            else return Optional.empty();
-        }
-
-        protected static Optional<ILabel> mergeUnchecked(Impl a, Impl b, boolean add) {
-            Impl ret = a.copy();
-            boolean p = a.percent || b.percent;
-            int amountA = a.amount;
-            int amountB = b.amount;
-            if (p) {
-                if (!a.percent) amountA *= 100;
-                if (!b.percent) amountB *= 100;
-            }
-            ret.amount = add ? amountA + amountB : amountA - amountB;
-            ret.percent = p;
-            return Optional.of(ret.amount == 0 ? ILabel.EMPTY : ret);
+                    Utilities.I18n.format("label.common.tooltip.amount", getAmountString(false)));
         }
 
         @Override
@@ -453,7 +471,7 @@ public interface ILabel {
         }
 
         public ILabel setPercent(boolean p) {
-            if (!acceptPercent()) throw new UnsupportedOperationException();
+            if (p && !acceptPercent()) throw new UnsupportedOperationException();
             if (p && !percent) {
                 amount *= 100;
                 percent = true;
@@ -465,15 +483,23 @@ public interface ILabel {
         }
 
         @Override
+        public boolean isPercent() {
+            return percent;
+        }
+
+        @Override
         public boolean equals(Object obj) {
             return obj instanceof Impl && amount == ((Impl) obj).amount && matches(obj);
         }
 
         @Override
         @SideOnly(Side.CLIENT)
-        public String getAmountString() {
-            return getAmount() == 0 ? "" : (percent ? Utilities.cutNumber(getAmount(), 4) + "%"
-                    : Utilities.cutNumber(getAmount(), 5));
+        @SuppressWarnings("IntegerDivisionInFloatingPointContext")
+        public String getAmountString(boolean round) {
+            if (getAmount() == 0) return "";
+            else if (!percent) return Utilities.cutNumber(getAmount(), 5);
+            else if (round) return Utilities.cutNumber((getAmount() + 99) / 100, 5);
+            else return Utilities.cutNumber(getAmount(), 4) + "%";
         }
 
         @Override

@@ -166,7 +166,7 @@ public class JecaGui extends GuiContainer {
         if (Minecraft.getMinecraft().currentScreen instanceof JecaGui) {
             JecaGui gui = getCurrent();
             if (gui.root.onTooltip(gui, event.getX() - gui.guiLeft, event.getY() - gui.guiTop, new ArrayList<>())
-                    && event.getStack() != ItemStack.EMPTY) event.setCanceled(true);
+                    && !event.getStack().isEmpty()) event.setCanceled(true);
         }
     }
 

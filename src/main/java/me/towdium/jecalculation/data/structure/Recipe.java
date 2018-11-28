@@ -104,13 +104,19 @@ public class Recipe {
         return ret;
     }
 
-    public boolean matches(ILabel label, enumIoType type) {
-        return Arrays.stream(getLabel(type)).anyMatch(i -> ILabel.MERGER.merge(label, i, true).isPresent());
+    public boolean matches(ILabel label) {
+        return Arrays.stream(output).anyMatch(i -> ILabel.MERGER.merge(label, i).isPresent());
     }
 
-    public int multiplier(ILabel label, enumIoType type) {
-        return Arrays.stream(getLabel(type)).filter(i -> ILabel.MERGER.merge(label, i, true).isPresent()).findAny()
-                .map(i -> (i.getAmount() + Math.abs(label.getAmount()) - 1) / i.getAmount()).orElse(0);
+    public int multiplier(ILabel label) {
+        return Arrays.stream(output).filter(i -> ILabel.MERGER.merge(label, i).isPresent()).findAny()
+                .map(i -> {
+                    int amountA = label.getAmount();
+                    if (!label.isPercent()) amountA *= 100;
+                    int amountB = i.getAmount();
+                    if (!i.isPercent()) amountB *= 100;
+                    return (amountB + Math.abs(amountA) - 1) / amountB;
+                }).orElse(0);
     }
 
     public enum enumIoType {

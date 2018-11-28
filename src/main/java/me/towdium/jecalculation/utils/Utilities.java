@@ -3,7 +3,6 @@ package me.towdium.jecalculation.utils;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.utils.wrappers.Pair;
-import me.towdium.jecalculation.utils.wrappers.Wrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.Item;
@@ -158,25 +157,6 @@ public class Utilities {
 
         public Stream<T> stream() {
             return StreamSupport.stream(Spliterators.spliteratorUnknownSize(this, Spliterator.ORDERED), false);
-        }
-    }
-
-    public static class Relation<T, R> {
-        HashMap<Pair<T, T>, R> data = new HashMap<>();
-
-        public void add(T a, T b, R relation) {
-            data.put(a.hashCode() < b.hashCode() ? new Pair<>(a, b) : new Pair<>(b, a), relation);
-        }
-
-        public Optional<R> get(T a, T b) {
-            int ah = a.hashCode();
-            int bh = b.hashCode();
-            Wrapper<R> ret = new Wrapper<>(null);
-            if (ah == bh)
-                ret.push(data.get(new Pair<>(a, b))).push(data.get(new Pair<>(b, a)));
-            else
-                ret.push(data.get(ah < bh ? new Pair<>(a, b) : new Pair<>(b, a)));
-            return Optional.ofNullable(ret.value);
         }
     }
 

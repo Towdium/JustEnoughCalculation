@@ -8,12 +8,17 @@ import me.towdium.jecalculation.data.structure.CostList.Calculator;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.gui.widgets.*;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Author: towdium
@@ -25,27 +30,27 @@ import java.util.List;
 public class GuiCalculator extends WContainer implements IGui {
     enumMode mode = enumMode.INPUT;
     Calculator calculator = null;
-    WLabelGroup lgRecent = new WLabelGroup(7, 31, 8, 1, WLabel.enumMode.PICKER);
-    WLabel lLabel = new WLabel(31, 7, 20, 20, WLabel.enumMode.SELECTOR);
-    WLabelScroll lsResult = new WLabelScroll(7, 87, 8, 4, WLabel.enumMode.RESULT, true);
-    WButton btnSteps = new WButtonIcon(64, 62, 20, 20, Resource.BTN_LIST, "calculator.step")
-            .setLsnrLeft(() -> setMode(enumMode.STEPS));
-    WButton btnCatalyst = new WButtonIcon(45, 62, 20, 20, Resource.BTN_CAT, "calculator.catalyst")
-            .setLsnrLeft(() -> setMode(enumMode.CATALYST));
-    WButton btnOutput = new WButtonIcon(26, 62, 20, 20, Resource.BTN_OUT, "calculator.output")
-            .setLsnrLeft(() -> setMode(enumMode.OUTPUT));
-    WButton btnInput = new WButtonIcon(7, 62, 20, 20, Resource.BTN_IN, "calculator.input")
+    WLabelGroup recent = new WLabelGroup(7, 31, 8, 1, WLabel.enumMode.PICKER);
+    WLabel label = new WLabel(31, 7, 20, 20, WLabel.enumMode.SELECTOR);
+    WLabelScroll result = new WLabelScroll(7, 87, 8, 4, WLabel.enumMode.RESULT, true);
+    WButton input = new WButtonIcon(7, 62, 20, 20, Resource.BTN_IN, "calculator.input")
             .setLsnrLeft(() -> setMode(enumMode.INPUT));
-    WTextField tfAmount = new WTextField(60, 7, 65);
+    WButton output = new WButtonIcon(26, 62, 20, 20, Resource.BTN_OUT, "calculator.output")
+            .setLsnrLeft(() -> setMode(enumMode.OUTPUT));
+    WButton catalyst = new WButtonIcon(45, 62, 20, 20, Resource.BTN_CAT, "calculator.catalyst")
+            .setLsnrLeft(() -> setMode(enumMode.CATALYST));
+    WButton steps = new WButtonIcon(64, 62, 20, 20, Resource.BTN_LIST, "calculator.step")
+            .setLsnrLeft(() -> setMode(enumMode.STEPS));
+    WTextField amount = new WTextField(60, 7, 65);
 
     public GuiCalculator() {
-        lLabel.setLsnrUpdate(() -> {
-            Controller.setRecent(lLabel.label);
+        label.setLsnrUpdate(() -> {
+            Controller.setRecent(label.label);
             refreshRecent();
             refreshCalculator();
         });
-        lgRecent.setLsnrUpdate(l -> JecaGui.getCurrent().hand = lgRecent.getLabelAt(l));
-        tfAmount.setLsnrText(s -> refreshCalculator());
+        recent.setLsnrUpdate(l -> JecaGui.getCurrent().hand = recent.getLabelAt(l));
+        amount.setLsnrText(s -> refreshCalculator());
         add(new WHelp("calculator"));
         add(new WPanel());
         add(new WButtonIcon(7, 7, 20, 20, Resource.BTN_LABEL, "calculator.label")
@@ -60,7 +65,7 @@ public class GuiCalculator extends WContainer implements IGui {
         add(new WText(53, 13, JecaGui.Font.PLAIN, "x"));
         add(new WLine(55));
         add(new WIcon(151, 31, 18, 18, Resource.ICN_RECENT, "calculator.history"));
-        addAll(lgRecent, lLabel, btnInput, btnOutput, btnCatalyst, btnSteps, lsResult, tfAmount);
+        addAll(recent, label, input, output, catalyst, steps, result, amount);
         refreshRecent();
         setMode(enumMode.INPUT);
     }
@@ -72,48 +77,62 @@ public class GuiCalculator extends WContainer implements IGui {
 
     void setMode(enumMode mode) {
         this.mode = mode;
-        btnInput.setDisabled(mode == enumMode.INPUT);
-        btnOutput.setDisabled(mode == enumMode.OUTPUT);
-        btnCatalyst.setDisabled(mode == enumMode.CATALYST);
-        btnSteps.setDisabled(mode == enumMode.STEPS);
+        input.setDisabled(mode == enumMode.INPUT);
+        output.setDisabled(mode == enumMode.OUTPUT);
+        catalyst.setDisabled(mode == enumMode.CATALYST);
+        steps.setDisabled(mode == enumMode.STEPS);
         refreshResult();
     }
 
     void refreshRecent() {
         List<ILabel> recent = Controller.getRecent();
-        if (!recent.isEmpty()) lLabel.setLabel(recent.get(0));
-        if (recent.size() > 1) lgRecent.setLabel(recent.subList(1, recent.size()), 0);
+        if (!recent.isEmpty()) label.setLabel(recent.get(0));
+        if (recent.size() > 1) this.recent.setLabel(recent.subList(1, recent.size()), 0);
     }
 
     void refreshCalculator() {
         try {
-            String s = tfAmount.getText();
-            int i = s.isEmpty() ? 1 : Integer.parseInt(tfAmount.getText());
-            tfAmount.setColor(JecaGui.COLOR_TEXT_WHITE);
-            calculator = new CostList(lLabel.getLabel().copy().setAmount(i)).calculate();
+            String s = amount.getText();
+            int i = s.isEmpty() ? 1 : Integer.parseInt(amount.getText());
+            amount.setColor(JecaGui.COLOR_TEXT_WHITE);
+            List<ILabel> dest = Collections.singletonList(label.getLabel().copy().setAmount(i));
+            calculator = new CostList(getInventory(), dest).calculate();
         } catch (NumberFormatException e) {
-            tfAmount.setColor(JecaGui.COLOR_TEXT_RED);
+            amount.setColor(JecaGui.COLOR_TEXT_RED);
             calculator = null;
         }
         refreshResult();
     }
 
+    List<ILabel> getInventory() {
+        InventoryPlayer inv = Minecraft.getMinecraft().player.inventory;
+        ArrayList<ILabel> labels = new ArrayList<>();
+        Consumer<List<ItemStack>> add = i -> i.stream()
+                .filter(j -> !j.isEmpty())
+                .forEach(j -> labels.add(ILabel.Converter.from(j)));
+
+        add.accept(inv.armorInventory);
+        add.accept(inv.mainInventory);
+        add.accept(inv.offHandInventory);
+        return labels;
+    }
+
     void refreshResult() {
         if (calculator == null) {
-            lsResult.setLabels(new ArrayList<>());
+            result.setLabels(new ArrayList<>());
         } else {
             switch (mode) {
                 case INPUT:
-                    lsResult.setLabels(calculator.getInputs());
+                    result.setLabels(calculator.getInputs());
                     break;
                 case OUTPUT:
-                    lsResult.setLabels(calculator.getOutputs());
+                    result.setLabels(calculator.getOutputs(getInventory()));
                     break;
                 case CATALYST:
-                    lsResult.setLabels(calculator.getCatalysts());
+                    result.setLabels(calculator.getCatalysts());
                     break;
                 case STEPS:
-                    lsResult.setLabels(new ArrayList<>());
+                    result.setLabels(calculator.getSteps());
                     break;
             }
         }

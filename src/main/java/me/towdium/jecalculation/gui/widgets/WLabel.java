@@ -54,7 +54,7 @@ public class WLabel implements IWidget {
         gui.drawResourceContinuous(Resource.WGT_SLOT, xPos, yPos, xSize, ySize, 3, 3, 3, 3);
         label.drawLabel(gui, xPos + xSize / 2, yPos + ySize / 2, true);
         if (mode == enumMode.RESULT || mode == enumMode.EDITOR) {
-            String s = label.getAmountString();
+            String s = label.getAmountString(mode == enumMode.RESULT);
             gui.drawText(xPos + xSize / 2.0f + 8 - HALF.getTextWidth(s),
                     yPos + ySize / 2.0f + 8.5f - HALF.getTextHeight(), HALF, s);
         }
@@ -137,22 +137,10 @@ public class WLabel implements IWidget {
     }
 
     public enum enumMode {
-        /**
-         * Slots in editor gui. Can use to edit amount. Exact amount displayed.
-         */
-        EDITOR,
-        /**
-         * Slots to display calculate/getRecipes result. Rounded amount displayed.
-         */
-        RESULT,
-        /**
-         * Slots that can pick items from. No amount displayed.
-         */
-        PICKER,
-        /**
-         * Slots to put labels into. No amount displayed.
-         */
-        SELECTOR
+        EDITOR,  // Slots in editor gui. Can use to edit amount. Exact amount displayed.
+        RESULT,  // Slots to display calculate/getRecipes result. Rounded amount displayed.
+        PICKER,  // Slots that can pick items from. No amount displayed.
+        SELECTOR  // Slots to put labels into. No amount displayed.
     }
 
     class WAmount extends WContainer {
@@ -173,8 +161,10 @@ public class WLabel implements IWidget {
         });
 
         public WAmount() {
-            wl.setLabel(getLabel());
-            wtf.setText(Integer.toString(getLabel().getAmount()));
+            wl.setLabel(label);
+            add(new WPanel(xPos - 5, yPos - 5, xSize + 133, ySize + 10));
+            add(new WText(xPos + xSize + 3, yPos + 5, JecaGui.Font.PLAIN, "x"));
+            addAll(wl, wtf, bYes, bNo);
             wtf.setLsnrText(i -> {
                 try {
                     Integer.parseInt(wtf.getText());
@@ -186,15 +176,13 @@ public class WLabel implements IWidget {
                     bYes.setDisabled(!acceptable);
                 }
             });
-            add(new WPanel(xPos - 5, yPos - 5, xSize + 133, ySize + 10));
-            add(new WText(xPos + xSize + 3, yPos + 5, JecaGui.Font.PLAIN, "x"));
-            addAll(wl, wtf, bYes, bNo);
             update();
         }
 
         private void update() {
-            bYes.setDisabled(!wl.getLabel().acceptPercent());
-            setPercent(false);
+            label = wl.getLabel();
+            bAmount.setDisabled(!wl.label.acceptPercent());
+            setPercent(label.isPercent());
         }
 
         private void setPercent(boolean b) {
@@ -205,7 +193,8 @@ public class WLabel implements IWidget {
                 remove(bPercent);
                 add(bAmount);
             }
-            wl.getLabel().setPercent(b);
+            wl.label.setPercent(b);
+            wtf.setText(Integer.toString(wl.label.getAmount()));
         }
 
         @Override

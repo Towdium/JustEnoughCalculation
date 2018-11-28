@@ -18,7 +18,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -40,7 +39,7 @@ public class LOreDict extends ILabel.Impl {
     }
 
     public LOreDict(String name, int amount) {
-        super(amount);
+        super(amount, false);
         this.name = name;
     }
 
@@ -73,32 +72,32 @@ public class LOreDict extends ILabel.Impl {
         return Utilities.I18n.format("label.ore_dict.name", name);
     }
 
-    public static Optional<ILabel> merge(ILabel a, ILabel b, boolean add) {
+    public static boolean mergeOO(ILabel a, ILabel b) {
         if (a instanceof LOreDict && b instanceof LOreDict) {
             LOreDict lodA = (LOreDict) a;
             LOreDict lodB = (LOreDict) b;
-            if (lodA.getName().equals(lodB.getName())) {
-                return Impl.mergeUnchecked(lodA, lodB, add);
-            }
-        } else if ((a instanceof LOreDict && b instanceof LItemStack)
-                || a instanceof LItemStack && b instanceof LOreDict) {
-            LItemStack lis;
-            LOreDict lor;
-            if (a instanceof LOreDict) {
-                lis = (LItemStack) b;
-                lor = (LOreDict) a;
-            } else {
-                lis = (LItemStack) a;
-                lor = (LOreDict) b;
-            }
-            return OreDictionary.getOres(lor.name).stream()
-                    .map(o -> Converter.from(o).multiply(lor.amount))
-                    .map(i -> LItemStack.merge(i, lis, add))
-                    .filter(Optional::isPresent)
-                    .findAny().flatMap(i -> i)
-                    .map(i -> lor.copy().setAmount(i.getAmount()));
+            return lodA.getName().equals(lodB.getName());
+        } else return false;
+    }
+
+    public static boolean mergeOI(ILabel a, ILabel b) {
+        if (a instanceof LOreDict && b instanceof LItemStack) {
+            LOreDict lod = (LOreDict) a;
+            LItemStack lis = (LItemStack) b;
+            if (lod.getAmount() > 0)
+                return false;
+            return OreDictionary.getOres(lod.name).stream()
+                    .map(Converter::from)
+                    .anyMatch(i -> LItemStack.merge(i, lis));
         }
-        return Optional.empty();
+        return false;
+    }
+
+    public static boolean mergeIO(ILabel a, ILabel b) {
+        if (a instanceof LItemStack && b instanceof LOreDict) {
+            return false;
+        }
+        return false;
     }
 
     public static List<ILabel> guess(List<ILabel> iss) {

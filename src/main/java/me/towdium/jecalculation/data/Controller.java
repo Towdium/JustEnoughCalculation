@@ -103,8 +103,8 @@ public class Controller {
         return getRecord().getRecipes(group);
     }
 
-    public static Optional<Recipe> getRecipe(ILabel label, Recipe.enumIoType type) {
-        return getRecord().getRecipe(label, type);
+    public static Optional<Recipe> getRecipe(ILabel label) {
+        return getRecord().getRecipe(label);
     }
 
     public static List<ILabel> getRecent() {

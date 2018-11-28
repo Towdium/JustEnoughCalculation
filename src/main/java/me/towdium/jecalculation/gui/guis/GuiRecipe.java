@@ -151,8 +151,8 @@ public class GuiRecipe extends WContainer implements IGui {
         dst.stream().filter(p -> {
             CostList cl = new CostList(list);
             if (p.three.equals(cl)) {
-                ILabel.MERGER.merge(p.one, ILabel.CONVERTER.first(list), true).ifPresent(i -> p.one = i);
-                p.two = p.two.merge(cl, true, true);
+                ILabel.MERGER.merge(p.one, ILabel.CONVERTER.first(list)).ifPresent(i -> p.one = i);
+                p.two = p.two.merge(cl, true, false);
                 return true;
             } else return false;
         }).findAny().orElseGet(() -> {

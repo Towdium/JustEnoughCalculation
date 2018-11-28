@@ -16,8 +16,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 import static net.minecraftforge.oredict.OreDictionary.WILDCARD_VALUE;
 
@@ -49,8 +47,8 @@ public class LItemStack extends ILabel.Impl {
     transient ItemStack temp;
 
     public LItemStack(int amount, Item item, int meta,
-                      @Nullable NBTTagCompound cap, @Nullable NBTTagCompound nbt) {
-        super(amount);
+                      @Nullable NBTTagCompound cap, @Nullable NBTTagCompound nbt, boolean percent) {
+        super(amount, percent);
         this.item = item;
         this.meta = meta;
         this.nbt = nbt == null ? null : nbt.copy();
@@ -61,14 +59,21 @@ public class LItemStack extends ILabel.Impl {
 
     // Convert from itemStack
     public LItemStack(ItemStack is) {
-        this(is.getCount(), is.getItem(), is.getItemDamage(), getCap(is), is.getTagCompound());
+        this(is.getCount(), is.getItem(), is.getItemDamage(), getCap(is), is.getTagCompound(), false);
     }
 
-    public LItemStack(NBTTagCompound nbt) {
-        this(nbt.getInteger(KEY_AMOUNT), Objects.requireNonNull(Item.getByNameOrId(nbt.getString(KEY_ITEM))),
-                nbt.getInteger(KEY_META), nbt.hasKey(KEY_CAP) ? nbt.getCompoundTag(KEY_CAP) : null,
-                nbt.hasKey(KEY_NBT) ? nbt.getCompoundTag(KEY_NBT) : null);
-        fromFuzzy(nbt.getByte(KEY_FUZZY));
+    public LItemStack(NBTTagCompound tag) {
+        super(tag);
+        item = Item.getByNameOrId(tag.getString(KEY_ITEM));
+        meta = tag.getInteger(KEY_META);
+        cap = tag.hasKey(KEY_CAP) ? tag.getCompoundTag(KEY_CAP) : null;
+        nbt = tag.hasKey(KEY_NBT) ? tag.getCompoundTag(KEY_NBT) : null;
+        byte fuzzy = tag.getByte(KEY_FUZZY);
+        fMeta = (fuzzy & FUZZY_META) != 0;
+        fCap = (fuzzy & FUZZY_CAP) != 0;
+        fNbt = (fuzzy & FUZZY_NBT) != 0;
+        temp = new ItemStack(item, 1, meta, cap);
+        temp.setTagCompound(tag);
     }
 
     private LItemStack(LItemStack lis) {
@@ -90,32 +95,26 @@ public class LItemStack extends ILabel.Impl {
         return nbt.hasKey("ForgeCaps") ? nbt.getCompoundTag("ForgeCaps") : null;
     }
 
-    public static Optional<ILabel> merge(ILabel a, ILabel b, boolean add) {
+    public static boolean merge(ILabel a, ILabel b) {
         if (a instanceof LItemStack && b instanceof LItemStack) {
             LItemStack lisA = (LItemStack) a;
             LItemStack lisB = (LItemStack) b;
-
-            // check meta
-            int resultMeta = 0;
-            boolean checkedMeta = true;
-            if (lisA.meta == WILDCARD_VALUE || lisB.meta == WILDCARD_VALUE) resultMeta = WILDCARD_VALUE;
-            else if (lisA.fMeta || lisB.fMeta || lisA.meta == lisB.meta) resultMeta = lisA.meta;
-            else checkedMeta = false;
-
-            // check nbt and cap
-            boolean checkedNbt, checkedCap;
-            checkedNbt = (lisA.nbt == null ? lisB.nbt == null : lisA.nbt.equals(lisB.nbt))
-                    || lisA.fNbt || lisB.fNbt;
-            checkedCap = (lisA.cap == null ? lisB.cap == null : lisA.cap.equals(lisB.cap))
-                    || lisA.fCap || lisB.fCap;
-
-            if (lisA.item == lisB.item && checkedCap && checkedMeta && checkedNbt) {
-                LItemStack is = lisA.copy();
-                is.meta = resultMeta;
-                return Impl.mergeUnchecked(is, lisB, add);
+            if (lisA.meta != WILDCARD_VALUE && lisB.meta == WILDCARD_VALUE) return false;
+            if (!lisA.fNbt) {
+                if (lisB.fNbt) return false;
+                else if (lisA.nbt == null) {
+                    if (lisB.nbt != null) return false;
+                } else if (lisB.nbt == null || !lisA.nbt.equals(lisB.nbt)) return false;
             }
+            if (!lisA.fCap) {
+                if (lisB.fCap) return false;
+                else if (lisA.cap == null) {
+                    if (lisB.cap != null) return false;
+                } else if (lisB.cap == null || !lisA.cap.equals(lisB.cap)) return false;
+            }
+            return lisA.item == lisB.item;
         }
-        return Optional.empty();
+        return false;
     }
 
     public ILabel setFMeta(boolean f) {
@@ -187,20 +186,10 @@ public class LItemStack extends ILabel.Impl {
         ret.setString(KEY_ITEM, rl.toString());
         if (nbt != null) ret.setTag(KEY_NBT, nbt);
         if (cap != null) ret.setTag(KEY_CAP, cap);
-        ret.setByte(KEY_FUZZY, toFuzzy());
+        int fuzzy = (fMeta ? FUZZY_META : 0) | (fCap ? FUZZY_CAP : 0) | (fNbt ? FUZZY_NBT : 0);
+        ret.setByte(KEY_FUZZY, (byte) fuzzy);
         return ret;
     }
-
-    private byte toFuzzy() {
-        return (byte) ((fMeta ? FUZZY_META : 0) | (fCap ? FUZZY_CAP : 0) | (fNbt ? FUZZY_NBT : 0));
-    }
-
-    private void fromFuzzy(byte i) {
-        fMeta = (i & FUZZY_META) != 0;
-        fCap = (i & FUZZY_CAP) != 0;
-        fNbt = (i & FUZZY_NBT) != 0;
-    }
-
 
     @Override
     @SideOnly(Side.CLIENT)
