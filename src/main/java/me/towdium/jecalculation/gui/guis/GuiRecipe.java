@@ -91,7 +91,7 @@ public class GuiRecipe extends WContainer implements IGui {
     }
 
     public GuiRecipe() {
-        add(new WPanel());
+        addAll(new WHelp("recipe"), new WPanel());
         add(new WIcon(7, 63, 21, 20, Resource.ICN_OUTPUT, "recipe.output"));
         add(new WIcon(7, 87, 21, 20, Resource.ICN_CATALYST, "recipe.catalyst"));
         add(new WIcon(7, 111, 21, 40, Resource.ICN_INPUT, "recipe.input"));

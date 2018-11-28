@@ -72,7 +72,7 @@ public class LOreDict extends ILabel.Impl {
         return Utilities.I18n.format("label.ore_dict.name", name);
     }
 
-    public static boolean mergeOO(ILabel a, ILabel b) {
+    public static boolean mergeSame(ILabel a, ILabel b) {
         if (a instanceof LOreDict && b instanceof LOreDict) {
             LOreDict lodA = (LOreDict) a;
             LOreDict lodB = (LOreDict) b;
@@ -80,7 +80,7 @@ public class LOreDict extends ILabel.Impl {
         } else return false;
     }
 
-    public static boolean mergeOI(ILabel a, ILabel b) {
+    public static boolean mergeFuzzy(ILabel a, ILabel b) {
         if (a instanceof LOreDict && b instanceof LItemStack) {
             LOreDict lod = (LOreDict) a;
             LItemStack lis = (LItemStack) b;
@@ -89,13 +89,6 @@ public class LOreDict extends ILabel.Impl {
             return OreDictionary.getOres(lod.name).stream()
                     .map(Converter::from)
                     .anyMatch(i -> LItemStack.merge(i, lis));
-        }
-        return false;
-    }
-
-    public static boolean mergeIO(ILabel a, ILabel b) {
-        if (a instanceof LItemStack && b instanceof LOreDict) {
-            return false;
         }
         return false;
     }

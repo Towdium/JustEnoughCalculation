@@ -14,6 +14,7 @@ import me.towdium.jecalculation.gui.guis.pickers.PickerSimple;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.Utilities.ReversedIterator;
 import me.towdium.jecalculation.utils.wrappers.Pair;
+import me.towdium.jecalculation.utils.wrappers.Wrapper;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -60,15 +62,14 @@ public interface ILabel {
 
     static void initClient() {
         CONVERTER.register(LOreDict::guess);
-        EDITOR.register(PickerSimple.FluidStack::new, "fluid_stack", new LFluidStack(1000, FluidRegistry.WATER));
-        EDITOR.register(PickerSimple.OreDict::new, "ore_dict", new LOreDict("ingotIron"));
+        EDITOR.register(PickerSimple.FluidStack::new, "fluid", new LFluidStack(1000, FluidRegistry.WATER));
+        EDITOR.register(PickerSimple.OreDict::new, "ore", new LOreDict("ingotIron"));
         EDITOR.register(PickerPlaceholder::new, "placeholder", new LPlaceholder("example", 1, true));
-        EDITOR.register(PickerItemStack::new, "item_stack", new LItemStack(new ItemStack(Items.IRON_PICKAXE)).setFMeta(true));
+        EDITOR.register(PickerItemStack::new, "item", new LItemStack(new ItemStack(Items.IRON_PICKAXE)).setFMeta(true));
         MERGER.register("itemStack", "itemStack", Impl.form(LItemStack.class, LItemStack.class, LItemStack::merge));
-        MERGER.register("oreDict", "oreDict", Impl.form(LOreDict.class, LOreDict.class, LOreDict::mergeOO));
-        MERGER.register("oreDict", "itemStack", Impl.form(LOreDict.class, LItemStack.class, LOreDict::mergeOI));
-        // MERGER.register("itemStack", "oreDict",  Impl.form(LOreDict.class, LItemStack.class, LOreDict::mergeIO));
-        // MERGER.register("fluidStack", "fluidStack", Impl::merge);  // TODO fluid and placeholder
+        MERGER.register("oreDict", "oreDict", Impl.form(LOreDict.class, LOreDict.class, LOreDict::mergeSame));
+        MERGER.register("oreDict", "itemStack", Impl.form(LOreDict.class, LItemStack.class, LOreDict::mergeFuzzy));
+        MERGER.register("fluidStack", "fluidStack", Impl.form(LFluidStack.class, LFluidStack.class, LFluidStack::merge));
     }
 
     int getAmount();
@@ -115,7 +116,7 @@ public interface ILabel {
      * Since {@link ILabel} merging is bidirectional, it is redundant to
      * implement on both side. So this class is created for merging
      * {@link ILabel label(s)}.
-     * It uses singleton mode. First registerGuess mergeOO functions, then use
+     * It uses singleton mode. First register merge functions, then use
      * {@link #merge(ILabel, ILabel)} to operate the {@link ILabel}.
      * For registering, see {@link Serializer}.
      */
@@ -131,36 +132,42 @@ public interface ILabel {
 
 
         /**
-         * @param a requested label
-         * @param b supplied label
+         * @param a one label
+         * @param b another label
          * @return merge result or empty
-         * This function ensures to generate same type if a and b are from same type
-         * If a is fuzzy, b is explicit, generates a is amount is negative, else generates b
-         * explicit type cannot request fuzzy type
+         * This function will try to merge two labels.
+         * If both label has same type, just sum up amount
+         * For different type, the framework will try reversing the order for MergeFunctions to work
+         * So generally speaking, a and b has no priority in this function
          */
         public Optional<ILabel> merge(ILabel a, ILabel b) {
-            MergerFunction mf = functions.get(new Pair<>(a.getIdentifier(), b.getIdentifier()));
-            Optional<ILabel> ret;
-            if (mf != null) ret = mf.merge(a, b);
-            else {
-                mf = functions.get(new Pair<>(b.getIdentifier(), a.getIdentifier()));
-                if (mf == null) return Optional.empty();
-                ret = mf.merge(b, a);
-            }
-            if (ret.isPresent() && ret.get() != ILabel.EMPTY && (ret.get() == a || ret.get() == b))
-                throw new RuntimeException("Merger should not modify the given label.");
-            return ret;
+            BiFunction<ILabel, ILabel, ILabel> get = (c, d) -> {
+                MergerFunction mf = functions.get(new Pair<>(c.getIdentifier(), d.getIdentifier()));
+                if (mf != null) return mf.merge(c, d);
+                else return null;
+            };
+            return new Wrapper<ILabel>(null)
+                    .or(() -> get.apply(a, b))
+                    .or(() -> get.apply(b, a))
+                    .ifPresent(i -> {
+                        if (i != ILabel.EMPTY && (i == a || i == b))
+                            throw new RuntimeException("Merger should not modify the given label.");
+                    })
+                    .toOptional();
         }
 
         @FunctionalInterface
         public interface MergerFunction {
             /**
-             * @param a   an {@link ILabel} to mergeOO
-             * @param b   another {@link ILabel} to mergeOO
-             * @return an optional {@link Pair pair} of {@link ILabel label(s)}.
-             * If empty, the labels cannot mergeOO, otherwise returns difference and common elements
+             * @param a requested label
+             * @param b supplied label
+             * @return merge result or empty
+             * This function ensures to generate same type if a and b are from same type
+             * If a is fuzzy, b is explicit, generates a is amount is negative, else generates b
+             * Normally, explicit type cannot request fuzzy type
              */
-            Optional<ILabel> merge(ILabel a, ILabel b);
+            @Nullable
+            ILabel merge(ILabel a, ILabel b);
         }
     }
 
@@ -425,16 +432,16 @@ public interface ILabel {
 
         protected static Merger.MergerFunction form(Class a, Class b, BiPredicate<ILabel, ILabel> p) {
             return (c, d) -> {
-                if (c == EMPTY || d == EMPTY) return Optional.empty();
+                if (c == EMPTY || d == EMPTY) return null;
                 if (a.isInstance(c) && b.isInstance(d) && p.test(c, d)) {
                     int amountC = c.isPercent() ? c.getAmount() : c.getAmount() * 100;
                     int amountD = d.isPercent() ? d.getAmount() : d.getAmount() * 100;
                     int amount = amountC + amountD;
                     int amountI = (amount > 0 ? amount + 99 : amount - 99) / 100;
-                    if (amount == 0) return Optional.of(EMPTY);
-                    else if (amount > 0) return Optional.of(d.copy().setAmount(d.isPercent() ? amount : amountI));
-                    else return Optional.of(c.copy().setAmount(c.isPercent() ? amount : amountI));
-                } else return Optional.empty();
+                    if (amount == 0) return EMPTY;
+                    else if (amount > 0) return d.copy().setAmount(d.isPercent() ? amount : amountI);
+                    else return c.copy().setAmount(c.isPercent() ? amount : amountI);
+                } else return null;
             };
         }
 

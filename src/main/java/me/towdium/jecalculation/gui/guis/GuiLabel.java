@@ -6,10 +6,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.cache.Weigher;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
-import me.towdium.jecalculation.gui.widgets.IWidget;
-import me.towdium.jecalculation.gui.widgets.WContainer;
-import me.towdium.jecalculation.gui.widgets.WPage;
-import me.towdium.jecalculation.gui.widgets.WPanel;
+import me.towdium.jecalculation.gui.widgets.*;
 import me.towdium.jecalculation.utils.wrappers.Wrapper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -45,7 +42,7 @@ public class GuiLabel extends WContainer implements IGui {
             add(new WPage(i, r, false).setListener(() -> refresh(i)));
             index.value += 1;
         });
-        add(new WPanel());
+        addAll(new WHelp("label"), new WPanel());
         add(container);
         refresh(0);
     }

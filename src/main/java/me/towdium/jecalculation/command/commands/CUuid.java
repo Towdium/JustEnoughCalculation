@@ -1,33 +1,34 @@
 package me.towdium.jecalculation.command.commands;
 
 import mcp.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.command.ISubCommand;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.Entity;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextComponentString;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
  * Author: towdium
- * Date:   8/10/17.
+ * Date:   17-10-15.
  */
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class CommandState implements ISubCommand {
+public class CUuid implements ISubCommand {
     @Override
     public String getName() {
-        return "state";
+        return "uuid";
     }
 
     @Override
     public String getUsage(ICommandSender sender) {
-        return "/jec state";
+        return "/jeca uuid";
     }
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
-        sender.sendMessage(new TextComponentTranslation(getKey("desc"), JustEnoughCalculation.side.toString()));
+        Entity e = sender.getCommandSenderEntity();
+        if (e != null) sender.sendMessage(new TextComponentString(e.getUniqueID().toString()));
     }
 }

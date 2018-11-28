@@ -133,4 +133,9 @@ public class LFluidStack extends ILabel.Impl {
     public int hashCode() {
         return fluid.getUnlocalizedName().hashCode() ^ amount ^ (nbt == null ? 0 : nbt.hashCode());
     }
+
+    public static boolean merge(ILabel a, ILabel b) {
+        if (a instanceof LFluidStack && b instanceof LFluidStack) return a.matches(b);
+        else return false;
+    }
 }

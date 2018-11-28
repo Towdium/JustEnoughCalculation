@@ -16,7 +16,7 @@ import java.util.Arrays;
  */
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class CommandOreDict implements ISubCommand {
+public class COreDict implements ISubCommand {
     @Override
     public String getName() {
         return "ore";
@@ -24,7 +24,7 @@ public class CommandOreDict implements ISubCommand {
 
     @Override
     public String getUsage(ICommandSender sender) {
-        return "/jec ore";
+        return "/jeca ore";
     }
 
     @Override

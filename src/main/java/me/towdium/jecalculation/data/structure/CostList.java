@@ -43,27 +43,26 @@ public class CostList {
     @SuppressWarnings("UnusedReturnValue")
     public CostList merge(CostList costList, boolean strict, boolean inplace) {
         CostList ret = inplace ? this : copy();
-        CostList in = costList.copy();
+        costList.labels.forEach(i -> ret.labels.add(i.copy()));
         for (int i = 0; i < ret.labels.size(); i++) {
-            for (int j = 0; j < in.labels.size(); j++) {
+            for (int j = i + 1; j < ret.labels.size(); j++) {
                 if (strict) {
                     ILabel a = ret.labels.get(i);
-                    ILabel b = in.labels.get(j);
+                    ILabel b = ret.labels.get(j);
                     if (a.matches(b)) {
                         ret.labels.set(i, a.setAmount(a.getAmount() + b.getAmount()));
-                        in.labels.set(j, ILabel.EMPTY);
+                        ret.labels.set(j, ILabel.EMPTY);
                     }
                 } else {
-                    Optional<ILabel> l = ILabel.MERGER.merge(ret.labels.get(i), in.labels.get(j));
+                    Optional<ILabel> l = ILabel.MERGER.merge(ret.labels.get(i), ret.labels.get(j));
                     if (l.isPresent()) {
                         ret.labels.set(i, l.get());
-                        in.labels.set(j, ILabel.EMPTY);
+                        ret.labels.set(j, ILabel.EMPTY);
                     }
                 }
             }
         }
         ret.labels = ret.labels.stream().filter(i -> i != ILabel.EMPTY).collect(Collectors.toList());
-        in.labels.stream().filter(i -> i != ILabel.EMPTY).forEach(i -> ret.labels.add(i));
         return ret;
     }
 

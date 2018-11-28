@@ -1,10 +1,10 @@
 package me.towdium.jecalculation.command;
 
 import mcp.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.command.commands.CommandHelp;
-import me.towdium.jecalculation.command.commands.CommandOreDict;
-import me.towdium.jecalculation.command.commands.CommandState;
-import me.towdium.jecalculation.command.commands.CommandUuid;
+import me.towdium.jecalculation.command.commands.CHelp;
+import me.towdium.jecalculation.command.commands.COreDict;
+import me.towdium.jecalculation.command.commands.CState;
+import me.towdium.jecalculation.command.commands.CUuid;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.HashMap;
@@ -16,20 +16,13 @@ import java.util.HashMap;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class Commands {
-    public static final HashMap<String, ISubCommand> commands;
-
-    public static final CommandHelp commandHelp = new CommandHelp();
-    public static final CommandState commandState = new CommandState();
-    public static final CommandOreDict commandOreDict = new CommandOreDict();
-    public static final CommandUuid commandUuid = new CommandUuid();
+    public static final HashMap<String, ISubCommand> commands = new HashMap<>();
 
     static {
-        commands = new HashMap<>();
-
-        add(commandHelp);
-        add(commandState);
-        add(commandOreDict);
-        add(commandUuid);
+        add(new CHelp());
+        add(new CState());
+        add(new COreDict());
+        add(new CUuid());
     }
 
     static void add(ISubCommand c) {
