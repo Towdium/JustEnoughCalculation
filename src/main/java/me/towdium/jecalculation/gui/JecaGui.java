@@ -1,8 +1,7 @@
 package me.towdium.jecalculation.gui;
 
 import mcp.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.JustEnoughCalculation;
-import me.towdium.jecalculation.JustEnoughCalculation.enumSide;
+import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.guis.GuiCalculator;
 import me.towdium.jecalculation.gui.guis.IGui;
@@ -156,7 +155,7 @@ public class JecaGui extends GuiContainer {
     @SubscribeEvent(receiveCanceled = true)
     public static void onKey(InputEvent.KeyInputEvent event) {
         if (ProxyClient.keyOpenGui.isPressed()) {
-            if (JustEnoughCalculation.side == enumSide.CLIENT) JecaGui.displayGui(true, true, new GuiCalculator());
+            if (!Controller.isServerActive()) JecaGui.displayGui(true, true, new GuiCalculator());
             else Minecraft.getMinecraft().player.sendMessage(new TextComponentTranslation("chat.server_mode"));
         }
     }

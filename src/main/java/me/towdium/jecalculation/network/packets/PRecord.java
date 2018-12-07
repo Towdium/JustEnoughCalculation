@@ -3,6 +3,7 @@ package me.towdium.jecalculation.network.packets;
 import io.netty.buffer.ByteBuf;
 import me.towdium.jecalculation.JecaCapability;
 import me.towdium.jecalculation.JustEnoughCalculation;
+import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.structure.Recipes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -48,6 +49,7 @@ public class PRecord implements IMessage {
                     recipes.deserialize(message.recipes);
                 }
             });
+            Controller.setServerActive(true);
             return null;
         }
     }

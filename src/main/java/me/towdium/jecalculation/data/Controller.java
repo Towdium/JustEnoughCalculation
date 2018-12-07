@@ -1,6 +1,7 @@
 package me.towdium.jecalculation.data;
 
 import me.towdium.jecalculation.JecaCapability;
+import me.towdium.jecalculation.JecaConfig;
 import me.towdium.jecalculation.JecaItem;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.label.ILabel;
@@ -34,6 +35,8 @@ import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static me.towdium.jecalculation.JustEnoughCalculation.network;
+
 /**
  * Author: towdium
  * Date:   17-10-15.
@@ -44,9 +47,18 @@ public class Controller {
     public static final String KEY_RECENTS = "recents";
     static Recipes recipesClient;
     static Recents recentsClient;
+    static boolean serverActive = false;
+
+    public static boolean isServerActive() {
+        return serverActive;
+    }
+
+    public static void setServerActive(boolean serverActive) {
+        Controller.serverActive = serverActive;
+    }
 
     static Recipes getRecord() {
-        if (JustEnoughCalculation.side == JustEnoughCalculation.enumSide.BOTH)
+        if (serverActive)
             //noinspection ConstantConditions
             return Minecraft.getMinecraft().player.getCapability(JecaCapability.CAPABILITY_RECORD, EnumFacing.UP);
         else return recipesClient;
@@ -98,20 +110,20 @@ public class Controller {
 
     public static void addRecipe(String group, Recipe recipe) {
         getRecord().add(group, recipe);
-        if (JustEnoughCalculation.side == JustEnoughCalculation.enumSide.BOTH)
-            JustEnoughCalculation.network.sendToServer(new PRecipe(group, -1, recipe));
+        if (serverActive)
+            network.sendToServer(new PRecipe(group, -1, recipe));
     }
 
     public static void setRecipe(String group, int index, Recipe recipe) {
         getRecord().set(group, index, recipe);
-        if (JustEnoughCalculation.side == JustEnoughCalculation.enumSide.BOTH)
-            JustEnoughCalculation.network.sendToServer(new PRecipe(group, index, recipe));
+        if (serverActive)
+            network.sendToServer(new PRecipe(group, index, recipe));
     }
 
     public static void removeRecipe(String group, int index) {
         getRecord().remove(group, index);
-        if (JustEnoughCalculation.side == JustEnoughCalculation.enumSide.BOTH)
-            JustEnoughCalculation.network.sendToServer(new PRecipe(group, index, null));
+        if (serverActive)
+            network.sendToServer(new PRecipe(group, index, null));
     }
 
     public static Recipe getRecipe(String group, int index) {
@@ -131,7 +143,7 @@ public class Controller {
     }
 
     public static List<ILabel> getRecent() {
-        if (JustEnoughCalculation.side == JustEnoughCalculation.enumSide.CLIENT)
+        if (!serverActive)
             return recentsClient.getRecords();
         else {
             ArrayList<ILabel> ret = new ArrayList<>();
@@ -145,7 +157,7 @@ public class Controller {
     }
 
     public static void setRecent(ILabel label) {
-        if (JustEnoughCalculation.side == JustEnoughCalculation.enumSide.CLIENT)
+        if (!serverActive)
             recentsClient.push(label);
         else {
             Optional<ItemStack> ois = getStack();
@@ -153,7 +165,7 @@ public class Controller {
                 Recents recent = new Recents(Utilities.getTag(is).getTagList(Recents.IDENTIFIER, 10));
                 recent.push(label);
                 Utilities.getTag(is).setTag(Recents.IDENTIFIER, recent.serialize());
-                JustEnoughCalculation.network.sendToServer(new PCalculator(is));
+                network.sendToServer(new PCalculator(is));
             });
         }
     }
@@ -186,12 +198,14 @@ public class Controller {
     @SubscribeEvent
     public static void onLogOut(ClientDisconnectionFromServerEvent event) {
         writeToLocal();
+        serverActive = false;
     }
 
     // server side
     @SubscribeEvent
     public static void onJoin(PlayerLoggedInEvent e) {
-        JustEnoughCalculation.network.sendTo(new PRecord(JecaCapability.getRecipes(e.player)), (EntityPlayerMP) e.player);
+        if (!JecaConfig.clientMode)
+            network.sendTo(new PRecord(JecaCapability.getRecipes(e.player)), (EntityPlayerMP) e.player);
     }
 
     @SubscribeEvent

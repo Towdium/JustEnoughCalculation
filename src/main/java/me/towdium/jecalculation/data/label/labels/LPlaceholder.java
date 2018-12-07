@@ -2,6 +2,7 @@ package me.towdium.jecalculation.data.label.labels;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
+import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
  */
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-@Mod.EventBusSubscriber
+@Mod.EventBusSubscriber(Side.CLIENT)
 public class LPlaceholder extends ILabel.Impl {
     public static final String KEY_NAME = "name";
     public static final String IDENTIFIER = "placeholder";
@@ -68,8 +69,7 @@ public class LPlaceholder extends ILabel.Impl {
     }
 
     private static Utilities.Recent<LPlaceholder> getRecord() {
-        return JustEnoughCalculation.side == JustEnoughCalculation.enumSide.CLIENT
-                ? recentClient : recentServer;
+        return Controller.isServerActive() ? recentClient : recentServer;
     }
 
     @Override

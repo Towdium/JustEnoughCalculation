@@ -2,7 +2,7 @@
 item.item_calculator_crafting.name=Crafting Calculator
 item.item_calculator_math.name=Math Calculator
 jecharacters.command.help.list=Here is the list of all commands available:
-jecharacters.command.state.desc=The mod is working on state: %s
+jecharacters.command.state.desc=Server %s.
 jecharacters.command.reload.done=Reloading finished
 jecharacters.chat.server_mode=The mod is not working in client mode. Key binding will not work.
 jecharacters.chat.export=Selected recipes has been exported to "%s".

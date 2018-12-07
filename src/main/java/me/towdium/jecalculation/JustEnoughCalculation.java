@@ -31,8 +31,8 @@ import java.util.Map;
         modid = JustEnoughCalculation.Reference.MODID,
         name = JustEnoughCalculation.Reference.MODNAME,
         version = JustEnoughCalculation.Reference.VERSION,
-        dependencies = "required-after:jei@[4.7.6.89,)",
-        clientSideOnly = true
+        dependencies = "required-after:jei@[4.7.6.89,)"
+        //clientSideOnly = true
 )
 public class JustEnoughCalculation {
     @Mod.Instance(JustEnoughCalculation.Reference.MODID)
@@ -43,15 +43,11 @@ public class JustEnoughCalculation {
     public static IProxy proxy;
     public static SimpleNetworkWrapper network;
     public static Logger logger = LogManager.getLogger(Reference.MODID);
-    public static enumSide side = enumSide.UNDEFINED;
 
     @NetworkCheckHandler
     public static boolean networkCheck(Map<String, String> mods, Side s) {
-        if (s == Side.SERVER) {
-            if (mods.containsKey(Reference.MODID) && !JecaConfig.clientMode) side = enumSide.BOTH;
-            else side = enumSide.CLIENT;
-            return true;
-        } else return mods.containsKey(Reference.MODID);
+        if (s == Side.SERVER) return true;
+        else return mods.containsKey(Reference.MODID);
     }
 
     @Mod.EventHandler
@@ -77,12 +73,5 @@ public class JustEnoughCalculation {
         public static final String MODID = "jecalculation";
         public static final String MODNAME = "Just Enough Calculation";
         public static final String VERSION = "@VERSION@";
-    }
-
-    // Only to use at client side
-    public enum enumSide {
-        CLIENT,  // Running at client side and server not installed
-        BOTH,  // Running at client side and both installed
-        UNDEFINED  // Default unknown
     }
 }
