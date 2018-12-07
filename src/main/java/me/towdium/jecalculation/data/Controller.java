@@ -45,8 +45,10 @@ import static me.towdium.jecalculation.JustEnoughCalculation.network;
 public class Controller {
     public static final String KEY_RECIPES = "recipes";
     public static final String KEY_RECENTS = "recents";
+    public static final String KEY_AMOUNT = "amount";
     static Recipes recipesClient;
     static Recents recentsClient;
+    static String amountClient;
     static boolean serverActive = false;
 
     public static boolean isServerActive() {
@@ -142,14 +144,25 @@ public class Controller {
         return getRecord().getRecipe(label);
     }
 
+    public static String getAmount() {
+        if (!serverActive) return amountClient;
+        else return getStack()
+                .map(is -> Utilities.getTag(is).getString(KEY_AMOUNT))
+                .orElseGet(() -> amountClient);
+    }
+
+    public static void setAmount(String amount) {
+        if (!serverActive) amountClient = amount;
+        else getStack().ifPresent(is -> Utilities.getTag(is).setString(KEY_AMOUNT, amount));
+    }
+
     public static List<ILabel> getRecent() {
-        if (!serverActive)
-            return recentsClient.getRecords();
+        if (!serverActive) return recentsClient.getRecords();
         else {
             ArrayList<ILabel> ret = new ArrayList<>();
             Optional<ItemStack> ois = getStack();
             ois.ifPresent(is -> {
-                Recents recent = new Recents(Utilities.getTag(is).getTagList(Recents.IDENTIFIER, 10));
+                Recents recent = new Recents(Utilities.getTag(is).getTagList(KEY_RECENTS, 10));
                 ret.addAll(recent.getRecords());
             });
             return ret;
@@ -157,14 +170,13 @@ public class Controller {
     }
 
     public static void setRecent(ILabel label) {
-        if (!serverActive)
-            recentsClient.push(label);
+        if (!serverActive) recentsClient.push(label);
         else {
             Optional<ItemStack> ois = getStack();
             ois.ifPresent(is -> {
-                Recents recent = new Recents(Utilities.getTag(is).getTagList(Recents.IDENTIFIER, 10));
+                Recents recent = new Recents(Utilities.getTag(is).getTagList(KEY_RECENTS, 10));
                 recent.push(label);
-                Utilities.getTag(is).setTag(Recents.IDENTIFIER, recent.serialize());
+                Utilities.getTag(is).setTag(KEY_RECENTS, recent.serialize());
                 network.sendToServer(new PCalculator(is));
             });
         }
@@ -178,6 +190,7 @@ public class Controller {
         if (nbt != null) {
             recipesClient = nbt.hasKey(KEY_RECIPES) ? new Recipes(nbt.getCompoundTag(KEY_RECIPES)) : new Recipes();
             recentsClient = nbt.hasKey(KEY_RECENTS) ? new Recents(nbt.getTagList(KEY_RECENTS, 10)) : new Recents();
+            amountClient = nbt.hasKey(KEY_AMOUNT) ? nbt.getString(KEY_AMOUNT) : "";
             return;
         }
         file = new File(Loader.instance().getConfigDir(), "JustEnoughCalculation/default.json");
@@ -191,6 +204,7 @@ public class Controller {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setTag(KEY_RECENTS, recentsClient.serialize());
         nbt.setTag(KEY_RECIPES, recipesClient.serialize());
+        nbt.setString(KEY_AMOUNT, amountClient);
         Utilities.Json.write(nbt, file);
     }
 

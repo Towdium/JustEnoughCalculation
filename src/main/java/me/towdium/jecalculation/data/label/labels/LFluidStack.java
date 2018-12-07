@@ -1,6 +1,5 @@
 package me.towdium.jecalculation.data.label.labels;
 
-import com.sun.istack.internal.NotNull;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
@@ -32,7 +31,6 @@ public class LFluidStack extends ILabel.Impl {
     NBTTagCompound nbt;
     FluidStack temp;
 
-    @NotNull
     @Override
     public FluidStack getRepresentation() {
         return temp;

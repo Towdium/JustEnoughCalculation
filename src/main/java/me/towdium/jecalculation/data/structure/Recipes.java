@@ -19,9 +19,6 @@ import java.util.stream.StreamSupport;
  */
 
 public class Recipes {
-    public static final String KEY_NAME = "name";
-    public static final String KEY_CONTENT = "content";
-
     LinkedHashMap<String, List<Recipe>> records = new LinkedHashMap<>();
 
     public Recipes() {

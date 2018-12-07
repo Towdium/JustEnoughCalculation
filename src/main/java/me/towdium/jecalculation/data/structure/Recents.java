@@ -15,7 +15,6 @@ import java.util.stream.StreamSupport;
  */
 
 public class Recents {
-    public static final String IDENTIFIER = "recent";
     Utilities.Recent<ILabel> record = new Utilities.Recent<>((a, b) ->
             a == ILabel.EMPTY || a.equals(b), 9);
 

@@ -4,6 +4,7 @@ item.item_calculator_math.name=Math Calculator
 jecharacters.command.help.list=Here is the list of all commands available:
 jecharacters.command.state.desc=Server %s.
 jecharacters.command.reload.done=Reloading finished
+jecharacters.chat.max_loop=Process terminated when exceeding max loop count to avoid freezing.
 jecharacters.chat.server_mode=The mod is not working in client mode. Key binding will not work.
 jecharacters.chat.export=Selected recipes has been exported to "%s".
 jecharacters.gui.calculator.recipe.active=New recipe

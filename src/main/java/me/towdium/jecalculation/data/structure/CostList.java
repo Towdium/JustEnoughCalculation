@@ -3,6 +3,8 @@ package me.towdium.jecalculation.data.structure;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.utils.wrappers.Pair;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.text.TextComponentTranslation;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -114,6 +116,7 @@ public class CostList {
             HashSet<CostList> set = new HashSet<>();
             set.add(CostList.this);
             Pair<Recipe, Integer> next = find(true);
+            int count = 0;
             while (next != null) {
                 CostList original = getCurrent();
                 CostList difference = new CostList(next.one);
@@ -125,6 +128,10 @@ public class CostList {
                     procedure.add(new Pair<>(result, difference));
                     addCatalyst(next.one.getLabel(Recipe.enumIoType.CATALYST));
                     next = find(true);
+                }
+                if (count++ > 1000) {
+                    Minecraft.getMinecraft().player.sendMessage(new TextComponentTranslation("jecharacters.chat.max_loop"));
+                    break;
                 }
             }
         }
