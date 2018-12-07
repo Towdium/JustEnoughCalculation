@@ -1,17 +1,20 @@
 package me.towdium.jecalculation;
 
 import me.towdium.jecalculation.data.structure.Recipes;
+import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.fml.common.Loader;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.File;
 
 /**
  * Author: Towdium
@@ -37,7 +40,7 @@ public class JecaCapability {
         }
     }
 
-    public static class Provider implements ICapabilityProvider, INBTSerializable<NBTTagList> {
+    public static class Provider implements ICapabilityProvider, INBTSerializable<NBTTagCompound> {
         Recipes record;
 
         public Provider(Recipes record) {
@@ -58,13 +61,17 @@ public class JecaCapability {
         }
 
         @Override
-        public NBTTagList serializeNBT() {
+        public NBTTagCompound serializeNBT() {
             return record.serialize();
         }
 
         @Override
-        public void deserializeNBT(NBTTagList nbt) {
-            record.deserialize(nbt);
+        public void deserializeNBT(NBTTagCompound nbt) {
+            if (nbt.isEmpty()) {
+                File file = new File(Loader.instance().getConfigDir(), "JustEnoughCalculation/default.json");
+                nbt = Utilities.Json.read(file);
+                if (nbt != null) record.deserialize(nbt);
+            } else record.deserialize(nbt);
         }
     }
 }

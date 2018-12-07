@@ -166,9 +166,8 @@ public class LOreDict extends ILabel.Impl {
 
     @Override
     public NBTTagCompound toNbt() {
-        NBTTagCompound ret = new NBTTagCompound();
+        NBTTagCompound ret = super.toNbt();
         ret.setString(KEY_NAME, name);
-        ret.setInteger(KEY_AMOUNT, amount);
         return ret;
     }
 

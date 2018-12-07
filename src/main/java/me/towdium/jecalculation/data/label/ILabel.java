@@ -176,7 +176,7 @@ public interface ILabel {
      * For {@link ILabel} operations, see {@link Merger}
      */
     class Serializer {
-        public static final String KEY_IDENTIFIER = "identifier";
+        public static final String KEY_IDENTIFIER = "type";
         public static final String KEY_CONTENT = "content";
 
         private HashMap<String, Function<NBTTagCompound, ILabel>> idToData = new HashMap<>();
@@ -467,7 +467,7 @@ public interface ILabel {
         public NBTTagCompound toNbt() {
             NBTTagCompound nbt = new NBTTagCompound();
             nbt.setInteger(KEY_AMOUNT, amount);
-            nbt.setBoolean(KEY_PERCENT, percent);
+            if (percent) nbt.setBoolean(KEY_PERCENT, true);
             return nbt;
         }
 

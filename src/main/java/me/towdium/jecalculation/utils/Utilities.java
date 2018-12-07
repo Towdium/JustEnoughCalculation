@@ -7,17 +7,22 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.*;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.text.BreakIterator;
 import java.util.*;
 import java.util.function.BiFunction;
@@ -269,6 +274,111 @@ public class Utilities {
 
         public void clear() {
             data.clear();
+        }
+    }
+
+    public static class Json {
+        @Nullable
+        public static NBTTagCompound read(File f) {
+            try {
+                String s = FileUtils.readFileToString(f, "UTF-8");
+                return JsonToNBT.getTagFromJson(s);
+            } catch (NBTException | IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Nullable
+        public static NBTTagCompound read(String s) {
+            try {
+                return JsonToNBT.getTagFromJson(s);
+            } catch (NBTException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        public static void write(NBTTagCompound nbt, File f) {
+            FileOutputStream fos = null;
+            try {
+                fos = new FileOutputStream(f);
+                fos.write(write(nbt).getBytes(Charset.forName("UTF-8")));
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (fos != null) {
+                    try {
+                        fos.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+        public static String write(NBTTagCompound nbt) {
+            Writer w = new Writer();
+            write(nbt, w);
+            w.enter();
+            return w.build();
+        }
+
+        private static void write(NBTBase nbt, Writer w) {
+            if (nbt instanceof NBTTagCompound) {
+                NBTTagCompound tags = (NBTTagCompound) nbt;
+                boolean wrap = tags.getKeySet().size() > 1;
+                boolean first = true;
+                w.sb.append('{');
+                if (wrap) w.indent++;
+                for (String i : tags.getKeySet()) {
+                    if (first) first = false;
+                    else w.sb.append(',');
+                    if (wrap) w.enter();
+                    w.sb.append('"');
+                    w.sb.append(i);
+                    w.sb.append("\": ");
+                    write(tags.getTag(i), w);
+                }
+                if (wrap) {
+                    w.indent--;
+                    w.enter();
+                }
+                w.sb.append('}');
+            } else if (nbt instanceof NBTTagList) {
+                NBTTagList tags = (NBTTagList) nbt;
+                boolean wrap = tags.tagCount() > 1;
+                boolean first = true;
+                w.sb.append('[');
+                if (wrap) w.indent++;
+                for (NBTBase i : tags) {
+                    if (first) first = false;
+                    else w.sb.append(',');
+                    if (wrap) w.enter();
+                    write(i, w);
+                }
+                if (wrap) {
+                    w.indent--;
+                    w.enter();
+                }
+                w.sb.append(']');
+            } else w.sb.append(nbt.toString());
+        }
+
+        private static class Writer {
+            public int indent = 0;
+            StringBuilder sb = new StringBuilder();
+
+            public void enter() {
+                sb.append('\n');
+                char[] tmp = new char[4 * indent];
+                Arrays.fill(tmp, ' ');
+                sb.append(tmp);
+            }
+
+            public String build() {
+                return sb.toString();
+            }
         }
     }
 }

@@ -11,14 +11,14 @@ import me.towdium.jecalculation.network.packets.PCalculator;
 import me.towdium.jecalculation.network.packets.PRecipe;
 import me.towdium.jecalculation.network.packets.PRecord;
 import me.towdium.jecalculation.utils.Utilities;
-import me.towdium.jecalculation.utils.wrappers.Triple;
+import me.towdium.jecalculation.utils.wrappers.Pair;
+import me.towdium.jecalculation.utils.wrappers.Trio;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -31,13 +31,7 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -66,11 +60,40 @@ public class Controller {
         return Optional.ofNullable(is.getItem() instanceof JecaItem ? is : null);
     }
 
+    // file, recipes
+    public static List<Pair<String, Recipes>> discover() {
+        File dir = new File(Loader.instance().getConfigDir(), "JustEnoughCalculation/data/");
+        File[] fs = dir.listFiles();
+        if (fs == null) return new ArrayList<>();
+        return Arrays.stream(fs)
+                .map(i -> new Pair<>(i.getName(), new Recipes(Utilities.Json.read(i))))
+                .collect(Collectors.toList());
+    }
+
+    public static void inport(Recipes recipes, String group) {
+        ArrayList<Recipe> buffer = new ArrayList<>();
+        recipes.flatStream(group).forEach(i ->
+                getRecord().flatStream(group).filter(j -> j.one.equals(i.one)).findAny().orElseGet(() -> {
+                    buffer.add(i.one);
+                    return null;
+                }));
+        for (Recipe r : buffer) addRecipe(group, r);
+    }
+
+    public static File export(String group) {
+        File f = new File(Loader.instance().getConfigDir(), "JustEnoughCalculation/data/" + group + ".json");
+        Utilities.Json.write(getRecord().serialize(Collections.singleton(group)), f);
+        return f;
+    }
+
+    public static File export() {
+        File f = new File(Loader.instance().getConfigDir(), "JustEnoughCalculation/data/groups.json");
+        Utilities.Json.write(getRecord().serialize(), f);
+        return f;
+    }
+
     public static List<String> getGroups() {
-        Recipes user = getRecord();
-        if (user.size() != 0) return user.stream()
-                .map(Map.Entry::getKey).collect(Collectors.toList());
-        else return new ArrayList<>();
+        return getRecord().getGroups();
     }
 
     public static void addRecipe(String group, Recipe recipe) {
@@ -95,11 +118,11 @@ public class Controller {
         return getRecord().getRecipe(group, index);
     }
 
-    public static List<Triple<Recipe, String, Integer>> getRecipes() {
+    public static List<Trio<Recipe, String, Integer>> getRecipes() {
         return getRecord().getRecipes();
     }
 
-    public static List<Triple<Recipe, String, Integer>> getRecipes(String group) {
+    public static List<Trio<Recipe, String, Integer>> getRecipes(String group) {
         return getRecord().getRecipes(group);
     }
 
@@ -136,30 +159,27 @@ public class Controller {
     }
 
     public static void loadFromLocal() {
-        try {
-            File file = new File(Loader.instance().getConfigDir(), "JustEnoughCalculation/record.dat");
-            FileInputStream stream = new FileInputStream(file);
-            NBTTagCompound nbt = CompressedStreamTools.readCompressed(stream);
-            recipesClient = nbt.hasKey(KEY_RECIPES) ? new Recipes(nbt.getTagList(KEY_RECIPES, 10)) : new Recipes();
+        //noinspection ResultOfMethodCallIgnored
+        new File(Loader.instance().getConfigDir(), "JustEnoughCalculation/data").mkdirs();
+        File file = new File(Loader.instance().getConfigDir(), "JustEnoughCalculation/client.json");
+        NBTTagCompound nbt = Utilities.Json.read(file);
+        if (nbt != null) {
+            recipesClient = nbt.hasKey(KEY_RECIPES) ? new Recipes(nbt.getCompoundTag(KEY_RECIPES)) : new Recipes();
             recentsClient = nbt.hasKey(KEY_RECENTS) ? new Recents(nbt.getTagList(KEY_RECENTS, 10)) : new Recents();
-        } catch (IOException e) {
-            e.printStackTrace();
-            recipesClient = new Recipes();
-            recentsClient = new Recents();
+            return;
         }
+        file = new File(Loader.instance().getConfigDir(), "JustEnoughCalculation/default.json");
+        nbt = Utilities.Json.read(file);
+        recipesClient = nbt == null ? new Recipes() : new Recipes(nbt);
+        recentsClient = new Recents();
     }
 
     public static void writeToLocal() {
-        try {
-            File file = new File(Loader.instance().getConfigDir(), "JustEnoughCalculation/record.dat");
-            NBTTagCompound nbt = new NBTTagCompound();
-            nbt.setTag(KEY_RECENTS, recentsClient.serialize());
-            nbt.setTag(KEY_RECIPES, recipesClient.serialize());
-            FileOutputStream stream = new FileOutputStream(file);
-            CompressedStreamTools.writeCompressed(nbt, stream);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        File file = new File(Loader.instance().getConfigDir(), "JustEnoughCalculation/record.json");
+        NBTTagCompound nbt = new NBTTagCompound();
+        nbt.setTag(KEY_RECENTS, recentsClient.serialize());
+        nbt.setTag(KEY_RECIPES, recipesClient.serialize());
+        Utilities.Json.write(nbt, file);
     }
 
     // client side
@@ -177,7 +197,7 @@ public class Controller {
     @SubscribeEvent
     public static void onAttachCapability(AttachCapabilitiesEvent<Entity> e) {
         if (e.getObject() instanceof EntityPlayer) {
-            e.addCapability(new ResourceLocation(JustEnoughCalculation.Reference.MODID, "record"),
+            e.addCapability(new ResourceLocation(JustEnoughCalculation.Reference.MODID, "recipes"),
                     new JecaCapability.Provider(new Recipes()));
         }
     }

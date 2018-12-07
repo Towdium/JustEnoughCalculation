@@ -6,7 +6,10 @@ import me.towdium.jecalculation.data.label.labels.LFluidStack;
 import me.towdium.jecalculation.data.label.labels.LOreDict;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.gui.guis.IGui;
-import me.towdium.jecalculation.gui.widgets.*;
+import me.towdium.jecalculation.gui.widgets.WIcon;
+import me.towdium.jecalculation.gui.widgets.WLabel;
+import me.towdium.jecalculation.gui.widgets.WLabelScroll;
+import me.towdium.jecalculation.gui.widgets.WSearch;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -31,10 +34,11 @@ public class PickerSimple extends IPicker.Impl implements IGui {
      *                entire key should be "gui.l18nKey.help.tooltip"
      */
     public PickerSimple(List<ILabel> labels, String l18nKey) {
-        WLabelScroll ls = new WLabelScroll(7, 33, 8, 7, WLabel.enumMode.PICKER, true).setLabels(labels);
-        WTextField tf = new WTextField(26, 7, 90);
-        add(new WSearch(l -> callback.accept(l), tf, ls));
+        WLabelScroll ls = new WLabelScroll(7, 33, 8, 7, WLabel.enumMode.PICKER, true)
+                .setLabels(labels).setLsnrUpdate(callback);
+        add(new WSearch(26, 7, 90, ls));
         add(new WIcon(7, 7, 20, 20, Resource.ICN_TEXT, l18nKey + ".text"));
+        add(ls);
     }
 
     public static class FluidStack extends PickerSimple {

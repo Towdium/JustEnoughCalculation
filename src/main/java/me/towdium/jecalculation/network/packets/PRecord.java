@@ -7,7 +7,6 @@ import me.towdium.jecalculation.data.structure.Recipes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -17,7 +16,7 @@ import java.util.Objects;
 
 public class PRecord implements IMessage {
     public static final String KEY = "content";
-    NBTTagList recipes;
+    NBTTagCompound recipes;
 
     public PRecord(Recipes recipes) {
         this.recipes = recipes.serialize();
@@ -29,7 +28,7 @@ public class PRecord implements IMessage {
     @Override
     public void fromBytes(ByteBuf buf) {
         NBTTagCompound tag = Objects.requireNonNull(ByteBufUtils.readTag(buf));
-        recipes = tag.getTagList(KEY, 10);
+        recipes = tag.getCompoundTag(KEY);
     }
 
     @Override

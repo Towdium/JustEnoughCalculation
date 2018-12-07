@@ -1,7 +1,7 @@
 package me.towdium.jecalculation.data.structure;
 
 import me.towdium.jecalculation.data.label.ILabel;
-import me.towdium.jecalculation.utils.wrappers.Triple;
+import me.towdium.jecalculation.utils.wrappers.Trio;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
@@ -27,17 +27,16 @@ public class Recipes {
     public Recipes() {
     }
 
-    public Recipes(NBTTagList nbt) {
+    public Recipes(NBTTagCompound nbt) {
         deserialize(nbt);
     }
 
-    public void deserialize(NBTTagList nbt) {
-        StreamSupport.stream(nbt.spliterator(), false).filter(g -> g instanceof NBTTagCompound).forEach(g -> {
-            NBTTagCompound group = (NBTTagCompound) g;
-            String name = group.getString(KEY_NAME);
-            NBTTagList recipes = group.getTagList(KEY_CONTENT, 10);
-            StreamSupport.stream(recipes.spliterator(), false).filter(r -> r instanceof NBTTagCompound)
-                    .map(r -> (NBTTagCompound) r).forEach(r -> add(name, new Recipe(r)));
+    public void deserialize(NBTTagCompound nbt) {
+        nbt.getKeySet().stream().sorted().forEach(i -> {
+            NBTTagList group = nbt.getTagList(i, 10);
+            StreamSupport.stream(group.spliterator(), false)
+                    .filter(r -> r instanceof NBTTagCompound)
+                    .forEach(r -> add(i, new Recipe((NBTTagCompound) r)));
         });
     }
 
@@ -69,15 +68,17 @@ public class Recipes {
         return records.entrySet().stream();
     }
 
-    public Stream<Triple<Recipe, String, Integer>> flatStream() {
+    public Stream<Trio<Recipe, String, Integer>> flatStream() {
         return records.entrySet().stream().flatMap(i ->
                 IntStream.range(0, i.getValue().size()).mapToObj(j ->
-                        new Triple<>(i.getValue().get(j), i.getKey(), j)));
+                        new Trio<>(i.getValue().get(j), i.getKey(), j)));
     }
 
-    public Stream<Triple<Recipe, String, Integer>> flatStream(String group) {
+    public Stream<Trio<Recipe, String, Integer>> flatStream(String group) {
         List<Recipe> l = records.get(group);
-        return IntStream.range(0, l.size()).mapToObj(j -> new Triple<>(l.get(j), group, j));
+        if (l == null) return Stream.empty();
+        return IntStream.range(0, l.size()).mapToObj(j ->
+                new Trio<>(l.get(j), group, j));
     }
 
     public void remove(String group, int index) {
@@ -90,11 +91,11 @@ public class Recipes {
         return getGroup(group).get(index);
     }
 
-    public List<Triple<Recipe, String, Integer>> getRecipes() {
+    public List<Trio<Recipe, String, Integer>> getRecipes() {
         return flatStream().collect(Collectors.toCollection(ArrayList::new));
     }
 
-    public List<Triple<Recipe, String, Integer>> getRecipes(String group) {
+    public List<Trio<Recipe, String, Integer>> getRecipes(String group) {
         return flatStream(group).collect(Collectors.toCollection(ArrayList::new));
     }
 
@@ -110,16 +111,21 @@ public class Recipes {
         return records.get(group);
     }
 
-    public NBTTagList serialize() {
-        NBTTagList ret = new NBTTagList();
-        forEach((n, rs) -> {
-            NBTTagCompound nbt = new NBTTagCompound();
-            nbt.setString(KEY_NAME, n);
+    public NBTTagCompound serialize(Collection<String> groups) {
+        NBTTagCompound ret = new NBTTagCompound();
+        groups.stream().sorted().forEach(i -> {
             NBTTagList l = new NBTTagList();
-            rs.forEach(r -> l.appendTag(r.serialize()));
-            nbt.setTag(KEY_CONTENT, l);
-            ret.appendTag(nbt);
+            getGroup(i).forEach(r -> l.appendTag(r.serialize()));
+            ret.setTag(i, l);
         });
         return ret;
+    }
+
+    public List<String> getGroups() {
+        return records.keySet().stream().sorted().collect(Collectors.toList());
+    }
+
+    public NBTTagCompound serialize() {
+        return serialize(records.keySet());
     }
 }

@@ -189,13 +189,13 @@ public class LItemStack extends ILabel.Impl {
         ResourceLocation rl = Item.REGISTRY.getNameForObject(item);
         if (rl == null) return ILabel.EMPTY.toNbt();
         NBTTagCompound ret = super.toNbt();
-        ret.setInteger(KEY_META, meta);
+        if (meta != 0) ret.setInteger(KEY_META, meta);
         ret.setString(KEY_ITEM, rl.toString());
         if (nbt != null) ret.setTag(KEY_NBT, nbt);
         if (cap != null) ret.setTag(KEY_CAP, cap);
-        ret.setBoolean(KEY_F_META, fMeta);
-        ret.setBoolean(KEY_F_NBT, fNbt);
-        ret.setBoolean(KEY_F_CAP, fCap);
+        if (fMeta) ret.setBoolean(KEY_F_META, true);
+        if (fNbt) ret.setBoolean(KEY_F_NBT, true);
+        if (fCap) ret.setBoolean(KEY_F_CAP, true);
         return ret;
     }
 
