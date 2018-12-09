@@ -19,7 +19,7 @@ import static org.lwjgl.input.Keyboard.KEY_NONE;
  */
 @SideOnly(Side.CLIENT)
 public class ProxyClient extends ProxyServer {
-    public static final KeyBinding keyOpenGui = new KeyBinding("key.open_gui", KEY_NONE, "key.category");
+    public static final KeyBinding keyOpenGui = new KeyBinding("key.jec.open_gui", KEY_NONE, "key.jec.category");
 
     @Override
     public void initPost() {
