@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern":
+  [
+    "xax",
+    "xcx",
+    "xbx"
+  ],
+  "key":
+  {
+    "x":
+    {
+      "type": "forge:ore_dict",
+      "ore": "stone"
+    },
+    "a":
+    {
+      "type": "forge:ore_dict",
+      "ore": "dyeBlack"
+    },
+    "b":
+    {
+      "item": "minecraft:redstone"
+    },
+    "c":
+    {
+      "item": "minecraft:iron_ingot"
+    }
+
+  },
+  "result":
+  {
+    "item": "jecalculation:item_calculator",
+    "count": 1,
+    "data": 1
+  }
+}
