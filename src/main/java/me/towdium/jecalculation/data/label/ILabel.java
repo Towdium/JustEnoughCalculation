@@ -15,6 +15,7 @@ import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.Utilities.ReversedIterator;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import me.towdium.jecalculation.utils.wrappers.Wrapper;
+import mezz.jei.api.gui.IRecipeLayout;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -62,6 +63,7 @@ public interface ILabel {
 
     static void initClient() {
         CONVERTER.register(LOreDict::guess);
+        CONVERTER.register(LFluidStack::guess);
         EDITOR.register(PickerSimple.FluidStack::new, "fluid", new LFluidStack(1000, FluidRegistry.WATER));
         EDITOR.register(PickerSimple.OreDict::new, "ore", new LOreDict("ingotIron"));
         EDITOR.register(PickerPlaceholder::new, "placeholder", new LPlaceholder("example", 1, true));
@@ -74,7 +76,7 @@ public interface ILabel {
 
     int getAmount();
 
-    ILabel multiply(int i);
+    ILabel multiply(float i);
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     boolean acceptPercent();
@@ -225,7 +227,7 @@ public interface ILabel {
      * It can also convert ItemStack or FluidStack to ILabel
      */
     class Converter {
-        ArrayList<Function<List<ILabel>, List<ILabel>>> handlers = new ArrayList<>();
+        ArrayList<ConverterFunction> handlers = new ArrayList<>();
 
         public static ILabel from(@Nullable Object o) {
             if (o == null) return ILabel.EMPTY;
@@ -234,20 +236,33 @@ public interface ILabel {
             else throw new RuntimeException("Unrecognized ingredient type: " + o.getClass());
         }
 
-        public void register(Function<List<ILabel>, List<ILabel>> handler) {
+        public void register(ConverterFunction handler) {
             handlers.add(handler);
         }
 
         // get most possible guess from labels
-        public ILabel first(List<ILabel> labels) {
-            List<ILabel> guess = guess(labels);
+        public ILabel first(List<ILabel> labels, @Nullable IRecipeLayout context) {
+            List<ILabel> guess = guess(labels, context);
             return guess.isEmpty() ? labels.get(0) : guess.get(0);
+        }
+
+        public ILabel first(List<ILabel> labels) {
+            return first(labels, null);
         }
 
         // to test if the labels can be converted to other labels (like oreDict)
         public List<ILabel> guess(List<ILabel> labels) {
-            return new ReversedIterator<>(handlers).stream().flatMap(h -> h.apply(labels).stream())
+            return guess(labels, null);
+        }
+
+        public List<ILabel> guess(List<ILabel> labels, @Nullable IRecipeLayout context) {
+            return new ReversedIterator<>(handlers).stream().flatMap(h -> h.convert(labels, context).stream())
                     .collect(Collectors.toList());
+        }
+
+        @FunctionalInterface
+        public interface ConverterFunction {
+            List<ILabel> convert(List<ILabel> a, @Nullable IRecipeLayout context);
         }
     }
 
@@ -307,7 +322,7 @@ public interface ILabel {
         }
 
         @Override
-        public ILabel multiply(int i) {
+        public ILabel multiply(float i) {
             return this;
         }
 
@@ -424,8 +439,8 @@ public interface ILabel {
         }
 
         @Override
-        public ILabel multiply(int i) {
-            setAmount(i * getAmount());
+        public ILabel multiply(float i) {
+            setAmount((int) (i * getAmount()));
             return this;
         }
 

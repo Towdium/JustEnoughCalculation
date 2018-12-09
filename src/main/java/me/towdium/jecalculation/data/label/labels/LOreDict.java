@@ -6,6 +6,8 @@ import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.utils.Utilities;
+import me.towdium.jecalculation.utils.wrappers.Wrapper;
+import mezz.jei.api.gui.IRecipeLayout;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,9 +17,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
 /**
@@ -29,7 +34,6 @@ import java.util.stream.Collectors;
 public class LOreDict extends ILabel.Impl {
     public static final String IDENTIFIER = "oreDict";
     public static final String KEY_NAME = "name";
-    public static final String KEY_AMOUNT = "amount";
     public static final boolean MODE_FORCE = false;
 
     protected String name;
@@ -93,11 +97,13 @@ public class LOreDict extends ILabel.Impl {
         return false;
     }
 
-    public static List<ILabel> guess(List<ILabel> iss) {
+    public static List<ILabel> guess(List<ILabel> iss, @Nullable IRecipeLayout rl) {
         ILabel l = iss.get(0);
+        if (!(l instanceof LItemStack)) return new ArrayList<>();
+        LItemStack lis = (LItemStack) l;
         HashSet<Integer> ids = new HashSet<>();
-        int amount = l.getAmount();
-        for (int i : OreDictionary.getOreIDs(((LItemStack) l).getRep()))
+        int amount = lis.getAmount();
+        for (int i : OreDictionary.getOreIDs(lis.getRep()))
             if (check(i, iss)) ids.add(i);
         return ids.stream().map(i -> new LOreDict(OreDictionary.getOreName(i), amount))
                 .collect(Collectors.toList());
@@ -110,36 +116,14 @@ public class LOreDict extends ILabel.Impl {
                 && (ores.get(0).getItemDamage() == OreDictionary.WILDCARD_VALUE || !MODE_FORCE))
             return false;
 
-        boolean acceptable = true;
-        for (ItemStack ore : ores) {
-            boolean found = false;
-            for (ILabel label : labels) {
-                if (label instanceof LItemStack && OreDictionary.itemMatches(
-                        ore, ((LItemStack) label).getRep(), false)) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                acceptable = false;
-                break;
-            }
-        }
-        for (ILabel label : labels) {
-            boolean found = false;
-            for (ItemStack ore : ores) {
-                if (label instanceof LItemStack && OreDictionary.itemMatches(
-                        ore, ((LItemStack) label).getRep(), false)) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                acceptable = false;
-                break;
-            }
-        }
-        return acceptable;
+        Wrapper<Boolean> acceptable = new Wrapper<>(true);
+        BiPredicate<ILabel, ItemStack> match = (l, o) -> l instanceof LItemStack
+                && OreDictionary.itemMatches(o, ((LItemStack) l).getRep(), false);
+        ores.stream().filter(ore -> labels.stream().noneMatch(label -> match.test(label, ore)))
+                .findAny().ifPresent(i -> acceptable.value = false);
+        labels.stream().filter(label -> ores.stream().noneMatch(ore -> match.test(label, ore)))
+                .findAny().ifPresent(i -> acceptable.value = false);
+        return acceptable.value;
     }
 
     @Override

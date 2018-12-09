@@ -5,6 +5,7 @@ import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.utils.Utilities;
+import mezz.jei.api.gui.IRecipeLayout;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -14,6 +15,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -134,6 +137,14 @@ public class LFluidStack extends ILabel.Impl {
     @Override
     public int hashCode() {
         return fluid.getUnlocalizedName().hashCode() ^ amount ^ (nbt == null ? 0 : nbt.hashCode());
+    }
+
+    private static final String TIC_CLASS = "slimeknights.tconstruct.plugin.jei.casting.CastingRecipeCategory";
+
+    public static List<ILabel> guess(List<ILabel> iss, @Nullable IRecipeLayout rl) {
+        if (rl != null && rl.getRecipeCategory().getClass().getName().equals(TIC_CLASS) && iss.get(0) instanceof LFluidStack)
+            return Collections.singletonList(iss.get(0).copy().multiply(0.5f));
+        return new ArrayList<>();
     }
 
     public static boolean merge(ILabel a, ILabel b) {

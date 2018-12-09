@@ -2,6 +2,7 @@ package me.towdium.jecalculation.gui.guis;
 
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
+import me.towdium.jecalculation.data.label.ILabel.Converter;
 import me.towdium.jecalculation.data.structure.CostList;
 import me.towdium.jecalculation.data.structure.Recipe;
 import me.towdium.jecalculation.gui.JecaGui;
@@ -11,10 +12,12 @@ import me.towdium.jecalculation.jei.JecaPlugin;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import me.towdium.jecalculation.utils.wrappers.Trio;
+import mezz.jei.api.gui.IGuiIngredient;
 import mezz.jei.api.gui.IRecipeLayout;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Author: towdium
@@ -127,16 +130,16 @@ public class GuiRecipe extends WContainer implements IGui {
         disambiguation = new HashMap<>();
 
         // merge jei structure into list input/output
-        Arrays.asList(recipe.getFluidStacks(), recipe.getItemStacks()).forEach(ing ->
-                ing.getGuiIngredients().forEach((i, g) -> merge(g.isInput() ? input : output,
-                        g.getAllIngredients().stream().map(ILabel.Converter::from).collect(Collectors.toList()))));
+        Stream.of(recipe.getFluidStacks(), recipe.getItemStacks())
+                .flatMap(i -> i.getGuiIngredients().values().stream())
+                .forEach(i -> merge(i.isInput() ? input : output, i, recipe));
 
         // convert catalyst
         List<ILabel> catalysts = JecaPlugin.runtime.getRecipeRegistry().getRecipeCatalysts(recipe.getRecipeCategory())
-                .stream().map(ILabel.Converter::from).collect(Collectors.toList());
+                .stream().map(Converter::from).collect(Collectors.toList());
         if (catalysts.size() == 1) groupCatalyst.setLabel(catalysts.get(0), 0);
         else if (catalysts.size() > 1) {
-            groupCatalyst.setLabel(ILabel.CONVERTER.first(catalysts), 0);
+            groupCatalyst.setLabel(ILabel.CONVERTER.first(catalysts, recipe), 0);
             disambiguation.put(14, catalysts);
         }
 
@@ -146,18 +149,19 @@ public class GuiRecipe extends WContainer implements IGui {
         refresh();
     }
 
-    private void merge(ArrayList<Trio<ILabel, CostList, CostList>> dst, List<ILabel> list) {
+    private void merge(ArrayList<Trio<ILabel, CostList, CostList>> dst, IGuiIngredient<?> gi, IRecipeLayout context) {
+        List<ILabel> list = gi.getAllIngredients().stream().map(Converter::from).collect(Collectors.toList());
         if (list.isEmpty()) return;
         dst.stream().filter(p -> {
             CostList cl = new CostList(list);
             if (p.three.equals(cl)) {
-                ILabel.MERGER.merge(p.one, ILabel.CONVERTER.first(list)).ifPresent(i -> p.one = i);
+                ILabel.MERGER.merge(p.one, ILabel.CONVERTER.first(list, context)).ifPresent(i -> p.one = i);
                 p.two = p.two.merge(cl, true, false);
                 return true;
             } else return false;
         }).findAny().orElseGet(() -> {
             Trio<ILabel, CostList, CostList> ret = new Trio<>(
-                    ILabel.CONVERTER.first(list), new CostList(list), new CostList(list));
+                    ILabel.CONVERTER.first(list, context), new CostList(list), new CostList(list));
             dst.add(ret);
             return ret;
         });
