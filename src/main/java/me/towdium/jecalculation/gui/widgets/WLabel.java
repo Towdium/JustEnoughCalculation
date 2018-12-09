@@ -180,7 +180,7 @@ public class WLabel implements IWidget {
         }
 
         private void update() {
-            label = wl.getLabel();
+            label = wl.label;
             bAmount.setDisabled(!wl.label.acceptPercent());
             setPercent(label.isPercent());
         }
@@ -193,8 +193,8 @@ public class WLabel implements IWidget {
                 remove(bPercent);
                 add(bAmount);
             }
-            wl.label.setPercent(b);
-            wtf.setText(Integer.toString(wl.label.getAmount()));
+            if (label.acceptPercent()) label.setPercent(b);
+            wtf.setText(Integer.toString(label.getAmount()));
         }
 
         @Override

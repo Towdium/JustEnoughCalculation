@@ -54,7 +54,7 @@ public class GuiSearch extends WContainer implements IGui {
         export = new WButtonIcon(149, 25, 20, 20, Resource.BTN_OUT, tooltip).setLsnrLeft(() -> {
             File f = iGroup == 0 ? Controller.export() : Controller.export(name);
             Minecraft.getMinecraft().player.sendMessage(new TextComponentTranslation(
-                    "jecharacters.chat.export", f.getAbsolutePath()));
+                    "jecalculation.chat.export", f.getAbsolutePath()));
         }).setDisabled(recipes.size() == 0);
         add(export);
     }

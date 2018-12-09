@@ -130,7 +130,7 @@ public class CostList {
                     next = find(true);
                 }
                 if (count++ > 1000) {
-                    Minecraft.getMinecraft().player.sendMessage(new TextComponentTranslation("jecharacters.chat.max_loop"));
+                    Minecraft.getMinecraft().player.sendMessage(new TextComponentTranslation("jecalculation.chat.max_loop"));
                     break;
                 }
             }

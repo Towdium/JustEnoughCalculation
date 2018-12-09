@@ -89,9 +89,9 @@ public class GuiCalculator extends WContainer implements IGui {
     }
 
     void refreshRecent() {
-        List<ILabel> recent = Controller.getRecent();
-        if (!recent.isEmpty()) label.setLabel(recent.get(0));
-        if (recent.size() > 1) this.recent.setLabel(recent.subList(1, recent.size()), 0);
+        List<ILabel> labels = Controller.getRecent();
+        label.setLabel(labels.isEmpty() ? ILabel.EMPTY : labels.get(0));
+        recent.setLabel(labels.isEmpty() ? new ArrayList<>() : labels.subList(1, labels.size()), 0);
     }
 
     void refreshCalculator() {

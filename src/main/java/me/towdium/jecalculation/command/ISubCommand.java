@@ -31,6 +31,6 @@ public interface ISubCommand {
     }
 
     default String getKey(String key) {
-        return "jecharacters.command." + getName() + '.' + key;
+        return "jecalculation.command." + getName() + '.' + key;
     }
 }

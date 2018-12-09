@@ -185,7 +185,7 @@ public class Controller {
     public static void loadFromLocal() {
         //noinspection ResultOfMethodCallIgnored
         new File(Loader.instance().getConfigDir(), "JustEnoughCalculation/data").mkdirs();
-        File file = new File(Loader.instance().getConfigDir(), "JustEnoughCalculation/client.json");
+        File file = new File(Loader.instance().getConfigDir(), "JustEnoughCalculation/record.json");
         NBTTagCompound nbt = Utilities.Json.read(file);
         if (nbt != null) {
             recipesClient = nbt.hasKey(KEY_RECIPES) ? new Recipes(nbt.getCompoundTag(KEY_RECIPES)) : new Recipes();
