@@ -197,6 +197,7 @@ public class Controller {
         nbt = Utilities.Json.read(file);
         recipesClient = nbt == null ? new Recipes() : new Recipes(nbt);
         recentsClient = new Recents();
+        amountClient = "";
     }
 
     public static void writeToLocal() {

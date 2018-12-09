@@ -57,6 +57,10 @@ public class LOreDict extends ILabel.Impl {
         name = nbt.getString(KEY_NAME);
     }
 
+    public boolean isEmpty() {
+        return OreDictionary.getOres(name).isEmpty();
+    }
+
     @Override
     @Nonnull
     public ItemStack getRepresentation() {
@@ -66,6 +70,7 @@ public class LOreDict extends ILabel.Impl {
                 is.getItem().getSubItems(CreativeTabs.SEARCH, list);
             } else list.add(is);
         });
+        if (list.isEmpty()) return ItemStack.EMPTY;
         long index = System.currentTimeMillis() / 1500;
         return list.get((int) (index % list.size()));
     }
