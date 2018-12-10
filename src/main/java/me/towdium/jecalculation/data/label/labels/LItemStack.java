@@ -45,12 +45,6 @@ public class LItemStack extends ILabel.Impl {
     boolean fCap;
     transient ItemStack temp;
 
-    public LItemStack(int amount, Item item, int meta, @Nullable NBTTagCompound cap,
-                      @Nullable NBTTagCompound nbt, boolean percent) {
-        super(amount, percent);
-        init(item, meta, cap, nbt, false, false, false);
-    }
-
     // Convert from itemStack
     public LItemStack(ItemStack is) {
         super(is.getCount(), false);
@@ -209,8 +203,8 @@ public class LItemStack extends ILabel.Impl {
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode() {  // TODO all labels use super hashcode
         return (nbt == null ? 0 : nbt.hashCode()) ^ (cap == null ? 0 : cap.hashCode())
-                ^ meta ^ item.getTranslationKey().hashCode() ^ amount;
+                ^ meta ^ item.getTranslationKey().hashCode() ^ (int) amount;
     }
 }

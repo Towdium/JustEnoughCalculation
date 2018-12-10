@@ -34,10 +34,9 @@ public class WLabelScroll extends WContainer implements ISearchable {
         this.yPos = yPos;
         this.column = column;
         this.row = row;
-        labelGroup = new WLabelGroup(xPos, yPos, column, row, mode)
-                .setLsnrUpdate(i -> {
-                    if (lsnrUpdate != null) lsnrUpdate.accept(labels.get(i + current * column));
-                });
+        labelGroup = new WLabelGroup(xPos, yPos, column, row, mode).setLsnrUpdate(i -> {
+            if (lsnrUpdate != null) lsnrUpdate.accept(labels.get(i + current * column));
+        });
         scroll = new WScroll(xPos + column * 18 + 4, yPos, row * 18).setLsnrScroll(this::update);
         add(labelGroup);
         add(scroll);

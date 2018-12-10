@@ -35,8 +35,8 @@ public class PickerSimple extends IPicker.Impl implements IGui {
      *                entire key should be "gui.l18nKey.help.tooltip"
      */
     public PickerSimple(List<ILabel> labels, String l18nKey) {
-        WLabelScroll ls = new WLabelScroll(7, 33, 8, 7, WLabel.enumMode.PICKER, true)
-                .setLabels(labels).setLsnrUpdate(callback);
+        WLabelScroll ls = new WLabelScroll(7, 33, 8, 7, WLabel.enumMode.PICKER, true).setLabels(labels)
+                .setLsnrUpdate(this::notifyLsnr);
         add(new WSearch(26, 7, 90, ls));
         add(new WIcon(7, 7, 20, 20, Resource.ICN_TEXT, l18nKey + ".text"));
         add(ls);

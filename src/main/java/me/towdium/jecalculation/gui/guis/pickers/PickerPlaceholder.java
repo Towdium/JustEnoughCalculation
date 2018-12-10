@@ -21,7 +21,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class PickerPlaceholder extends IPicker.Impl implements IGui {
     public PickerPlaceholder() {
         WLabelScroll scroll = new WLabelScroll(7, 69, 8, 5, WLabel.enumMode.PICKER, true)
-                .setLabels(LPlaceholder.getRecent()).setLsnrUpdate(callback);
+                .setLabels(LPlaceholder.getRecent()).setLsnrUpdate(this::notifyLsnr);
         WTextField create = new WTextField(26, 7, 69);
         create.setLsnrText(s -> create.setColor(s.equals("") ? JecaGui.COLOR_TEXT_RED : JecaGui.COLOR_TEXT_WHITE));
         add(new WSearch(26, 45, 90, scroll));

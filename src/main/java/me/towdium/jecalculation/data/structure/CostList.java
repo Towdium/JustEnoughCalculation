@@ -57,7 +57,7 @@ public class CostList {
                     ILabel a = ret.labels.get(i);
                     ILabel b = ret.labels.get(j);
                     if (a.matches(b)) {
-                        ret.labels.set(i, a.setAmount(a.getAmount() + b.getAmount()));
+                        ret.labels.set(i, a.setAmount(Math.addExact(a.getAmount(), b.getAmount())));
                         ret.labels.set(j, ILabel.EMPTY);
                     }
                 } else {
@@ -73,7 +73,7 @@ public class CostList {
         return ret;
     }
 
-    public CostList multiply(int i) {
+    public CostList multiply(long i) {
         labels = labels.stream().map(j -> j.multiply(i)).collect(Collectors.toList());
         return this;
     }
@@ -117,10 +117,10 @@ public class CostList {
         ArrayList<ILabel> catalysts = new ArrayList<>();
         private int index;
 
-        public Calculator() {
+        public Calculator() throws ArithmeticException {
             HashSet<CostList> set = new HashSet<>();
             set.add(CostList.this);
-            Pair<Recipe, Integer> next = find(true);
+            Pair<Recipe, Long> next = find(true);
             int count = 0;
             while (next != null) {
                 CostList original = getCurrent();
@@ -142,7 +142,7 @@ public class CostList {
         }
 
         @Nullable
-        private Pair<Recipe, Integer> find(boolean reset) {
+        private Pair<Recipe, Long> find(boolean reset) {
             if (reset) index = 0;
             List<ILabel> labels = getCurrent().labels;
             for (; index < labels.size(); index++) {

@@ -74,7 +74,7 @@ public interface ILabel {
         MERGER.register("fluidStack", "fluidStack", Impl.form(LFluidStack.class, LFluidStack.class, LFluidStack::merge));
     }
 
-    int getAmount();
+    long getAmount();
 
     ILabel multiply(float i);
 
@@ -107,7 +107,7 @@ public interface ILabel {
 
     String getIdentifier();
 
-    ILabel setAmount(int amount);
+    ILabel setAmount(long amount);
 
     // test two labels are exactly same except amount
     boolean matches(Object l);
@@ -343,12 +343,12 @@ public interface ILabel {
         }
 
         @Override
-        public int getAmount() {
+        public long getAmount() {
             return 0;
         }
 
         @Override
-        public ILabel setAmount(int amount) {
+        public ILabel setAmount(long amount) {
             return this;
         }
 
@@ -389,7 +389,7 @@ public interface ILabel {
     abstract class Impl implements ILabel {
         public static final String KEY_AMOUNT = "amount";
         public static final String KEY_PERCENT = "percent";
-        protected int amount;
+        protected long amount;
         protected boolean percent;
 
         @Override
@@ -397,7 +397,7 @@ public interface ILabel {
             return getDisplayName() + 'x' + getAmount();
         }
 
-        public Impl(int amount, boolean percent) {
+        public Impl(long amount, boolean percent) {
             this.amount = amount;
             this.percent = percent;
         }
@@ -408,7 +408,7 @@ public interface ILabel {
         }
 
         public Impl(NBTTagCompound nbt) {
-            amount = nbt.getInteger(KEY_AMOUNT);
+            amount = nbt.getLong(KEY_AMOUNT);
             percent = nbt.getBoolean(KEY_PERCENT);
         }
 
@@ -439,25 +439,27 @@ public interface ILabel {
             }
         }
 
-        @Override
-        public ILabel multiply(float i) {
-            setAmount((int) (i * getAmount()));
-            return this;
-        }
-
         protected static Merger.MergerFunction form(Class a, Class b, BiPredicate<ILabel, ILabel> p) {
             return (c, d) -> {
                 if (c == EMPTY || d == EMPTY) return null;
                 if (a.isInstance(c) && b.isInstance(d) && p.test(c, d)) {
-                    int amountC = c.isPercent() ? c.getAmount() : c.getAmount() * 100;
-                    int amountD = d.isPercent() ? d.getAmount() : d.getAmount() * 100;
-                    int amount = amountC + amountD;
-                    int amountI = (amount > 0 ? amount + 99 : amount - 99) / 100;
+                    long amountC = c.isPercent() ? c.getAmount() : Math.multiplyExact(c.getAmount(), 100);
+                    long amountD = d.isPercent() ? d.getAmount() : Math.multiplyExact(d.getAmount(), 100);
+                    long amount = Math.addExact(amountC, amountD);
+                    long amountI = (amount > 0 ? Math.addExact(amount, 99) : Math.subtractExact(amount, 99)) / 100;
                     if (amount == 0) return EMPTY;
                     else if (amount > 0) return d.copy().setAmount(d.isPercent() ? amount : amountI);
                     else return c.copy().setAmount(c.isPercent() ? amount : amountI);
                 } else return null;
             };
+        }
+
+        @Override
+        public ILabel multiply(float i) {
+            float amount = i * getAmount();
+            if (amount > Long.MAX_VALUE) throw new ArithmeticException("Multiply overflow");
+            setAmount((long) amount);
+            return this;
         }
 
         @Override
@@ -468,12 +470,12 @@ public interface ILabel {
         }
 
         @Override
-        public int getAmount() {
+        public long getAmount() {
             return amount;
         }
 
         @Override
-        public ILabel setAmount(int amount) {
+        public ILabel setAmount(long amount) {
             if (amount == 0) return ILabel.EMPTY;
             this.amount = amount;
             return this;
@@ -482,7 +484,7 @@ public interface ILabel {
         @Override
         public NBTTagCompound toNbt() {
             NBTTagCompound nbt = new NBTTagCompound();
-            nbt.setInteger(KEY_AMOUNT, amount);
+            nbt.setLong(KEY_AMOUNT, amount);
             if (percent) nbt.setBoolean(KEY_PERCENT, true);
             return nbt;
         }

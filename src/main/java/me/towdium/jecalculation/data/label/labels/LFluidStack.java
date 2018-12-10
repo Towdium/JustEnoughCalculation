@@ -48,11 +48,11 @@ public class LFluidStack extends ILabel.Impl {
         this(fs.amount, fs.getFluid(), fs.tag);
     }
 
-    public LFluidStack(int amount, Fluid fluid) {
+    public LFluidStack(long amount, Fluid fluid) {
         this(amount, fluid, null);
     }
 
-    public LFluidStack(int amount, Fluid fluid, @Nullable NBTTagCompound nbt) {
+    public LFluidStack(long amount, Fluid fluid, @Nullable NBTTagCompound nbt) {
         super(amount, false);
         init(fluid, nbt);
     }
@@ -66,7 +66,7 @@ public class LFluidStack extends ILabel.Impl {
     private void init(Fluid fluid, @Nullable NBTTagCompound nbt) {
         this.fluid = fluid;
         this.nbt = nbt;
-        temp = new FluidStack(fluid, amount, nbt);
+        temp = new FluidStack(fluid, 1, nbt);
     }
 
     public LFluidStack(LFluidStack lfs) {
@@ -84,7 +84,7 @@ public class LFluidStack extends ILabel.Impl {
     @Override
     public String getAmountString(boolean round) {
         return amount >= 1000 ? Utilities.cutNumber(amount / 1000f, 4) + "B"
-                : Integer.toString(amount) + "mB";
+                : Long.toString(amount) + "mB";
     }
 
     @Override
@@ -123,7 +123,7 @@ public class LFluidStack extends ILabel.Impl {
     @SideOnly(Side.CLIENT)
     public void getToolTip(List<String> existing, boolean detailed) {
         if (detailed) existing.add(FORMAT_GREY +
-                Utilities.I18n.format("label.common.tooltip.amount", Integer.toString(getAmount())) + "mB");
+                Utilities.I18n.format("label.common.tooltip.amount", Long.toString(getAmount())) + "mB");
         existing.add(FORMAT_BLUE + FORMAT_ITALIC + Utilities.getModName(fluid));
     }
 
@@ -136,7 +136,7 @@ public class LFluidStack extends ILabel.Impl {
 
     @Override
     public int hashCode() {
-        return fluid.getUnlocalizedName().hashCode() ^ amount ^ (nbt == null ? 0 : nbt.hashCode());
+        return fluid.getUnlocalizedName().hashCode() ^ (int) amount ^ (nbt == null ? 0 : nbt.hashCode());
     }
 
     private static final String TIC_CLASS = "slimeknights.tconstruct.plugin.jei.casting.CastingRecipeCategory";

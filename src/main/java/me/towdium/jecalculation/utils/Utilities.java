@@ -42,10 +42,11 @@ public class Utilities {
     // FLOAT FORMATTING
     public static String cutNumber(float f, int size) {
         BiFunction<Float, Integer, String> form = (fl, len) -> {
-            String ret = Float.toString(fl);
-            if (ret.endsWith(".0")) ret = ret.substring(0, ret.length() - 2);
-            if (ret.length() > len) ret = ret.substring(0, len);
-            return ret;
+            if (fl != fl.intValue()) {
+                return String.format("%." + (len - 1 - (int) Math.log10(fl)) + "f", fl);
+            } else {
+                return String.format("%" + "d", fl.intValue());
+            }
         };
         int scale = (int) Math.log10(f) / 3;
         switch (scale) {

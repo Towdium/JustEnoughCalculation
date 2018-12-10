@@ -138,15 +138,15 @@ public class Recipe {
         return Arrays.stream(output).anyMatch(i -> ILabel.MERGER.merge(label, i).isPresent());
     }
 
-    public int multiplier(ILabel label) {
+    public long multiplier(ILabel label) {
         return Arrays.stream(output).filter(i -> ILabel.MERGER.merge(label, i).isPresent()).findAny()
                 .map(i -> {
-                    int amountA = label.getAmount();
-                    if (!label.isPercent()) amountA *= 100;
-                    int amountB = i.getAmount();
-                    if (!i.isPercent()) amountB *= 100;
+                    long amountA = label.getAmount();
+                    if (!label.isPercent()) amountA = Math.multiplyExact(amountA, 100L);
+                    long amountB = i.getAmount();
+                    if (!i.isPercent()) amountB = Math.multiplyExact(amountB, 100L);
                     return (amountB + Math.abs(amountA) - 1) / amountB;
-                }).orElse(0);
+                }).orElse(0L);
     }
 
     public enum enumIoType {

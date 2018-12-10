@@ -28,5 +28,9 @@ public interface IPicker extends IGui {
             this.callback = callback;
             return this;
         }
+
+        protected void notifyLsnr(ILabel l) {
+            if (callback != null) callback.accept(l);
+        }
     }
 }

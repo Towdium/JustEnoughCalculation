@@ -42,7 +42,7 @@ public class LOreDict extends ILabel.Impl {
         this(name, 1);
     }
 
-    public LOreDict(String name, int amount) {
+    public LOreDict(String name, long amount) {
         super(amount, false);
         this.name = name;
     }
@@ -107,7 +107,7 @@ public class LOreDict extends ILabel.Impl {
         if (!(l instanceof LItemStack)) return new ArrayList<>();
         LItemStack lis = (LItemStack) l;
         HashSet<Integer> ids = new HashSet<>();
-        int amount = lis.getAmount();
+        long amount = lis.getAmount();
         for (int i : OreDictionary.getOreIDs(lis.getRep()))
             if (check(i, iss)) ids.add(i);
         return ids.stream().map(i -> new LOreDict(OreDictionary.getOreName(i), amount))
@@ -169,7 +169,7 @@ public class LOreDict extends ILabel.Impl {
 
     @Override
     public int hashCode() {
-        return name.hashCode() ^ amount;
+        return name.hashCode() ^ (int) amount;
     }
 
     public String getName() {
