@@ -105,6 +105,7 @@ public class GuiRecipe extends WContainer implements IGui {
         buttonCopy.setDisabled(true);
         buttonDel.setDisabled(true);
         buttonDisamb.setDisabled(true);
+        textField.setLsnrText(s -> buttonYes.setDisabled(s.isEmpty()));
     }
 
     public void setModeNewGroup(boolean b) {

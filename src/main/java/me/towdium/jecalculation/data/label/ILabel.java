@@ -87,6 +87,7 @@ public interface ILabel {
     boolean isPercent();
 
     static void initServer() {
+        // TODO handle invalid items
         SERIALIZER.register(LFluidStack.IDENTIFIER, LFluidStack::new);
         SERIALIZER.register(LItemStack.IDENTIFIER, LItemStack::new);
         SERIALIZER.register(LOreDict.IDENTIFIER, LOreDict::new);

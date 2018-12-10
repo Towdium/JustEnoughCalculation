@@ -1,5 +1,6 @@
 package me.towdium.jecalculation.data;
 
+import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JecaCapability;
 import me.towdium.jecalculation.JecaConfig;
 import me.towdium.jecalculation.JecaItem;
@@ -31,8 +32,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.File;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static me.towdium.jecalculation.JustEnoughCalculation.network;
@@ -42,6 +45,8 @@ import static me.towdium.jecalculation.JustEnoughCalculation.network;
  * Date:   17-10-15.
  */
 @Mod.EventBusSubscriber
+@MethodsReturnNonnullByDefault
+@ParametersAreNonnullByDefault
 public class Controller {
     public static final String KEY_RECIPES = "recipes";
     public static final String KEY_RECENTS = "recents";
@@ -78,9 +83,14 @@ public class Controller {
     public static List<Pair<String, Recipes>> discover() {
         File dir = new File(Loader.instance().getConfigDir(), "JustEnoughCalculation/data/");
         File[] fs = dir.listFiles();
+        Function<File, Recipes> read = f -> {
+            NBTTagCompound nbt = Utilities.Json.read(f);
+            return nbt == null ? null : new Recipes(nbt);
+        };
         if (fs == null) return new ArrayList<>();
         return Arrays.stream(fs)
-                .map(i -> new Pair<>(i.getName(), new Recipes(Utilities.Json.read(i))))
+                .map(i -> new Pair<>(i.getName(), read.apply(i)))
+                .filter(i -> i.two != null)
                 .collect(Collectors.toList());
     }
 

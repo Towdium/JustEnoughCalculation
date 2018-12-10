@@ -1,5 +1,6 @@
 package me.towdium.jecalculation.data.structure;
 
+import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.utils.IllegalPositionException;
 import me.towdium.jecalculation.utils.Utilities;
@@ -7,6 +8,7 @@ import me.towdium.jecalculation.utils.wrappers.Wrapper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,6 +24,8 @@ import java.util.stream.StreamSupport;
  * Author: towdium
  * Date:   17-10-6.
  */
+@MethodsReturnNonnullByDefault
+@ParametersAreNonnullByDefault
 public class Recipe {
     public static final String KEY_INPUT = "input";
     public static final String KEY_CATALYST = "catalyst";

@@ -1,11 +1,14 @@
 package me.towdium.jecalculation.data.structure;
 
+import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.TextComponentTranslation;
 
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -13,6 +16,8 @@ import static me.towdium.jecalculation.data.structure.Recipe.enumIoType.INPUT;
 import static me.towdium.jecalculation.data.structure.Recipe.enumIoType.OUTPUT;
 
 // positive => generate; negative => require
+@MethodsReturnNonnullByDefault
+@ParametersAreNonnullByDefault
 public class CostList {
     List<ILabel> labels;
 
@@ -136,6 +141,7 @@ public class CostList {
             }
         }
 
+        @Nullable
         private Pair<Recipe, Integer> find(boolean reset) {
             if (reset) index = 0;
             List<ILabel> labels = getCurrent().labels;

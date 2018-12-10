@@ -1,11 +1,13 @@
 package me.towdium.jecalculation.data.structure;
 
+import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.utils.wrappers.Trio;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
@@ -18,6 +20,8 @@ import java.util.stream.StreamSupport;
  * Date:   18-8-28.
  */
 
+@MethodsReturnNonnullByDefault
+@ParametersAreNonnullByDefault
 public class Recipes {
     LinkedHashMap<String, List<Recipe>> records = new LinkedHashMap<>();
 
@@ -48,7 +52,7 @@ public class Recipes {
     }
 
     public void modify(String group, int index, @Nullable Recipe recipe) {
-        if (index == -1) add(group, recipe);
+        if (index == -1 && recipe != null) add(group, recipe);
         else if (recipe == null) remove(group, index);
         else set(group, index, recipe);
     }
