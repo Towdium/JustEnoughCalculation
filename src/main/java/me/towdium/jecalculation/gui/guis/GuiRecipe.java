@@ -74,11 +74,12 @@ public class GuiRecipe extends WContainer implements IGui {
     });
     WButton buttonNew = new WButtonIcon(7, 33, 20, 20, Resource.BTN_NEW, "recipe.new")
             .setLsnrLeft(() -> setModeNewGroup(true));
-    WButton buttonYes = new WButtonIcon(7, 33, 20, 20, Resource.BTN_YES, "recipe.confirm").setLsnrLeft(() -> {
-        switcherGroup.setTemp(textField.getText());
-        textField.setText("");
-        setModeNewGroup(false);
-    });
+    WButton buttonYes = new WButtonIcon(7, 33, 20, 20, Resource.BTN_YES, "recipe.confirm").setDisabled(true)
+            .setLsnrLeft(() -> {
+                switcherGroup.setTemp(textField.getText());
+                textField.setText("");
+                setModeNewGroup(false);
+            });
     WButton buttonNo = new WButtonIcon(26, 33, 20, 20, Resource.BTN_NO, "recipe.cancel")
             .setLsnrLeft(() -> setModeNewGroup(false));
 
