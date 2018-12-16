@@ -11,6 +11,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -205,5 +206,11 @@ public class WLabel implements IWidget {
                 return true;
             } else return false;
         }
+    }
+
+    @Nullable
+    @Override
+    public ILabel getLabelUnderMouse(int xMouse, int yMouse) {
+        return mouseIn(xMouse, yMouse) ? label : null;
     }
 }

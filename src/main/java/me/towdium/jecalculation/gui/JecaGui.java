@@ -3,6 +3,7 @@ package me.towdium.jecalculation.gui;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
+import me.towdium.jecalculation.data.label.labels.LItemStack;
 import me.towdium.jecalculation.gui.guis.GuiCalculator;
 import me.towdium.jecalculation.gui.guis.IGui;
 import me.towdium.jecalculation.jei.JecaPlugin;
@@ -20,6 +21,9 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryBasic;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.client.event.GuiScreenEvent;
@@ -72,6 +76,49 @@ public class JecaGui extends GuiContainer {
         if (inventorySlots instanceof JecContainer) ((JecContainer) inventorySlots).setGui(this);
     }
 
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onMouse(GuiScreenEvent.MouseInputEvent.Pre event) {
+        if (!(event.getGui() instanceof JecaGui)) return;
+        JecaGui gui = getCurrent();
+        int xMouse = Mouse.getEventX() * gui.width / gui.mc.displayWidth - gui.guiLeft;
+        int yMouse = gui.height - Mouse.getEventY() * gui.height / gui.mc.displayHeight - 1 - gui.guiTop;
+        int button = Mouse.getEventButton();
+
+        if (button == -1) {
+            int diff = Mouse.getEventDWheel() / 120;
+            if (diff != 0) gui.root.onScroll(gui, xMouse, yMouse, diff);
+        } else if (Mouse.getEventButtonState()) {
+            if (gui.root.onClicked(gui, xMouse, yMouse, button)) event.setCanceled(true);
+            else if (button == 0) {
+                if (gui.hand == ILabel.EMPTY) {
+                    ILabel e = JecaPlugin.getLabelUnderMouse();
+                    if (e != ILabel.EMPTY) {
+                        gui.hand = e;
+                        event.setCanceled(true);
+                    }
+                } else {
+                    gui.hand = ILabel.EMPTY;
+                    event.setCanceled(true);
+                }
+            } else if (button == 1) {
+                if (gui.hand != ILabel.EMPTY) {
+                    gui.hand = ILabel.EMPTY;
+                    event.setCanceled(true);
+                }
+            }
+        }
+    }
+
+    @Nullable
+    @Override
+    public Slot getSlotUnderMouse() {
+        IInventory i = new InventoryBasic("", false, 1);
+        Slot s = new Slot(i, 0, 0, 0);
+        ILabel l = getLabelUnderMouse();
+        if (l instanceof LItemStack) s.putStack(((LItemStack) l).getRep());
+        return s;
+    }
+
     public static boolean mouseIn(int xPos, int yPos, int xSize, int ySize, int xMouse, int yMouse) {
         return xMouse > xPos && yMouse > yPos && xMouse <= xPos + xSize && yMouse <= yPos + ySize;
     }
@@ -119,37 +166,11 @@ public class JecaGui extends GuiContainer {
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.HIGHEST) // TODO check effect
-    public static void onMouse(GuiScreenEvent.MouseInputEvent.Pre event) {
-        if (!(event.getGui() instanceof JecaGui)) return;
-        JecaGui gui = getCurrent();
-        int xMouse = Mouse.getEventX() * gui.width / gui.mc.displayWidth - gui.guiLeft;
-        int yMouse = gui.height - Mouse.getEventY() * gui.height / gui.mc.displayHeight - 1 - gui.guiTop;
-        int button = Mouse.getEventButton();
-
-        if (button == -1) {
-            int diff = Mouse.getEventDWheel() / 120;
-            if (diff != 0) gui.root.onScroll(gui, xMouse, yMouse, diff);
-        } else if (Mouse.getEventButtonState()) {
-            if (gui.root.onClicked(gui, xMouse, yMouse, button)) event.setCanceled(true);
-            else if (button == 0) {
-                if (gui.hand == ILabel.EMPTY) {
-                    ILabel e = JecaPlugin.getLabelUnderMouse();
-                    if (e != ILabel.EMPTY) {
-                        gui.hand = e;
-                        event.setCanceled(true);
-                    }
-                } else {
-                    gui.hand = ILabel.EMPTY;
-                    event.setCanceled(true);
-                }
-            } else if (button == 1) {
-                if (gui.hand != ILabel.EMPTY) {
-                    gui.hand = ILabel.EMPTY;
-                    event.setCanceled(true);
-                }
-            }
-        }
+    @Nullable
+    public ILabel getLabelUnderMouse() {
+        int xMouse = Mouse.getEventX() * width / mc.displayWidth - guiLeft;
+        int yMouse = height - Mouse.getEventY() * height / mc.displayHeight - 1 - guiTop;
+        return root.getLabelUnderMouse(xMouse, yMouse);
     }
 
     @SubscribeEvent(receiveCanceled = true)

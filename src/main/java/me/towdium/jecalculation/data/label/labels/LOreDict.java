@@ -169,7 +169,7 @@ public class LOreDict extends ILabel.Impl {
 
     @Override
     public int hashCode() {
-        return name.hashCode() ^ (int) amount;
+        return name.hashCode() ^ super.hashCode();
     }
 
     public String getName() {

@@ -2,6 +2,7 @@ package me.towdium.jecalculation.data.label.labels;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
+import me.towdium.jecalculation.data.label.ILabel.Serializer.SerializationException;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.utils.Utilities;
@@ -59,8 +60,10 @@ public class LFluidStack extends ILabel.Impl {
 
     public LFluidStack(NBTTagCompound nbt) {
         super(nbt);
-        init(FluidRegistry.getFluid(nbt.getString(KEY_FLUID)),
-                nbt.hasKey(KEY_NBT) ? nbt.getCompoundTag(KEY_NBT) : null);
+        String id = nbt.getString(KEY_FLUID);
+        Fluid f = FluidRegistry.getFluid(id);
+        if (f == null) throw new SerializationException("Fluid " + id + " cannot be resolved, ignoring");
+        init(f, nbt.hasKey(KEY_NBT) ? nbt.getCompoundTag(KEY_NBT) : null);
     }
 
     private void init(Fluid fluid, @Nullable NBTTagCompound nbt) {
@@ -136,7 +139,7 @@ public class LFluidStack extends ILabel.Impl {
 
     @Override
     public int hashCode() {
-        return fluid.getUnlocalizedName().hashCode() ^ (int) amount ^ (nbt == null ? 0 : nbt.hashCode());
+        return super.hashCode() ^ fluid.getUnlocalizedName().hashCode() ^ (nbt == null ? 0 : nbt.hashCode());
     }
 
     private static final String TIC_CLASS = "slimeknights.tconstruct.plugin.jei.casting.CastingRecipeCategory";

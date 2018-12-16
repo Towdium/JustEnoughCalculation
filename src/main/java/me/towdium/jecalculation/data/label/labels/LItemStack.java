@@ -2,6 +2,7 @@ package me.towdium.jecalculation.data.label.labels;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
+import me.towdium.jecalculation.data.label.ILabel.Serializer.SerializationException;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.utils.Utilities;
@@ -53,8 +54,10 @@ public class LItemStack extends ILabel.Impl {
 
     public LItemStack(NBTTagCompound tag) {
         super(tag);
-        init(Item.getByNameOrId(tag.getString(KEY_ITEM)),
-                tag.getInteger(KEY_META),
+        String id = tag.getString(KEY_ITEM);
+        Item i = Item.getByNameOrId(id);
+        if (i == null) throw new SerializationException("Item " + id + " cannot be resolved, ignoring");
+        init(i, tag.getInteger(KEY_META),
                 tag.hasKey(KEY_CAP) ? tag.getCompoundTag(KEY_CAP) : null,
                 tag.hasKey(KEY_NBT) ? tag.getCompoundTag(KEY_NBT) : null,
                 tag.getBoolean(KEY_F_META),
@@ -203,8 +206,8 @@ public class LItemStack extends ILabel.Impl {
     }
 
     @Override
-    public int hashCode() {  // TODO all labels use super hashcode
+    public int hashCode() {
         return (nbt == null ? 0 : nbt.hashCode()) ^ (cap == null ? 0 : cap.hashCode())
-                ^ meta ^ item.getTranslationKey().hashCode() ^ (int) amount;
+                ^ meta ^ item.getTranslationKey().hashCode() ^ super.hashCode();
     }
 }

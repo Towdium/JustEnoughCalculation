@@ -87,7 +87,6 @@ public interface ILabel {
     boolean isPercent();
 
     static void initServer() {
-        // TODO handle invalid items
         SERIALIZER.register(LFluidStack.IDENTIFIER, LFluidStack::new);
         SERIALIZER.register(LItemStack.IDENTIFIER, LItemStack::new);
         SERIALIZER.register(LOreDict.IDENTIFIER, LOreDict::new);
@@ -207,11 +206,12 @@ public interface ILabel {
         public ILabel deserialize(NBTTagCompound nbt) {
             String s = nbt.getString(KEY_IDENTIFIER);
             Function<NBTTagCompound, ILabel> func = idToData.get(s);
-            if (func != null) return func.apply(nbt.getCompoundTag(KEY_CONTENT));
-            else {
-                JustEnoughCalculation.logger.warn("Unrecognized type identifier \"" + s + "\", use empty instead.");
-                return ILabel.EMPTY;
+            if (func == null) JustEnoughCalculation.logger.warn("Unrecognized identifier \"" + s + "\", abort");
+            else try {
+                return func.apply(nbt.getCompoundTag(KEY_CONTENT));
+            } catch (SerializationException ignored) {
             }
+            return EMPTY;
         }
 
         public NBTTagCompound serialize(ILabel label) {
@@ -219,6 +219,13 @@ public interface ILabel {
             ret.setString(KEY_IDENTIFIER, label.getIdentifier());
             ret.setTag(KEY_CONTENT, label.toNbt());
             return ret;
+        }
+
+        public static class SerializationException extends RuntimeException {
+            public SerializationException(String s) {
+                super(s);
+                JustEnoughCalculation.logger.warn(s);
+            }
         }
     }
 
@@ -439,6 +446,11 @@ public interface ILabel {
             }
         }
 
+        @Override
+        public int hashCode() {
+            return (int) (amount ^ (percent ? 1 : 0));
+        }
+
         protected static Merger.MergerFunction form(Class a, Class b, BiPredicate<ILabel, ILabel> p) {
             return (c, d) -> {
                 if (c == EMPTY || d == EMPTY) return null;
@@ -535,5 +547,7 @@ public interface ILabel {
         }
 
         abstract protected void drawLabel(JecaGui gui);
+
+
     }
 }

@@ -1,8 +1,10 @@
 package me.towdium.jecalculation.gui.widgets;
 
 import mcp.MethodsReturnNonnullByDefault;
+import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
@@ -29,5 +31,10 @@ public interface IWidget {  // TODO unify listener behavior when manually set an
 
     default boolean onScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
         return false;
+    }
+
+    @Nullable
+    default ILabel getLabelUnderMouse(int xMouse, int yMouse) {
+        return null;
     }
 }
