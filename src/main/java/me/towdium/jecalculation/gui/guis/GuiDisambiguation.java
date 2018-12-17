@@ -29,7 +29,7 @@ public class GuiDisambiguation extends IPicker.Impl implements IGui {
     public GuiDisambiguation(List<List<ILabel>> record) {
         this.record = record;
         WSwitcher switcher = new WSwitcher(7, 7, 162, this.record.size()).setListener(i -> setPage(i.getIndex()));
-        ListenerValue<IWidget, ILabel> consumer = (i, v) -> callback.accept(v.copy().multiply(-1));
+        ListenerValue<WLabelScroll, Integer> consumer = (i, v) -> callback.accept(i.get(v).copy().multiply(-1));
         add(new WPanel());
         add(new WIcon(7, 48, 18, 54, ICN_LIST, "disambiguation.list"));
         add(new WIcon(7, 105, 18, 54, ICN_LABEL, "disambiguation.label"));

@@ -55,7 +55,7 @@ public class GuiImport extends WContainer implements IGui, ISearchable {
     @Override
     public void onVisible(JecaGui gui) {
         data = Controller.discover().stream()
-                .flatMap(i -> i.two.stream().map(j -> new Quad<>(false, i.one, j.getKey(), i.two)))
+                .flatMap(i -> i.two.stream().map(j -> new Quad<>(false, i.one, j.one, i.two)))
                 .collect(Collectors.toList());
         search.refresh();
     }

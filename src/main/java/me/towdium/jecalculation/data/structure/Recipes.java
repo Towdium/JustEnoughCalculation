@@ -1,8 +1,7 @@
 package me.towdium.jecalculation.data.structure;
 
 import mcp.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.data.label.ILabel;
-import me.towdium.jecalculation.utils.wrappers.Trio;
+import me.towdium.jecalculation.utils.wrappers.Pair;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
@@ -11,7 +10,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -65,21 +63,8 @@ public class Recipes {
         return records.size();
     }
 
-    public Stream<Map.Entry<String, List<Recipe>>> stream() {
-        return records.entrySet().stream();
-    }
-
-    public Stream<Trio<Recipe, String, Integer>> flatStream() {
-        return records.entrySet().stream().flatMap(i ->
-                IntStream.range(0, i.getValue().size()).mapToObj(j ->
-                        new Trio<>(i.getValue().get(j), i.getKey(), j)));
-    }
-
-    public Stream<Trio<Recipe, String, Integer>> flatStream(String group) {
-        List<Recipe> l = records.get(group);
-        if (l == null) return Stream.empty();
-        return IntStream.range(0, l.size()).mapToObj(j ->
-                new Trio<>(l.get(j), group, j));
+    public Stream<Pair<String, List<Recipe>>> stream() {
+        return records.entrySet().stream().map(i -> new Pair<>(i.getKey(), i.getValue()));
     }
 
     public void remove(String group, int index) {
@@ -92,16 +77,12 @@ public class Recipes {
         return getGroup(group).get(index);
     }
 
-    public List<Trio<Recipe, String, Integer>> getRecipes() {
-        return flatStream().collect(Collectors.toCollection(ArrayList::new));
+    public List<Recipe> getRecipes() {
+        return records.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
     }
 
-    public List<Trio<Recipe, String, Integer>> getRecipes(String group) {
-        return flatStream(group).collect(Collectors.toCollection(ArrayList::new));
-    }
-
-    public Optional<Recipe> getRecipe(ILabel label) {
-        return flatStream().map(i -> i.one).filter(i -> i.matches(label)).findFirst();
+    public List<Recipe> getRecipes(String group) {
+        return records.get(group);
     }
 
     public void forEach(BiConsumer<String, List<Recipe>> consumer) {
@@ -123,10 +104,34 @@ public class Recipes {
     }
 
     public List<String> getGroups() {
-        return records.keySet().stream().sorted().collect(Collectors.toList());
+        return new ArrayList<>(records.keySet());
     }
 
     public NBTTagCompound serialize() {
         return serialize(records.keySet());
+    }
+
+    public RecipeIterator recipeIterator() {
+        return new RecipeIterator();
+    }
+
+    public class RecipeIterator implements Iterator<Recipe> {
+        Iterator<Map.Entry<String, List<Recipe>>> i = records.entrySet().iterator();
+        Iterator<Recipe> j;
+
+        @Override
+        public boolean hasNext() {
+            while (j == null || !j.hasNext()) {
+                if (i.hasNext()) j = i.next().getValue().iterator();
+                else return false;
+            }
+            return j.hasNext();
+        }
+
+        @Override
+        public Recipe next() {
+            while (j == null || !j.hasNext()) if (i.hasNext()) j = i.next().getValue().iterator();
+            return j.next();
+        }
     }
 }

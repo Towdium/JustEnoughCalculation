@@ -1,5 +1,6 @@
 package me.towdium.jecalculation.gui.guis;
 
+import com.google.common.collect.Streams;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.structure.Recipe;
 import me.towdium.jecalculation.gui.JecaGui;
@@ -12,19 +13,18 @@ import net.minecraft.util.text.TextComponentTranslation;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static me.towdium.jecalculation.gui.Resource.*;
 import static me.towdium.jecalculation.gui.widgets.WLabel.Mode.PICKER;
 
 public class GuiSearch extends WContainer implements IGui {
-    List<Trio<Recipe, String, Integer>> content;
     WSwitcher group;
     WButton export;
-    WLabelScroll labels = new WLabelScroll(7, 51, 8, 6, PICKER, true).setListener((i, v) -> content.stream()
-            .filter(j -> j.one.getRep() == v)
-            .findFirst()
-            .ifPresent(j -> JecaGui.displayGui(true, true, new GuiRecipe(j.two, j.three))));
+    List<Trio<Recipe, String, Integer>> recipes;
+    WLabelScroll labels = new WLabelScroll(7, 51, 8, 6, PICKER, true).setListener((i, v) ->
+            JecaGui.displayGui(true, true, new GuiRecipe(recipes.get(v).two, recipes.get(v).three)));
 
 
     public GuiSearch() {
@@ -36,24 +36,33 @@ public class GuiSearch extends WContainer implements IGui {
         add(labels);
     }
 
+    private void generate() {
+        if (group.getIndex() == 0) {
+            recipes = Controller.stream()
+                    .flatMap(i -> Streams.mapWithIndex(i.two.stream(), (j, k) -> new Trio<>(j, i.one, (int) k)))
+                    .collect(Collectors.toList());
+        } else {
+            String s = group.getText();
+            recipes = Streams.mapWithIndex(Controller.getRecipes(s).stream(), (i, j) -> new Trio<>(i, s, (int) j))
+                    .collect(Collectors.toList());
+        }
+    }
+
     public void refresh() {
-        int iGroup = group.getIndex();
-        content = iGroup == 0 ? Controller.getRecipes() : Controller.getRecipes(group.getText());
-        labels.setLabels(content.stream().map(i -> i.one.getRep()).collect(Collectors.toCollection(ArrayList::new)));
         remove(export);
-        String tooltip, name;
-        List<Trio<Recipe, String, Integer>> recipes;
-        if (iGroup == 0) {
+        String tooltip;
+        Supplier<File> func;
+        generate();
+        if (group.getIndex() == 0) {
             tooltip = "search.export_all";
-            name = null;
-            recipes = Controller.getRecipes();
+            func = Controller::export;
         } else {
             tooltip = "search.export_group";
-            name = Controller.getGroups().get(iGroup - 1);
-            recipes = Controller.getRecipes(name);
+            func = () -> Controller.export(group.getText());
         }
+        labels.setLabels(recipes.stream().map(i -> i.one.getRep()).collect(Collectors.toList()));
         export = new WButtonIcon(149, 25, 20, 20, BTN_OUT, tooltip).setListener(i -> {
-            File f = iGroup == 0 ? Controller.export() : Controller.export(name);
+            File f = func.get();
             Minecraft.getMinecraft().player.sendMessage(new TextComponentTranslation(
                     "jecalculation.chat.export", f.getAbsolutePath()));
         }).setDisabled(recipes.size() == 0);

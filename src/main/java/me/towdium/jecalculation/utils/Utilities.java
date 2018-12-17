@@ -100,7 +100,7 @@ public class Utilities {
         @Nullable
         public V get(K a, K b) {
             V ret = data.get(new Pair<>(a, b));
-            if (ret == null) data.get(new Pair<>(b, a));
+            if (ret == null) ret = data.get(new Pair<>(b, a));
             return ret;
         }
     }
