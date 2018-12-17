@@ -8,6 +8,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.List;
 
 import static me.towdium.jecalculation.gui.Resource.*;
 
@@ -37,6 +38,11 @@ public class WPage extends WTooltip {
         gui.drawResourceContinuous(resource, index * 24, -21, 24, 25, 4, 4, 4, 4);
         record.representation.drawLabel(gui, index * 24 + 4, -17, false);
         super.onDraw(gui, xMouse, yMouse);
+    }
+
+    @Override
+    public boolean onTooltip(JecaGui gui, int xMouse, int yMouse, List<String> tooltip) {
+        return super.onTooltip(gui, xMouse, yMouse, tooltip) || mouseIn(xMouse, yMouse);
     }
 
     @Override

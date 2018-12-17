@@ -32,28 +32,25 @@ import static me.towdium.jecalculation.gui.Resource.ICN_TEXT;
 public class PickerSimple extends IPicker.Impl implements IGui {
     /**
      * @param labels  label to be displayed for selection
-     * @param l18nKey localization key for help string,
-     *                entire key should be "gui.l18nKey.help.tooltip"
      */
-    public PickerSimple(List<ILabel> labels, String l18nKey) {
+    public PickerSimple(List<ILabel> labels) {
         WLabelScroll ls = new WLabelScroll(7, 33, 8, 7, WLabel.Mode.PICKER, true).setLabels(labels)
                 .setListener((i, v) -> notifyLsnr(v));
         add(new WSearch(26, 7, 90, ls));
-        add(new WIcon(7, 7, 20, 20, ICN_TEXT, l18nKey + ".text"));
+        add(new WIcon(7, 7, 20, 20, ICN_TEXT, "common.search"));
         add(ls);
     }
 
     public static class FluidStack extends PickerSimple {
         public FluidStack() {
             super(FluidRegistry.getRegisteredFluids().entrySet().stream()
-                            .map(e -> new LFluidStack(1000, e.getValue())).collect(Collectors.toList()),
-                    "picker_fluid_stack");
+                    .map(e -> new LFluidStack(1000, e.getValue())).collect(Collectors.toList()));
         }
     }
 
     public static class OreDict extends PickerSimple {
         public OreDict() {
-            super(generate(), "picker_ore_dict");
+            super(generate());
         }
 
         static List<ILabel> generate() {

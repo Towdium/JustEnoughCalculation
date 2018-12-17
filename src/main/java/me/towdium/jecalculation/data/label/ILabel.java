@@ -469,7 +469,7 @@ public interface ILabel {
         @SideOnly(Side.CLIENT)
         public void getToolTip(List<String> existing, boolean detailed) {
             if (detailed) existing.add(FORMAT_GREY +
-                    Utilities.I18n.format("label.common.tooltip.amount", getAmountString(false)));
+                    Utilities.I18n.get("label.common.amount", getAmountString(false)));
         }
 
         @Override

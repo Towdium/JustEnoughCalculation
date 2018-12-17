@@ -35,11 +35,11 @@ public class GuiCalculator extends WContainer implements IGui {
     WLabelScroll result = new WLabelScroll(7, 87, 8, 4, WLabel.Mode.RESULT, true);
     WButton steps = new WButtonIcon(64, 62, 20, 20, Resource.BTN_LIST, "calculator.step")
             .setListener(i -> setMode(Mode.STEPS));
-    WButton catalyst = new WButtonIcon(45, 62, 20, 20, Resource.BTN_CAT, "calculator.catalyst")
+    WButton catalyst = new WButtonIcon(45, 62, 20, 20, Resource.BTN_CAT, "common.catalyst")
             .setListener(i -> setMode(Mode.CATALYST));
-    WButton output = new WButtonIcon(26, 62, 20, 20, Resource.BTN_OUT, "calculator.output")
+    WButton output = new WButtonIcon(26, 62, 20, 20, Resource.BTN_OUT, "common.output")
             .setListener(i -> setMode(Mode.OUTPUT));
-    WButton input = new WButtonIcon(7, 62, 20, 20, Resource.BTN_IN, "calculator.input")
+    WButton input = new WButtonIcon(7, 62, 20, 20, Resource.BTN_IN, "common.input")
             .setListener(i -> setMode(Mode.INPUT));
     WTextField amount = new WTextField(60, 7, 65).setText(Controller.getAmount()).setListener(i -> {
         Controller.setAmount(i.getText());

@@ -33,6 +33,8 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import static net.minecraft.client.resources.I18n.format;
+
 /**
  * Author: Towdium
  * Date:   2016/6/25.
@@ -194,14 +196,14 @@ public class Utilities {
         public static Pair<String, Boolean> search(String translateKey, Object... parameters) {
             Pair<String, Boolean> ret = new Pair<>(null, null);
             translateKey = "jecalculation." + translateKey;
-            String buffer = net.minecraft.client.resources.I18n.format(translateKey, parameters);
+            String buffer = format(translateKey, parameters);
             ret.two = !buffer.equals(translateKey);
             buffer = StringEscapeUtils.unescapeJava(buffer);
             ret.one = buffer.replace("\t", "    ");
             return ret;
         }
 
-        public static String format(String translateKey, Object... parameters) {
+        public static String get(String translateKey, Object... parameters) {
             return search(translateKey, parameters).one;
         }
 

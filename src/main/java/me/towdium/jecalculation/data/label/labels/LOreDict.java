@@ -78,7 +78,7 @@ public class LOreDict extends ILabel.Impl {
     @Override
     @SideOnly(Side.CLIENT)
     public String getDisplayName() {
-        return Utilities.I18n.format("label.ore_dict.name", name);
+        return Utilities.I18n.get("label.ore_dict.name", name);
     }
 
     public static boolean mergeSame(ILabel a, ILabel b) {

@@ -64,7 +64,7 @@ public class GuiSearch extends WContainer implements IGui {
     public void onVisible(JecaGui gui) {
         removeAll(group);
         ArrayList<String> groups = new ArrayList<>();
-        groups.add(Utilities.I18n.format("gui.search.all"));
+        groups.add(Utilities.I18n.get("gui.search.all"));
         groups.addAll(Controller.getGroups());
         int index = group == null ? 0 : group.getIndex();
         if (index >= groups.size()) index = groups.size() - 1;

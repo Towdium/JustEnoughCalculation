@@ -126,7 +126,7 @@ public class LFluidStack extends ILabel.Impl {
     @SideOnly(Side.CLIENT)
     public void getToolTip(List<String> existing, boolean detailed) {
         if (detailed) existing.add(FORMAT_GREY +
-                Utilities.I18n.format("label.common.tooltip.amount", Long.toString(getAmount())) + "mB");
+                Utilities.I18n.get("label.common.tooltip.amount", Long.toString(getAmount())) + "mB");
         existing.add(FORMAT_BLUE + FORMAT_ITALIC + Utilities.getModName(fluid));
     }
 

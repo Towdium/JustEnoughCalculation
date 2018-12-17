@@ -29,6 +29,7 @@ public class WHelp extends WTooltip {
 
     @Override
     public void onDraw(JecaGui gui, int xMouse, int yMouse) {
+        super.onDraw(gui, xMouse, yMouse);
         gui.drawResourceContinuous(WGT_PANEL_N, -21, 0, 25, 24, 4);
         gui.drawResource(WGT_HELP_N, -19, 2);
     }
@@ -50,7 +51,7 @@ public class WHelp extends WTooltip {
             Text tContent = new Text();
             WSwitcher sPage = new WSwitcher(7, 146, 162, tContent.amount());
             sPage.setListener(i -> tContent.setPage(i.getIndex()));
-            WText tTitle = new WText(7, 7, SHADOW, I18n.format("gui." + WHelp.this.key + ".title"));
+            WText tTitle = new WText(7, 7, SHADOW, I18n.get("gui." + WHelp.this.key + ".title"));
             addAll(new WPanel(), new Icon(), tTitle, tContent, sPage);
         }
 
@@ -65,7 +66,7 @@ public class WHelp extends WTooltip {
             int page;
 
             public Text() {
-                List<String> ss = I18n.wrap(I18n.format("gui." + WHelp.this.key + ".help"), 162);
+                List<String> ss = I18n.wrap(I18n.get("gui." + WHelp.this.key + ".help"), 162);
                 List<String> tmp = new ArrayList<>();
                 int count = 0;
                 for (String s : ss) {
@@ -108,8 +109,15 @@ public class WHelp extends WTooltip {
 
             @Override
             public void onDraw(JecaGui gui, int xMouse, int yMouse) {
+                super.onDraw(gui, xMouse, yMouse);
                 gui.drawResourceContinuous(WGT_HELP_B, -21, 0, 25, 24, 4);
                 gui.drawResource(WGT_HELP_F, -19, 2);
+            }
+
+            @Override
+            public boolean onTooltip(JecaGui gui, int xMouse, int yMouse, List<String> tooltip) {
+                super.onTooltip(gui, xMouse, yMouse, tooltip);
+                return mouseIn(xMouse, yMouse);
             }
 
             @Override
