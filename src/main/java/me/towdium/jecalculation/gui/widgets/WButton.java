@@ -3,7 +3,6 @@ package me.towdium.jecalculation.gui.widgets;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
-import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.init.SoundEvents;
@@ -16,6 +15,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static me.towdium.jecalculation.gui.Resource.*;
+
 /**
  * Author: towdium
  * Date:   17-8-17.
@@ -25,8 +26,7 @@ import java.util.List;
 @SideOnly(Side.CLIENT)
 public abstract class WButton extends WTooltip {
     protected int xPos, yPos, xSize, ySize;
-    protected Runnable lsnrLeft, lsnrRight;
-    protected Utilities.Timer timer = new Utilities.Timer();
+    protected ListenerAction<? super WButton> listener;
     protected boolean disabled;
 
     public WButton(int xPos, int yPos, int xSize, int ySize, @Nullable String name) {
@@ -37,26 +37,21 @@ public abstract class WButton extends WTooltip {
         this.ySize = ySize;
     }
 
-    public WButton setLsnrLeft(Runnable r) {
-        lsnrLeft = r;
-        return this;
-    }
-
-    public WButton setLsnrRight(Runnable r) {
-        lsnrRight = r;
+    public WButton setListener(ListenerAction<? super WButton> r) {
+        listener = r;
         return this;
     }
 
     protected Resource getDisabled() {
-        return Resource.WGT_BUTTON_D;
+        return WGT_BUTTON_D;
     }
 
     protected Resource getNormal() {
-        return Resource.WGT_BUTTON_N;
+        return WGT_BUTTON_N;
     }
 
     protected Resource getFocused() {
-        return Resource.WGT_BUTTON_F;
+        return WGT_BUTTON_F;
     }
 
     @Override
@@ -70,15 +65,10 @@ public abstract class WButton extends WTooltip {
     @Override
     public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
         if (!disabled && JecaGui.mouseIn(xPos + 1, yPos + 1, xSize - 2, ySize - 2, xMouse, yMouse)) {
-            if (button == 0 && lsnrLeft != null) {
-                lsnrLeft.run();
+            if (button == 0 && listener != null) {
+                listener.invoke(this);
                 Minecraft.getMinecraft().getSoundHandler().playSound(
                         PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-                return true;
-            } else if (button == 1 && lsnrRight != null) {
-                lsnrLeft.run();
-                Minecraft.getMinecraft().getSoundHandler().playSound(
-                        PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 0.8F));
                 return true;
             }
         }

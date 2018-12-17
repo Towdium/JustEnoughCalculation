@@ -3,7 +3,6 @@ package me.towdium.jecalculation.gui.guis;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.structure.Recipe;
 import me.towdium.jecalculation.gui.JecaGui;
-import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.gui.widgets.*;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Trio;
@@ -15,23 +14,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static me.towdium.jecalculation.gui.Resource.*;
+import static me.towdium.jecalculation.gui.widgets.WLabel.Mode.PICKER;
+
 public class GuiSearch extends WContainer implements IGui {
     List<Trio<Recipe, String, Integer>> content;
     WSwitcher group;
-    WLabelScroll labels;
     WButton export;
+    WLabelScroll labels = new WLabelScroll(7, 51, 8, 6, PICKER, true).setListener((i, v) -> content.stream()
+            .filter(j -> j.one.getRep() == v)
+            .findFirst()
+            .ifPresent(j -> JecaGui.displayGui(true, true, new GuiRecipe(j.two, j.three))));
+
 
     public GuiSearch() {
-        labels = new WLabelScroll(7, 51, 8, 6, WLabel.enumMode.PICKER, true);
-        labels.setLsnrUpdate(i -> content.stream()
-                .filter(j -> j.one.getRep() == i)
-                .findFirst()
-                .ifPresent(j -> JecaGui.displayGui(true, true, new GuiRecipe(j.two, j.three))));
         add(new WPanel());
         add(new WSearch(25, 25, 90, labels));
-        add(new WIcon(7, 25, 20, 20, Resource.ICN_TEXT, "common.search"));
-        add(new WButtonIcon(131, 25, 20, 20, Resource.BTN_IN, "search.import")
-                .setLsnrLeft(() -> JecaGui.displayGui(new GuiImport())));
+        add(new WIcon(7, 25, 20, 20, ICN_TEXT, "common.search"));
+        add(new WButtonIcon(131, 25, 20, 20, BTN_IN, "search.import")
+                .setListener(i -> JecaGui.displayGui(new GuiImport())));
         add(labels);
     }
 
@@ -51,7 +52,7 @@ public class GuiSearch extends WContainer implements IGui {
             name = Controller.getGroups().get(iGroup - 1);
             recipes = Controller.getRecipes(name);
         }
-        export = new WButtonIcon(149, 25, 20, 20, Resource.BTN_OUT, tooltip).setLsnrLeft(() -> {
+        export = new WButtonIcon(149, 25, 20, 20, BTN_OUT, tooltip).setListener(i -> {
             File f = iGroup == 0 ? Controller.export() : Controller.export(name);
             Minecraft.getMinecraft().player.sendMessage(new TextComponentTranslation(
                     "jecalculation.chat.export", f.getAbsolutePath()));
@@ -67,7 +68,7 @@ public class GuiSearch extends WContainer implements IGui {
         groups.addAll(Controller.getGroups());
         int index = group == null ? 0 : group.getIndex();
         if (index >= groups.size()) index = groups.size() - 1;
-        group = new WSwitcher(7, 7, 162, groups).setListener(this::refresh);
+        group = new WSwitcher(7, 7, 162, groups).setListener(i -> refresh());
         group.setIndex(index);
         addAll(group);
         refresh();

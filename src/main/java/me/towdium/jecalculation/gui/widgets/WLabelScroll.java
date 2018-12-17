@@ -10,7 +10,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -27,17 +26,17 @@ public class WLabelScroll extends WContainer implements ISearchable {
     protected WScroll scroll;
     protected int xPos, yPos, column, row, current;
     protected String filter = "";
-    protected Consumer<ILabel> lsnrUpdate;
+    protected ListenerValue<? super WLabelScroll, ILabel> listener;
 
-    public WLabelScroll(int xPos, int yPos, int column, int row, WLabel.enumMode mode, boolean drawConnection) {
+    public WLabelScroll(int xPos, int yPos, int column, int row, WLabel.Mode mode, boolean drawConnection) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.column = column;
         this.row = row;
-        labelGroup = new WLabelGroup(xPos, yPos, column, row, mode).setLsnrUpdate(i -> {
-            if (lsnrUpdate != null) lsnrUpdate.accept(labels.get(i + current * column));
+        labelGroup = new WLabelGroup(xPos, yPos, column, row, mode).setListener((i, v) -> {
+            if (listener != null) listener.invoke(this, i.get(v));
         });
-        scroll = new WScroll(xPos + column * 18 + 4, yPos, row * 18).setLsnrScroll(this::update);
+        scroll = new WScroll(xPos + column * 18 + 4, yPos, row * 18).setListener(i -> update(i.getCurrent()));
         add(labelGroup);
         add(scroll);
         if (drawConnection) add(new WRectangle(xPos + column * 18, yPos, 4, row * 18, JecaGui.COLOR_GUI_GREY));
@@ -83,13 +82,9 @@ public class WLabelScroll extends WContainer implements ISearchable {
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    public WLabelScroll setLsnrUpdate(Consumer<ILabel> lsnr) {
-        lsnrUpdate = lsnr;
+    public WLabelScroll setListener(ListenerValue<? super WLabelScroll, ILabel> listener) {
+        this.listener = listener;
         return this;
-    }
-
-    public ILabel getLabelAt(int index) {
-        return labelGroup.getLabelAt(index - current * column);
     }
 
     private int getStepAmount() {

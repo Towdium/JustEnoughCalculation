@@ -5,9 +5,10 @@ import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.label.ILabel.Converter;
 import me.towdium.jecalculation.data.structure.CostList;
 import me.towdium.jecalculation.data.structure.Recipe;
+import me.towdium.jecalculation.data.structure.Recipe.IO;
 import me.towdium.jecalculation.gui.JecaGui;
-import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.gui.widgets.*;
+import me.towdium.jecalculation.gui.widgets.WLabel.Mode;
 import me.towdium.jecalculation.jei.JecaPlugin;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
@@ -19,6 +20,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static me.towdium.jecalculation.gui.Resource.*;
+
 /**
  * Author: towdium
  * Date:   17-9-8.
@@ -28,34 +31,33 @@ public class GuiRecipe extends WContainer implements IGui {
     HashMap<Integer, List<ILabel>> disambiguation = new HashMap<>();
     WSwitcher switcherGroup = new WSwitcher(7, 7, 162, Controller.getGroups());
     WTextField textField = new WTextField(49, 33, 119);
-    WButton buttonCopy = new WButtonIcon(83, 33, 20, 20, Resource.BTN_COPY, "recipe.copy").setLsnrLeft(() -> {
-        Controller.addRecipe(switcherGroup.getText(), toRecipe());
-        JecaGui.displayParent();
-    });
-
-    WLabelGroup groupCatalyst = new WLabelGroup(28, 87, 7, 1, 20, 20, WLabel.enumMode.EDITOR);
-    WButton buttonDisamb = new WButtonIcon(121, 33, 20, 20, Resource.BTN_DISAMB, "recipe.disamb").setLsnrLeft(() -> {
+    WLabelGroup groupCatalyst = new WLabelGroup(28, 87, 7, 1, 20, 20, Mode.EDITOR);
+    WButton buttonDisamb = new WButtonIcon(121, 33, 20, 20, BTN_DISAMB, "recipe.disamb").setListener(i -> {
         if (disambiguation != null) JecaGui.displayGui(new GuiDisambiguation(new ArrayList<>(disambiguation.values()))
                 .setCallback(l -> {
                     JecaGui.displayParent();
                     JecaGui.getCurrent().hand = l;
                 }));
     });
-    WLabelGroup groupInput = new WLabelGroup(28, 111, 7, 2, 20, 20, WLabel.enumMode.EDITOR).setLsnrUpdate(i -> {
-        disambiguation.remove(i);
+    WLabelGroup groupInput = new WLabelGroup(28, 111, 7, 2, 20, 20, Mode.EDITOR).setListener((i, v) -> {
+        disambiguation.remove(v);
         refresh();
     });
-    WLabelGroup groupOutput = new WLabelGroup(28, 63, 7, 1, 20, 20, WLabel.enumMode.EDITOR).setLsnrUpdate(i -> {
-        disambiguation.remove(i + 21);
+    WLabelGroup groupOutput = new WLabelGroup(28, 63, 7, 1, 20, 20, Mode.EDITOR).setListener((i, v) -> {
+        disambiguation.remove(v + 21);
         refresh();
     });
-    WButton buttonClear = new WButtonIcon(64, 33, 20, 20, Resource.BTN_DEL, "recipe.clear").setLsnrLeft(this::clear);
-    WButton buttonLabel = new WButtonIcon(45, 33, 20, 20, Resource.BTN_LABEL, "recipe.label")
-            .setLsnrLeft(() -> JecaGui.displayGui(new GuiLabel((l) -> {
+    WButton buttonClear = new WButtonIcon(64, 33, 20, 20, BTN_DEL, "recipe.clear").setListener(i -> clear());
+    WButton buttonCopy = new WButtonIcon(83, 33, 20, 20, BTN_COPY, "recipe.copy").setListener(i -> {
+        Controller.addRecipe(switcherGroup.getText(), toRecipe());
+        JecaGui.displayParent();
+    });
+    WButton buttonLabel = new WButtonIcon(45, 33, 20, 20, BTN_LABEL, "recipe.label").setListener(i ->
+            JecaGui.displayGui(new GuiLabel((l) -> {
                 JecaGui.displayParent();
                 JecaGui.getCurrent().hand = l;
             })));
-    WButton buttonSave = new WButtonIcon(26, 33, 20, 20, Resource.BTN_SAVE, "recipe.save").setLsnrLeft(() -> {
+    WButton buttonSave = new WButtonIcon(26, 33, 20, 20, BTN_SAVE, "recipe.save").setListener(i -> {
         if (dest == null)
             Controller.addRecipe(switcherGroup.getText(), toRecipe());
         else {
@@ -68,21 +70,17 @@ public class GuiRecipe extends WContainer implements IGui {
         }
         JecaGui.displayParent();
     });
-    WButton buttonDel = new WButtonIcon(102, 33, 20, 20, Resource.BTN_NO, "recipe.delete").setLsnrLeft(() -> {
+    WButton buttonDel = new WButtonIcon(102, 33, 20, 20, BTN_NO, "recipe.delete").setListener(i -> {
         Controller.removeRecipe(dest.one, dest.two);
         JecaGui.displayParent();
     });
-    WButton buttonNew = new WButtonIcon(7, 33, 20, 20, Resource.BTN_NEW, "recipe.new")
-            .setLsnrLeft(() -> setModeNewGroup(true));
-    WButton buttonYes = new WButtonIcon(7, 33, 20, 20, Resource.BTN_YES, "recipe.confirm").setDisabled(true)
-            .setLsnrLeft(() -> {
-                switcherGroup.setTemp(textField.getText());
-                textField.setText("");
-                setModeNewGroup(false);
-            });
-    WButton buttonNo = new WButtonIcon(26, 33, 20, 20, Resource.BTN_NO, "recipe.cancel")
-            .setLsnrLeft(() -> setModeNewGroup(false));
-
+    WButton buttonYes = new WButtonIcon(7, 33, 20, 20, BTN_YES, "recipe.confirm").setDisabled(true).setListener(i -> {
+        switcherGroup.setTemp(textField.getText());
+        textField.setText("");
+        setNewGroup(false);
+    });
+    WButton buttonNo = new WButtonIcon(26, 33, 20, 20, BTN_NO, "recipe.cancel").setListener(i -> setNewGroup(false));
+    WButton buttonNew = new WButtonIcon(7, 33, 20, 20, BTN_NEW, "recipe.new").setListener(i -> setNewGroup(true));
 
     public GuiRecipe(String group, int index) {
         this();
@@ -96,20 +94,20 @@ public class GuiRecipe extends WContainer implements IGui {
 
     public GuiRecipe() {
         addAll(new WHelp("recipe"), new WPanel());
-        add(new WIcon(7, 63, 21, 20, Resource.ICN_OUTPUT, "recipe.output"));
-        add(new WIcon(7, 87, 21, 20, Resource.ICN_CATALYST, "recipe.catalyst"));
-        add(new WIcon(7, 111, 21, 40, Resource.ICN_INPUT, "recipe.input"));
+        add(new WIcon(7, 63, 21, 20, ICN_OUTPUT, "recipe.output"));
+        add(new WIcon(7, 87, 21, 20, ICN_CATALYST, "recipe.catalyst"));
+        add(new WIcon(7, 111, 21, 40, ICN_INPUT, "recipe.input"));
         add(new WLine(57));
         addAll(groupInput, groupCatalyst, groupOutput, switcherGroup);
         if (switcherGroup.getTexts().isEmpty()) switcherGroup.setTemp(Utilities.I18n.format("common.default"));
-        setModeNewGroup(false);
+        setNewGroup(false);
         buttonCopy.setDisabled(true);
         buttonDel.setDisabled(true);
         buttonDisamb.setDisabled(true);
-        textField.setLsnrText(s -> buttonYes.setDisabled(s.isEmpty()));
+        textField.setListener(i -> buttonYes.setDisabled(i.getText().isEmpty()));
     }
 
-    public void setModeNewGroup(boolean b) {
+    public void setNewGroup(boolean b) {
         if (b) {
             removeAll(buttonNew, buttonLabel, buttonClear, buttonCopy, buttonSave, buttonDisamb, buttonDel);
             addAll(buttonYes, buttonNo, textField);
@@ -185,11 +183,11 @@ public class GuiRecipe extends WContainer implements IGui {
     }
 
     void fromRecipe(Recipe r) {
-        groupInput.setLabel(Arrays.stream(r.getLabel(Recipe.enumIoType.INPUT))
+        groupInput.setLabel(Arrays.stream(r.getLabel(IO.INPUT))
                 .map(ILabel::copy).collect(Collectors.toList()), 0);
-        groupCatalyst.setLabel(Arrays.stream(r.getLabel(Recipe.enumIoType.CATALYST))
+        groupCatalyst.setLabel(Arrays.stream(r.getLabel(IO.CATALYST))
                 .map(ILabel::copy).collect(Collectors.toList()), 0);
-        groupOutput.setLabel(Arrays.stream(r.getLabel(Recipe.enumIoType.OUTPUT))
+        groupOutput.setLabel(Arrays.stream(r.getLabel(IO.OUTPUT))
                 .map(ILabel::copy).collect(Collectors.toList()), 0);
     }
 

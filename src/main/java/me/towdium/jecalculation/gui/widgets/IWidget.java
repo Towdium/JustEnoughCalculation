@@ -37,4 +37,14 @@ public interface IWidget {  // TODO unify listener behavior when manually set an
     default ILabel getLabelUnderMouse(int xMouse, int yMouse) {
         return null;
     }
+
+    @FunctionalInterface
+    interface ListenerValue<W extends IWidget, V> {
+        void invoke(W widget, V value);
+    }
+
+    @FunctionalInterface
+    interface ListenerAction<W extends IWidget> {
+        void invoke(W widget);
+    }
 }

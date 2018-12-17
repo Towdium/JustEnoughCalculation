@@ -8,8 +8,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -22,28 +20,24 @@ import java.util.stream.IntStream;
 @SideOnly(Side.CLIENT)
 public class WLabelGroup extends WContainer {
     ArrayList<WLabel> labels = new ArrayList<>();
-    Consumer<Integer> lsnrUpdate;
+    ListenerValue<? super WLabelGroup, Integer> listener;
 
-    public WLabelGroup(int xPos, int yPos, int column, int row, WLabel.enumMode mode) {
+    public WLabelGroup(int xPos, int yPos, int column, int row, WLabel.Mode mode) {
         this(xPos, yPos, column, row, 18, 18, mode);
     }
 
-    public WLabelGroup(int xPos, int yPos, int column, int row, int xSize, int ySize, WLabel.enumMode mode) {
+    public WLabelGroup(int xPos, int yPos, int column, int row, int xSize, int ySize, WLabel.Mode mode) {
         IntStream.range(0, row).forEach(r -> IntStream.range(0, column).forEach(c -> {
-            WLabel l = new WLabel(xPos + c * xSize, yPos + r * ySize, xSize, ySize, mode).setLsnrUpdate(() -> {
-                if (lsnrUpdate != null) lsnrUpdate.accept(r * column + c);
+            WLabel l = new WLabel(xPos + c * xSize, yPos + r * ySize, xSize, ySize, mode).setListener((i, v) -> {
+                if (listener != null) listener.invoke(this, r * column + c);
             });
             labels.add(l);
             add(l);
         }));
     }
 
-    public ILabel getLabelAt(int index) {
+    public ILabel get(int index) {
         return labels.get(index).getLabel();
-    }
-
-    public Optional<ILabel> getLabelAt(int xMouse, int yMouse) {
-        return labels.stream().filter(w -> w.mouseIn(xMouse, yMouse)).findFirst().map(WLabel::getLabel);
     }
 
     public List<ILabel> getLabels() {
@@ -58,8 +52,8 @@ public class WLabelGroup extends WContainer {
         for (WLabel label : this.labels) label.setLabel(start < labels.size() ? labels.get(start++) : ILabel.EMPTY);
     }
 
-    public WLabelGroup setLsnrUpdate(Consumer<Integer> listener) {
-        lsnrUpdate = listener;
+    public WLabelGroup setListener(ListenerValue<? super WLabelGroup, Integer> listener) {
+        this.listener = listener;
         return this;
     }
 }

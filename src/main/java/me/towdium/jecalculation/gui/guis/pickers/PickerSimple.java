@@ -4,7 +4,6 @@ import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.label.labels.LFluidStack;
 import me.towdium.jecalculation.data.label.labels.LOreDict;
-import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.gui.guis.IGui;
 import me.towdium.jecalculation.gui.widgets.WIcon;
 import me.towdium.jecalculation.gui.widgets.WLabel;
@@ -21,6 +20,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static me.towdium.jecalculation.gui.Resource.ICN_TEXT;
+
 /**
  * Author: towdium
  * Date:   17-9-28.
@@ -35,10 +36,10 @@ public class PickerSimple extends IPicker.Impl implements IGui {
      *                entire key should be "gui.l18nKey.help.tooltip"
      */
     public PickerSimple(List<ILabel> labels, String l18nKey) {
-        WLabelScroll ls = new WLabelScroll(7, 33, 8, 7, WLabel.enumMode.PICKER, true).setLabels(labels)
-                .setLsnrUpdate(this::notifyLsnr);
+        WLabelScroll ls = new WLabelScroll(7, 33, 8, 7, WLabel.Mode.PICKER, true).setLabels(labels)
+                .setListener((i, v) -> notifyLsnr(v));
         add(new WSearch(26, 7, 90, ls));
-        add(new WIcon(7, 7, 20, 20, Resource.ICN_TEXT, l18nKey + ".text"));
+        add(new WIcon(7, 7, 20, 20, ICN_TEXT, l18nKey + ".text"));
         add(ls);
     }
 
@@ -58,7 +59,8 @@ public class PickerSimple extends IPicker.Impl implements IGui {
         static List<ILabel> generate() {
             List<ILabel> present = new ArrayList<>();
             List<ILabel> empty = new ArrayList<>();
-            Arrays.stream(OreDictionary.getOreNames()).map(LOreDict::new).forEach(i -> (i.isEmpty() ? empty : present).add(i));
+            Arrays.stream(OreDictionary.getOreNames()).map(LOreDict::new).forEach(i ->
+                    (i.isEmpty() ? empty : present).add(i));
             present.addAll(empty);
             return present;
         }

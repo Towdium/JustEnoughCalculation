@@ -3,6 +3,7 @@ package me.towdium.jecalculation.data.structure;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
+import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -11,9 +12,10 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static me.towdium.jecalculation.data.structure.Recipe.enumIoType.INPUT;
-import static me.towdium.jecalculation.data.structure.Recipe.enumIoType.OUTPUT;
+import static me.towdium.jecalculation.data.structure.Recipe.IO.INPUT;
+import static me.towdium.jecalculation.data.structure.Recipe.IO.OUTPUT;
 
 // positive => generate; negative => require
 @MethodsReturnNonnullByDefault
@@ -131,7 +133,7 @@ public class CostList {
                 else {
                     set.add(result);
                     procedure.add(new Pair<>(result, difference));
-                    addCatalyst(next.one.getLabel(Recipe.enumIoType.CATALYST));
+                    addCatalyst(next.one.getLabel(Recipe.IO.CATALYST));
                     next = find(true);
                 }
                 if (count++ > 1000) {
@@ -155,16 +157,12 @@ public class CostList {
         }
 
         private void addCatalyst(ILabel[] labels) {
-            LOOP:
-            for (ILabel i : labels) {
-                for (ILabel j : catalysts) {
-                    if (j.matches(i)) {
-                        j.setAmount(Math.max(i.getAmount(), j.getAmount()));
-                        continue LOOP;
-                    }
-                }
-                catalysts.add(i.copy());
-            }
+            Arrays.stream(labels)
+                    .filter(i -> i != ILabel.EMPTY)
+                    .forEach(i -> catalysts.stream()
+                            .filter(j -> j.matches(i)).findAny()
+                            .map(j -> j.setAmount(Math.max(i.getAmount(), j.getAmount())))
+                            .orElseGet(Utilities.fake(() -> catalysts.add(i))));
         }
 
         private CostList getCurrent() {
@@ -183,13 +181,10 @@ public class CostList {
         public List<ILabel> getOutputs(List<ILabel> ignore) {
             return getCurrent().labels.stream()
                     .map(i -> i.copy().multiply(-1))
-                    .map(i -> {
-                        for (ILabel j : ignore) {
-                            Optional<ILabel> merged = ILabel.MERGER.merge(i, j);
-                            if (merged.isPresent()) i = merged.get();
-                        }
-                        return i;
-                    })
+                    .map(i -> ignore.stream()
+                            .flatMap(j -> ILabel.MERGER.merge(i, j).map(Stream::of).orElse(Stream.empty()))
+                            .findFirst().orElse(i)
+                    )
                     .filter(i -> i != ILabel.EMPTY && i.getAmount() < 0)
                     .map(i -> i.multiply(-1))
                     .collect(Collectors.toList());

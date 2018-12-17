@@ -1,11 +1,13 @@
 package me.towdium.jecalculation.gui.widgets;
 
 import mcp.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.gui.JecaGui;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+
+import static me.towdium.jecalculation.gui.JecaGui.COLOR_TEXT_RED;
+import static me.towdium.jecalculation.gui.JecaGui.COLOR_TEXT_WHITE;
 
 /**
  * Author: towdium
@@ -31,6 +33,6 @@ public class WSearch extends WTextField {
     public void refresh() {
         boolean b = false;
         for (ISearchable i : lss) if (i.setFilter(textField.getText())) b = true;
-        setColor(b ? JecaGui.COLOR_TEXT_WHITE : JecaGui.COLOR_TEXT_RED);
+        setColor(b ? COLOR_TEXT_WHITE : COLOR_TEXT_RED);
     }
 }

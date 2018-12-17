@@ -9,7 +9,6 @@ import org.lwjgl.input.Mouse;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.function.Consumer;
 
 /**
  * Author: towdium
@@ -21,7 +20,7 @@ import java.util.function.Consumer;
 @SideOnly(Side.CLIENT)
 public class WScroll implements IWidget {
     public int xPos, yPos, ySize, current;
-    public Consumer<Float> lsnrScroll;
+    public ListenerAction<? super WScroll> listener;
     protected boolean drag;
 
     public WScroll(int xPos, int yPos, int ySize) {
@@ -50,7 +49,11 @@ public class WScroll implements IWidget {
         current = pos;
         if (current < 0) current = 0;
         if (current > ySize - 17) current = ySize - 17;
-        if (notify && lsnrScroll != null) lsnrScroll.accept(current / (ySize - 17f));
+        if (notify && listener != null) listener.invoke(this);
+    }
+
+    public float getCurrent() {
+        return current / (ySize - 17f);
     }
 
     public void setCurrent(float ratio) {
@@ -61,8 +64,8 @@ public class WScroll implements IWidget {
         return JecaGui.mouseIn(xPos + 1, yPos + 1, 12, ySize - 2, xMouse, yMouse);
     }
 
-    public WScroll setLsnrScroll(@Nullable Consumer<Float> lsnrScroll) {
-        this.lsnrScroll = lsnrScroll;
+    public WScroll setListener(@Nullable ListenerAction<? super WScroll> listener) {
+        this.listener = listener;
         return this;
     }
 }

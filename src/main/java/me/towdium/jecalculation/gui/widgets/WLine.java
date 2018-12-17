@@ -2,11 +2,12 @@ package me.towdium.jecalculation.gui.widgets;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
-import me.towdium.jecalculation.gui.Resource;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+
+import static me.towdium.jecalculation.gui.Resource.WGT_LINE;
 
 /**
  * Author: towdium
@@ -24,6 +25,6 @@ public class WLine implements IWidget {
 
     @Override
     public void onDraw(JecaGui gui, int xMouse, int yMouse) {
-        gui.drawResource(Resource.WGT_LINE, 6, y - 1);
+        gui.drawResource(WGT_LINE, 6, y - 1);
     }
 }

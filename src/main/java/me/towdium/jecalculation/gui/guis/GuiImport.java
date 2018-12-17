@@ -4,7 +4,6 @@ import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.structure.Recipes;
 import me.towdium.jecalculation.gui.JecaGui;
-import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.gui.widgets.*;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import me.towdium.jecalculation.utils.wrappers.Quad;
@@ -15,6 +14,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static me.towdium.jecalculation.gui.Resource.BTN_YES;
+import static me.towdium.jecalculation.gui.Resource.ICN_TEXT;
 import static me.towdium.jecalculation.utils.Utilities.I18n.contains;
 
 /**
@@ -28,21 +29,21 @@ public class GuiImport extends WContainer implements IGui, ISearchable {
     List<Quad<Boolean, String, String, Recipes>> filtered;
     WSearch search = new WSearch(25, 25, 90, this);
     WSwitcher page;
-    WButton confirm = new WButtonIcon(149, 25, 20, 20, Resource.BTN_YES, "common.confirm").setDisabled(true)
-            .setLsnrLeft(() -> {
-                data.stream().filter(i -> i.one).forEach(i -> Controller.inport(i.four, i.three));
+    WButton confirm = new WButtonIcon(149, 25, 20, 20, BTN_YES, "common.confirm").setDisabled(true)
+            .setListener(i -> {
+                data.stream().filter(j -> j.one).forEach(j -> Controller.inport(j.four, j.three));
                 JecaGui.displayParent();
             });
     List<Pair<WTick, WText>> content = new ArrayList<>();
 
     public GuiImport() {
         add(new WPanel());
-        add(new WIcon(7, 25, 20, 20, Resource.ICN_TEXT, "common.search"));
+        add(new WIcon(7, 25, 20, 20, ICN_TEXT, "common.search"));
         addAll(search, confirm);
         IntStream.range(0, 7).forEach(i -> {
             WTick tick = new WTick(7, 49 + 16 * i, 13, 13, "import.tick").setDisabled(true)
                     .setListener(j -> {
-                        filtered.get(page.getIndex() * 7 + i).one = j;
+                        filtered.get(page.getIndex() * 7 + i).one = j.selected();
                         confirm.setDisabled(data.stream().noneMatch(k -> k.one));
                     });
             WText text = new WTextExpand(49 + 16 * i, "");
@@ -81,7 +82,7 @@ public class GuiImport extends WContainer implements IGui, ISearchable {
                 .filter(i -> contains(i.two, s) || contains(i.three, s))
                 .collect(Collectors.toList());
         remove(page);
-        page = new WSwitcher(7, 7, 162, (filtered.size() + 6) / 7).setListener(this::refresh);
+        page = new WSwitcher(7, 7, 162, (filtered.size() + 6) / 7).setListener(i -> refresh());
         add(page);
         refresh();
         return !filtered.isEmpty();

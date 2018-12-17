@@ -3,7 +3,6 @@ package me.towdium.jecalculation.gui.guis.pickers;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.label.labels.LItemStack;
-import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.gui.guis.IGui;
 import me.towdium.jecalculation.gui.widgets.WButton;
 import me.towdium.jecalculation.gui.widgets.WButtonIcon;
@@ -14,6 +13,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.Consumer;
 
+import static me.towdium.jecalculation.gui.Resource.*;
+
 /**
  * Author: Towdium
  * Date: 18-9-18
@@ -22,14 +23,14 @@ import java.util.function.Consumer;
 @MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class PickerItemStack extends IPicker.Impl implements IGui {
-    WLabel label = new WLabel(7, 7, 20, 20, WLabel.enumMode.SELECTOR).setLsnrUpdate(this::update);
-    WButton bConfirm = new WButtonIcon(149, 7, 20, 20, Resource.BTN_YES).setLsnrLeft(() -> callback.accept(label.getLabel()));
-    WButton bNbtF = new WButtonIcon(49, 7, 20, 20, Resource.BTN_NBT_F).setLsnrLeft(() -> setFNbt(false));
-    WButton bBbtN = new WButtonIcon(49, 7, 20, 20, Resource.BTN_NBT_N).setLsnrLeft(() -> setFNbt(true));
-    WButton bCapF = new WButtonIcon(68, 7, 20, 20, Resource.BTN_CAP_F).setLsnrLeft(() -> setFCap(false));
-    WButton bCapN = new WButtonIcon(68, 7, 20, 20, Resource.BTN_CAP_N).setLsnrLeft(() -> setFCap(true));
-    WButton bMetaF = new WButtonIcon(30, 7, 20, 20, Resource.BTN_META_F).setLsnrLeft(() -> setFMeta(false));
-    WButton bMetaN = new WButtonIcon(30, 7, 20, 20, Resource.BTN_META_N).setLsnrLeft(() -> setFMeta(true));
+    WButton bConfirm = new WButtonIcon(149, 7, 20, 20, BTN_YES).setListener(i -> callback.accept(label.getLabel()));
+    WButton bBbtN = new WButtonIcon(49, 7, 20, 20, BTN_NBT_N).setListener(i -> setFNbt(true));
+    WButton bNbtF = new WButtonIcon(49, 7, 20, 20, BTN_NBT_F).setListener(i -> setFNbt(false));
+    WButton bCapN = new WButtonIcon(68, 7, 20, 20, BTN_CAP_N).setListener(i -> setFCap(true));
+    WButton bCapF = new WButtonIcon(68, 7, 20, 20, BTN_CAP_F).setListener(i -> setFCap(false));
+    WButton bMetaN = new WButtonIcon(30, 7, 20, 20, BTN_META_N).setListener(i -> setFMeta(true));
+    WButton bMetaF = new WButtonIcon(30, 7, 20, 20, BTN_META_F).setListener(i -> setFMeta(false));
+    WLabel label = new WLabel(7, 7, 20, 20, WLabel.Mode.SELECTOR).setListener((i, v) -> update());
 
     public PickerItemStack() {
         addAll(label, bConfirm);

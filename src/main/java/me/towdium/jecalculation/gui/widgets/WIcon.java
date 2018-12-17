@@ -9,6 +9,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import static me.towdium.jecalculation.gui.JecaGui.COLOR_GUI_GREY;
+
 /**
  * Author: towdium
  * Date:   17-8-18.
@@ -42,7 +44,7 @@ public class WIcon extends WTooltip {
     @Override
     public void onDraw(JecaGui gui, int xMouse, int yMouse) {
         super.onDraw(gui, xMouse, yMouse);
-        gui.drawRectangle(xPos, yPos, xSize, ySize, JecaGui.COLOR_GUI_GREY);
+        gui.drawRectangle(xPos, yPos, xSize, ySize, COLOR_GUI_GREY);
         Resource r = mouseIn(xMouse, yMouse) ? focused : normal;
         gui.drawResource(r, (xSize - r.getXSize()) / 2 + xPos, (ySize - r.getYSize()) / 2 + yPos);
     }

@@ -29,6 +29,7 @@ import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -52,6 +53,18 @@ public class Utilities {
         int scale = (int) Math.log10(f) / 3;
         if (scale == 0) return form.apply(f, size);
         else return form.apply(f / (float) Math.pow(1000, scale), size - 1) + suffix[scale - 1];
+    }
+
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    public static <T> Stream<T> stream(Optional<T> o) {
+        return o.map(Stream::of).orElse(Stream.empty());
+    }
+
+    public static <T> Supplier<T> fake(Runnable r) {
+        return () -> {
+            r.run();
+            return null;
+        };
     }
 
     // MOD NAME
