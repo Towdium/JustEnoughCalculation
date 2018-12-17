@@ -86,6 +86,23 @@ public class Utilities {
         return is.getOrCreateSubCompound(JustEnoughCalculation.Reference.MODID);
     }
 
+    public static class Relation<K, V> {
+        public HashMap<Pair<K, K>, V> data = new HashMap<>();
+
+        public void put(K a, K b, V v) {
+            Pair<K, K> pair = new Pair<>(a, b);
+            V tmp = data.get(pair);
+            data.put(tmp == null ? new Pair<>(b, a) : pair, v);
+        }
+
+        @Nullable
+        public V get(K a, K b) {
+            V ret = data.get(new Pair<>(a, b));
+            if (ret == null) data.get(new Pair<>(b, a));
+            return ret;
+        }
+    }
+
     public static class Timer {
         long time = System.currentTimeMillis();
         boolean running = false;

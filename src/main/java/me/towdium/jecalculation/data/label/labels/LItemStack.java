@@ -103,16 +103,15 @@ public class LItemStack extends ILabel.Impl {
             LItemStack lisA = (LItemStack) a;
             LItemStack lisB = (LItemStack) b;
 
-            if (!lisA.fMeta && lisA.meta != WILDCARD_VALUE && lisA.meta != lisB.meta) return false;
-            if (!lisA.fNbt) {
-                if (lisB.fNbt) return false;
-                else if (lisA.nbt == null) {
+            if (lisA.meta != lisB.meta && !lisA.fMeta && lisA.meta != WILDCARD_VALUE
+                    && !lisB.fMeta && lisB.meta != WILDCARD_VALUE) return false;
+            if (!lisA.fNbt && !lisB.fNbt) {
+                if (lisA.nbt == null) {
                     if (lisB.nbt != null) return false;
                 } else if (lisB.nbt == null || !lisA.nbt.equals(lisB.nbt)) return false;
             }
-            if (!lisA.fCap) {
-                if (lisB.fCap) return false;
-                else if (lisA.cap == null) {
+            if (!lisA.fCap && !lisB.fCap) {
+                if (lisA.cap == null) {
                     if (lisB.cap != null) return false;
                 } else if (lisB.cap == null || !lisA.cap.equals(lisB.cap)) return false;
             }

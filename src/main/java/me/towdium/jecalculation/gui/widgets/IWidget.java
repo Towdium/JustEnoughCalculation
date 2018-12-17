@@ -14,7 +14,7 @@ import java.util.List;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public interface IWidget {  // TODO unify listener behavior when manually set and pass instance to listener
+public interface IWidget {
     void onDraw(JecaGui gui, int xMouse, int yMouse);
 
     default boolean onTooltip(JecaGui gui, int xMouse, int yMouse, List<String> tooltip) {

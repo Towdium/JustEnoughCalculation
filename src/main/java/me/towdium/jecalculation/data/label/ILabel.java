@@ -13,8 +13,6 @@ import me.towdium.jecalculation.gui.guis.pickers.PickerPlaceholder;
 import me.towdium.jecalculation.gui.guis.pickers.PickerSimple;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.Utilities.ReversedIterator;
-import me.towdium.jecalculation.utils.wrappers.Pair;
-import me.towdium.jecalculation.utils.wrappers.Wrapper;
 import mezz.jei.api.gui.IRecipeLayout;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.Items;
@@ -31,7 +29,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -123,13 +120,13 @@ public interface ILabel {
      * For registering, see {@link Serializer}.
      */
     class Merger {
-        private HashMap<Pair<String, String>, MergerFunction> functions = new HashMap<>();
+        private Utilities.Relation<String, MergerFunction> functions = new Utilities.Relation<>();
 
         private Merger() {
         }
 
         public void register(String a, String b, MergerFunction func) {
-            functions.put(new Pair<>(a, b), func);
+            functions.put(a, b, func);
         }
 
         /**
@@ -142,19 +139,9 @@ public interface ILabel {
          * So generally speaking, a and b has no priority in this function
          */
         public Optional<ILabel> merge(ILabel a, ILabel b) {
-            BiFunction<ILabel, ILabel, ILabel> get = (c, d) -> {
-                MergerFunction mf = functions.get(new Pair<>(c.getIdentifier(), d.getIdentifier()));
-                if (mf != null) return mf.merge(c, d);
-                else return null;
-            };
-            return new Wrapper<ILabel>(null)
-                    .or(() -> get.apply(a, b))
-                    .or(() -> get.apply(b, a))
-                    .ifPresent(i -> {
-                        if (i != ILabel.EMPTY && (i == a || i == b))
-                            throw new RuntimeException("Merger should not modify the given label.");
-                    })
-                    .toOptional();
+            MergerFunction mf = functions.get(a.getIdentifier(), b.getIdentifier());
+            if (mf == null) return Optional.empty();
+            return Optional.ofNullable(mf.merge(a, b));
         }
 
         @FunctionalInterface
@@ -453,7 +440,11 @@ public interface ILabel {
 
         protected static Merger.MergerFunction form(Class a, Class b, BiPredicate<ILabel, ILabel> p) {
             return (c, d) -> {
-                if (c == EMPTY || d == EMPTY) return null;
+                if (a.isInstance(d) && b.isInstance(c)) {
+                    ILabel tmp = c;
+                    c = d;
+                    d = tmp;
+                }
                 if (a.isInstance(c) && b.isInstance(d) && p.test(c, d)) {
                     long amountC = c.isPercent() ? c.getAmount() : Math.multiplyExact(c.getAmount(), 100);
                     long amountD = d.isPercent() ? d.getAmount() : Math.multiplyExact(d.getAmount(), 100);

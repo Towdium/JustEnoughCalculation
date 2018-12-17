@@ -12,10 +12,10 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static me.towdium.jecalculation.data.structure.Recipe.IO.INPUT;
 import static me.towdium.jecalculation.data.structure.Recipe.IO.OUTPUT;
+import static me.towdium.jecalculation.utils.Utilities.stream;
 
 // positive => generate; negative => require
 @MethodsReturnNonnullByDefault
@@ -145,7 +145,7 @@ public class CostList {
 
         @Nullable
         private Pair<Recipe, Long> find(boolean reset) {
-            if (reset) index = 0;
+            index = reset ? 0 : index + 1;
             List<ILabel> labels = getCurrent().labels;
             for (; index < labels.size(); index++) {
                 ILabel label = labels.get(index);
@@ -181,10 +181,7 @@ public class CostList {
         public List<ILabel> getOutputs(List<ILabel> ignore) {
             return getCurrent().labels.stream()
                     .map(i -> i.copy().multiply(-1))
-                    .map(i -> ignore.stream()
-                            .flatMap(j -> ILabel.MERGER.merge(i, j).map(Stream::of).orElse(Stream.empty()))
-                            .findFirst().orElse(i)
-                    )
+                    .map(i -> ignore.stream().flatMap(j -> stream(ILabel.MERGER.merge(i, j))).findFirst().orElse(i))
                     .filter(i -> i != ILabel.EMPTY && i.getAmount() < 0)
                     .map(i -> i.multiply(-1))
                     .collect(Collectors.toList());

@@ -23,6 +23,7 @@ import static me.towdium.jecalculation.gui.Resource.*;
 @MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class PickerItemStack extends IPicker.Impl implements IGui {
+    WLabel label = new WLabel(7, 7, 20, 20, WLabel.Mode.SELECTOR).setListener((i, v) -> update());
     WButton bConfirm = new WButtonIcon(149, 7, 20, 20, BTN_YES).setListener(i -> callback.accept(label.getLabel()));
     WButton bBbtN = new WButtonIcon(49, 7, 20, 20, BTN_NBT_N).setListener(i -> setFNbt(true));
     WButton bNbtF = new WButtonIcon(49, 7, 20, 20, BTN_NBT_F).setListener(i -> setFNbt(false));
@@ -30,7 +31,6 @@ public class PickerItemStack extends IPicker.Impl implements IGui {
     WButton bCapF = new WButtonIcon(68, 7, 20, 20, BTN_CAP_F).setListener(i -> setFCap(false));
     WButton bMetaN = new WButtonIcon(30, 7, 20, 20, BTN_META_N).setListener(i -> setFMeta(true));
     WButton bMetaF = new WButtonIcon(30, 7, 20, 20, BTN_META_F).setListener(i -> setFMeta(false));
-    WLabel label = new WLabel(7, 7, 20, 20, WLabel.Mode.SELECTOR).setListener((i, v) -> update());
 
     public PickerItemStack() {
         addAll(label, bConfirm);
