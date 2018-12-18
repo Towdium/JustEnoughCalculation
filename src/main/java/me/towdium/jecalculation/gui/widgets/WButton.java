@@ -74,6 +74,6 @@ public abstract class WButton extends WTooltip {
 
     @Override
     protected List<String> getSuffix() {
-        return disabled ? Arrays.asList("disabled", "active", "") : Arrays.asList("active", "");
+        return disabled ? Arrays.asList("inactive", "active", "") : Arrays.asList("active", "");
     }
 }
