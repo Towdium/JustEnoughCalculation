@@ -57,9 +57,12 @@ public class Resource {
     public static final Resource BTN_IMPORT_N = getIcon(13, 1);
     public static final Resource BTN_IMPORT_F = getIcon(13, 0);
     public static final Resource BTN_IMPORT_D = getIcon(13, 2);
-    public static final Resource BTN_EXPORT_N = getIcon(14, 1);
-    public static final Resource BTN_EXPORT_F = getIcon(14, 0);
-    public static final Resource BTN_EXPORT_D = getIcon(14, 2);
+    public static final Resource BTN_EXPORT_N_N = getIcon(14, 1);
+    public static final Resource BTN_EXPORT_N_F = getIcon(14, 0);
+    public static final Resource BTN_EXPORT_N_D = getIcon(14, 2);
+    public static final Resource BTN_EXPORT_1_N = getIcon(15, 1);
+    public static final Resource BTN_EXPORT_1_F = getIcon(15, 0);
+    public static final Resource BTN_EXPORT_1_D = getIcon(15, 2);
     public static final Resource BTN_CAP_N_N = getIcon(0, 4);
     public static final Resource BTN_CAP_N_F = getIcon(0, 3);
     public static final Resource BTN_CAP_F_N = getIcon(1, 4);
@@ -141,7 +144,8 @@ public class Resource {
     public static final ResourceGroup BTN_CAT = new ResourceGroup(BTN_CAT_N, BTN_CAT_F, BTN_CAT_D);
     public static final ResourceGroup BTN_LIST = new ResourceGroup(BTN_LIST_N, BTN_LIST_F, BTN_LIST_D);
     public static final ResourceGroup BTN_IMPORT = new ResourceGroup(BTN_IMPORT_N, BTN_IMPORT_F, BTN_IMPORT_D);
-    public static final ResourceGroup BTN_EXPORT = new ResourceGroup(BTN_EXPORT_N, BTN_EXPORT_F, BTN_EXPORT_D);
+    public static final ResourceGroup BTN_EXPORT_N = new ResourceGroup(BTN_EXPORT_N_N, BTN_EXPORT_N_F, BTN_EXPORT_N_D);
+    public static final ResourceGroup BTN_EXPORT_1 = new ResourceGroup(BTN_EXPORT_1_N, BTN_EXPORT_1_F, BTN_EXPORT_1_D);
     public static final ResourceGroup BTN_META_N = new ResourceGroup(BTN_META_N_N, BTN_META_N_F, BTN_META_D);
     public static final ResourceGroup BTN_CAP_N = new ResourceGroup(BTN_CAP_N_N, BTN_CAP_N_F, BTN_CAP_D);
     public static final ResourceGroup BTN_NBT_N = new ResourceGroup(BTN_NBT_N_N, BTN_NBT_N_F, BTN_NBT_D);

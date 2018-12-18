@@ -39,6 +39,7 @@ public class WButtonIcon extends WButton {
     public void onDraw(JecaGui gui, int xMouse, int yMouse) {
         super.onDraw(gui, xMouse, yMouse);
         Resource r = disabled ? rDisabled : (mouseIn(xMouse, yMouse) ? rFocused : rNormal);
-        if (r != null) gui.drawResource(r, xPos + (xSize - r.getXSize()) / 2, yPos + (ySize - r.getYSize()) / 2);
+        if (r != null)
+            gui.drawResource(r, xPos + (xSize - r.getXSize() + 1) / 2, yPos + (ySize - r.getYSize() + 1) / 2);
     }
 }

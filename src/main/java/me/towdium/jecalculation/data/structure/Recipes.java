@@ -1,6 +1,7 @@
 package me.towdium.jecalculation.data.structure;
 
 import mcp.MethodsReturnNonnullByDefault;
+import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -35,7 +36,13 @@ public class Recipes {
             NBTTagList group = nbt.getTagList(i, 10);
             StreamSupport.stream(group.spliterator(), false)
                     .filter(r -> r instanceof NBTTagCompound)
-                    .forEach(r -> add(i, new Recipe((NBTTagCompound) r)));
+                    .forEach(r -> {
+                        try {
+                            add(i, new Recipe((NBTTagCompound) r));
+                        } catch (IllegalArgumentException e) {
+                            JustEnoughCalculation.logger.warn("Invalid recipe record :" + r);
+                        }
+                    });
         });
     }
 

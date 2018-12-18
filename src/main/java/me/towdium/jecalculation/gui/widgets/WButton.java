@@ -2,7 +2,6 @@ package me.towdium.jecalculation.gui.widgets;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
-import me.towdium.jecalculation.gui.Resource;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.init.SoundEvents;
@@ -41,23 +40,11 @@ public abstract class WButton extends WTooltip {
         return this;
     }
 
-    protected Resource getDisabled() {
-        return WGT_BUTTON_D;
-    }
-
-    protected Resource getNormal() {
-        return WGT_BUTTON_N;
-    }
-
-    protected Resource getFocused() {
-        return WGT_BUTTON_F;
-    }
-
     @Override
     public void onDraw(JecaGui gui, int xMouse, int yMouse) {
         super.onDraw(gui, xMouse, yMouse);
         boolean hovered = JecaGui.mouseIn(xPos + 1, yPos + 1, xSize - 2, ySize - 2, xMouse, yMouse);
-        gui.drawResourceContinuous(disabled ? getDisabled() : (hovered ? getFocused() : getNormal())
+        gui.drawResourceContinuous(disabled ? WGT_BUTTON_D : (hovered ? WGT_BUTTON_F : WGT_BUTTON_N)
                 , xPos, yPos, xSize, ySize, 5, 5, 5, 5);
     }
 

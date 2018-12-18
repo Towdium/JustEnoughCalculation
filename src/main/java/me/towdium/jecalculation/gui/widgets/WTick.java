@@ -1,11 +1,11 @@
 package me.towdium.jecalculation.gui.widgets;
 
 import mcp.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.gui.Resource;
+import me.towdium.jecalculation.gui.JecaGui;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static me.towdium.jecalculation.gui.Resource.*;
@@ -58,7 +58,7 @@ public class WTick extends WContainer {
 
     private class Normal extends WButton {
         public Normal(int xPos, int yPos, int xSize, int ySize, @Nullable String name) {
-            super(xPos, yPos, xSize, ySize, name + ".normal");
+            super(xPos, yPos, xSize, ySize, name);
             listener = i -> {
                 setSelected(true);
                 WTick.this.listener.invoke(WTick.this);
@@ -68,13 +68,13 @@ public class WTick extends WContainer {
 
         @Override
         protected List<String> getSuffix() {
-            return new ArrayList<>();
+            return Collections.singletonList("unselected");
         }
     }
 
     private class Selected extends WButton {
         public Selected(int xPos, int yPos, int xSize, int ySize, @Nullable String name) {
-            super(xPos, yPos, xSize, ySize, name + ".selected");
+            super(xPos, yPos, xSize, ySize, name);
             listener = i -> {
                 setSelected(false);
                 WTick.this.listener.invoke(WTick.this);
@@ -83,23 +83,16 @@ public class WTick extends WContainer {
         }
 
         @Override
-        protected Resource getDisabled() {
-            return WGT_BUTTON_S_D;
-        }
-
-        @Override
-        protected Resource getNormal() {
-            return WGT_BUTTON_S_N;
-        }
-
-        @Override
-        protected Resource getFocused() {
-            return WGT_BUTTON_S_F;
-        }
-
-        @Override
         protected List<String> getSuffix() {
-            return new ArrayList<>();
+            return Collections.singletonList("selected");
+        }
+
+        @Override
+        public void onDraw(JecaGui gui, int xMouse, int yMouse) {
+            super.onDraw(gui, xMouse, yMouse);
+            boolean hovered = JecaGui.mouseIn(xPos + 1, yPos + 1, xSize - 2, ySize - 2, xMouse, yMouse);
+            gui.drawResourceContinuous(disabled ? WGT_BUTTON_S_D : (hovered ? WGT_BUTTON_S_F : WGT_BUTTON_S_N)
+                    , xPos, yPos, xSize, ySize, 5, 5, 5, 5);
         }
     }
 }

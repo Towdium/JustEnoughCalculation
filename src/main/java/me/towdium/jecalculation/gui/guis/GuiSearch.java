@@ -4,6 +4,7 @@ import com.google.common.collect.Streams;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.structure.Recipe;
 import me.towdium.jecalculation.gui.JecaGui;
+import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.gui.widgets.*;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Trio;
@@ -28,8 +29,8 @@ public class GuiSearch extends WContainer implements IGui {
 
 
     public GuiSearch() {
-        add(new WPanel());
-        add(new WSearch(25, 25, 90, labels));
+        addAll(new WHelp("search"), new WPanel());
+        add(new WSearch(26, 25, 90, labels));
         add(new WIcon(7, 25, 20, 20, ICN_TEXT, "common.search"));
         add(new WButtonIcon(131, 25, 20, 20, BTN_IMPORT, "search.import")
                 .setListener(i -> JecaGui.displayGui(new GuiImport())));
@@ -52,16 +53,19 @@ public class GuiSearch extends WContainer implements IGui {
         remove(export);
         String tooltip;
         Supplier<File> func;
+        ResourceGroup texture;
         generate();
         if (group.getIndex() == 0) {
             tooltip = "search.export_all";
             func = Controller::export;
+            texture = Resource.BTN_EXPORT_N;
         } else {
             tooltip = "search.export_group";
             func = () -> Controller.export(group.getText());
+            texture = Resource.BTN_EXPORT_1;
         }
         labels.setLabels(recipes.stream().map(i -> i.one.getRep()).collect(Collectors.toList()));
-        export = new WButtonIcon(149, 25, 20, 20, BTN_EXPORT, tooltip).setListener(i -> {
+        export = new WButtonIcon(149, 25, 20, 20, texture, tooltip).setListener(i -> {
             File f = func.get();
             Minecraft.getMinecraft().player.sendMessage(new TextComponentTranslation(
                     "jecalculation.chat.export", f.getAbsolutePath()));

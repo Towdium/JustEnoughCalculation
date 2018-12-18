@@ -18,6 +18,7 @@ import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
@@ -56,6 +57,8 @@ public class Recipe {
         this.input = convert.apply(input, 14);
         this.catalyst = convert.apply(catalyst, 7);
         this.output = convert.apply(output, 7);
+        Stream.of(input, output).forEach(i -> Arrays.stream(i).filter(j -> j != ILabel.EMPTY).findAny()
+                .orElseThrow(() -> new IllegalArgumentException("Invalid recipe")));
     }
 
     static private List<ILabel> readNbtList(NBTTagList list) {
