@@ -31,21 +31,24 @@ public class GuiRecipe extends WContainer implements IGui {
     HashMap<Integer, List<ILabel>> disambiguation = new HashMap<>();
     WSwitcher switcherGroup = new WSwitcher(7, 7, 162, Controller.getGroups());
     WTextField textField = new WTextField(49, 33, 119);
-    WLabelGroup groupCatalyst = new WLabelGroup(28, 87, 7, 1, 20, 20, Mode.EDITOR);
+    WLabelGroup groupCatalyst = new WLabelGroup(29, 87, 7, 1, 20, 20, Mode.EDITOR).setListener((i, v) -> {
+        disambiguation.remove(v + 14);
+        refresh();
+    });
+    WLabelGroup groupInput = new WLabelGroup(29, 111, 7, 2, 20, 20, Mode.EDITOR).setListener((i, v) -> {
+        disambiguation.remove(v);
+        refresh();
+    });
+    WLabelGroup groupOutput = new WLabelGroup(29, 63, 7, 1, 20, 20, Mode.EDITOR).setListener((i, v) -> {
+        disambiguation.remove(v + 21);
+        refresh();
+    });
     WButton buttonDisamb = new WButtonIcon(121, 33, 20, 20, BTN_DISAMB, "recipe.disamb").setListener(i -> {
         if (disambiguation != null) JecaGui.displayGui(new GuiDisambiguation(new ArrayList<>(disambiguation.values()))
                 .setCallback(l -> {
                     JecaGui.displayParent();
                     JecaGui.getCurrent().hand = l;
                 }));
-    });
-    WLabelGroup groupInput = new WLabelGroup(28, 111, 7, 2, 20, 20, Mode.EDITOR).setListener((i, v) -> {
-        disambiguation.remove(v);
-        refresh();
-    });
-    WLabelGroup groupOutput = new WLabelGroup(28, 63, 7, 1, 20, 20, Mode.EDITOR).setListener((i, v) -> {
-        disambiguation.remove(v + 21);
-        refresh();
     });
     WButton buttonClear = new WButtonIcon(64, 33, 20, 20, BTN_DEL, "recipe.clear").setListener(i -> clear());
     WButton buttonCopy = new WButtonIcon(83, 33, 20, 20, BTN_COPY, "recipe.copy").setListener(i -> {
@@ -94,9 +97,9 @@ public class GuiRecipe extends WContainer implements IGui {
 
     public GuiRecipe() {
         addAll(new WHelp("recipe"), new WPanel());
-        add(new WIcon(7, 63, 21, 20, ICN_OUTPUT, "common.output"));
-        add(new WIcon(7, 87, 21, 20, ICN_CATALYST, "common.catalyst"));
-        add(new WIcon(7, 111, 21, 40, ICN_INPUT, "common.input"));
+        add(new WIcon(7, 63, 22, 20, ICN_OUTPUT, "common.output"));
+        add(new WIcon(7, 87, 22, 20, ICN_CATALYST, "common.catalyst"));
+        add(new WIcon(7, 111, 22, 40, ICN_INPUT, "common.input"));
         add(new WLine(57));
         addAll(groupInput, groupCatalyst, groupOutput, switcherGroup);
         if (switcherGroup.getTexts().isEmpty()) switcherGroup.setTemp(Utilities.I18n.get("gui.common.default"));

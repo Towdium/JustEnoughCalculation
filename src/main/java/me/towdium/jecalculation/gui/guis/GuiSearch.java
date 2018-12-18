@@ -31,7 +31,7 @@ public class GuiSearch extends WContainer implements IGui {
         add(new WPanel());
         add(new WSearch(25, 25, 90, labels));
         add(new WIcon(7, 25, 20, 20, ICN_TEXT, "common.search"));
-        add(new WButtonIcon(131, 25, 20, 20, BTN_IN, "search.import")
+        add(new WButtonIcon(131, 25, 20, 20, BTN_IMPORT, "search.import")
                 .setListener(i -> JecaGui.displayGui(new GuiImport())));
         add(labels);
     }
@@ -61,7 +61,7 @@ public class GuiSearch extends WContainer implements IGui {
             func = () -> Controller.export(group.getText());
         }
         labels.setLabels(recipes.stream().map(i -> i.one.getRep()).collect(Collectors.toList()));
-        export = new WButtonIcon(149, 25, 20, 20, BTN_OUT, tooltip).setListener(i -> {
+        export = new WButtonIcon(149, 25, 20, 20, BTN_EXPORT, tooltip).setListener(i -> {
             File f = func.get();
             Minecraft.getMinecraft().player.sendMessage(new TextComponentTranslation(
                     "jecalculation.chat.export", f.getAbsolutePath()));
