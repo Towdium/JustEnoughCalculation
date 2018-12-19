@@ -28,6 +28,7 @@ public class Resource {
     public static final Resource BTN_SEARCH_F = getIcon(2, 0);
     public static final Resource BTN_SAVE_N = getIcon(3, 1);
     public static final Resource BTN_SAVE_F = getIcon(3, 0);
+    public static final Resource BTN_SAVE_D = getIcon(3, 2);
     public static final Resource BTN_COPY_N = getIcon(4, 1);
     public static final Resource BTN_COPY_F = getIcon(4, 0);
     public static final Resource BTN_COPY_D = getIcon(4, 2);
@@ -133,7 +134,7 @@ public class Resource {
     public static final ResourceGroup BTN_LABEL = new ResourceGroup(BTN_LABEL_N, BTN_LABEL_F);
     public static final ResourceGroup BTN_NEW = new ResourceGroup(BTN_NEW_N, BTN_NEW_F);
     public static final ResourceGroup BTN_SEARCH = new ResourceGroup(BTN_SEARCH_N, BTN_SEARCH_F);
-    public static final ResourceGroup BTN_SAVE = new ResourceGroup(BTN_SAVE_N, BTN_SAVE_F);
+    public static final ResourceGroup BTN_SAVE = new ResourceGroup(BTN_SAVE_N, BTN_SAVE_F, BTN_SAVE_D);
     public static final ResourceGroup BTN_COPY = new ResourceGroup(BTN_COPY_N, BTN_COPY_F, BTN_COPY_D);
     public static final ResourceGroup BTN_DEL = new ResourceGroup(BTN_DEL_N, BTN_DEL_F);
     public static final ResourceGroup BTN_YES = new ResourceGroup(BTN_YES_N, BTN_YES_F, BTN_YES_D);

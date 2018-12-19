@@ -30,7 +30,7 @@ public class GuiRecipe extends WContainer implements IGui {
     Pair<String, Integer> dest;
     HashMap<Integer, List<ILabel>> disambiguation = new HashMap<>();
     WSwitcher switcherGroup = new WSwitcher(7, 7, 162, Controller.getGroups());
-    WTextField textField = new WTextField(49, 33, 119);
+    WTextField textField = new WTextField(49, 31, 119);
     WLabelGroup groupCatalyst = new WLabelGroup(29, 87, 7, 1, 20, 20, Mode.EDITOR).setListener((i, v) -> {
         disambiguation.remove(v + 14);
         refresh();
@@ -43,24 +43,24 @@ public class GuiRecipe extends WContainer implements IGui {
         disambiguation.remove(v + 21);
         refresh();
     });
-    WButton buttonDisamb = new WButtonIcon(121, 33, 20, 20, BTN_DISAMB, "recipe.disamb").setListener(i -> {
+    WButton buttonDisamb = new WButtonIcon(121, 31, 20, 20, BTN_DISAMB, "recipe.disamb").setListener(i -> {
         if (disambiguation != null) JecaGui.displayGui(new GuiDisambiguation(new ArrayList<>(disambiguation.values()))
                 .setCallback(l -> {
                     JecaGui.displayParent();
                     JecaGui.getCurrent().hand = l;
                 }));
     });
-    WButton buttonClear = new WButtonIcon(64, 33, 20, 20, BTN_DEL, "recipe.clear").setListener(i -> clear());
-    WButton buttonCopy = new WButtonIcon(83, 33, 20, 20, BTN_COPY, "recipe.copy").setListener(i -> {
+    WButton buttonClear = new WButtonIcon(64, 31, 20, 20, BTN_DEL, "recipe.clear").setListener(i -> clear());
+    WButton buttonCopy = new WButtonIcon(83, 31, 20, 20, BTN_COPY, "recipe.copy").setListener(i -> {
         Controller.addRecipe(switcherGroup.getText(), toRecipe());
         JecaGui.displayParent();
     });
-    WButton buttonLabel = new WButtonIcon(45, 33, 20, 20, BTN_LABEL, "recipe.label").setListener(i ->
+    WButton buttonLabel = new WButtonIcon(45, 31, 20, 20, BTN_LABEL, "recipe.label").setListener(i ->
             JecaGui.displayGui(new GuiLabel((l) -> {
                 JecaGui.displayParent();
                 JecaGui.getCurrent().hand = l;
             })));
-    WButton buttonSave = new WButtonIcon(26, 33, 20, 20, BTN_SAVE, "recipe.save").setListener(i -> {
+    WButton buttonSave = new WButtonIcon(26, 31, 20, 20, BTN_SAVE, "recipe.save").setDisabled(true).setListener(i -> {
         if (dest == null)
             Controller.addRecipe(switcherGroup.getText(), toRecipe());
         else {
@@ -73,17 +73,17 @@ public class GuiRecipe extends WContainer implements IGui {
         }
         JecaGui.displayParent();
     });
-    WButton buttonDel = new WButtonIcon(102, 33, 20, 20, BTN_NO, "recipe.delete").setListener(i -> {
+    WButton buttonDel = new WButtonIcon(102, 31, 20, 20, BTN_NO, "recipe.delete").setListener(i -> {
         Controller.removeRecipe(dest.one, dest.two);
         JecaGui.displayParent();
     });
-    WButton buttonYes = new WButtonIcon(7, 33, 20, 20, BTN_YES, "recipe.confirm").setDisabled(true).setListener(i -> {
+    WButton buttonYes = new WButtonIcon(7, 31, 20, 20, BTN_YES, "recipe.confirm").setDisabled(true).setListener(i -> {
         switcherGroup.setTemp(textField.getText());
         textField.setText("");
         setNewGroup(false);
     });
-    WButton buttonNo = new WButtonIcon(26, 33, 20, 20, BTN_NO, "common.cancel").setListener(i -> setNewGroup(false));
-    WButton buttonNew = new WButtonIcon(7, 33, 20, 20, BTN_NEW, "recipe.new").setListener(i -> setNewGroup(true));
+    WButton buttonNo = new WButtonIcon(26, 31, 20, 20, BTN_NO, "common.cancel").setListener(i -> setNewGroup(false));
+    WButton buttonNew = new WButtonIcon(7, 31, 20, 20, BTN_NEW, "recipe.new").setListener(i -> setNewGroup(true));
 
     public GuiRecipe(String group, int index) {
         this();
@@ -93,6 +93,7 @@ public class GuiRecipe extends WContainer implements IGui {
         switcherGroup.setIndex(Controller.getGroups().indexOf(group));
         buttonCopy.setDisabled(false);
         buttonDel.setDisabled(false);
+        buttonSave.setDisabled(false);
     }
 
     public GuiRecipe() {
@@ -196,5 +197,11 @@ public class GuiRecipe extends WContainer implements IGui {
 
     void refresh() {
         buttonDisamb.setDisabled(disambiguation.isEmpty());
+        try {
+            toRecipe();
+            buttonSave.setDisabled(false);
+        } catch (IllegalArgumentException e) {
+            buttonSave.setDisabled(true);
+        }
     }
 }

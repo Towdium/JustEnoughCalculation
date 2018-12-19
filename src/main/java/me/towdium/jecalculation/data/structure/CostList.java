@@ -183,7 +183,7 @@ public class CostList {
                     .map(i -> i.copy().multiply(-1)).collect(Collectors.toList());
         }
 
-        public List<ILabel> getOutputs(List<ILabel> ignore) {
+        public List<ILabel> getOutputs(List<ILabel> ignore) {  // TODO check logic
             return getCurrent().labels.stream()
                     .map(i -> i.copy().multiply(-1))
                     .map(i -> ignore.stream().flatMap(j -> stream(ILabel.MERGER.merge(i, j))).findFirst().orElse(i))

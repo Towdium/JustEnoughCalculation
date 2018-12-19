@@ -119,4 +119,12 @@ public class LPlaceholder extends ILabel.Impl {
         super.getToolTip(existing, detailed);
         existing.add(FORMAT_BLUE + FORMAT_ITALIC + JustEnoughCalculation.Reference.MODNAME);
     }
+
+    public static boolean merge(ILabel a, ILabel b) {
+        if (a instanceof LPlaceholder && b instanceof LPlaceholder) {
+            LPlaceholder lpA = (LPlaceholder) a;
+            LPlaceholder lpB = (LPlaceholder) b;
+            return lpA.name.equals(lpB.name);
+        } else return false;
+    }
 }
