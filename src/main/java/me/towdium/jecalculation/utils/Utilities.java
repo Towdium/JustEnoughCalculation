@@ -285,8 +285,8 @@ public class Utilities {
 
         public void push(T obj) {
             data.removeIf(t -> tester != null ? tester.test(t, obj) : t.equals(obj));
-            data.push(obj);
-            if (data.size() > limit) data.pop();
+            data.addFirst(obj);
+            if (data.size() > limit) data.removeLast();
         }
 
         public List<T> toList() {

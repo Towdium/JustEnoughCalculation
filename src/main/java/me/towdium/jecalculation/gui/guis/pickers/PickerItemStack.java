@@ -24,17 +24,16 @@ import static me.towdium.jecalculation.gui.Resource.*;
 @SideOnly(Side.CLIENT)
 public class PickerItemStack extends IPicker.Impl implements IGui {
     WLabel label = new WLabel(7, 7, 20, 20, WLabel.Mode.SELECTOR).setListener((i, v) -> update());
-    WButton bConfirm = new WButtonIcon(149, 7, 20, 20, BTN_YES).setListener(i -> callback.accept(label.getLabel()));
-    WButton bBbtN = new WButtonIcon(49, 7, 20, 20, BTN_NBT_N).setListener(i -> setFNbt(true));
-    WButton bNbtF = new WButtonIcon(49, 7, 20, 20, BTN_NBT_F).setListener(i -> setFNbt(false));
-    WButton bCapN = new WButtonIcon(68, 7, 20, 20, BTN_CAP_N).setListener(i -> setFCap(true));
-    WButton bCapF = new WButtonIcon(68, 7, 20, 20, BTN_CAP_F).setListener(i -> setFCap(false));
-    WButton bMetaN = new WButtonIcon(30, 7, 20, 20, BTN_META_N).setListener(i -> setFMeta(true));
-    WButton bMetaF = new WButtonIcon(30, 7, 20, 20, BTN_META_F).setListener(i -> setFMeta(false));
+    WButton bConfirm = new WButtonIcon(149, 7, 20, 20, BTN_YES, "item_stack.confirm").setListener(i -> callback.accept(label.getLabel()));
+    WButton bNbtN = new WButtonIcon(49, 7, 20, 20, BTN_NBT_N, "item_stack.nbt_normal").setListener(i -> setFNbt(true));
+    WButton bNbtF = new WButtonIcon(49, 7, 20, 20, BTN_NBT_F, "item_stack.nbt_fuzzy").setListener(i -> setFNbt(false));
+    WButton bCapN = new WButtonIcon(68, 7, 20, 20, BTN_CAP_N, "item_stack.capability_normal").setListener(i -> setFCap(true));
+    WButton bCapF = new WButtonIcon(68, 7, 20, 20, BTN_CAP_F, "item_stack.capability_fuzzy").setListener(i -> setFCap(false));
+    WButton bMetaN = new WButtonIcon(30, 7, 20, 20, BTN_META_N, "item_stack.meta_normal").setListener(i -> setFMeta(true));
+    WButton bMetaF = new WButtonIcon(30, 7, 20, 20, BTN_META_F, "item_stack.meta_fuzzy").setListener(i -> setFMeta(false));
 
     public PickerItemStack() {
-        addAll(label, bConfirm);
-        add(bConfirm);
+        add(label, bConfirm);
         update();
     }
 
@@ -43,14 +42,14 @@ public class PickerItemStack extends IPicker.Impl implements IGui {
         setFMeta(false);
         setFNbt(false);
         boolean b = label.getLabel() == ILabel.EMPTY;
-        bBbtN.setDisabled(b);
+        bNbtN.setDisabled(b);
         bCapN.setDisabled(b);
         bMetaN.setDisabled(b);
         bConfirm.setDisabled(b);
     }
 
     private void setFNbt(boolean b) {
-        setF(b, bBbtN, bNbtF, i -> i.setFNbt(b));
+        setF(b, bNbtN, bNbtF, i -> i.setFNbt(b));
     }
 
     private void setFMeta(boolean b) {
@@ -62,13 +61,9 @@ public class PickerItemStack extends IPicker.Impl implements IGui {
     }
 
     private void setF(boolean b, WButton be, WButton bd, Consumer<LItemStack> c) {
-        if (b) {
-            remove(be);
-            add(bd);
-        } else {
-            remove(bd);
-            add(be);
-        }
+        remove(be, bd);
+        if (b) add(bd);
+        else add(be);
         ILabel l = label.getLabel();
         if (l instanceof LItemStack) c.accept((LItemStack) l);
     }

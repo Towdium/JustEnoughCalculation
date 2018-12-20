@@ -97,12 +97,12 @@ public class GuiRecipe extends WContainer implements IGui {
     }
 
     public GuiRecipe() {
-        addAll(new WHelp("recipe"), new WPanel());
+        add(new WHelp("recipe"), new WPanel());
         add(new WIcon(7, 63, 22, 20, ICN_OUTPUT, "common.output"));
         add(new WIcon(7, 87, 22, 20, ICN_CATALYST, "common.catalyst"));
         add(new WIcon(7, 111, 22, 40, ICN_INPUT, "common.input"));
         add(new WLine(57));
-        addAll(groupInput, groupCatalyst, groupOutput, switcherGroup);
+        add(groupInput, groupCatalyst, groupOutput, switcherGroup);
         if (switcherGroup.getTexts().isEmpty()) switcherGroup.setTemp(Utilities.I18n.get("gui.common.default"));
         setNewGroup(false);
         buttonCopy.setDisabled(true);
@@ -113,11 +113,11 @@ public class GuiRecipe extends WContainer implements IGui {
 
     public void setNewGroup(boolean b) {
         if (b) {
-            removeAll(buttonNew, buttonLabel, buttonClear, buttonCopy, buttonSave, buttonDisamb, buttonDel);
-            addAll(buttonYes, buttonNo, textField);
+            remove(buttonNew, buttonLabel, buttonClear, buttonCopy, buttonSave, buttonDisamb, buttonDel);
+            add(buttonYes, buttonNo, textField);
         } else {
-            addAll(buttonNew, buttonLabel, buttonClear, buttonCopy, buttonSave, buttonDisamb, buttonDel);
-            removeAll(buttonYes, buttonNo, textField);
+            add(buttonNew, buttonLabel, buttonClear, buttonCopy, buttonSave, buttonDisamb, buttonDel);
+            remove(buttonYes, buttonNo, textField);
         }
     }
 

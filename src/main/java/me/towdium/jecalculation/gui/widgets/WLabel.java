@@ -167,7 +167,7 @@ public class WLabel implements IWidget {
             wl.setLabel(label);
             add(new WPanel(xPos - 5, yPos - 5, xSize + 133, ySize + 10));
             add(new WText(xPos + xSize + 3, yPos + 5, PLAIN, "x"));
-            addAll(wl, wtf, bYes, bNo);
+            add(wl, wtf, bYes, bNo);
             wtf.setListener(i -> {
                 try {
                     long n = Long.parseLong(wtf.getText());

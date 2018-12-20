@@ -57,7 +57,7 @@ public class WSwitcher extends WContainer {
         wText = new WText(xPos + SIZE, yPos + 2, xSize - 2 * SIZE, SHADOW, "", true);
         index = new Circulator(keys.size());
         refresh();
-        addAll(left, right, wRect, wText);
+        add(left, right, wRect, wText);
     }
 
     protected void move(boolean forward) {

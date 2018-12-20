@@ -61,7 +61,7 @@ public class WHelp extends WContainer {
             WSwitcher sPage = new WSwitcher(7, 146, 162, tContent.amount());
             sPage.setListener(i -> tContent.setPage(i.getIndex()));
             WText tTitle = new WText(7, 7, SHADOW, I18n.get("gui." + key + ".title"));
-            addAll(new WPanel(), new Icon(), tTitle, tContent, sPage);
+            add(new WPanel(), new Icon(), tTitle, tContent, sPage);
         }
 
         @Override

@@ -66,7 +66,7 @@ public class GuiCalculator extends WContainer implements IGui {
         add(new WText(53, 13, JecaGui.Font.PLAIN, "x"));
         add(new WLine(55));
         add(new WIcon(151, 31, 18, 18, Resource.ICN_RECENT, "calculator.history"));
-        addAll(recent, label, input, output, catalyst, steps, result, amount);
+        add(recent, label, input, output, catalyst, steps, result, amount);
         refreshRecent();
         setMode(Mode.INPUT);
     }

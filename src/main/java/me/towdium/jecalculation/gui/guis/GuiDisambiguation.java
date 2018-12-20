@@ -34,7 +34,7 @@ public class GuiDisambiguation extends IPicker.Impl implements IGui {
         add(new WIcon(7, 48, 18, 54, ICN_LIST, "disamb.list"));
         add(new WIcon(7, 105, 18, 54, ICN_LABEL, "disamb.label"));
         add(new WSearch(25, 24, 90, lsUp.setListener(consumer), lsDown.setListener(consumer)));
-        addAll(switcher, lsUp, lsDown);
+        add(switcher, lsUp, lsDown);
         setPage(0);
     }
 

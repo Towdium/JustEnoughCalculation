@@ -37,9 +37,9 @@ public class GuiImport extends WContainer implements IGui, ISearchable {
     List<Pair<WTick, WText>> content = new ArrayList<>();
 
     public GuiImport() {
-        addAll(new WHelp("import"), new WPanel());
+        add(new WHelp("import"), new WPanel());
         add(new WIcon(7, 25, 20, 20, ICN_TEXT, "common.search"));
-        addAll(search, confirm);
+        add(search, confirm);
         IntStream.range(0, 7).forEach(i -> {
             WTick tick = new WTick(7, 49 + 16 * i, 13, 13, "import.tick").setDisabled(true)
                     .setListener(j -> {
@@ -47,7 +47,7 @@ public class GuiImport extends WContainer implements IGui, ISearchable {
                         confirm.setDisabled(data.stream().noneMatch(k -> k.one));
                     });
             WText text = new WTextExpand(49 + 16 * i, "");
-            addAll(tick, text);
+            add(tick, text);
             content.add(new Pair<>(tick, text));
         });
     }

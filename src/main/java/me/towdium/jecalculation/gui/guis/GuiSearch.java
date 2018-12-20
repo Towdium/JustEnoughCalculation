@@ -29,7 +29,7 @@ public class GuiSearch extends WContainer implements IGui {
 
 
     public GuiSearch() {
-        addAll(new WHelp("search"), new WPanel());
+        add(new WHelp("search"), new WPanel());
         add(new WSearch(26, 25, 90, labels));
         add(new WIcon(7, 25, 20, 20, ICN_TEXT, "common.search"));
         add(new WButtonIcon(131, 25, 20, 20, BTN_IMPORT, "search.import")
@@ -75,7 +75,7 @@ public class GuiSearch extends WContainer implements IGui {
 
     @Override
     public void onVisible(JecaGui gui) {
-        removeAll(group);
+        this.remove(group);
         ArrayList<String> groups = new ArrayList<>();
         groups.add(Utilities.I18n.get("gui.search.all"));
         groups.addAll(Controller.getGroups());
@@ -83,7 +83,7 @@ public class GuiSearch extends WContainer implements IGui {
         if (index >= groups.size()) index = groups.size() - 1;
         group = new WSwitcher(7, 7, 162, groups).setListener(i -> refresh());
         group.setIndex(index);
-        addAll(group);
+        this.add(group);
         refresh();
     }
 }
