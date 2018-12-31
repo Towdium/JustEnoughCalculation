@@ -15,7 +15,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,12 +53,9 @@ public class PickerSimple extends IPicker.Impl implements IGui {
         }
 
         static List<ILabel> generate() {
-            List<ILabel> present = new ArrayList<>();
-            List<ILabel> empty = new ArrayList<>();
-            Arrays.stream(OreDictionary.getOreNames()).map(LOreDict::new).forEach(i ->
-                    (i.isEmpty() ? empty : present).add(i));
-            present.addAll(empty);
-            return present;
+            return Arrays.stream(OreDictionary.getOreNames())
+                    .filter(i -> !OreDictionary.getOres(i).isEmpty())
+                    .map(LOreDict::new).collect(Collectors.toList());
         }
     }
 }

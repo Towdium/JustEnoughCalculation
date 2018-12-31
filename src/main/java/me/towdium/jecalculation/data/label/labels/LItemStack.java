@@ -49,7 +49,7 @@ public class LItemStack extends ILabel.Impl {
     // Convert from itemStack
     public LItemStack(ItemStack is) {
         super(is.getCount(), false);
-        init(is.getItem(), is.getItemDamage(), getCap(is), is.getTagCompound(), false, false, false);
+        init(is.getItem(), is.getMetadata(), getCap(is), is.getTagCompound(), false, false, false);
     }
 
     public LItemStack(NBTTagCompound tag) {

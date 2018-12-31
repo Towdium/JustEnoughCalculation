@@ -46,11 +46,11 @@ public class WSwitcher extends WContainer {
         this.yPos = yPos;
         this.keys = keys;
         left = new WButtonIcon(xPos, yPos, SIZE, SIZE, WGT_ARR_L).setListener(i -> {
-            if (temp == null) move(false);
+            if (temp == null) move(-1);
             else setTemp(null);
         });
         right = new WButtonIcon(xPos + xSize - SIZE, yPos, SIZE, SIZE, WGT_ARR_R).setListener(i -> {
-            if (temp == null) move(true);
+            if (temp == null) move(1);
             else setTemp(null);
         });
         wRect = new WRectangle(xPos + SIZE, yPos, xSize - 2 * SIZE, SIZE, COLOR_GUI_GREY);
@@ -60,11 +60,14 @@ public class WSwitcher extends WContainer {
         add(left, right, wRect, wText);
     }
 
-    protected void move(boolean forward) {
-        if (temp == null) {
-            if (forward) index.move(1);
-            else index.move(-1);
-        } else temp = null;
+    public void move(int diff) {
+        if (diff == 0) return;
+        if (temp != null) {
+            temp = null;
+            if (diff > 0) diff -= 1;
+            else diff += 1;
+        }
+        index.move(diff);
         notifyLsnr();
         refresh();
     }

@@ -10,6 +10,7 @@ import me.towdium.jecalculation.jei.JecaPlugin;
 import me.towdium.jecalculation.network.ProxyClient;
 import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -117,6 +118,12 @@ public class JecaGui extends GuiContainer {
         ILabel l = getLabelUnderMouse();
         if (l instanceof LItemStack) s.putStack(((LItemStack) l).getRep());
         return s;
+    }
+
+    @Override
+    public void initGui() {
+        this.guiLeft = (this.width - this.xSize) / 2;
+        this.guiTop = (this.height - this.ySize) / 2;
     }
 
     public static boolean mouseIn(int xPos, int yPos, int xSize, int ySize, int xMouse, int yMouse) {
@@ -337,6 +344,10 @@ public class JecaGui extends GuiContainer {
         }
         GlStateManager.enableDepth();
         RenderHelper.enableGUIStandardItemLighting();
+        FontRenderer font = is.getItem().getFontRenderer(is);
+        if (font == null) font = fontRenderer;
+        itemRender.renderItemAndEffectIntoGUI(is, xPos, yPos);
+        itemRender.renderItemOverlayIntoGUI(font, is, xPos, yPos, null);
         itemRender.renderItemIntoGUI(is, xPos, yPos);
         RenderHelper.disableStandardItemLighting();
         GlStateManager.disableDepth();

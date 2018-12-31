@@ -56,18 +56,24 @@ public class WHelp extends WContainer {
     }
 
     private class Doc extends WContainer {
+        Text text = new Text();
+        WSwitcher switcher = new WSwitcher(7, 146, 162, text.amount()).setListener(i -> text.setPage(i.getIndex()));
         public Doc() {
-            Text tContent = new Text();
-            WSwitcher sPage = new WSwitcher(7, 146, 162, tContent.amount());
-            sPage.setListener(i -> tContent.setPage(i.getIndex()));
-            WText tTitle = new WText(7, 7, SHADOW, I18n.get("gui." + key + ".title"));
-            add(new WPanel(), new Icon(), tTitle, tContent, sPage);
+            WText title = new WText(7, 7, SHADOW, I18n.get("gui." + key + ".title"));
+            add(new WPanel(), new Icon(), title, text, switcher);
         }
 
         @Override
         public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
             if (!super.onClicked(gui, xMouse, yMouse, button)) gui.root.remove(this);
             return true;
+        }
+
+        @Override
+        public boolean onScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
+            switcher.move(-diff);
+            text.setPage(switcher.getIndex());
+            return super.onScroll(gui, xMouse, yMouse, diff);
         }
 
         public class Text implements IWidget {

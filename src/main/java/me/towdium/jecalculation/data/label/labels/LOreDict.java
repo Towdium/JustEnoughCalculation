@@ -57,10 +57,6 @@ public class LOreDict extends ILabel.Impl {
         name = nbt.getString(KEY_NAME);
     }
 
-    public boolean isEmpty() {
-        return OreDictionary.getOres(name).isEmpty();
-    }
-
     @Override
     @Nonnull
     public ItemStack getRepresentation() {
