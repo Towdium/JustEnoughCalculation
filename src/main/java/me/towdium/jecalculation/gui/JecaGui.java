@@ -90,20 +90,13 @@ public class JecaGui extends GuiContainer {
             if (diff != 0) gui.root.onScroll(gui, xMouse, yMouse, diff);
         } else if (Mouse.getEventButtonState()) {
             if (gui.root.onClicked(gui, xMouse, yMouse, button)) event.setCanceled(true);
-            else if (button == 0) {
-                if (gui.hand == ILabel.EMPTY) {
-                    ILabel e = JecaPlugin.getLabelUnderMouse();
-                    if (e != ILabel.EMPTY) {
-                        gui.hand = e;
-                        event.setCanceled(true);
-                    }
-                } else {
-                    gui.hand = ILabel.EMPTY;
-                    event.setCanceled(true);
-                }
-            } else if (button == 1) {
-                if (gui.hand != ILabel.EMPTY) {
-                    gui.hand = ILabel.EMPTY;
+            else if (gui.hand != ILabel.EMPTY) {
+                gui.hand = ILabel.EMPTY;
+                event.setCanceled(true);
+            } else {
+                ILabel e = JecaPlugin.getLabelUnderMouse();
+                if (e != ILabel.EMPTY) {
+                    gui.hand = e;
                     event.setCanceled(true);
                 }
             }
@@ -330,7 +323,7 @@ public class JecaGui extends GuiContainer {
         boolean unicode = fontRenderer.getUnicodeFlag();
         if (f.half) fontRenderer.setUnicodeFlag(false);
         GlStateManager.pushMatrix();
-        GlStateManager.translate(xPos, yPos, 0);
+        GlStateManager.translate(unicode && f.half ? xPos - 5 : xPos, yPos, 0);
         if (f.half) GlStateManager.scale(0.5, 0.5, 1);
         r.run();
         GlStateManager.popMatrix();

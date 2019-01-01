@@ -40,6 +40,6 @@ public class GuiDisambiguation extends IPicker.Impl implements IGui {
 
     protected void setPage(int n) {
         lsUp.setLabels(record.get(n));
-        lsDown.setLabels(ILabel.CONVERTER.guess(record.get(n)));
+        lsDown.setLabels(ILabel.CONVERTER.guess(record.get(n)).one);
     }
 }

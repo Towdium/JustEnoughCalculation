@@ -9,10 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
@@ -134,8 +131,8 @@ public class Recipe {
         return ret;
     }
 
-    public boolean matches(ILabel label) {
-        return Arrays.stream(output).anyMatch(i -> ILabel.MERGER.merge(label, i).isPresent());
+    public Optional<ILabel> matches(ILabel label) {
+        return Arrays.stream(output).filter(i -> ILabel.MERGER.merge(label, i).isPresent()).findAny();
     }
 
     public long multiplier(ILabel label) {

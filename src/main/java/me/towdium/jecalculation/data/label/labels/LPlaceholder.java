@@ -46,7 +46,7 @@ public class LPlaceholder extends ILabel.Impl {
     public LPlaceholder(String name, long amount, boolean silent) {
         super(amount, false);
         this.name = name;
-        if (!silent) getRecord().push(new LPlaceholder(name, 1, true));
+        if (!silent) getRecord().push(new LPlaceholder(name, 1, true), false);
     }
 
     public LPlaceholder(LPlaceholder label) {

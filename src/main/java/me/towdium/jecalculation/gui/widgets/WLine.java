@@ -17,14 +17,26 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class WLine implements IWidget {
-    public int y;
+    int xPos, yPos, xSize, ySize;
 
     public WLine(int y) {
-        this.y = y;
+        this(7, y, 162, true);
+    }
+
+    public WLine(int xPos, int yPos, int size, boolean horizontal) {
+        this.yPos = yPos;
+        this.xPos = xPos;
+        if (horizontal) {
+            xSize = size;
+            ySize = 2;
+        } else {
+            xSize = 2;
+            ySize = size;
+        }
     }
 
     @Override
     public void onDraw(JecaGui gui, int xMouse, int yMouse) {
-        gui.drawResourceContinuous(Resource.WGT_SLOT, 7, y - 1, 162, 2, 1);
+        gui.drawResourceContinuous(Resource.WGT_SLOT, xPos, yPos, xSize, ySize, 1);
     }
 }

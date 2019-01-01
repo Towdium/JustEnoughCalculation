@@ -96,29 +96,40 @@ public class LOreDict extends ILabel.Impl {
         return false;
     }
 
-    public static List<ILabel> guess(List<ILabel> iss, @Nullable IRecipeLayout rl) {
+    public static List<ILabel> suggest(List<ILabel> iss, @Nullable IRecipeLayout rl) {
         ILabel l = iss.get(0);
         if (!(l instanceof LItemStack)) return new ArrayList<>();
         LItemStack lis = (LItemStack) l;
         HashSet<Integer> ids = new HashSet<>();
         long amount = lis.getAmount();
         for (int i : OreDictionary.getOreIDs(lis.getRep()))
-            if (check(i, iss)) ids.add(i);
+            if (check(i, iss, true)) ids.add(i);
+        return ids.stream().map(i -> new LOreDict(OreDictionary.getOreName(i), amount))
+                .collect(Collectors.toList());
+    }
+
+    public static List<ILabel> fallback(List<ILabel> iss, @Nullable IRecipeLayout rl) {
+        ILabel l = iss.get(0);
+        if (!(l instanceof LItemStack)) return new ArrayList<>();
+        LItemStack lis = (LItemStack) l;
+        HashSet<Integer> ids = new HashSet<>();
+        long amount = lis.getAmount();
+        for (int i : OreDictionary.getOreIDs(lis.getRep()))
+            if (check(i, iss, false)) ids.add(i);
         return ids.stream().map(i -> new LOreDict(OreDictionary.getOreName(i), amount))
                 .collect(Collectors.toList());
     }
 
     // check labels in the list suitable for the ore id
-    private static boolean check(int id, List<ILabel> labels) {
+    private static boolean check(int id, List<ILabel> labels, boolean biDir) {
         NonNullList<ItemStack> ores = OreDictionary.getOres(OreDictionary.getOreName(id));
-        if (labels.size() == 1 && ores.size() == 1
-                && (ores.get(0).getItemDamage() == OreDictionary.WILDCARD_VALUE || !MODE_FORCE))
+        if (labels.size() == 1 && ores.size() == 1 && biDir && !MODE_FORCE)
             return false;
 
         Wrapper<Boolean> acceptable = new Wrapper<>(true);
         BiPredicate<ILabel, ItemStack> match = (l, o) -> l instanceof LItemStack
                 && OreDictionary.itemMatches(o, ((LItemStack) l).getRep(), false);
-        ores.stream().filter(ore -> labels.stream().noneMatch(label -> match.test(label, ore)))
+        if (biDir) ores.stream().filter(ore -> labels.stream().noneMatch(label -> match.test(label, ore)))
                 .findAny().ifPresent(i -> acceptable.value = false);
         labels.stream().filter(label -> ores.stream().noneMatch(ore -> match.test(label, ore)))
                 .findAny().ifPresent(i -> acceptable.value = false);

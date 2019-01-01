@@ -30,7 +30,7 @@ import static me.towdium.jecalculation.jei.JecaPlugin.runtime;
 @SideOnly(Side.CLIENT)
 public class WLabel implements IWidget {
     public int xPos, yPos, xSize, ySize;
-    public ILabel label;
+    ILabel label;
     public Mode mode;
     public ListenerValue<? super WLabel, ILabel> listener;
     protected Timer timer = new Timer();
@@ -48,8 +48,9 @@ public class WLabel implements IWidget {
         return label;
     }
 
-    public void setLabel(ILabel label) {
+    public WLabel setLabel(ILabel label) {
         this.label = label;
+        return this;
     }
 
     @Override

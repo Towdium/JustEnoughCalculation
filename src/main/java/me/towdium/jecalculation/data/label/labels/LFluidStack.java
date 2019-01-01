@@ -126,7 +126,7 @@ public class LFluidStack extends ILabel.Impl {
     @SideOnly(Side.CLIENT)
     public void getToolTip(List<String> existing, boolean detailed) {
         if (detailed) existing.add(FORMAT_GREY +
-                Utilities.I18n.get("label.common.tooltip.amount", Long.toString(getAmount())) + "mB");
+                Utilities.I18n.get("label.common.amount", Long.toString(getAmount())) + "mB");
         existing.add(FORMAT_BLUE + FORMAT_ITALIC + Utilities.getModName(fluid));
     }
 
@@ -144,7 +144,7 @@ public class LFluidStack extends ILabel.Impl {
 
     private static final String TIC_CLASS = "slimeknights.tconstruct.plugin.jei.casting.CastingRecipeCategory";
 
-    public static List<ILabel> guess(List<ILabel> iss, @Nullable IRecipeLayout rl) {
+    public static List<ILabel> suggest(List<ILabel> iss, @Nullable IRecipeLayout rl) {
         if (rl != null && rl.getRecipeCategory().getClass().getName().equals(TIC_CLASS) && iss.get(0) instanceof LFluidStack)
             return Collections.singletonList(iss.get(0).copy().multiply(0.5f));
         return new ArrayList<>();

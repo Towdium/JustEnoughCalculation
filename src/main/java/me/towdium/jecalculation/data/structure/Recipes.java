@@ -23,6 +23,7 @@ import java.util.stream.StreamSupport;
 @ParametersAreNonnullByDefault
 public class Recipes {
     LinkedHashMap<String, List<Recipe>> records = new LinkedHashMap<>();
+    HashSet<Recipe> cache = new HashSet<>();
 
     public Recipes() {
     }
@@ -47,13 +48,8 @@ public class Recipes {
     }
 
     public void add(String group, Recipe recipe) {
-        if (records.containsKey(group)) {
-            records.get(group).add(recipe);
-        } else {
-            ArrayList<Recipe> l = new ArrayList<>();
-            l.add(recipe);
-            records.put(group, l);
-        }
+        records.computeIfAbsent(group, k -> new ArrayList<>()).add(recipe);
+        cache.add(recipe);
     }
 
     public void modify(String group, int index, @Nullable Recipe recipe) {
@@ -63,7 +59,9 @@ public class Recipes {
     }
 
     public void set(String group, int index, Recipe recipe) {
-        records.get(group).set(index, recipe);
+        Recipe r = records.get(group).set(index, recipe);
+        cache.remove(r);
+        cache.add(recipe);
     }
 
     public int size() {
@@ -76,7 +74,7 @@ public class Recipes {
 
     public void remove(String group, int index) {
         List<Recipe> l = records.get(group);
-        l.remove(index);
+        cache.remove(l.remove(index));
         if (l.isEmpty()) records.remove(group);
     }
 
@@ -96,6 +94,12 @@ public class Recipes {
         records.forEach(consumer);
     }
 
+    /**
+     * Do not modify!
+     *
+     * @param group Name of group to get
+     * @return List of Recipes in group
+     */
     public List<Recipe> getGroup(String group) {
         return records.get(group);
     }
@@ -140,5 +144,13 @@ public class Recipes {
             while (j == null || !j.hasNext()) if (i.hasNext()) j = i.next().getValue().iterator();
             return j.next();
         }
+
+        public Stream<Recipe> stream() {
+            return StreamSupport.stream(Spliterators.spliteratorUnknownSize(this, Spliterator.ORDERED), false);
+        }
+    }
+
+    public boolean hasDuplicate(Recipe r) {
+        return cache.contains(r);
     }
 }

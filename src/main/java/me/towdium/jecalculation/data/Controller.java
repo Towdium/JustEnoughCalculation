@@ -184,17 +184,21 @@ public class Controller {
         }
     }
 
-    public static void setRecent(ILabel label) {
-        if (!serverActive) recentsClient.push(label);
+    public static void setRecent(ILabel label, boolean replace) {
+        if (!serverActive) recentsClient.push(label, replace);
         else {
             Optional<ItemStack> ois = getStack();
             ois.ifPresent(is -> {
                 Recents recent = new Recents(Utilities.getTag(is).getTagList(KEY_RECENTS, 10));
-                recent.push(label);
+                recent.push(label, replace);
                 Utilities.getTag(is).setTag(KEY_RECENTS, recent.serialize());
                 network.sendToServer(new PCalculator(is));
             });
         }
+    }
+
+    public static boolean hasDuplicate(Recipe r) {
+        return getRecord().hasDuplicate(r);
     }
 
     public static void loadFromLocal() {

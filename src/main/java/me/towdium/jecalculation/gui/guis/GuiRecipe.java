@@ -176,7 +176,7 @@ public class GuiRecipe extends WContainer implements IGui {
         for (int i = 0; i < src.size(); i++) {
             Trio<ILabel, CostList, CostList> p = src.get(i);
             ret.add(p.one);
-            if (guess && !ILabel.CONVERTER.guess(p.three.getLabels()).isEmpty())
+            if (guess && !ILabel.CONVERTER.guess(p.three.getLabels()).one.isEmpty())
                 disambiguation.put(i + offset, p.two.getLabels());
         }
         return ret;
@@ -198,8 +198,8 @@ public class GuiRecipe extends WContainer implements IGui {
     void refresh() {
         buttonDisamb.setDisabled(disambiguation.isEmpty());
         try {
-            toRecipe();
-            buttonSave.setDisabled(false);
+            Recipe r = toRecipe();
+            buttonSave.setDisabled(Controller.hasDuplicate(r));
         } catch (IllegalArgumentException e) {
             buttonSave.setDisabled(true);
         }

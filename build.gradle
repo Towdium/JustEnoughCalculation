@@ -25,7 +25,7 @@ compileJava {
 }
 
 minecraft {
-    version = "1.12.2-14.23.3.2669"
+    version = "1.12.2-14.23.5.2796"
     runDir = "run"
     mappings = "stable_39"
     replace '@VERSION@', project.version

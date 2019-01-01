@@ -13,6 +13,7 @@ import me.towdium.jecalculation.gui.guis.pickers.PickerPlaceholder;
 import me.towdium.jecalculation.gui.guis.pickers.PickerSimple;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.Utilities.ReversedIterator;
+import me.towdium.jecalculation.utils.wrappers.Pair;
 import mezz.jei.api.gui.IRecipeLayout;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.Items;
@@ -25,10 +26,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -59,8 +57,10 @@ public interface ILabel {
     ILabel decreaseAmount();
 
     static void initClient() {
-        CONVERTER.register(LOreDict::guess);
-        CONVERTER.register(LFluidStack::guess);
+        CONVERTER.register(LOreDict::suggest, Converter.Priority.SUGGEST);
+        CONVERTER.register(LFluidStack::suggest, Converter.Priority.SUGGEST);
+        CONVERTER.register(LItemStack::fallback, Converter.Priority.FALLBACK);
+        CONVERTER.register(LOreDict::fallback, Converter.Priority.FALLBACK);
         EDITOR.register(PickerSimple.FluidStack::new, "fluid", new LFluidStack(1000, FluidRegistry.WATER));
         EDITOR.register(PickerSimple.OreDict::new, "ore", new LOreDict("ingotIron"));
         EDITOR.register(PickerPlaceholder::new, "placeholder", new LPlaceholder("example", 1, true));
@@ -223,7 +223,15 @@ public interface ILabel {
      * It can also convert ItemStack or FluidStack to ILabel
      */
     class Converter {
-        ArrayList<ConverterFunction> handlers = new ArrayList<>();
+        static EnumMap<Priority, ArrayList<ConverterFunction>> handlers;
+
+        public enum Priority {SUGGEST, FALLBACK}
+
+        static {
+            handlers = new EnumMap<>(Priority.class);
+            handlers.put(Priority.SUGGEST, new ArrayList<>());
+            handlers.put(Priority.FALLBACK, new ArrayList<>());
+        }
 
         public static ILabel from(@Nullable Object o) {
             if (o == null) return ILabel.EMPTY;
@@ -232,13 +240,13 @@ public interface ILabel {
             else throw new RuntimeException("Unrecognized ingredient type: " + o.getClass());
         }
 
-        public void register(ConverterFunction handler) {
-            handlers.add(handler);
+        public void register(ConverterFunction handler, Priority priority) {
+            handlers.get(priority).add(handler);
         }
 
         // get most possible guess from labels
         public ILabel first(List<ILabel> labels, @Nullable IRecipeLayout context) {
-            List<ILabel> guess = guess(labels, context);
+            List<ILabel> guess = guess(labels, context).one;
             return guess.isEmpty() ? labels.get(0) : guess.get(0);
         }
 
@@ -247,13 +255,19 @@ public interface ILabel {
         }
 
         // to test if the labels can be converted to other labels (like oreDict)
-        public List<ILabel> guess(List<ILabel> labels) {
+        public Pair<List<ILabel>, List<ILabel>> guess(List<ILabel> labels) {
             return guess(labels, null);
         }
 
-        public List<ILabel> guess(List<ILabel> labels, @Nullable IRecipeLayout context) {
-            return new ReversedIterator<>(handlers).stream().flatMap(h -> h.convert(labels, context).stream())
+        public Pair<List<ILabel>, List<ILabel>> guess(List<ILabel> labels, @Nullable IRecipeLayout context) {
+            List<ILabel> ret = new ArrayList<>();
+            List<ILabel> suggest = new ReversedIterator<>(handlers.get(Priority.SUGGEST)).stream()
+                    .flatMap(h -> h.convert(labels, context).stream())
                     .collect(Collectors.toList());
+            List<ILabel> fallback = new ReversedIterator<>(handlers.get(Priority.FALLBACK)).stream()
+                    .flatMap(h -> h.convert(labels, context).stream())
+                    .collect(Collectors.toList());
+            return new Pair<>(suggest, fallback);
         }
 
         @FunctionalInterface

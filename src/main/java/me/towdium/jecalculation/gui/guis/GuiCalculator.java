@@ -8,17 +8,19 @@ import me.towdium.jecalculation.data.structure.CostList.Calculator;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.gui.widgets.*;
+import me.towdium.jecalculation.utils.wrappers.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.input.Keyboard;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Author: towdium
@@ -45,11 +47,34 @@ public class GuiCalculator extends WContainer implements IGui {
         Controller.setAmount(i.getText());
         refreshCalculator();
     });
-    WLabel label = new WLabel(31, 7, 20, 20, WLabel.Mode.SELECTOR).setListener((i, v) -> {
-        Controller.setRecent(v);
+    WLabel label = new WLabel(31, 7, 20, 20, WLabel.Mode.SELECTOR).setListener((i, v) -> refreshLabel(v, false));
+
+    private void refreshLabel(ILabel l, boolean replace) {
+        Controller.setRecent(l, replace);
         refreshRecent();
         refreshCalculator();
-    });
+        if (findRecipe(l).isEmpty()) {
+            Pair<List<ILabel>, List<ILabel>> guess = ILabel.CONVERTER.guess(Collections.singletonList(l));
+            LinkedHashSet<ILabel> match = new LinkedHashSet<>();
+            List<ILabel> fuzzy = new ArrayList<>();
+            Stream.of(guess.one, guess.two).flatMap(Collection::stream).forEach(i -> {
+                List<ILabel> list = findRecipe(i);
+                list.forEach(j -> match.add(j.setPercent(false).setAmount(1)));
+                if (!list.isEmpty()) fuzzy.add(i);
+            });
+            match.addAll(fuzzy);
+            List<ILabel> list = new ArrayList<>(match);
+            if (!match.isEmpty()) add(new Suggest(list.size() > 3 ? list.subList(0, 3) : list));
+        }
+    }
+
+    private static List<ILabel> findRecipe(ILabel l) {
+        return Controller.recipeIterator().stream()
+                .map(i -> i.matches(l))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+    }
 
     public GuiCalculator() {
         add(new WHelp("calculator"));
@@ -141,5 +166,41 @@ public class GuiCalculator extends WContainer implements IGui {
 
     enum Mode {
         INPUT, OUTPUT, CATALYST, STEPS
+    }
+
+    class Suggest extends WContainer {
+        public Suggest(List<ILabel> labels) {
+            int width = labels.size() * 20;
+            add(new WPanel(0 - width, 2, 56 + width, 30));
+            add(new WLabel(31, 7, 20, 20, WLabel.Mode.SELECTOR).setLabel(label.getLabel())
+                    .setListener((i, v) -> refresh(v)));
+            add(new WIcon(5 - width, 7, 18, 20, Resource.ICN_HELP, "calculator.suggest"));
+            add(new WLine(26, 7, 20, false));
+            for (int i = 0; i < labels.size(); i++) {
+                add(new WLabel(3 - i * 20, 7, 20, 20, WLabel.Mode.PICKER).setLabel(labels.get(i))
+                        .setListener((j, v) -> refresh(v)));
+            }
+        }
+
+        public void refresh(ILabel l) {
+            GuiCalculator.this.remove(this);
+            refreshLabel(l, true);
+        }
+
+        @Override
+        public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
+            if (!super.onClicked(gui, xMouse, yMouse, button)) GuiCalculator.this.remove(this);
+            return true;
+        }
+
+        @Override
+        public boolean onKey(JecaGui gui, char ch, int code) {
+            if (!super.onKey(gui, ch, code)) {
+                if (code == Keyboard.KEY_ESCAPE) {
+                    GuiCalculator.this.remove(this);
+                    return true;
+                } else return false;
+            } else return true;
+        }
     }
 }

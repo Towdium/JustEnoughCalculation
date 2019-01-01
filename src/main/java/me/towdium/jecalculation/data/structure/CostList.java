@@ -154,7 +154,7 @@ public class CostList {
                 if (label.getAmount() >= 0) continue;
                 while (iterator.hasNext()) {
                     Recipe r = iterator.next();
-                    if (r.matches(label)) return new Pair<>(r, r.multiplier(label));
+                    if (r.matches(label).isPresent()) return new Pair<>(r, r.multiplier(label));
                 }
                 iterator = Controller.recipeIterator();
             }

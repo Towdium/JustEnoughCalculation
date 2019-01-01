@@ -6,6 +6,7 @@ import me.towdium.jecalculation.data.label.ILabel.Serializer.SerializationExcept
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.utils.Utilities;
+import mezz.jei.api.gui.IRecipeLayout;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,6 +16,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -120,17 +122,31 @@ public class LItemStack extends ILabel.Impl {
         return false;
     }
 
-    public ILabel setFMeta(boolean f) {
+    public static List<ILabel> fallback(List<ILabel> iss, @Nullable IRecipeLayout rl) {
+        List<ILabel> ret = new ArrayList<>();
+        if (iss.size() == 1) {
+            ILabel label = iss.get(0);
+            LItemStack lis = (LItemStack) label;
+            if (lis.fCap || lis.fNbt || lis.fMeta) return new ArrayList<>();
+            ret.add(lis.copy().setFMeta(true));
+            ret.add(lis.copy().setFNbt(true));
+            ret.add(lis.copy().setFCap(true));
+            ret.add(lis.copy().setFMeta(true).setFNbt(true).setFCap(true));
+        }
+        return ret;
+    }
+
+    public LItemStack setFMeta(boolean f) {
         fMeta = f;
         return this;
     }
 
-    public ILabel setFNbt(boolean f) {
+    public LItemStack setFNbt(boolean f) {
         fNbt = f;
         return this;
     }
 
-    public ILabel setFCap(boolean f) {
+    public LItemStack setFCap(boolean f) {
         fCap = f;
         return this;
     }
@@ -143,6 +159,9 @@ public class LItemStack extends ILabel.Impl {
     @SideOnly(Side.CLIENT)
     public void getToolTip(List<String> existing, boolean detailed) {
         super.getToolTip(existing, detailed);
+        if (fMeta) existing.add(FORMAT_GREY + Utilities.I18n.get("label.item_stack.fuzzy_meta"));
+        if (fNbt) existing.add(FORMAT_GREY + Utilities.I18n.get("label.item_stack.fuzzy_nbt"));
+        if (fCap) existing.add(FORMAT_GREY + Utilities.I18n.get("label.item_stack.fuzzy_cap"));
         existing.add(FORMAT_BLUE + FORMAT_ITALIC + Utilities.getModName(item));
     }
 

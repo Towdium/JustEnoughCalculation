@@ -283,7 +283,8 @@ public class Utilities {
             this.limit = limit;
         }
 
-        public void push(T obj) {
+        public void push(T obj, boolean replace) {
+            if (replace) data.pop();
             data.removeIf(t -> tester != null ? tester.test(t, obj) : t.equals(obj));
             data.addFirst(obj);
             if (data.size() > limit) data.removeLast();

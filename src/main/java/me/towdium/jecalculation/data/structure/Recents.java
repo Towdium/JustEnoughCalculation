@@ -26,14 +26,14 @@ public class Recents {
                 .filter(n -> n instanceof NBTTagCompound)
                 .map(n -> ILabel.SERIALIZER.deserialize((NBTTagCompound) n))
                 .collect(Collectors.toList());
-        new Utilities.ReversedIterator<>(ls).forEachRemaining(l -> record.push(l));
+        new Utilities.ReversedIterator<>(ls).forEachRemaining(l -> record.push(l, false));
     }
 
     public Recents() {
     }
 
-    public void push(ILabel label) {
-        record.push(label);
+    public void push(ILabel label, boolean replace) {
+        record.push(label, replace);
     }
 
     public ILabel getLatest() {
