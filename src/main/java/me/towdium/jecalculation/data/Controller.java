@@ -15,16 +15,11 @@ import me.towdium.jecalculation.network.packets.PRecord;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -51,9 +46,11 @@ public class Controller {
     public static final String KEY_RECIPES = "recipes";
     public static final String KEY_RECENTS = "recents";
     public static final String KEY_AMOUNT = "amount";
+    public static final String KEY_INVENTORY = "inventory";
     static Recipes recipesClient;
     static Recents recentsClient;
     static String amountClient;
+    static boolean inventoryClient;
     static boolean serverActive = false;
 
     public static boolean isServerActive() {
@@ -123,20 +120,17 @@ public class Controller {
 
     public static void addRecipe(String group, Recipe recipe) {
         getRecord().add(group, recipe);
-        if (serverActive)
-            network.sendToServer(new PRecipe(group, -1, recipe));
+        if (serverActive) network.sendToServer(new PRecipe(group, -1, recipe));
     }
 
     public static void setRecipe(String group, int index, Recipe recipe) {
         getRecord().set(group, index, recipe);
-        if (serverActive)
-            network.sendToServer(new PRecipe(group, index, recipe));
+        if (serverActive) network.sendToServer(new PRecipe(group, index, recipe));
     }
 
     public static void removeRecipe(String group, int index) {
         getRecord().remove(group, index);
-        if (serverActive)
-            network.sendToServer(new PRecipe(group, index, null));
+        if (serverActive) network.sendToServer(new PRecipe(group, index, null));
     }
 
     public static Recipe getRecipe(String group, int index) {
@@ -168,7 +162,25 @@ public class Controller {
 
     public static void setAmount(String amount) {
         if (!serverActive) amountClient = amount;
-        else getStack().ifPresent(is -> Utilities.getTag(is).setString(KEY_AMOUNT, amount));
+        else getStack().ifPresent(is -> {
+            Utilities.getTag(is).setString(KEY_AMOUNT, amount);
+            network.sendToServer(new PCalculator(is));
+        });
+    }
+
+    public static boolean getDetectInv() {
+        if (!serverActive) return inventoryClient;
+        else return getStack()
+                .map(is -> Utilities.getTag(is).getBoolean(KEY_INVENTORY))
+                .orElseGet(() -> inventoryClient);
+    }
+
+    public static void setDetectInv(boolean b) {
+        if (!serverActive) inventoryClient = b;
+        else getStack().ifPresent(is -> {
+            Utilities.getTag(is).setBoolean(KEY_INVENTORY, b);
+            network.sendToServer(new PCalculator(is));
+        });
     }
 
     public static List<ILabel> getRecent() {
@@ -210,6 +222,7 @@ public class Controller {
             recipesClient = nbt.hasKey(KEY_RECIPES) ? new Recipes(nbt.getCompoundTag(KEY_RECIPES)) : new Recipes();
             recentsClient = nbt.hasKey(KEY_RECENTS) ? new Recents(nbt.getTagList(KEY_RECENTS, 10)) : new Recents();
             amountClient = nbt.hasKey(KEY_AMOUNT) ? nbt.getString(KEY_AMOUNT) : "";
+            inventoryClient = !nbt.hasKey(KEY_INVENTORY) || nbt.getBoolean(KEY_INVENTORY);
             return;
         }
         file = new File(Loader.instance().getConfigDir(), "JustEnoughCalculation/default.json");
@@ -217,6 +230,7 @@ public class Controller {
         recipesClient = nbt == null ? new Recipes() : new Recipes(nbt);
         recentsClient = new Recents();
         amountClient = "";
+        inventoryClient = true;
     }
 
     public static void writeToLocal() {
@@ -225,6 +239,7 @@ public class Controller {
         nbt.setTag(KEY_RECENTS, recentsClient.serialize());
         nbt.setTag(KEY_RECIPES, recipesClient.serialize());
         nbt.setString(KEY_AMOUNT, amountClient);
+        nbt.setBoolean(KEY_INVENTORY, inventoryClient);
         Utilities.Json.write(nbt, file);
     }
 
@@ -240,19 +255,5 @@ public class Controller {
     public static void onJoin(PlayerLoggedInEvent e) {
         if (!JecaConfig.clientMode)
             network.sendTo(new PRecord(JecaCapability.getRecipes(e.player)), (EntityPlayerMP) e.player);
-    }
-
-    @SubscribeEvent
-    public static void onAttachCapability(AttachCapabilitiesEvent<Entity> e) {
-        if (e.getObject() instanceof EntityPlayer) {
-            e.addCapability(new ResourceLocation(JustEnoughCalculation.Reference.MODID, "recipes"),
-                    new JecaCapability.Provider(new Recipes()));
-        }
-    }
-
-    @SubscribeEvent
-    public void onCloneCapability(PlayerEvent.Clone e) {
-        Recipes ro = JecaCapability.getRecipes(e.getOriginal());
-        JecaCapability.getRecipes(e.getEntityPlayer()).deserialize(ro.serialize());
     }
 }

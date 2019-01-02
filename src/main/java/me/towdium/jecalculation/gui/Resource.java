@@ -64,6 +64,10 @@ public class Resource {
     public static final Resource BTN_EXPORT_1_N = getIcon(15, 1);
     public static final Resource BTN_EXPORT_1_F = getIcon(15, 0);
     public static final Resource BTN_EXPORT_1_D = getIcon(15, 2);
+    public static final Resource BTN_INV_E_N = getIcon(16, 1);
+    public static final Resource BTN_INV_E_F = getIcon(16, 0);
+    public static final Resource BTN_INV_D_N = getIcon(17, 1);
+    public static final Resource BTN_INV_D_F = getIcon(17, 0);
     public static final Resource BTN_CAP_N_N = getIcon(0, 4);
     public static final Resource BTN_CAP_N_F = getIcon(0, 3);
     public static final Resource BTN_CAP_F_N = getIcon(1, 4);
@@ -147,6 +151,9 @@ public class Resource {
     public static final ResourceGroup BTN_IMPORT = new ResourceGroup(BTN_IMPORT_N, BTN_IMPORT_F, BTN_IMPORT_D);
     public static final ResourceGroup BTN_EXPORT_N = new ResourceGroup(BTN_EXPORT_N_N, BTN_EXPORT_N_F, BTN_EXPORT_N_D);
     public static final ResourceGroup BTN_EXPORT_1 = new ResourceGroup(BTN_EXPORT_1_N, BTN_EXPORT_1_F, BTN_EXPORT_1_D);
+    public static final ResourceGroup BTN_INV_E = new ResourceGroup(BTN_INV_E_N, BTN_INV_E_F);
+    public static final ResourceGroup BTN_INV_D = new ResourceGroup(BTN_INV_D_N, BTN_INV_D_F);
+
     public static final ResourceGroup BTN_META_N = new ResourceGroup(BTN_META_N_N, BTN_META_N_F, BTN_META_D);
     public static final ResourceGroup BTN_CAP_N = new ResourceGroup(BTN_CAP_N_N, BTN_CAP_N_F, BTN_CAP_D);
     public static final ResourceGroup BTN_NBT_N = new ResourceGroup(BTN_NBT_N_N, BTN_NBT_N_F, BTN_NBT_D);

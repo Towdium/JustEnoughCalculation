@@ -2,6 +2,7 @@ package me.towdium.jecalculation.gui.guis;
 
 import com.google.common.collect.Streams;
 import me.towdium.jecalculation.data.Controller;
+import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.structure.Recipe;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
@@ -13,9 +14,10 @@ import net.minecraft.util.text.TextComponentTranslation;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import static me.towdium.jecalculation.gui.Resource.*;
 import static me.towdium.jecalculation.gui.widgets.WLabel.Mode.PICKER;
@@ -23,10 +25,12 @@ import static me.towdium.jecalculation.gui.widgets.WLabel.Mode.PICKER;
 public class GuiSearch extends WContainer implements IGui {
     WSwitcher group;
     WButton export;
-    List<Trio<Recipe, String, Integer>> recipes;
-    WLabelScroll labels = new WLabelScroll(7, 51, 8, 6, PICKER, true).setListener((i, v) ->
-            JecaGui.displayGui(true, true, new GuiRecipe(recipes.get(v).two, recipes.get(v).three)));
-
+    List<ILabel> identifiers;
+    IdentityHashMap<ILabel, Trio<Recipe, String, Integer>> recipes;
+    WLabelScroll labels = new WLabelScroll(7, 51, 8, 6, PICKER, true).setListener((i, v) -> {
+        Trio<Recipe, String, Integer> recipe = recipes.get(i.get(v));
+        JecaGui.displayGui(true, true, new GuiRecipe(recipe.two, recipe.three));
+    });
 
     public GuiSearch() {
         add(new WHelp("search"), new WPanel());
@@ -38,14 +42,22 @@ public class GuiSearch extends WContainer implements IGui {
     }
 
     private void generate() {
+        identifiers = new ArrayList<>();
+        recipes = new IdentityHashMap<>();
+        Consumer<Trio<Recipe, String, Integer>> add = i -> {
+            ILabel id = i.one.getRep();
+            recipes.put(id, i);
+            identifiers.add(id);
+        };
+
         if (group.getIndex() == 0) {
-            recipes = Controller.stream()
+            Controller.stream()
                     .flatMap(i -> Streams.mapWithIndex(i.two.stream(), (j, k) -> new Trio<>(j, i.one, (int) k)))
-                    .collect(Collectors.toList());
+                    .forEach(add);
         } else {
             String s = group.getText();
-            recipes = Streams.mapWithIndex(Controller.getRecipes(s).stream(), (i, j) -> new Trio<>(i, s, (int) j))
-                    .collect(Collectors.toList());
+            Streams.mapWithIndex(Controller.getRecipes(s).stream(), (j, k) -> new Trio<>(j, s, (int) k))
+                    .forEach(add);
         }
     }
 
@@ -64,7 +76,7 @@ public class GuiSearch extends WContainer implements IGui {
             func = () -> Controller.export(group.getText());
             texture = Resource.BTN_EXPORT_1;
         }
-        labels.setLabels(recipes.stream().map(i -> i.one.getRep()).collect(Collectors.toList()));
+        labels.setLabels(identifiers);
         export = new WButtonIcon(149, 25, 20, 20, texture, tooltip).setListener(i -> {
             File f = func.get();
             Minecraft.getMinecraft().player.sendMessage(new TextComponentTranslation(

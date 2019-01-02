@@ -48,33 +48,8 @@ public class GuiCalculator extends WContainer implements IGui {
         refreshCalculator();
     });
     WLabel label = new WLabel(31, 7, 20, 20, WLabel.Mode.SELECTOR).setListener((i, v) -> refreshLabel(v, false));
-
-    private void refreshLabel(ILabel l, boolean replace) {
-        Controller.setRecent(l, replace);
-        refreshRecent();
-        refreshCalculator();
-        if (findRecipe(l).isEmpty()) {
-            Pair<List<ILabel>, List<ILabel>> guess = ILabel.CONVERTER.guess(Collections.singletonList(l));
-            LinkedHashSet<ILabel> match = new LinkedHashSet<>();
-            List<ILabel> fuzzy = new ArrayList<>();
-            Stream.of(guess.one, guess.two).flatMap(Collection::stream).forEach(i -> {
-                List<ILabel> list = findRecipe(i);
-                list.forEach(j -> match.add(j.setPercent(false).setAmount(1)));
-                if (!list.isEmpty()) fuzzy.add(i);
-            });
-            match.addAll(fuzzy);
-            List<ILabel> list = new ArrayList<>(match);
-            if (!match.isEmpty()) add(new Suggest(list.size() > 3 ? list.subList(0, 3) : list));
-        }
-    }
-
-    private static List<ILabel> findRecipe(ILabel l) {
-        return Controller.recipeIterator().stream()
-                .map(i -> i.matches(l))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toList());
-    }
+    WButton invE = new WButtonIcon(149, 62, 20, 20, Resource.BTN_INV_E, "calculator.inventory_enabled");
+    WButton invD = new WButtonIcon(149, 62, 20, 20, Resource.BTN_INV_D, "calculator.inventory_disabled");
 
     public GuiCalculator() {
         add(new WHelp("calculator"));
@@ -91,7 +66,19 @@ public class GuiCalculator extends WContainer implements IGui {
         add(new WText(53, 13, JecaGui.Font.PLAIN, "x"));
         add(new WLine(55));
         add(new WIcon(151, 31, 18, 18, Resource.ICN_RECENT, "calculator.history"));
-        add(recent, label, input, output, catalyst, steps, result, amount);
+        add(recent, label, input, output, catalyst, steps, result, amount, Controller.getDetectInv() ? invE : invD);
+        invE.setListener(i -> {
+            Controller.setDetectInv(false);
+            remove(invE);
+            add(invD);
+            refreshCalculator();
+        });
+        invD.setListener(i -> {
+            Controller.setDetectInv(true);
+            remove(invD);
+            add(invE);
+            refreshCalculator();
+        });
         refreshRecent();
         setMode(Mode.INPUT);
     }
@@ -122,7 +109,8 @@ public class GuiCalculator extends WContainer implements IGui {
             long i = s.isEmpty() ? 1 : Long.parseLong(amount.getText());
             amount.setColor(JecaGui.COLOR_TEXT_WHITE);
             List<ILabel> dest = Collections.singletonList(label.getLabel().copy().setAmount(i));
-            calculator = new CostList(getInventory(), dest).calculate();
+            CostList list = Controller.getDetectInv() ? new CostList(getInventory(), dest) : new CostList(dest);
+            calculator = list.calculate();
         } catch (NumberFormatException | ArithmeticException e) {
             amount.setColor(JecaGui.COLOR_TEXT_RED);
             calculator = null;
@@ -162,6 +150,33 @@ public class GuiCalculator extends WContainer implements IGui {
                     break;
             }
         }
+    }
+
+    private void refreshLabel(ILabel l, boolean replace) {
+        Controller.setRecent(l, replace);
+        refreshRecent();
+        refreshCalculator();
+        if (findRecipe(l).isEmpty()) {
+            Pair<List<ILabel>, List<ILabel>> guess = ILabel.CONVERTER.guess(Collections.singletonList(l));
+            LinkedHashSet<ILabel> match = new LinkedHashSet<>();
+            List<ILabel> fuzzy = new ArrayList<>();
+            Stream.of(guess.one, guess.two).flatMap(Collection::stream).forEach(i -> {
+                List<ILabel> list = findRecipe(i);
+                list.forEach(j -> match.add(j.setPercent(false).setAmount(1)));
+                if (!list.isEmpty()) fuzzy.add(i);
+            });
+            match.addAll(fuzzy);
+            List<ILabel> list = new ArrayList<>(match);
+            if (!match.isEmpty()) add(new Suggest(list.size() > 3 ? list.subList(0, 3) : list));
+        }
+    }
+
+    private static List<ILabel> findRecipe(ILabel l) {
+        return Controller.recipeIterator().stream()
+                .map(i -> i.matches(l))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
     }
 
     enum Mode {

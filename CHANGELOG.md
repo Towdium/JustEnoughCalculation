@@ -2,7 +2,6 @@
 
 #### Todo list
 
-Fix meta and nbt mismatch  
 Add math calculator  
 Add options for inventory detection  
 Add nested grouping
@@ -30,3 +29,7 @@ Fixed Amount rendering in unicode environment
 Fixed Right click to pick item from JEI item list    
 Updated Forge version  
 
+#### 3.0.0-pre16
+
+Added Option to toggle inventory detection
+Fixed GuiRecipe item mismatched when searching
