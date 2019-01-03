@@ -93,9 +93,9 @@ public class Resource {
     public static final Resource WGT_SLOT = getWidget(6);
     public static final Resource WGT_PANEL_N = getWidget(7);
     public static final Resource WGT_PANEL_F = getWidget(8);
-    public static final Resource WGT_PAGER_FN = getWidget(9);
-    public static final Resource WGT_PAGER_F0 = getWidget(10);
-    public static final Resource WGT_HELP_B = getWidget(11);
+    public static final Resource WGT_PAGER_F = getWidget(9);
+    public static final Resource WGT_HELP_B = getWidget(10);
+    public static final Resource WGT_LCD_BG = getWidget(11);
 
     public static final Resource WGT_ARR_L_F = new Resource(112, 132, 7, 10);
     public static final Resource WGT_ARR_L_N = new Resource(119, 132, 7, 10);

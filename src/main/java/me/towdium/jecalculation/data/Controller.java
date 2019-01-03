@@ -15,11 +15,12 @@ import me.towdium.jecalculation.network.packets.PRecord;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -68,11 +69,11 @@ public class Controller {
         else return recipesClient;
     }
 
-    static Optional<ItemStack> getStack() {
-        InventoryPlayer inv = Minecraft.getMinecraft().player.inventory;
-        ItemStack is = inv.getCurrentItem();
+    public static Optional<ItemStack> getStack() {
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        ItemStack is = player.getHeldItem(EnumHand.MAIN_HAND);
         if (is.getItem() instanceof JecaItem) return Optional.of(is);
-        is = inv.offHandInventory.get(0);
+        is = player.getHeldItem(EnumHand.OFF_HAND);
         return Optional.ofNullable(is.getItem() instanceof JecaItem ? is : null);
     }
 

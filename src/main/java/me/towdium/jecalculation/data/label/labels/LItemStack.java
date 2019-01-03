@@ -126,6 +126,7 @@ public class LItemStack extends ILabel.Impl {
         List<ILabel> ret = new ArrayList<>();
         if (iss.size() == 1) {
             ILabel label = iss.get(0);
+            if (!(label instanceof LItemStack)) return ret;
             LItemStack lis = (LItemStack) label;
             if (lis.fCap || lis.fNbt || lis.fMeta) return new ArrayList<>();
             ret.add(lis.copy().setFMeta(true));

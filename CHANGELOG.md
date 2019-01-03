@@ -3,7 +3,6 @@
 #### Todo list
 
 Add math calculator  
-Add options for inventory detection  
 Add nested grouping
 
 #### 3.0.0-pre13
@@ -31,5 +30,11 @@ Updated Forge version
 
 #### 3.0.0-pre16
 
-Added Option to toggle inventory detection
+Added Option to toggle inventory detection  
 Fixed GuiRecipe item mismatched when searching
+
+#### 3.0.0-pre17
+
+Added Shift-click switching of calculator types  
+Changed Right click will clear text field content  
+Fixed Crash caused by unchecked type cast
