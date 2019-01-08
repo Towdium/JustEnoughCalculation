@@ -177,7 +177,8 @@ public class JecaGui extends GuiContainer {
     public static void onKey(InputEvent.KeyInputEvent event) {
         if (ProxyClient.keyOpenGui.isPressed()) {
             if (!Controller.isServerActive()) JecaGui.displayGui(true, true, new GuiCalculator());
-            else Minecraft.getMinecraft().player.sendMessage(new TextComponentTranslation("chat.server_mode"));
+            else Minecraft.getMinecraft().player.sendMessage(
+                    new TextComponentTranslation("jecalculation.chat.server_mode"));
         }
     }
 

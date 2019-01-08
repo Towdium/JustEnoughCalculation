@@ -38,3 +38,9 @@ Fixed GuiRecipe item mismatched when searching
 Added Shift-click switching of calculator types  
 Changed Right click will clear text field content  
 Fixed Crash caused by unchecked type cast
+
+#### 3.0.0-pre18
+
+Fixed Losing records on death (and comes back after reload)  
+Fixed Default records not loaded in server mode  
+Improved Console output for default records loading

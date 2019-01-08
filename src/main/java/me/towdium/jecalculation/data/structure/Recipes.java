@@ -2,12 +2,15 @@ package me.towdium.jecalculation.data.structure;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
+import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.fml.common.Loader;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.io.File;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
@@ -26,13 +29,20 @@ public class Recipes {
     HashSet<Recipe> cache = new HashSet<>();
 
     public Recipes() {
+        File file = new File(Loader.instance().getConfigDir(), "JustEnoughCalculation/default.json");
+        NBTTagCompound nbt = Utilities.Json.read(file);
+        if (nbt == null) JustEnoughCalculation.logger.info("Failed to load default records at " + file + ".");
+        else {
+            JustEnoughCalculation.logger.info("Loading default records at " + file + ".");
+            deserialize(nbt);
+        }
     }
 
     public Recipes(NBTTagCompound nbt) {
         deserialize(nbt);
     }
 
-    public void deserialize(NBTTagCompound nbt) {
+    protected void deserialize(NBTTagCompound nbt) {
         nbt.getKeySet().stream().sorted().forEach(i -> {
             NBTTagList group = nbt.getTagList(i, 10);
             StreamSupport.stream(group.spliterator(), false)
@@ -95,7 +105,7 @@ public class Recipes {
     }
 
     /**
-     * Do not modify!
+     * Do not modify return value!
      *
      * @param group Name of group to get
      * @return List of Recipes in group

@@ -1,12 +1,8 @@
 package me.towdium.jecalculation.network.packets;
 
 import io.netty.buffer.ByteBuf;
-import me.towdium.jecalculation.JecaCapability;
-import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.structure.Recipes;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -42,14 +38,7 @@ public class PRecord implements IMessage {
     public static class Handler implements IMessageHandler<PRecord, IMessage> {
         @Override
         public IMessage onMessage(PRecord message, MessageContext ctx) {
-            Minecraft.getMinecraft().addScheduledTask(() -> {
-                EntityPlayer player = JustEnoughCalculation.proxy.getPlayer();
-                if (player != null) {
-                    Recipes recipes = JecaCapability.getRecipes(player);
-                    recipes.deserialize(message.recipes);
-                }
-            });
-            Controller.setServerActive(true);
+            Controller.setRecipesServer(new Recipes(message.recipes));
             return null;
         }
     }

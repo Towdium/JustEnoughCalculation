@@ -19,7 +19,6 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
@@ -52,20 +51,18 @@ public class Controller {
     static Recents recentsClient;
     static String amountClient;
     static boolean inventoryClient;
-    static boolean serverActive = false;
+    static Recipes recipesServer;
 
-    public static boolean isServerActive() {
-        return serverActive;
+    public static void setRecipesServer(Recipes r) {
+        recipesServer = r;
     }
 
-    public static void setServerActive(boolean serverActive) {
-        Controller.serverActive = serverActive;
+    public static boolean isServerActive() {
+        return recipesServer != null;
     }
 
     static Recipes getRecord() {
-        if (serverActive)
-            //noinspection ConstantConditions
-            return Minecraft.getMinecraft().player.getCapability(JecaCapability.CAPABILITY_RECORD, EnumFacing.UP);
+        if (isServerActive()) return recipesServer;
         else return recipesClient;
     }
 
@@ -121,17 +118,17 @@ public class Controller {
 
     public static void addRecipe(String group, Recipe recipe) {
         getRecord().add(group, recipe);
-        if (serverActive) network.sendToServer(new PRecipe(group, -1, recipe));
+        if (isServerActive()) network.sendToServer(new PRecipe(group, -1, recipe));
     }
 
     public static void setRecipe(String group, int index, Recipe recipe) {
         getRecord().set(group, index, recipe);
-        if (serverActive) network.sendToServer(new PRecipe(group, index, recipe));
+        if (isServerActive()) network.sendToServer(new PRecipe(group, index, recipe));
     }
 
     public static void removeRecipe(String group, int index) {
         getRecord().remove(group, index);
-        if (serverActive) network.sendToServer(new PRecipe(group, index, null));
+        if (isServerActive()) network.sendToServer(new PRecipe(group, index, null));
     }
 
     public static Recipe getRecipe(String group, int index) {
@@ -155,14 +152,14 @@ public class Controller {
     }
 
     public static String getAmount() {
-        if (!serverActive) return amountClient;
+        if (!isServerActive()) return amountClient;
         else return getStack()
                 .map(is -> Utilities.getTag(is).getString(KEY_AMOUNT))
                 .orElseGet(() -> amountClient);
     }
 
     public static void setAmount(String amount) {
-        if (!serverActive) amountClient = amount;
+        if (!isServerActive()) amountClient = amount;
         else getStack().ifPresent(is -> {
             Utilities.getTag(is).setString(KEY_AMOUNT, amount);
             network.sendToServer(new PCalculator(is));
@@ -170,14 +167,14 @@ public class Controller {
     }
 
     public static boolean getDetectInv() {
-        if (!serverActive) return inventoryClient;
+        if (!isServerActive()) return inventoryClient;
         else return getStack()
                 .map(is -> Utilities.getTag(is).getBoolean(KEY_INVENTORY))
                 .orElseGet(() -> inventoryClient);
     }
 
     public static void setDetectInv(boolean b) {
-        if (!serverActive) inventoryClient = b;
+        if (!isServerActive()) inventoryClient = b;
         else getStack().ifPresent(is -> {
             Utilities.getTag(is).setBoolean(KEY_INVENTORY, b);
             network.sendToServer(new PCalculator(is));
@@ -185,7 +182,7 @@ public class Controller {
     }
 
     public static List<ILabel> getRecent() {
-        if (!serverActive) return recentsClient.getRecords();
+        if (!isServerActive()) return recentsClient.getRecords();
         else {
             ArrayList<ILabel> ret = new ArrayList<>();
             Optional<ItemStack> ois = getStack();
@@ -198,7 +195,7 @@ public class Controller {
     }
 
     public static void setRecent(ILabel label, boolean replace) {
-        if (!serverActive) recentsClient.push(label, replace);
+        if (!isServerActive()) recentsClient.push(label, replace);
         else {
             Optional<ItemStack> ois = getStack();
             ois.ifPresent(is -> {
@@ -224,14 +221,12 @@ public class Controller {
             recentsClient = nbt.hasKey(KEY_RECENTS) ? new Recents(nbt.getTagList(KEY_RECENTS, 10)) : new Recents();
             amountClient = nbt.hasKey(KEY_AMOUNT) ? nbt.getString(KEY_AMOUNT) : "";
             inventoryClient = !nbt.hasKey(KEY_INVENTORY) || nbt.getBoolean(KEY_INVENTORY);
-            return;
+        } else {
+            recipesClient = new Recipes();
+            recentsClient = new Recents();
+            amountClient = "";
+            inventoryClient = true;
         }
-        file = new File(Loader.instance().getConfigDir(), "JustEnoughCalculation/default.json");
-        nbt = Utilities.Json.read(file);
-        recipesClient = nbt == null ? new Recipes() : new Recipes(nbt);
-        recentsClient = new Recents();
-        amountClient = "";
-        inventoryClient = true;
     }
 
     public static void writeToLocal() {
@@ -248,7 +243,7 @@ public class Controller {
     @SubscribeEvent
     public static void onLogOut(ClientDisconnectionFromServerEvent event) {
         writeToLocal();
-        serverActive = false;
+        recipesServer = null;
     }
 
     // server side

@@ -1,9 +1,10 @@
 package me.towdium.jecalculation;
 
+import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.structure.Recipes;
-import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -14,40 +15,57 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.File;
+import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Objects;
 
 /**
  * Author: Towdium
  * Date: 18-9-24
  */
 @Mod.EventBusSubscriber
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class JecaCapability {
     @CapabilityInject(Recipes.class)
-    public static final Capability<Recipes> CAPABILITY_RECORD = null;
+    public static final Capability<Container> CAPABILITY_RECORD = null;
 
     public static Recipes getRecipes(EntityPlayer player) {
         //noinspection ConstantConditions
-        return player.getCapability(JecaCapability.CAPABILITY_RECORD, EnumFacing.UP);
+        Container c = player.getCapability(JecaCapability.CAPABILITY_RECORD, EnumFacing.UP);
+        Objects.requireNonNull(c);
+        return c.get();
     }
 
     @SubscribeEvent
     public static void onAttachCapability(AttachCapabilitiesEvent<Entity> e) {
-        if (e.getObject() instanceof EntityPlayer) {
+        if (e.getObject() instanceof EntityPlayerMP) {
             e.addCapability(new ResourceLocation(JustEnoughCalculation.Reference.MODID, "recipes"),
-                    new JecaCapability.Provider(new Recipes()));
+                    new JecaCapability.Provider());
         }
     }
 
     @SubscribeEvent
-    public void onCloneCapability(PlayerEvent.Clone e) {
-        Recipes ro = JecaCapability.getRecipes(e.getOriginal());
-        JecaCapability.getRecipes(e.getEntityPlayer()).deserialize(ro.serialize());
+    public static void onCloneCapability(PlayerEvent.Clone e) {
+        Recipes r = JecaCapability.getRecipes(e.getOriginal());
+        //noinspection ConstantConditions
+        e.getEntityPlayer().getCapability(JecaCapability.CAPABILITY_RECORD, EnumFacing.UP).set(r);
+    }
+
+    public static class Container {
+        Recipes recipes;
+
+        public Recipes get() {
+            if (recipes == null) recipes = new Recipes();
+            return recipes;
+        }
+
+        public void set(Recipes r) {
+            recipes = r;
+        }
     }
 
     public static class Storage implements Capability.IStorage<Recipes> {
@@ -62,37 +80,34 @@ public class JecaCapability {
     }
 
     public static class Provider implements ICapabilityProvider, INBTSerializable<NBTTagCompound> {
-        Recipes record;
+        Container container;
 
-        public Provider(Recipes record) {
-            this.record = record;
+        public Provider() {
+            container = new Container();
         }
 
         @Override
-        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+        public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
             //noinspection ConstantConditions
             return capability == JecaCapability.CAPABILITY_RECORD;
         }
 
         @Nullable
         @Override
-        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+        public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
             //noinspection unchecked,ConstantConditions
-            return capability == JecaCapability.CAPABILITY_RECORD ? (T) record : null;
+            return capability == JecaCapability.CAPABILITY_RECORD ? (T) container : null;
         }
 
         @Override
         public NBTTagCompound serializeNBT() {
-            return record.serialize();
+            if (container.recipes == null) container.recipes = new Recipes();
+            return container.recipes.serialize();
         }
 
         @Override
         public void deserializeNBT(NBTTagCompound nbt) {
-            if (nbt.isEmpty()) {
-                File file = new File(Loader.instance().getConfigDir(), "JustEnoughCalculation/default.json");
-                nbt = Utilities.Json.read(file);
-                if (nbt != null) record.deserialize(nbt);
-            } else record.deserialize(nbt);
+            container.recipes = new Recipes(nbt);
         }
     }
 }

@@ -305,9 +305,8 @@ public class Utilities {
         public static NBTTagCompound read(File f) {
             try {
                 String s = FileUtils.readFileToString(f, "UTF-8");
-                return JsonToNBT.getTagFromJson(s);
-            } catch (NBTException | IOException e) {
-                e.printStackTrace();
+                return read(s);
+            } catch (IOException e) {
                 return null;
             }
         }
