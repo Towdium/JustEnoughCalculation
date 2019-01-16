@@ -36,8 +36,7 @@ public class JecaCapability {
     public static Recipes getRecipes(EntityPlayer player) {
         //noinspection ConstantConditions
         Container c = player.getCapability(JecaCapability.CAPABILITY_RECORD, EnumFacing.UP);
-        Objects.requireNonNull(c);
-        return c.get();
+        return Objects.requireNonNull(c).get();
     }
 
     @SubscribeEvent

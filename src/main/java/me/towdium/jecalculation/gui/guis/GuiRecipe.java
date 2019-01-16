@@ -148,8 +148,8 @@ public class GuiRecipe extends WContainer implements IGui {
         }
 
         // generate disamb info according to content in list input/output
-        groupInput.setLabel(sort(input, 0, true), 0);
-        groupOutput.setLabel(sort(output, 21, false), 0);
+        groupInput.setLabel(sort(input, 0), 0);
+        groupOutput.setLabel(sort(output, 21), 0);
         refresh();
     }
 
@@ -171,13 +171,12 @@ public class GuiRecipe extends WContainer implements IGui {
         });
     }
 
-    private ArrayList<ILabel> sort(ArrayList<Trio<ILabel, CostList, CostList>> src, int offset, boolean guess) {
+    private ArrayList<ILabel> sort(ArrayList<Trio<ILabel, CostList, CostList>> src, int offset) {
         ArrayList<ILabel> ret = new ArrayList<>();
         for (int i = 0; i < src.size(); i++) {
             Trio<ILabel, CostList, CostList> p = src.get(i);
             ret.add(p.one);
-            if (guess && !ILabel.CONVERTER.guess(p.three.getLabels()).one.isEmpty())
-                disambiguation.put(i + offset, p.two.getLabels());
+            if (p.two.getLabels().size() > 1) disambiguation.put(i + offset, p.two.getLabels());
         }
         return ret;
     }

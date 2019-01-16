@@ -44,3 +44,8 @@ Fixed Crash caused by unchecked type cast
 Fixed Losing records on death (and comes back after reload)  
 Fixed Default records not loaded in server mode  
 Improved Console output for default records loading
+
+#### 3.0.0-pre19
+
+Added Intelligent inference for itemStacks  
+Changed Fuzzy LItemStack will not record fuzzy data

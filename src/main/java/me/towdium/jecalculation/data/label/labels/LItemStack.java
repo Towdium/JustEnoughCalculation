@@ -17,6 +17,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -84,14 +85,14 @@ public class LItemStack extends ILabel.Impl {
                       @Nullable NBTTagCompound nbt, boolean fMeta, boolean fCap, boolean fNbt) {
         Objects.requireNonNull(item);
         this.item = item;
-        this.meta = meta;
-        this.cap = cap;
-        this.nbt = nbt;
+        this.meta = fMeta ? 0 : meta;
+        this.cap = fCap ? null : cap;
+        this.nbt = fNbt ? null : nbt;
         this.fMeta = fMeta;
         this.fCap = fCap;
         this.fNbt = fNbt;
-        temp = new ItemStack(item, 1, meta, cap);
-        temp.setTagCompound(nbt);
+        temp = new ItemStack(item, 1, this.meta, this.cap);
+        temp.setTagCompound(this.nbt);
     }
 
     @Nullable
@@ -122,6 +123,25 @@ public class LItemStack extends ILabel.Impl {
         return false;
     }
 
+    public static List<ILabel> suggest(List<ILabel> iss, @Nullable IRecipeLayout rl) {
+        if (iss.size() == 0) return new ArrayList<>();
+        for (ILabel i : iss) if (!(i instanceof LItemStack)) return new ArrayList<>();
+        LItemStack lis = (LItemStack) iss.get(0);
+        boolean fMeta = false;
+        boolean fNbt = false;
+        boolean fCap = false;
+        for (ILabel i : iss) {
+            LItemStack ii = (LItemStack) i;
+            if (ii.item != lis.item) return new ArrayList<>();
+            if (ii.meta != lis.meta || ii.fMeta) fMeta = true;
+            if (ii.nbt == null ? lis.nbt != null : !ii.nbt.equals(lis.nbt)) fNbt = true;
+            if (ii.cap == null ? lis.cap != null : !ii.cap.equals(lis.cap)) fCap = true;
+        }
+        if (fMeta || fNbt || fCap) return Collections.singletonList(
+                lis.copy().setFCap(fCap).setFMeta(fMeta).setFNbt(fNbt));
+        else return new ArrayList<>();
+    }
+
     public static List<ILabel> fallback(List<ILabel> iss, @Nullable IRecipeLayout rl) {
         List<ILabel> ret = new ArrayList<>();
         if (iss.size() == 1) {
@@ -139,16 +159,25 @@ public class LItemStack extends ILabel.Impl {
 
     public LItemStack setFMeta(boolean f) {
         fMeta = f;
+        if (f) meta = 0;
+        temp = new ItemStack(item, 1, meta, cap);
+        temp.setTagCompound(nbt);
         return this;
     }
 
     public LItemStack setFNbt(boolean f) {
         fNbt = f;
+        if (f) nbt = null;
+        temp = new ItemStack(item, 1, meta, cap);
+        temp.setTagCompound(nbt);
         return this;
     }
 
     public LItemStack setFCap(boolean f) {
         fCap = f;
+        if (f) cap = null;
+        temp = new ItemStack(item, 1, meta, cap);
+        temp.setTagCompound(nbt);
         return this;
     }
 

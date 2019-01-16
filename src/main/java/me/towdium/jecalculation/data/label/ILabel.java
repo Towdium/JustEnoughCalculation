@@ -57,6 +57,7 @@ public interface ILabel {
     ILabel decreaseAmount();
 
     static void initClient() {
+        CONVERTER.register(LItemStack::suggest, Converter.Priority.SUGGEST);
         CONVERTER.register(LOreDict::suggest, Converter.Priority.SUGGEST);
         CONVERTER.register(LFluidStack::suggest, Converter.Priority.SUGGEST);
         CONVERTER.register(LItemStack::fallback, Converter.Priority.FALLBACK);
