@@ -5,6 +5,7 @@ import me.towdium.jecalculation.gui.JecaGui;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
@@ -14,12 +15,16 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
-public class WButtonText extends WButton { // TODO need rework for text without need for localization
+public class WButtonText extends WButton {
     public static final JecaGui.Font focused = new JecaGui.Font(0xFFFFA0, true, false);
     public static final JecaGui.Font normal = new JecaGui.Font(0xFFFFFF, true, false);
     public String text;
 
-    public WButtonText(int xPos, int yPos, int xSize, int ySize, String name, String text) {
+    public WButtonText(int xPos, int yPos, int xSize, int ySize, String text) {
+        this(xPos, yPos, xSize, ySize, text, null);
+    }
+
+    public WButtonText(int xPos, int yPos, int xSize, int ySize, String text, @Nullable String name) {
         super(xPos, yPos, xSize, ySize, name);
         this.text = text;
     }

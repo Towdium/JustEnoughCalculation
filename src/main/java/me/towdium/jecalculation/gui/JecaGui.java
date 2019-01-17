@@ -173,7 +173,7 @@ public class JecaGui extends GuiContainer {
         return root.getLabelUnderMouse(xMouse, yMouse);
     }
 
-    @SubscribeEvent(receiveCanceled = true)
+    @SubscribeEvent() // TODO receiveCanceled = true)
     public static void onKey(InputEvent.KeyInputEvent event) {
         if (ProxyClient.keyOpenGui.isPressed()) {
             if (!Controller.isServerActive()) JecaGui.displayGui(true, true, new GuiCalculator());
