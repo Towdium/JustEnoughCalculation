@@ -55,3 +55,10 @@ Changed Fuzzy LItemStack will not record fuzzy data
 Added Math calculator  
 Improved Structure of NBT data  
 Improved Interaction in interface
+
+#### 3.0.0-pre21
+
+Added Key binding for math calculator  
+Added Commands for math and crafting calculator  
+Added Recipe editor will use last edited group by default  
+Fixed Rendering in unicode environment

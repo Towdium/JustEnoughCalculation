@@ -30,14 +30,14 @@ import java.util.stream.Stream;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
-public class GuiCalculator extends WContainer implements IGui {
+public class GuiCraft extends WContainer implements IGui {
     Mode mode = Mode.INPUT;
     Calculator calculator = null;
     RecordCraft record = Controller.getRCraft();
     WLabelGroup recent = new WLabelGroup(7, 31, 8, 1, WLabel.Mode.PICKER)
             .setListener((i, v) -> JecaGui.getCurrent().hand = i.get(v));
     WLabelScroll result = new WLabelScroll(7, 87, 8, 4, WLabel.Mode.RESULT, true);
-    WButton steps = new WButtonIcon(64, 62, 20, 20, Resource.BTN_LIST, "calculator.step")
+    WButton steps = new WButtonIcon(64, 62, 20, 20, Resource.BTN_LIST, "craft.step")
             .setListener(i -> setMode(Mode.STEPS));
     WButton catalyst = new WButtonIcon(45, 62, 20, 20, Resource.BTN_CAT, "common.catalyst")
             .setListener(i -> setMode(Mode.CATALYST));
@@ -47,29 +47,29 @@ public class GuiCalculator extends WContainer implements IGui {
             .setListener(i -> setMode(Mode.INPUT));
 
     WLabel label = new WLabel(31, 7, 20, 20, WLabel.Mode.SELECTOR).setListener((i, v) -> refreshLabel(v, false, true));
-    WButton invE = new WButtonIcon(149, 62, 20, 20, Resource.BTN_INV_E, "calculator.inventory_enabled");
-    WButton invD = new WButtonIcon(149, 62, 20, 20, Resource.BTN_INV_D, "calculator.inventory_disabled");
+    WButton invE = new WButtonIcon(149, 62, 20, 20, Resource.BTN_INV_E, "craft.inventory_enabled");
+    WButton invD = new WButtonIcon(149, 62, 20, 20, Resource.BTN_INV_D, "craft.inventory_disabled");
     WTextField amount = new WTextField(60, 7, 65).setText(record.amount).setListener(i -> {
         record.amount = i.getText();
         Controller.setRCraft(record);
         refreshCalculator();
     });
 
-    public GuiCalculator() {
-        add(new WHelp("calculator"));
+    public GuiCraft() {
+        add(new WHelp("craft"));
         add(new WPanel());
-        add(new WButtonIcon(7, 7, 20, 20, Resource.BTN_LABEL, "calculator.label")
+        add(new WButtonIcon(7, 7, 20, 20, Resource.BTN_LABEL, "craft.label")
                 .setListener(i -> JecaGui.displayGui(new GuiLabel(l -> {
                     JecaGui.displayParent();
                     JecaGui.getCurrent().hand = l;
                 }))));
-        add(new WButtonIcon(130, 7, 20, 20, Resource.BTN_NEW, "calculator.recipe")
+        add(new WButtonIcon(130, 7, 20, 20, Resource.BTN_NEW, "craft.recipe")
                 .setListener(i -> JecaGui.displayGui(true, true, new GuiRecipe())));
-        add(new WButtonIcon(149, 7, 20, 20, Resource.BTN_SEARCH, "calculator.search")
+        add(new WButtonIcon(149, 7, 20, 20, Resource.BTN_SEARCH, "craft.search")
                 .setListener(i -> JecaGui.displayGui(new GuiSearch())));
         add(new WText(53, 13, JecaGui.Font.PLAIN, "x"));
         add(new WLine(55));
-        add(new WIcon(151, 31, 18, 18, Resource.ICN_RECENT, "calculator.history"));
+        add(new WIcon(151, 31, 18, 18, Resource.ICN_RECENT, "craft.history"));
         add(recent, label, input, output, catalyst, steps, result, amount, record.inventory ? invE : invD);
         invE.setListener(i -> {
             record.inventory = false;
@@ -198,7 +198,7 @@ public class GuiCalculator extends WContainer implements IGui {
             add(new WPanel(0 - width, 2, 56 + width, 30));
             add(new WLabel(31, 7, 20, 20, WLabel.Mode.PICKER).setLabel(label.getLabel())
                     .setListener((i, v) -> refresh(v)));
-            add(new WIcon(5 - width, 7, 18, 20, Resource.ICN_HELP, "calculator.suggest"));
+            add(new WIcon(5 - width, 7, 18, 20, Resource.ICN_HELP, "craft.suggest"));
             add(new WLine(26, 7, 20, false));
             for (int i = 0; i < labels.size(); i++) {
                 add(new WLabel(3 - i * 20, 7, 20, 20, WLabel.Mode.PICKER).setLabel(labels.get(i))
@@ -207,13 +207,13 @@ public class GuiCalculator extends WContainer implements IGui {
         }
 
         public void refresh(ILabel l) {
-            GuiCalculator.this.remove(this);
+            GuiCraft.this.remove(this);
             refreshLabel(l, replace, false);
         }
 
         @Override
         public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
-            if (!super.onClicked(gui, xMouse, yMouse, button)) GuiCalculator.this.remove(this);
+            if (!super.onClicked(gui, xMouse, yMouse, button)) GuiCraft.this.remove(this);
             return true;
         }
 
@@ -221,7 +221,7 @@ public class GuiCalculator extends WContainer implements IGui {
         public boolean onKey(JecaGui gui, char ch, int code) {
             if (!super.onKey(gui, ch, code)) {
                 if (code == Keyboard.KEY_ESCAPE) {
-                    GuiCalculator.this.remove(this);
+                    GuiCraft.this.remove(this);
                     return true;
                 } else return false;
             } else return true;

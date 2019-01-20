@@ -44,7 +44,7 @@ public class GuiRecipe extends WContainer implements IGui {
         refresh();
     });
     WButton buttonDisamb = new WButtonIcon(121, 31, 20, 20, BTN_DISAMB, "recipe.disamb").setListener(i -> {
-        if (disambiguation != null) JecaGui.displayGui(new GuiDisambiguation(new ArrayList<>(disambiguation.values()))
+        if (disambiguation != null) JecaGui.displayGui(new GuiDisamb(new ArrayList<>(disambiguation.values()))
                 .setCallback(l -> {
                     JecaGui.displayParent();
                     JecaGui.getCurrent().hand = l;
@@ -104,6 +104,10 @@ public class GuiRecipe extends WContainer implements IGui {
         add(new WLine(57));
         add(groupInput, groupCatalyst, groupOutput, switcherGroup);
         if (switcherGroup.getTexts().isEmpty()) switcherGroup.setTemp(Utilities.I18n.get("gui.common.default"));
+        String last = Controller.getLast();
+        int index = -1;
+        if (last != null) index = switcherGroup.getTexts().indexOf(last);
+        if (index != -1) switcherGroup.setIndex(index);
         setNewGroup(false);
         buttonCopy.setDisabled(true);
         buttonDel.setDisabled(true);

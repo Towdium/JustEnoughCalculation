@@ -2,33 +2,31 @@ package me.towdium.jecalculation.command.commands;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.command.ISubCommand;
+import me.towdium.jecalculation.data.Controller;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.Entity;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentString;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
- * Author: towdium
- * Date:   17-10-15.
+ * Author: Towdium
+ * Date: 19-1-20
  */
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class CUuid implements ISubCommand {
+public class CCraft implements ISubCommand {
     @Override
     public String getName() {
-        return "uuid";
+        return "craft";
     }
 
     @Override
     public String getUsage(ICommandSender sender) {
-        return "/jeca uuid";
+        return "/jeca craft";
     }
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
-        Entity e = sender.getCommandSenderEntity();
-        if (e != null) sender.sendMessage(new TextComponentString(e.getUniqueID().toString()));
+        Controller.openGuiCraft();
     }
 }

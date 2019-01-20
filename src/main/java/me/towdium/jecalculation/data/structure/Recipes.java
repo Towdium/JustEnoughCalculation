@@ -136,9 +136,23 @@ public class Recipes {
         return new RecipeIterator();
     }
 
+    public RecipeIterator recipeIterator(String group) {
+        return new RecipeIterator(group);
+    }
+
     public class RecipeIterator implements Iterator<Recipe> {
-        Iterator<Map.Entry<String, List<Recipe>>> i = records.entrySet().iterator();
+        Iterator<Map.Entry<String, List<Recipe>>> i;
         Iterator<Recipe> j;
+
+        public RecipeIterator() {
+            i = records.entrySet().iterator();
+        }
+
+        public RecipeIterator(String group) {
+            HashMap<String, List<Recipe>> tmp = new HashMap<>();
+            tmp.put(group, records.get(group));
+            i = tmp.entrySet().iterator();
+        }
 
         @Override
         public boolean hasNext() {

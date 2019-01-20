@@ -28,6 +28,6 @@ public class CState implements ISubCommand {
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
-        sender.sendMessage(new TextComponentTranslation(getKey("desc"), Controller.isServerActive() ? "active" : "inactive"));
+        sender.sendMessage(new TextComponentTranslation(getKey(Controller.isServerActive() ? "active" : "inactive")));
     }
 }

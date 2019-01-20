@@ -144,7 +144,7 @@ public class WLabel implements IWidget {
 
     public enum Mode {
         EDITOR,  // Slots in editor gui. Can use to edit amount. Exact amount displayed.
-        RESULT,  // Slots to display calculate/getRecipes result. Rounded amount displayed.
+        RESULT,  // Slots to display calculate result. Rounded amount displayed.
         PICKER,  // Slots that can pick items from. No amount displayed.
         SELECTOR  // Slots to put labels into. No amount displayed.
     }

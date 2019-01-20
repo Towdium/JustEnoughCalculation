@@ -2,6 +2,7 @@ package me.towdium.jecalculation;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.structure.Recipes;
+import me.towdium.jecalculation.data.structure.RecordPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -20,7 +21,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Objects;
 
 /**
  * Author: Towdium
@@ -30,40 +30,39 @@ import java.util.Objects;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class JecaCapability {
-    @CapabilityInject(Recipes.class)
+    @CapabilityInject(Container.class)
     public static final Capability<Container> CAPABILITY_RECORD = null;
 
-    public static Recipes getRecipes(EntityPlayer player) {
+    public static RecordPlayer getRecord(EntityPlayer player) {
         //noinspection ConstantConditions
-        Container c = player.getCapability(JecaCapability.CAPABILITY_RECORD, EnumFacing.UP);
-        return Objects.requireNonNull(c).get();
+        return player.getCapability(JecaCapability.CAPABILITY_RECORD, EnumFacing.UP).getRecord();
     }
 
     @SubscribeEvent
     public static void onAttachCapability(AttachCapabilitiesEvent<Entity> e) {
         if (e.getObject() instanceof EntityPlayerMP) {
-            e.addCapability(new ResourceLocation(JustEnoughCalculation.Reference.MODID, "recipes"),
+            e.addCapability(new ResourceLocation(JustEnoughCalculation.Reference.MODID, "record"),
                     new JecaCapability.Provider());
         }
     }
 
     @SubscribeEvent
     public static void onCloneCapability(PlayerEvent.Clone e) {
-        Recipes r = JecaCapability.getRecipes(e.getOriginal());
+        RecordPlayer r = JecaCapability.getRecord(e.getOriginal());
         //noinspection ConstantConditions
-        e.getEntityPlayer().getCapability(JecaCapability.CAPABILITY_RECORD, EnumFacing.UP).set(r);
+        e.getEntityPlayer().getCapability(JecaCapability.CAPABILITY_RECORD, EnumFacing.UP).setRecord(r);
     }
 
     public static class Container {
-        Recipes recipes;
+        RecordPlayer record;
 
-        public Recipes get() {
-            if (recipes == null) recipes = new Recipes();
-            return recipes;
+        public RecordPlayer getRecord() {
+            if (record == null) record = new RecordPlayer();
+            return record;
         }
 
-        public void set(Recipes r) {
-            recipes = r;
+        public void setRecord(RecordPlayer r) {
+            record = r;
         }
     }
 
@@ -100,13 +99,12 @@ public class JecaCapability {
 
         @Override
         public NBTTagCompound serializeNBT() {
-            if (container.recipes == null) container.recipes = new Recipes();
-            return container.recipes.serialize();
+            return container.getRecord().serialize();
         }
 
         @Override
         public void deserializeNBT(NBTTagCompound nbt) {
-            container.recipes = new Recipes(nbt);
+            container.setRecord(new RecordPlayer(nbt));
         }
     }
 }

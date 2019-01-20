@@ -4,7 +4,6 @@ import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.label.labels.LItemStack;
-import me.towdium.jecalculation.gui.guis.GuiCalculator;
 import me.towdium.jecalculation.gui.guis.IGui;
 import me.towdium.jecalculation.jei.JecaPlugin;
 import me.towdium.jecalculation.network.ProxyClient;
@@ -26,7 +25,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.fluids.Fluid;
@@ -173,13 +171,11 @@ public class JecaGui extends GuiContainer {
         return root.getLabelUnderMouse(xMouse, yMouse);
     }
 
-    @SubscribeEvent() // TODO receiveCanceled = true)
+    @SubscribeEvent
     public static void onKey(InputEvent.KeyInputEvent event) {
-        if (ProxyClient.keyOpenGui.isPressed()) {
-            if (!Controller.isServerActive()) JecaGui.displayGui(true, true, new GuiCalculator());
-            else Minecraft.getMinecraft().player.sendMessage(
-                    new TextComponentTranslation("jecalculation.chat.server_mode"));
-        }
+        if (ProxyClient.keyOpenGuiCraft.isPressed()) Controller.openGuiCraft();
+        if (ProxyClient.keyOpenGuiMath.isPressed()) Controller.openGuiMath();
+
     }
 
     @SubscribeEvent
@@ -324,7 +320,7 @@ public class JecaGui extends GuiContainer {
         boolean unicode = fontRenderer.getUnicodeFlag();
         if (f.half) fontRenderer.setUnicodeFlag(false);
         GlStateManager.pushMatrix();
-        GlStateManager.translate(unicode && f.half ? xPos - 5 : xPos, yPos, 0);
+        GlStateManager.translate(xPos, yPos, 0);
         if (f.half) GlStateManager.scale(0.5, 0.5, 1);
         r.run();
         GlStateManager.popMatrix();
@@ -371,7 +367,12 @@ public class JecaGui extends GuiContainer {
         }
 
         public int getTextWidth(String s) {
-            return (int) Math.ceil(getCurrent().fontRenderer.getStringWidth(s) * (half ? 0.5f : 1));
+            FontRenderer fr = getCurrent().fontRenderer;
+            boolean flag = fr.getUnicodeFlag();
+            if (half) fr.setUnicodeFlag(false);
+            int ret = (int) Math.ceil(fr.getStringWidth(s) * (half ? 0.5f : 1));
+            fr.setUnicodeFlag(flag);
+            return ret;
         }
 
         public int getTextHeight() {

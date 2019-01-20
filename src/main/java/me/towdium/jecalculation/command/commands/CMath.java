@@ -2,33 +2,31 @@ package me.towdium.jecalculation.command.commands;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.command.ISubCommand;
+import me.towdium.jecalculation.data.Controller;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Arrays;
 
 /**
- * Author: towdium
- * Date:   17-9-11.
+ * Author: Towdium
+ * Date: 19-1-21
  */
-@MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class COreDict implements ISubCommand {
+@MethodsReturnNonnullByDefault
+public class CMath implements ISubCommand {
     @Override
     public String getName() {
-        return "ore";
+        return "math";
     }
 
     @Override
     public String getUsage(ICommandSender sender) {
-        return "/jeca ore";
+        return "/jeca math";
     }
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
-        Arrays.stream(OreDictionary.getOreNames()).forEach(s -> sender.sendMessage(new TextComponentString(s)));
+        Controller.openGuiMath();
     }
 }

@@ -19,7 +19,8 @@ import static org.lwjgl.input.Keyboard.KEY_NONE;
  */
 @SideOnly(Side.CLIENT)
 public class ProxyClient extends ProxyServer {
-    public static final KeyBinding keyOpenGui = new KeyBinding("jecalculation.key.open_gui", KEY_NONE, "jecalculation.key.category");
+    public static final KeyBinding keyOpenGuiCraft = new KeyBinding("jecalculation.key.gui_craft", KEY_NONE, "jecalculation.key.category");
+    public static final KeyBinding keyOpenGuiMath = new KeyBinding("jecalculation.key.gui_math", KEY_NONE, "jecalculation.key.category");
 
     @Override
     public void initPost() {
@@ -32,7 +33,8 @@ public class ProxyClient extends ProxyServer {
     @Override
     public void init() {
         super.init();
-        ClientRegistry.registerKeyBinding(keyOpenGui);
+        ClientRegistry.registerKeyBinding(keyOpenGuiCraft);
+        ClientRegistry.registerKeyBinding(keyOpenGuiMath);
     }
 
     @Override

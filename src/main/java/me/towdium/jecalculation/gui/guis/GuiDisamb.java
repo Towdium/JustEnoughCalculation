@@ -20,12 +20,12 @@ import static me.towdium.jecalculation.gui.Resource.*;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
-public class GuiDisambiguation extends IPicker.Impl implements IGui {
+public class GuiDisamb extends IPicker.Impl implements IGui {
     protected WLabelScroll lsUp = new WLabelScroll(25, 48, 7, 3, Mode.PICKER, true);
     protected WLabelScroll lsDown = new WLabelScroll(25, 105, 7, 3, Mode.PICKER, true);
     protected List<List<ILabel>> record;
 
-    public GuiDisambiguation(List<List<ILabel>> record) {
+    public GuiDisamb(List<List<ILabel>> record) {
         this.record = record;
         WSwitcher switcher = new WSwitcher(7, 7, 162, this.record.size()).setListener(i -> setPage(i.getIndex()));
         ListenerValue<WLabelScroll, Integer> consumer = (i, v) -> callback.accept(i.get(v).copy().multiply(-1));

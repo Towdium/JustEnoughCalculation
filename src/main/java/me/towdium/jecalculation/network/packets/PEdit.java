@@ -11,7 +11,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class PRecipe implements IMessage {
+public class PEdit implements IMessage {
     static final String KEY_GROUP = "group";
     static final String KEY_INDEX = "index";
     static final String KEY_RECIPE = "recipe";
@@ -20,10 +20,10 @@ public class PRecipe implements IMessage {
     int index;
     Recipe recipe;
 
-    public PRecipe() {
+    public PEdit() {
     }
 
-    public PRecipe(String group, int index, Recipe recipe) {
+    public PEdit(String group, int index, Recipe recipe) {
         this.group = group;
         this.index = index;
         this.recipe = recipe;
@@ -47,12 +47,15 @@ public class PRecipe implements IMessage {
         ByteBufUtils.writeTag(buf, tag);
     }
 
-    public static class Handler implements IMessageHandler<PRecipe, IMessage> {
+    public static class Handler implements IMessageHandler<PEdit, IMessage> {
         @Override
-        public IMessage onMessage(PRecipe message, MessageContext ctx) {
+        public IMessage onMessage(PEdit message, MessageContext ctx) {
             IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
-            mainThread.addScheduledTask(() -> JecaCapability.getRecipes(ctx.getServerHandler().player)
-                    .modify(message.group, message.index, message.recipe));
+            mainThread.addScheduledTask(() -> {
+                JecaCapability.getRecord(ctx.getServerHandler().player).recipes
+                        .modify(message.group, message.index, message.recipe);
+                JecaCapability.getRecord(ctx.getServerHandler().player).last = message.group;
+            });
             return null;
         }
     }

@@ -2,7 +2,7 @@ package me.towdium.jecalculation;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
-import me.towdium.jecalculation.gui.guis.GuiCalculator;
+import me.towdium.jecalculation.gui.guis.GuiCraft;
 import me.towdium.jecalculation.gui.guis.GuiMath;
 import me.towdium.jecalculation.network.packets.PCalculator;
 import me.towdium.jecalculation.utils.IllegalPositionException;
@@ -104,7 +104,7 @@ public class JecaItem extends Item {
             if (playerIn.isSneaking()) {
                 is.setItemDamage(recipe ? 1 : 0);
                 network.sendToServer(new PCalculator(is));
-            } else JecaGui.displayGui(true, true, recipe ? new GuiCalculator() : new GuiMath());
+            } else JecaGui.displayGui(true, true, recipe ? new GuiCraft() : new GuiMath());
         }, Side.CLIENT);
         return new ActionResult<>(EnumActionResult.SUCCESS, is);
     }
