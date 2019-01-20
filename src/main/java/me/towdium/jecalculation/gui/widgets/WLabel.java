@@ -94,7 +94,7 @@ public class WLabel implements IWidget {
 
     @Override
     public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
-        if (!mouseIn(xMouse, yMouse)) return false;
+        if (!mouseIn(xMouse, yMouse) || button == 1) return false;
         switch (mode) {
             case EDITOR:
                 if (gui.hand != label.EMPTY) {
@@ -151,10 +151,10 @@ public class WLabel implements IWidget {
 
     class WAmount extends WContainer {
         long old = label.getAmount();
-        WButton bAmount = new WButtonText(xPos + xSize + 60, yPos, 20, 20, "general.to_percent", "#")
+        WButton bAmount = new WButtonText(xPos + xSize + 60, yPos, 20, 20, "#", "general.to_percent")
                 .setListener(i -> setPercent(true));
         WTextField wtf = new WTextField(xPos + xSize + 10, yPos + ySize / 2 - WTextField.HEIGHT / 2, 50);
-        WButton bPercent = new WButtonText(xPos + xSize + 60, yPos, 20, 20, "general.to_percent", "%")
+        WButton bPercent = new WButtonText(xPos + xSize + 60, yPos, 20, 20, "%", "general.to_percent")
                 .setListener(i -> setPercent(false));
         WLabel wl = new WLabel(xPos, yPos, xSize, ySize, Mode.SELECTOR).setListener((i, v) -> update());
         WButton bYes = new WButtonIcon(xPos + xSize + 83, yPos, 20, 20, BTN_YES)
@@ -187,6 +187,7 @@ public class WLabel implements IWidget {
         }
 
         private void update() {
+            label = wl.label;
             bAmount.setDisabled(!label.acceptPercent());
             if (label.isPercent()) {
                 remove(bAmount);

@@ -1,18 +1,22 @@
 package me.towdium.jecalculation.gui.guis;
 
 import mcp.MethodsReturnNonnullByDefault;
+import me.towdium.jecalculation.data.Controller;
+import me.towdium.jecalculation.data.structure.RecordMath;
+import me.towdium.jecalculation.data.structure.RecordMath.Operator;
+import me.towdium.jecalculation.data.structure.RecordMath.State;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.gui.widgets.*;
-import me.towdium.jecalculation.utils.IllegalPositionException;
 import me.towdium.jecalculation.utils.Utilities;
 import org.lwjgl.input.Keyboard;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
+
+import static me.towdium.jecalculation.data.structure.RecordMath.DOT_NONE;
+import static me.towdium.jecalculation.data.structure.RecordMath.context;
 
 /**
  * Author: Towdium
@@ -22,43 +26,12 @@ import java.util.stream.Collectors;
 @MethodsReturnNonnullByDefault
 public class GuiMath extends WContainer implements IGui {
     WLcd lcd = new WLcd(7);
-    LinkedList<BigDecimal> numbers = new LinkedList<>();
-    BigDecimal last = BigDecimal.ZERO;
-    int dot = -1;
-    boolean sign = true;
-    Operator operator = Operator.EQUALS;
-    State state = State.INPUT;
-    static MathContext context = new MathContext(7, RoundingMode.HALF_UP);
-
-    static final int DOT_NONE = -1;
-
-    enum State {INPUT, OUTPUT, ERROR}
-
-    enum Operator {
-        PLUS, MINUS, TIMES, DIVIDE, EQUALS;
-
-        public WLcd.Operator map() {
-            switch (this) {
-                case PLUS: return WLcd.Operator.PLUS;
-                case MINUS: return WLcd.Operator.MINUS;
-                case TIMES: return WLcd.Operator.TIMES;
-                case DIVIDE: return WLcd.Operator.DIVIDE;
-                case EQUALS: return WLcd.Operator.NONE;
-                default: throw new IllegalPositionException();
-            }
-        }
-
-        public BigDecimal operate(BigDecimal a, BigDecimal b) {
-            switch (this) {
-                case PLUS: return a.add(b);
-                case MINUS: return a.subtract(b);
-                case TIMES: return a.multiply(b);
-                case DIVIDE: return a.divide(b, context);
-                case EQUALS: return b;
-                default: throw new IllegalPositionException();
-            }
-        }
-    }
+    LinkedList<BigDecimal> numbers;
+    BigDecimal last;
+    int dot;
+    boolean sign;
+    Operator operator;
+    State state;
 
     public GuiMath() {
         add(new WPanel(), lcd);
@@ -82,9 +55,16 @@ public class GuiMath extends WContainer implements IGui {
         add(new WButtonText(109, 91, 28, 20, "C").setListener(i -> reset()).setKeyBind(Keyboard.KEY_DELETE));
         add(new WButtonText(141, 91, 28, 20, "-").setListener(i -> operate(Operator.MINUS)).setKeyBind(Keyboard.KEY_SUBTRACT, Keyboard.KEY_MINUS));
         add(new WButtonText(109, 115, 28, 44, "=").setListener(i -> operate(Operator.EQUALS)).setKeyBind(Keyboard.KEY_RETURN, Keyboard.KEY_NUMPADENTER, Keyboard.KEY_NUMPADEQUALS));
-        add(new WButtonText(141, 115, 28, 20, "x").setListener(i -> operate(Operator.TIMES)).setKeyBind(Keyboard.KEY_MULTIPLY));
+        add(new WButtonText(141, 115, 28, 20, "x").setListener(i -> operate(Operator.TIMES)).setKeyBind(Keyboard.KEY_APOSTROPHE, Keyboard.KEY_MULTIPLY));
         add(new WButtonText(141, 139, 28, 20, "/").setListener(i -> operate(Operator.DIVIDE)).setKeyBind(Keyboard.KEY_SLASH, Keyboard.KEY_DIVIDE));
-        add(new WLine(61), new WLine(103, 61, 98, false), new WLine(103, 61, 2, true), new WRectangle(103, 61, 2, 1, 0xFF373737));
+        add(new WLine(61), new WLine(103, 61, 98, false), new WLine.Joint(103, 61, false, true, true, true));
+        RecordMath recordMath = Controller.getRMath();
+        state = recordMath.state;
+        operator = recordMath.operator;
+        last = recordMath.last;
+        dot = recordMath.getDot();
+        sign = recordMath.getSign();
+        numbers = recordMath.getNumbers();
         print();
     }
 
@@ -100,38 +80,54 @@ public class GuiMath extends WContainer implements IGui {
         } else if (state == State.OUTPUT) {
             lcd.print(last);
         }
-        lcd.operator = operator.map();
+        lcd.operator = operator;
     }
 
     private void append(int i) {
         if (state != State.INPUT) state = State.INPUT;
-        if (numbers.size() < (sign ? 7 : 6)) {
+        if ((i != 0 || !numbers.isEmpty()) && numbers.size() < (sign ? 7 : 6)) {
             numbers.add(new BigDecimal(i));
             if (dot != DOT_NONE) dot++;
         }
         print();
+        sync();
+    }
+
+    private void sync() {
+        Controller.setRMath(new RecordMath(state, operator, last, sign, dot, numbers));
     }
 
     private void operate(Operator operator) {
         if (state == State.INPUT && numbers.isEmpty() && operator == Operator.MINUS) sign = !sign;
         else {
             if (state == State.INPUT) {
-                last = this.operator.operate(last, convert());
-                numbers.clear();
-                dot = DOT_NONE;
-                sign = true;
+                try {
+                    last = this.operator.operate(last, convert());
+                } catch (ArithmeticException e) {
+                    state = State.ERROR;
+                    this.operator = Operator.EQUALS;
+                    print();
+                    sync();
+                    return;
+                } finally {
+                    numbers.clear();
+                    dot = DOT_NONE;
+                    sign = true;
+                }
             }
             this.operator = operator;
             state = State.OUTPUT;
         }
         print();
+        sync();
     }
 
     private void dot() {
-        if (state != State.INPUT) reset();
-        if (numbers.size() == 0) append(0);
+        if (state != State.INPUT) state = State.INPUT;
+        if (numbers.size() == 0) numbers.add(BigDecimal.ZERO);
         dot = 0;
         print();
+        sync();
     }
 
     private void remove() {
@@ -141,6 +137,7 @@ public class GuiMath extends WContainer implements IGui {
             if (dot != DOT_NONE) dot--;
         }
         print();
+        sync();
     }
 
     private void reset() {
@@ -151,6 +148,7 @@ public class GuiMath extends WContainer implements IGui {
         sign = true;
         state = State.INPUT;
         print();
+        sync();
     }
 
     private BigDecimal convert() {

@@ -5,10 +5,10 @@ import me.towdium.jecalculation.JecaCapability;
 import me.towdium.jecalculation.JecaConfig;
 import me.towdium.jecalculation.JecaItem;
 import me.towdium.jecalculation.JustEnoughCalculation;
-import me.towdium.jecalculation.data.label.ILabel;
-import me.towdium.jecalculation.data.structure.Recents;
 import me.towdium.jecalculation.data.structure.Recipe;
 import me.towdium.jecalculation.data.structure.Recipes;
+import me.towdium.jecalculation.data.structure.RecordCraft;
+import me.towdium.jecalculation.data.structure.RecordMath;
 import me.towdium.jecalculation.network.packets.PCalculator;
 import me.towdium.jecalculation.network.packets.PRecipe;
 import me.towdium.jecalculation.network.packets.PRecord;
@@ -44,14 +44,13 @@ import static me.towdium.jecalculation.JustEnoughCalculation.network;
 @ParametersAreNonnullByDefault
 public class Controller {
     public static final String KEY_RECIPES = "recipes";
-    public static final String KEY_RECENTS = "recents";
-    public static final String KEY_AMOUNT = "amount";
-    public static final String KEY_INVENTORY = "inventory";
+    public static final String KEY_MATH = "math";
+    public static final String KEY_CRAFT = "craft";
+
     static Recipes recipesClient;
-    static Recents recentsClient;
-    static String amountClient;
-    static boolean inventoryClient;
     static Recipes recipesServer;
+    static RecordCraft rCraftClient;
+    static RecordMath rMathClient;
 
     public static void setRecipesServer(Recipes r) {
         recipesServer = r;
@@ -151,60 +150,40 @@ public class Controller {
         return getRecord().getRecipes(group);
     }
 
-    public static String getAmount() {
-        if (!isServerActive()) return amountClient;
-        else return getStack()
-                .map(is -> Utilities.getTag(is).getString(KEY_AMOUNT))
-                .orElseGet(() -> amountClient);
-    }
-
-    public static void setAmount(String amount) {
-        if (!isServerActive()) amountClient = amount;
-        else getStack().ifPresent(is -> {
-            Utilities.getTag(is).setString(KEY_AMOUNT, amount);
-            network.sendToServer(new PCalculator(is));
-        });
-    }
-
-    public static boolean getDetectInv() {
-        if (!isServerActive()) return inventoryClient;
-        else return getStack()
-                .map(is -> Utilities.getTag(is).getBoolean(KEY_INVENTORY))
-                .orElseGet(() -> inventoryClient);
-    }
-
-    public static void setDetectInv(boolean b) {
-        if (!isServerActive()) inventoryClient = b;
-        else getStack().ifPresent(is -> {
-            Utilities.getTag(is).setBoolean(KEY_INVENTORY, b);
-            network.sendToServer(new PCalculator(is));
-        });
-    }
-
-    public static List<ILabel> getRecent() {
-        if (!isServerActive()) return recentsClient.getRecords();
-        else {
-            ArrayList<ILabel> ret = new ArrayList<>();
-            Optional<ItemStack> ois = getStack();
-            ois.ifPresent(is -> {
-                Recents recent = new Recents(Utilities.getTag(is).getTagList(KEY_RECENTS, 10));
-                ret.addAll(recent.getRecords());
-            });
-            return ret;
-        }
-    }
-
-    public static void setRecent(ILabel label, boolean replace) {
-        if (!isServerActive()) recentsClient.push(label, replace);
+    public static void setRMath(RecordMath math) {
+        if (!isServerActive()) rMathClient = math;
         else {
             Optional<ItemStack> ois = getStack();
             ois.ifPresent(is -> {
-                Recents recent = new Recents(Utilities.getTag(is).getTagList(KEY_RECENTS, 10));
-                recent.push(label, replace);
-                Utilities.getTag(is).setTag(KEY_RECENTS, recent.serialize());
+                Utilities.getTag(is).setTag(KEY_MATH, math.serialize());
                 network.sendToServer(new PCalculator(is));
             });
         }
+    }
+
+    public static RecordCraft getRCraft() {
+        if (!isServerActive()) return rCraftClient;
+        else return new RecordCraft(getStack()
+                .map(i -> Utilities.getTag(i).getCompoundTag(KEY_CRAFT))
+                .orElse(new NBTTagCompound()));
+    }
+
+    public static void setRCraft(RecordCraft rc) {
+        if (!isServerActive()) rCraftClient = rc;
+        else {
+            Optional<ItemStack> ois = getStack();
+            ois.ifPresent(is -> {
+                Utilities.getTag(is).setTag(KEY_CRAFT, rc.serialize());
+                network.sendToServer(new PCalculator(is));
+            });
+        }
+    }
+
+    public static RecordMath getRMath() {
+        if (!isServerActive()) return rMathClient;
+        else return new RecordMath(getStack()
+                .map(i -> Utilities.getTag(i).getCompoundTag(KEY_MATH))
+                .orElse(new NBTTagCompound()));
     }
 
     public static boolean hasDuplicate(Recipe r) {
@@ -218,24 +197,21 @@ public class Controller {
         NBTTagCompound nbt = Utilities.Json.read(file);
         if (nbt != null) {
             recipesClient = nbt.hasKey(KEY_RECIPES) ? new Recipes(nbt.getCompoundTag(KEY_RECIPES)) : new Recipes();
-            recentsClient = nbt.hasKey(KEY_RECENTS) ? new Recents(nbt.getTagList(KEY_RECENTS, 10)) : new Recents();
-            amountClient = nbt.hasKey(KEY_AMOUNT) ? nbt.getString(KEY_AMOUNT) : "";
-            inventoryClient = !nbt.hasKey(KEY_INVENTORY) || nbt.getBoolean(KEY_INVENTORY);
+            rCraftClient = new RecordCraft(nbt.getCompoundTag(KEY_CRAFT));
+            rMathClient = new RecordMath(nbt.getCompoundTag(KEY_MATH));
         } else {
             recipesClient = new Recipes();
-            recentsClient = new Recents();
-            amountClient = "";
-            inventoryClient = true;
+            rCraftClient = new RecordCraft(new NBTTagCompound());
+            rMathClient = new RecordMath(new NBTTagCompound());
         }
     }
 
     public static void writeToLocal() {
         File file = new File(Loader.instance().getConfigDir(), "JustEnoughCalculation/record.json");
         NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setTag(KEY_RECENTS, recentsClient.serialize());
+        nbt.setTag(KEY_CRAFT, rCraftClient.serialize());
         nbt.setTag(KEY_RECIPES, recipesClient.serialize());
-        nbt.setString(KEY_AMOUNT, amountClient);
-        nbt.setBoolean(KEY_INVENTORY, inventoryClient);
+        nbt.setTag(KEY_MATH, rMathClient.serialize());
         Utilities.Json.write(nbt, file);
     }
 

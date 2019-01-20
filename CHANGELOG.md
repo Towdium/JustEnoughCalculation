@@ -49,3 +49,9 @@ Improved Console output for default records loading
 
 Added Intelligent inference for itemStacks  
 Changed Fuzzy LItemStack will not record fuzzy data
+
+#### 3.0.0-pre20
+
+Added Math calculator  
+Improved Structure of NBT data  
+Improved Interaction in interface

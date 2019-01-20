@@ -206,6 +206,10 @@ public class Resource {
         this(xPos, yPos, xSize, ySize, location);
     }
 
+    public Resource sub(int xPos, int yPos, int xSize, int ySize) {
+        return new Resource(this.xPos + xPos, this.yPos + yPos, xSize, ySize);
+    }
+
     public int getXPos() {
         return xPos;
     }

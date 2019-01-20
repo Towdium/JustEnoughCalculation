@@ -1,6 +1,7 @@
 package me.towdium.jecalculation.gui.widgets;
 
 import mcp.MethodsReturnNonnullByDefault;
+import me.towdium.jecalculation.data.structure.RecordMath.Operator;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 
@@ -11,6 +12,9 @@ import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Objects;
 
+import static me.towdium.jecalculation.data.structure.RecordMath.DOT_NONE;
+
+
 /**
  * Author: Towdium
  * Date: 19-1-16
@@ -20,14 +24,11 @@ import java.util.Objects;
 public class WLcd implements IWidget {
     static HashMap<Character, boolean[]> PATTERN = new HashMap<>();
 
-    public enum Operator {PLUS, MINUS, TIMES, DIVIDE, NONE}
-
     public int yPos;
-    public String text;
+    public String text = "";
     public int dot = DOT_NONE;
-    public static final int DOT_NONE = -1;
     static NumberFormat format = new DecimalFormat("0.0E0");
-    public Operator operator = Operator.NONE;
+    public Operator operator = Operator.EQUALS;
 
     static {
         PATTERN.put('0', new boolean[]{true, true, true, true, true, true, false});
