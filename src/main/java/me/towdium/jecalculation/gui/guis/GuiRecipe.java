@@ -51,6 +51,7 @@ public class GuiRecipe extends WContainer implements IGui {
                 }));
     });
     WButton buttonClear = new WButtonIcon(64, 31, 20, 20, BTN_DEL, "recipe.clear").setListener(i -> clear());
+    // check duplicate and valid
     WButton buttonCopy = new WButtonIcon(83, 31, 20, 20, BTN_COPY, "recipe.copy").setListener(i -> {
         Controller.addRecipe(switcherGroup.getText(), toRecipe());
         JecaGui.displayParent();

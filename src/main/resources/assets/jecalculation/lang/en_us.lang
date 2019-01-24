@@ -7,13 +7,13 @@ jecalculation.key.gui_math=Open math calculator
 jecalculation.command.help.list=Here is the list of all commands available:
 jecalculation.command.state.active=Server active.
 jecalculation.command.state.inactive=Server inactive.
-jecalculation.command.reload.done=Reloading finished
 jecalculation.chat.max_loop=Sorry, it seems the calculation does not converge in 1000 iterations. Please contact the developer if you think this process should have a result.
 jecalculation.chat.server_mode=The mod is not working in client mode, so you cannot open the interface without an calculator item
 jecalculation.chat.export=Selected recipes has been exported to "%s".
 jecalculation.gui.craft.inventory_enabled=Inventory detection enabled
 jecalculation.gui.craft.inventory_disabled=Inventory detection disabled
-jecalculation.gui.craft.recipeNew recipe
+jecalculation.gui.craft.recipe=New recipe
+jecalculation.gui.craft.history=History
 jecalculation.gui.craft.help=Welcome to the main interface of the mod. The first thing suggested to do is to use the two buttons in the upper right to input the recipes, which allows you to create and edit recipes. All of the calculations require recipes to be recorded.\fTo calculate the cost of an item, simply pick the item from JEIs item list then put it in the slot in the upper left of the interface with all of the recipes to use recorded. The result will then be displayed in the lower slots of the interface. The four buttons provide options to display input, output, catalyst and crafting steps.\fThe button in the upper left allows you to edit and get a label. Labels are a very important part of the mod. They are basically things that can be put into a slot, including ItemStack, FluidStack, OreDict entry, or simply a placeholder. Lables are used in the calculation process. Most of time they are quite clever as long as you configure them properly.
 jecalculation.gui.craft.title=Crafting Calculator
 jecalculation.gui.craft.label=Add label
@@ -21,6 +21,8 @@ jecalculation.gui.craft.step=Steps
 jecalculation.gui.craft.recipe=Add recipe
 jecalculation.gui.craft.search=Search recipe
 jecalculation.gui.craft.suggest=Suggestions
+jecalculation.gui.math.title=Math Calculator
+jecalculation.gui.math.help=You can use both buttons and keyboard (numpad or main keyboard) to use it. For main keyboard, the buttons are mapped to these keys:\n- plus: = / +\n- minus: - / --\n- times: ' / "\n- divide by: / / ?\n- equals: Enter\n- clear: Delete\n- backspace: Backspace
 jecalculation.gui.disamb.list=Raw types
 jecalculation.gui.disamb.label=Inferred types
 jecalculation.gui.recipe.save.enabled=Save

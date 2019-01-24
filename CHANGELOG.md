@@ -62,3 +62,9 @@ Added Key binding for math calculator
 Added Commands for math and crafting calculator  
 Added Recipe editor will use last edited group by default  
 Fixed Rendering in unicode environment
+
+#### 3.0.0-pre22
+
+Added Localization for simplified Chinese
+Added Document for math calculator
+Fixed Some tooltips

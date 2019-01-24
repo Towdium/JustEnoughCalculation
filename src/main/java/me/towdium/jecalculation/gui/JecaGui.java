@@ -221,6 +221,47 @@ public class JecaGui extends GuiContainer {
         GlStateManager.enableDepth();
     }
 
+    // modified from vanilla
+    public void drawHoveringText(List<String> textLines, int x, int y, FontRenderer font) {
+        if (!textLines.isEmpty()) {
+            GlStateManager.disableRescaleNormal();
+            RenderHelper.disableStandardItemLighting();
+            GlStateManager.disableLighting();
+            GlStateManager.disableDepth();
+            int i = 0;
+            for (String s : textLines) {
+                int j = this.fontRenderer.getStringWidth(s);
+                if (j > i) i = j;
+            }
+            int l1 = x + 12;
+            int i2 = y - 12;
+            int k = 8 + (textLines.size() - 1) * 10;
+            if (l1 + i > this.width) l1 -= 28 + i;
+            if (i2 + k + 6 > this.height) i2 = this.height - k - 6;
+            zLevel = 300.0F;
+            itemRender.zLevel = 300.0F;
+            drawGradientRect(l1 - 3, i2 - 4, l1 + i + 3, i2 - 3, -267386864, -267386864);
+            drawGradientRect(l1 - 3, i2 + k + 3, l1 + i + 3, i2 + k + 4, -267386864, -267386864);
+            drawGradientRect(l1 - 3, i2 - 3, l1 + i + 3, i2 + k + 3, -267386864, -267386864);
+            drawGradientRect(l1 - 4, i2 - 3, l1 - 3, i2 + k + 3, -267386864, -267386864);
+            drawGradientRect(l1 + i + 3, i2 - 3, l1 + i + 4, i2 + k + 3, -267386864, -267386864);
+            drawGradientRect(l1 - 3, i2 - 3 + 1, l1 - 3 + 1, i2 + k + 3 - 1, 1347420415, 1344798847);
+            drawGradientRect(l1 + i + 2, i2 - 3 + 1, l1 + i + 3, i2 + k + 3 - 1, 1347420415, 1344798847);
+            drawGradientRect(l1 - 3, i2 - 3, l1 + i + 3, i2 - 3 + 1, 1347420415, 1347420415);
+            drawGradientRect(l1 - 3, i2 + k + 2, l1 + i + 3, i2 + k + 3, 1344798847, 1344798847);
+            for (String s1 : textLines) {
+                fontRenderer.drawStringWithShadow(s1, (float) l1, (float) i2, -1);
+                i2 += 10;
+            }
+            zLevel = 0.0F;
+            itemRender.zLevel = 0.0F;
+            GlStateManager.enableLighting();
+            GlStateManager.enableDepth();
+            RenderHelper.enableStandardItemLighting();
+            GlStateManager.enableRescaleNormal();
+        }
+    }
+
     public void drawResource(Resource r, int xPos, int yPos) {
         drawResource(r, xPos, yPos, 0xFFFFFF);
     }

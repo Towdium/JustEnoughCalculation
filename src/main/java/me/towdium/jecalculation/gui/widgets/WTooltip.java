@@ -45,7 +45,7 @@ public abstract class WTooltip implements IWidget {
             String str = suffix.stream()
                     .filter(p -> p.two).findFirst().map(p -> p.one)
                     .orElse(JecaGui.ALWAYS_TOOLTIP ? suffix.get(0).one : null);
-            if (str != null) tooltip.add(str);
+            if (str != null) Collections.addAll(tooltip, str.split("\n"));
         }
         return false;
     }

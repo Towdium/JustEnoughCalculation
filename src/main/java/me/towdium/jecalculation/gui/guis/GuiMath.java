@@ -34,6 +34,7 @@ public class GuiMath extends WContainer implements IGui {
     State state;
 
     public GuiMath() {
+        add(new WHelp("math"));
         add(new WPanel(), lcd);
         add(new WButtonText(7, 67, 28, 20, "7").setListener(i -> append(7)).setKeyBind(Keyboard.KEY_7, Keyboard.KEY_NUMPAD7));
         add(new WButtonText(39, 67, 28, 20, "8").setListener(i -> append(8)).setKeyBind(Keyboard.KEY_8, Keyboard.KEY_NUMPAD8));
