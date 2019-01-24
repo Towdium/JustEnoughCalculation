@@ -65,6 +65,6 @@ Fixed Rendering in unicode environment
 
 #### 3.0.0-pre22
 
-Added Localization for simplified Chinese
-Added Document for math calculator
+Added Localization for simplified Chinese  
+Added Document for math calculator  
 Fixed Some tooltips
