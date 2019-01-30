@@ -16,17 +16,26 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class WButtonText extends WButton {
-    public static final JecaGui.Font focused = new JecaGui.Font(0xFFFFA0, true, false);
-    public static final JecaGui.Font normal = new JecaGui.Font(0xFFFFFF, true, false);
+    public static final JecaGui.Font focused_u = new JecaGui.Font(0xFFFFA0, true, false, false);
+    public static final JecaGui.Font normal_u = new JecaGui.Font(0xFFFFFF, true, false, false);
+    public static final JecaGui.Font focused_r = new JecaGui.Font(0xFFFFA0, true, false, true);
+    public static final JecaGui.Font normal_r = new JecaGui.Font(0xFFFFFF, true, false, true);
     public String text;
+    protected JecaGui.Font focused, normal;
 
     public WButtonText(int xPos, int yPos, int xSize, int ySize, String text) {
         this(xPos, yPos, xSize, ySize, text, null);
     }
 
     public WButtonText(int xPos, int yPos, int xSize, int ySize, String text, @Nullable String name) {
+        this(xPos, yPos, xSize, ySize, text, name, false);
+    }
+
+    public WButtonText(int xPos, int yPos, int xSize, int ySize, String text, @Nullable String name, boolean raw) {
         super(xPos, yPos, xSize, ySize, name);
         this.text = text;
+        focused = raw ? focused_r : focused_u;
+        normal = raw ? normal_r : normal_u;
     }
 
     @Override

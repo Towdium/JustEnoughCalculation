@@ -67,7 +67,7 @@ public class GuiCraft extends WContainer implements IGui {
                 .setListener(i -> JecaGui.displayGui(true, true, new GuiRecipe())));
         add(new WButtonIcon(149, 7, 20, 20, Resource.BTN_SEARCH, "craft.search")
                 .setListener(i -> JecaGui.displayGui(new GuiSearch())));
-        add(new WText(53, 13, JecaGui.Font.PLAIN, "x"));
+        add(new WText(53, 13, JecaGui.Font.RAW, "x"));
         add(new WLine(55));
         add(new WIcon(151, 31, 18, 18, Resource.ICN_RECENT, "craft.history"));
         add(recent, label, input, output, catalyst, steps, result, amount, record.inventory ? invE : invD);

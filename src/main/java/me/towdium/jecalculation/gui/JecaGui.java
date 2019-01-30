@@ -33,6 +33,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -61,6 +62,8 @@ public class JecaGui extends GuiContainer {
     public static final boolean ALWAYS_TOOLTIP = false;
     public ILabel hand = ILabel.EMPTY;
     protected static JecaGui last;
+    protected static Runnable scheduled;
+    protected static int timeout;
     protected JecaGui parent;
     public IGui root;
 
@@ -126,8 +129,18 @@ public class JecaGui extends GuiContainer {
     }
 
     public static void displayGui(boolean updateParent, boolean acceptsTransfer, IGui root) {
-        if (Minecraft.getMinecraft().isCallingFromMinecraftThread())
-            displayGuiUnsafe(updateParent, acceptsTransfer, root);
+        displayGui(updateParent, acceptsTransfer, false, root);
+    }
+
+    public static void displayGui(boolean updateParent, boolean acceptsTransfer, boolean scheduled, IGui root) {
+        Runnable r = () -> {
+            if (Minecraft.getMinecraft().isCallingFromMinecraftThread())
+                displayGuiUnsafe(updateParent, acceptsTransfer, root);
+        };
+        if (scheduled) {
+            JecaGui.scheduled = r;
+            JecaGui.timeout = 2;
+        } else r.run();
     }
 
     /**
@@ -184,6 +197,17 @@ public class JecaGui extends GuiContainer {
             JecaGui gui = getCurrent();
             if (gui.root.onTooltip(gui, event.getX() - gui.guiLeft, event.getY() - gui.guiTop, new ArrayList<>())
                     && !event.getStack().isEmpty()) event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onGameTike(TickEvent.PlayerTickEvent e) {
+        if (e.player.world.isRemote && scheduled != null) {
+            if (timeout <= 0) {
+                Runnable r = scheduled;
+                scheduled = null;
+                r.run();
+            } else timeout--;
         }
     }
 
@@ -359,7 +383,7 @@ public class JecaGui extends GuiContainer {
 
     private void drawText(float xPos, float yPos, Font f, Runnable r) {
         boolean unicode = fontRenderer.getUnicodeFlag();
-        if (f.half) fontRenderer.setUnicodeFlag(false);
+        if (f.raw) fontRenderer.setUnicodeFlag(false);
         GlStateManager.pushMatrix();
         GlStateManager.translate(xPos, yPos, 0);
         if (f.half) GlStateManager.scale(0.5, 0.5, 1);
@@ -394,23 +418,25 @@ public class JecaGui extends GuiContainer {
     }
 
     public static class Font {
-        public static final Font SHADOW = new Font(JecaGui.COLOR_TEXT_WHITE, true, false);
-        public static final Font PLAIN = new Font(JecaGui.COLOR_TEXT_GREY, false, false);
-        public static final Font HALF = new Font(JecaGui.COLOR_TEXT_WHITE, true, true);
+        public static final Font SHADOW = new Font(JecaGui.COLOR_TEXT_WHITE, true, false, false);
+        public static final Font PLAIN = new Font(JecaGui.COLOR_TEXT_GREY, false, false, false);
+        public static final Font RAW = new Font(JecaGui.COLOR_TEXT_GREY, false, false, true);
+        public static final Font HALF = new Font(JecaGui.COLOR_TEXT_WHITE, true, true, true);
 
         public int color;
-        public boolean shadow, half;
+        public boolean shadow, half, raw;
 
-        public Font(int color, boolean shadow, boolean half) {
+        public Font(int color, boolean shadow, boolean half, boolean raw) {
             this.color = color;
             this.shadow = shadow;
             this.half = half;
+            this.raw = raw;
         }
 
         public int getTextWidth(String s) {
             FontRenderer fr = getCurrent().fontRenderer;
             boolean flag = fr.getUnicodeFlag();
-            if (half) fr.setUnicodeFlag(false);
+            if (raw) fr.setUnicodeFlag(false);
             int ret = (int) Math.ceil(fr.getStringWidth(s) * (half ? 0.5f : 1));
             fr.setUnicodeFlag(flag);
             return ret;

@@ -27,6 +27,6 @@ public class CMath implements ISubCommand {
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
-        Controller.openGuiMath();
+        Controller.openGuiMath(true);
     }
 }

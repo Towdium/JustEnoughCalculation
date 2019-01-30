@@ -1,7 +1,6 @@
 package me.towdium.jecalculation.network;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.fml.relauncher.Side;
 
 /**
  * Author: towdium
@@ -15,9 +14,6 @@ public interface IProxy {
     }
 
     default void initPost() {
-    }
-
-    default void runOnSide(Runnable r, Side s) {
     }
 
     default EntityPlayer getPlayer() {

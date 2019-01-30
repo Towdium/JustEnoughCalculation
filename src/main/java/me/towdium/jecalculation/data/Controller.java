@@ -120,7 +120,7 @@ public class Controller {
 
     static void setLast(String last) {
         if (isServerActive()) rPlayerServer.last = last;
-        else rPlayerServer.last = last;
+        else rPlayerClient.last = last;
     }
 
     public static List<String> getGroups() {
@@ -227,13 +227,21 @@ public class Controller {
     }
 
     public static void openGuiCraft() {
-        if (!Controller.isServerActive()) JecaGui.displayGui(true, true, new GuiCraft());
+        openGuiCraft(false);
+    }
+
+    public static void openGuiMath() {
+        openGuiMath(false);
+    }
+
+    public static void openGuiCraft(boolean scheduled) {
+        if (!Controller.isServerActive()) JecaGui.displayGui(true, true, scheduled, new GuiCraft());
         else Minecraft.getMinecraft().player.sendMessage(
                 new TextComponentTranslation("jecalculation.chat.server_mode"));
     }
 
-    public static void openGuiMath() {
-        if (!Controller.isServerActive()) JecaGui.displayGui(true, true, new GuiMath());
+    public static void openGuiMath(boolean scheduled) {
+        if (!Controller.isServerActive()) JecaGui.displayGui(true, true, scheduled, new GuiMath());
         else Minecraft.getMinecraft().player.sendMessage(
                 new TextComponentTranslation("jecalculation.chat.server_mode"));
     }

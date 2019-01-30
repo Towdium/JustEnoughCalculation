@@ -4,7 +4,6 @@ import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.guis.GuiCraft;
 import me.towdium.jecalculation.gui.guis.GuiMath;
-import me.towdium.jecalculation.network.packets.PCalculator;
 import me.towdium.jecalculation.utils.IllegalPositionException;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
@@ -25,8 +24,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-
-import static me.towdium.jecalculation.JustEnoughCalculation.network;
 
 /**
  * Author: towdium
@@ -99,13 +96,9 @@ public class JecaItem extends Item {
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
         ItemStack is = playerIn.getHeldItem(handIn);
-        JustEnoughCalculation.proxy.runOnSide(() -> {
-            boolean recipe = is.getItemDamage() == 0;
-            if (playerIn.isSneaking()) {
-                is.setItemDamage(recipe ? 1 : 0);
-                network.sendToServer(new PCalculator(is));
-            } else JecaGui.displayGui(true, true, recipe ? new GuiCraft() : new GuiMath());
-        }, Side.CLIENT);
+        boolean recipe = is.getItemDamage() == 0;
+        if (playerIn.isSneaking()) is.setItemDamage(recipe ? 1 : 0);
+        else if (worldIn.isRemote) JecaGui.displayGui(true, true, recipe ? new GuiCraft() : new GuiMath());
         return new ActionResult<>(EnumActionResult.SUCCESS, is);
     }
 }

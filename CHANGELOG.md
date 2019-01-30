@@ -2,7 +2,6 @@
 
 #### Todo list
 
-Add math calculator  
 Add nested grouping
 
 #### 3.0.0-pre13
@@ -68,3 +67,10 @@ Fixed Rendering in unicode environment
 Added Localization for simplified Chinese  
 Added Document for math calculator  
 Fixed Some tooltips
+
+#### 3.0.0-pre23
+
+Changed Text forced rendered as non-unicode in math calc  
+Changed Document of math calc  
+Fixed Command cannot trigger GUI  
+Fixed Crash when adding recipe in client mode

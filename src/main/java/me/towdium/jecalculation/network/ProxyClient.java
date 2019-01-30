@@ -38,11 +38,6 @@ public class ProxyClient extends ProxyServer {
     }
 
     @Override
-    public void runOnSide(Runnable r, Side s) {
-        if (s == Side.CLIENT) r.run();
-    }
-
-    @Override
     public EntityPlayer getPlayer() {
         return Minecraft.getMinecraft().player;
     }

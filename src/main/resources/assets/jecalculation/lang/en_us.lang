@@ -22,7 +22,7 @@ jecalculation.gui.craft.recipe=Add recipe
 jecalculation.gui.craft.search=Search recipe
 jecalculation.gui.craft.suggest=Suggestions
 jecalculation.gui.math.title=Math Calculator
-jecalculation.gui.math.help=You can use both buttons and keyboard (numpad or main keyboard) to use it. For main keyboard, the buttons are mapped to these keys:\n- plus: = / +\n- minus: - / --\n- times: ' / "\n- divide by: / / ?\n- equals: Enter\n- clear: Delete\n- backspace: Backspace
+jecalculation.gui.math.help=You can use both buttons and keyboard (numpad or main keyboard) to use it. For main keyboard, the buttons are mapped to these keys:\n- plus: = or +\n- minus: - or _\n- times: ' or "\n- divide by: / or ?\n- equals: Enter\n- clear: Delete\n- backspace: Backspace
 jecalculation.gui.disamb.list=Raw types
 jecalculation.gui.disamb.label=Inferred types
 jecalculation.gui.recipe.save.enabled=Save

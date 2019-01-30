@@ -27,6 +27,6 @@ public class CCraft implements ISubCommand {
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
-        Controller.openGuiCraft();
+        Controller.openGuiCraft(true);
     }
 }

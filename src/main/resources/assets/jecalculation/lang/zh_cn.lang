@@ -22,7 +22,7 @@ jecalculation.gui.craft.recipe=添加配方
 jecalculation.gui.craft.search=查找配方
 jecalculation.gui.craft.suggest=建议选项
 jecalculation.gui.math.title=数学计算器
-jecalculation.gui.math.help=按钮或者键盘都可以与计算器（主键盘或小键盘）进行交互。对于主键盘而言，各项功能以下列关系被映射到键盘按键上：\n- 加: = / +\n- 减: - / --\n- 乘: ' / "\n- 除: / / ?\n- 等于: Enter\n- 清零: Delete\n- 退格: Backspace
+jecalculation.gui.math.help=按钮或者键盘都可以与计算器（主键盘或小键盘）进行交互。对于主键盘而言，各项功能以下列关系被映射到键盘按键上：\n- 加: = 或 +\n- 减: - 或 --\n- 乘: ' 或 "\n- 除: / 或 ?\n- 等于: Enter\n- 清零: Delete\n- 退格: Backspace
 jecalculation.gui.disamb.list=原始类型
 jecalculation.gui.disamb.label=推测类型
 jecalculation.gui.recipe.save.enabled=保存配方
