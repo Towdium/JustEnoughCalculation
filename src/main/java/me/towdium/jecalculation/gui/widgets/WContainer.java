@@ -42,6 +42,10 @@ public class WContainer implements IContainer {
         widgets.clear();
     }
 
+    public boolean contains(IWidget w) {
+        return widgets.contains(w);
+    }
+
     @Override
     public void onDraw(JecaGui gui, int mouseX, int mouseY) {
         widgets.forEach(widget -> widget.onDraw(gui, mouseX, mouseY));

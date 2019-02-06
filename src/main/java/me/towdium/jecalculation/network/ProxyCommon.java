@@ -10,7 +10,7 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
  * Author: towdium
  * Date:   8/10/17.
  */
-public class ProxyServer implements IProxy {
+public class ProxyCommon implements IProxy {
     @Override
     public void initPre() {
         CapabilityManager.INSTANCE.register(Recipes.class, new JecaCapability.Storage(), Recipes::new);

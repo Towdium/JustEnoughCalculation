@@ -59,7 +59,7 @@ Improved Interaction in interface
 
 Added Key binding for math calculator  
 Added Commands for math and crafting calculator  
-Added Recipe editor will use last edited group by default  
+Added Recipe editor will use last edited old by default  
 Fixed Rendering in unicode environment
 
 #### 3.0.0-pre22
@@ -74,3 +74,10 @@ Changed Text forced rendered as non-unicode in math calc
 Changed Document of math calc  
 Fixed Command cannot trigger GUI  
 Fixed Crash when adding recipe in client mode
+
+#### 3.1.0
+
+Added ru_ru.lang  
+Added Group renaming  
+Changed When searching for recipes, use alphabetic order 
+for groups and try to select latest recipe in each group

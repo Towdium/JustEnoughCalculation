@@ -11,20 +11,24 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
+import javax.annotation.Nullable;
+
 public class PEdit implements IMessage {
-    static final String KEY_GROUP = "group";
+    static final String KEY_OLD = "old";
+    static final String KEY_NEW = "new";
     static final String KEY_INDEX = "index";
     static final String KEY_RECIPE = "recipe";
 
-    String group;
+    String old, neu;
     int index;
     Recipe recipe;
 
     public PEdit() {
     }
 
-    public PEdit(String group, int index, Recipe recipe) {
-        this.group = group;
+    public PEdit(String neu, @Nullable String old, int index, @Nullable Recipe recipe) {
+        this.neu = neu;
+        this.old = old;
         this.index = index;
         this.recipe = recipe;
     }
@@ -33,7 +37,8 @@ public class PEdit implements IMessage {
     public void fromBytes(ByteBuf buf) {
         NBTTagCompound tag = ByteBufUtils.readTag(buf);
         tag = tag == null ? new NBTTagCompound() : tag;
-        group = tag.getString(KEY_GROUP);
+        old = tag.hasKey(KEY_OLD) ? tag.getString(KEY_OLD) : null;
+        neu = tag.getString(KEY_NEW);
         index = tag.getInteger(KEY_INDEX);
         recipe = tag.hasKey(KEY_RECIPE) ? new Recipe(tag.getCompoundTag(KEY_RECIPE)) : null;
     }
@@ -41,7 +46,8 @@ public class PEdit implements IMessage {
     @Override
     public void toBytes(ByteBuf buf) {
         NBTTagCompound tag = new NBTTagCompound();
-        tag.setString(KEY_GROUP, group);
+        if (old != null) tag.setString(KEY_OLD, old);
+        tag.setString(KEY_NEW, neu);
         tag.setInteger(KEY_INDEX, index);
         if (recipe != null) tag.setTag(KEY_RECIPE, recipe.serialize());
         ByteBufUtils.writeTag(buf, tag);
@@ -53,8 +59,8 @@ public class PEdit implements IMessage {
             IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
             mainThread.addScheduledTask(() -> {
                 JecaCapability.getRecord(ctx.getServerHandler().player).recipes
-                        .modify(message.group, message.index, message.recipe);
-                JecaCapability.getRecord(ctx.getServerHandler().player).last = message.group;
+                        .modify(message.neu, message.old, message.index, message.recipe);
+                JecaCapability.getRecord(ctx.getServerHandler().player).last = message.old;
             });
             return null;
         }

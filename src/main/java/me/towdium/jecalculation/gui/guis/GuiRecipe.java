@@ -1,5 +1,6 @@
 package me.towdium.jecalculation.gui.guis;
 
+import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.label.ILabel.Converter;
@@ -15,7 +16,9 @@ import me.towdium.jecalculation.utils.wrappers.Pair;
 import me.towdium.jecalculation.utils.wrappers.Trio;
 import mezz.jei.api.gui.IGuiIngredient;
 import mezz.jei.api.gui.IRecipeLayout;
+import org.lwjgl.input.Keyboard;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -26,75 +29,74 @@ import static me.towdium.jecalculation.gui.Resource.*;
  * Author: towdium
  * Date:   17-9-8.
  */
+@MethodsReturnNonnullByDefault
+@ParametersAreNonnullByDefault
 public class GuiRecipe extends WContainer implements IGui {
     Pair<String, Integer> dest;
-    HashMap<Integer, List<ILabel>> disambiguation = new HashMap<>();
-    WSwitcher switcherGroup = new WSwitcher(7, 7, 162, Controller.getGroups());
-    WTextField textField = new WTextField(49, 31, 119);
-    WLabelGroup groupCatalyst = new WLabelGroup(29, 87, 7, 1, 20, 20, Mode.EDITOR).setListener((i, v) -> {
-        disambiguation.remove(v + 14);
+    HashMap<Integer, List<ILabel>> disambCache = new HashMap<>();
+    WSwitcher group = new WSwitcher(7, 7, 162, Controller.getGroups());
+    WTextField text = new WTextField(49, 31, 119);
+    WLabelGroup catalyst = new WLabelGroup(29, 87, 7, 1, 20, 20, Mode.EDITOR).setListener((i, v) -> {
+        disambCache.remove(v + 14);
         refresh();
     });
-    WLabelGroup groupInput = new WLabelGroup(29, 111, 7, 2, 20, 20, Mode.EDITOR).setListener((i, v) -> {
-        disambiguation.remove(v);
+    WLabelGroup input = new WLabelGroup(29, 111, 7, 2, 20, 20, Mode.EDITOR).setListener((i, v) -> {
+        disambCache.remove(v);
         refresh();
     });
-    WLabelGroup groupOutput = new WLabelGroup(29, 63, 7, 1, 20, 20, Mode.EDITOR).setListener((i, v) -> {
-        disambiguation.remove(v + 21);
+    WLabelGroup output = new WLabelGroup(29, 63, 7, 1, 20, 20, Mode.EDITOR).setListener((i, v) -> {
+        disambCache.remove(v + 21);
         refresh();
     });
-    WButton buttonDisamb = new WButtonIcon(121, 31, 20, 20, BTN_DISAMB, "recipe.disamb").setListener(i -> {
-        if (disambiguation != null) JecaGui.displayGui(new GuiDisamb(new ArrayList<>(disambiguation.values()))
+    WButton disamb = new WButtonIcon(121, 31, 20, 20, BTN_DISAMB, "recipe.disamb").setListener(i -> {
+        if (disambCache != null) JecaGui.displayGui(new GuiDisamb(new ArrayList<>(disambCache.values()))
                 .setCallback(l -> {
                     JecaGui.displayParent();
                     JecaGui.getCurrent().hand = l;
                 }));
     });
-    WButton buttonClear = new WButtonIcon(64, 31, 20, 20, BTN_DEL, "recipe.clear").setListener(i -> clear());
+    WButton clear = new WButtonIcon(64, 31, 20, 20, BTN_DEL, "recipe.clear").setListener(i -> reset());
     // check duplicate and valid
-    WButton buttonCopy = new WButtonIcon(83, 31, 20, 20, BTN_COPY, "recipe.copy").setListener(i -> {
-        Controller.addRecipe(switcherGroup.getText(), toRecipe());
+    WButton copy = new WButtonIcon(83, 31, 20, 20, BTN_COPY, "recipe.copy").setListener(i -> {
+        Controller.addRecipe(group.getText(), toRecipe());
         JecaGui.displayParent();
     });
-    WButton buttonLabel = new WButtonIcon(45, 31, 20, 20, BTN_LABEL, "recipe.label").setListener(i ->
+    WButton label = new WButtonIcon(45, 31, 20, 20, BTN_LABEL, "recipe.label").setListener(i ->
             JecaGui.displayGui(new GuiLabel((l) -> {
                 JecaGui.displayParent();
                 JecaGui.getCurrent().hand = l;
             })));
-    WButton buttonSave = new WButtonIcon(26, 31, 20, 20, BTN_SAVE, "recipe.save").setDisabled(true).setListener(i -> {
+    WButton save = new WButtonIcon(26, 31, 20, 20, BTN_SAVE, "recipe.save").setDisabled(true).setListener(i -> {
         if (dest == null)
-            Controller.addRecipe(switcherGroup.getText(), toRecipe());
+            Controller.addRecipe(group.getText(), toRecipe());
         else {
-            if (textField.getText().equals(dest.one))
-                Controller.setRecipe(dest.one, dest.two, toRecipe());
-            else {
-                Controller.removeRecipe(dest.one, dest.two);
-                Controller.addRecipe(switcherGroup.getText(), toRecipe());
-            }
+            String group = this.group.getText();
+            if (group.equals(dest.one)) Controller.setRecipe(dest.one, dest.two, toRecipe());
+            else Controller.setRecipe(group, dest.one, dest.two, toRecipe());
         }
         JecaGui.displayParent();
     });
-    WButton buttonDel = new WButtonIcon(102, 31, 20, 20, BTN_NO, "recipe.delete").setListener(i -> {
+    WButton delete = new WButtonIcon(102, 31, 20, 20, BTN_NO, "recipe.delete").setListener(i -> {
         Controller.removeRecipe(dest.one, dest.two);
         JecaGui.displayParent();
     });
-    WButton buttonYes = new WButtonIcon(7, 31, 20, 20, BTN_YES, "recipe.confirm").setDisabled(true).setListener(i -> {
-        switcherGroup.setTemp(textField.getText());
-        textField.setText("");
+    WButton yes = new WButtonIcon(7, 31, 20, 20, BTN_YES, "recipe.confirm").setDisabled(true).setListener(i -> {
+        group.setText(text.getText());
+        text.setText("");
         setNewGroup(false);
+        refresh();
     });
-    WButton buttonNo = new WButtonIcon(26, 31, 20, 20, BTN_NO, "common.cancel").setListener(i -> setNewGroup(false));
-    WButton buttonNew = new WButtonIcon(7, 31, 20, 20, BTN_NEW, "recipe.new").setListener(i -> setNewGroup(true));
+    WButton no = new WButtonIcon(26, 31, 20, 20, BTN_NO, "common.cancel").setListener(i -> setNewGroup(false));
+    WButton neu = new WButtonIcon(7, 31, 20, 20, BTN_NEW, "recipe.new").setListener(i -> setNewGroup(true));
 
     public GuiRecipe(String group, int index) {
         this();
         dest = new Pair<>(group, index);
         Recipe r = Controller.getRecipe(group, index);
         fromRecipe(r);
-        switcherGroup.setIndex(Controller.getGroups().indexOf(group));
-        buttonCopy.setDisabled(false);
-        buttonDel.setDisabled(false);
-        buttonSave.setDisabled(false);
+        this.group.setIndex(Controller.getGroups().indexOf(group));
+        delete.setDisabled(false);
+        refresh();
     }
 
     public GuiRecipe() {
@@ -103,40 +105,51 @@ public class GuiRecipe extends WContainer implements IGui {
         add(new WIcon(7, 87, 22, 20, ICN_CATALYST, "common.catalyst"));
         add(new WIcon(7, 111, 22, 40, ICN_INPUT, "common.input"));
         add(new WLine(57));
-        add(groupInput, groupCatalyst, groupOutput, switcherGroup);
-        if (switcherGroup.getTexts().isEmpty()) switcherGroup.setTemp(Utilities.I18n.get("gui.common.default"));
+        add(input, catalyst, output, group);
+        if (group.getTexts().isEmpty()) group.setText(Utilities.I18n.get("gui.common.default"));
         String last = Controller.getLast();
         int index = -1;
-        if (last != null) index = switcherGroup.getTexts().indexOf(last);
-        if (index != -1) switcherGroup.setIndex(index);
+        if (last != null) index = group.getTexts().indexOf(last);
+        if (index != -1) group.setIndex(index);
         setNewGroup(false);
-        buttonCopy.setDisabled(true);
-        buttonDel.setDisabled(true);
-        buttonDisamb.setDisabled(true);
-        textField.setListener(i -> buttonYes.setDisabled(i.getText().isEmpty()));
+        copy.setDisabled(true);
+        delete.setDisabled(true);
+        disamb.setDisabled(true);
+        text.setListener(i -> yes.setDisabled(i.getText().isEmpty()));
+    }
+
+    @Override
+    public boolean onKey(JecaGui gui, char ch, int code) {
+        if (code == Keyboard.KEY_ESCAPE && contains(text)) {
+            setNewGroup(false);
+            return true;
+        }
+        return super.onKey(gui, ch, code);
     }
 
     public void setNewGroup(boolean b) {
         if (b) {
-            remove(buttonNew, buttonLabel, buttonClear, buttonCopy, buttonSave, buttonDisamb, buttonDel);
-            add(buttonYes, buttonNo, textField);
+            remove(neu, label, clear, copy, save, disamb, delete);
+            add(yes, no, text);
         } else {
-            add(buttonNew, buttonLabel, buttonClear, buttonCopy, buttonSave, buttonDisamb, buttonDel);
-            remove(buttonYes, buttonNo, textField);
+            add(neu, label, clear, copy, save, disamb, delete);
+            remove(yes, no, text);
+            text.setText("");
+            yes.setDisabled(true);
         }
     }
 
-    public void clear() {
-        groupInput.setLabel(Collections.nCopies(14, ILabel.EMPTY), 0);
-        groupCatalyst.setLabel(Collections.nCopies(7, ILabel.EMPTY), 0);
-        groupOutput.setLabel(Collections.nCopies(7, ILabel.EMPTY), 0);
+    public void reset() {
+        input.setLabel(Collections.nCopies(14, ILabel.EMPTY), 0);
+        catalyst.setLabel(Collections.nCopies(7, ILabel.EMPTY), 0);
+        output.setLabel(Collections.nCopies(7, ILabel.EMPTY), 0);
     }
 
     public void transfer(IRecipeLayout recipe) {
         // item disamb raw
         ArrayList<Trio<ILabel, CostList, CostList>> input = new ArrayList<>();
         ArrayList<Trio<ILabel, CostList, CostList>> output = new ArrayList<>();
-        disambiguation = new HashMap<>();
+        disambCache = new HashMap<>();
 
         // merge jei structure into list input/output
         Stream.of(recipe.getFluidStacks(), recipe.getItemStacks())
@@ -146,15 +159,15 @@ public class GuiRecipe extends WContainer implements IGui {
         // convert catalyst
         List<ILabel> catalysts = JecaPlugin.runtime.getRecipeRegistry().getRecipeCatalysts(recipe.getRecipeCategory())
                 .stream().map(Converter::from).collect(Collectors.toList());
-        if (catalysts.size() == 1) groupCatalyst.setLabel(catalysts.get(0), 0);
+        if (catalysts.size() == 1) catalyst.setLabel(catalysts.get(0), 0);
         else if (catalysts.size() > 1) {
-            groupCatalyst.setLabel(ILabel.CONVERTER.first(catalysts, recipe), 0);
-            disambiguation.put(14, catalysts);
+            catalyst.setLabel(ILabel.CONVERTER.first(catalysts, recipe), 0);
+            disambCache.put(14, catalysts);
         }
 
         // generate disamb info according to content in list input/output
-        groupInput.setLabel(sort(input, 0), 0);
-        groupOutput.setLabel(sort(output, 21), 0);
+        this.input.setLabel(sort(input, 0), 0);
+        this.output.setLabel(sort(output, 21), 0);
         refresh();
     }
 
@@ -181,31 +194,34 @@ public class GuiRecipe extends WContainer implements IGui {
         for (int i = 0; i < src.size(); i++) {
             Trio<ILabel, CostList, CostList> p = src.get(i);
             ret.add(p.one);
-            if (p.two.getLabels().size() > 1) disambiguation.put(i + offset, p.two.getLabels());
+            if (p.two.getLabels().size() > 1) disambCache.put(i + offset, p.two.getLabels());
         }
         return ret;
     }
 
     private Recipe toRecipe() {
-        return new Recipe(groupInput.getLabels(), groupCatalyst.getLabels(), groupOutput.getLabels());
+        return new Recipe(input.getLabels(), catalyst.getLabels(), output.getLabels());
     }
 
     void fromRecipe(Recipe r) {
-        groupInput.setLabel(Arrays.stream(r.getLabel(IO.INPUT))
+        input.setLabel(Arrays.stream(r.getLabel(IO.INPUT))
                 .map(ILabel::copy).collect(Collectors.toList()), 0);
-        groupCatalyst.setLabel(Arrays.stream(r.getLabel(IO.CATALYST))
+        catalyst.setLabel(Arrays.stream(r.getLabel(IO.CATALYST))
                 .map(ILabel::copy).collect(Collectors.toList()), 0);
-        groupOutput.setLabel(Arrays.stream(r.getLabel(IO.OUTPUT))
+        output.setLabel(Arrays.stream(r.getLabel(IO.OUTPUT))
                 .map(ILabel::copy).collect(Collectors.toList()), 0);
     }
 
     void refresh() {
-        buttonDisamb.setDisabled(disambiguation.isEmpty());
+        disamb.setDisabled(disambCache.isEmpty());
         try {
             Recipe r = toRecipe();
-            buttonSave.setDisabled(Controller.hasDuplicate(r));
+            boolean d = Controller.hasDuplicate(r, group.getText());
+            save.setDisabled(d);
+            if (dest != null) copy.setDisabled(d);
         } catch (IllegalArgumentException e) {
-            buttonSave.setDisabled(true);
+            save.setDisabled(true);
+            copy.setDisabled(true);
         }
     }
 }

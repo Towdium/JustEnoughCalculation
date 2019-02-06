@@ -47,17 +47,23 @@ public class WSwitcher extends WContainer {
         this.keys = keys;
         left = new WButtonIcon(xPos, yPos, SIZE, SIZE, WGT_ARR_L).setListener(i -> {
             if (temp == null) move(-1);
-            else setTemp(null);
+            else setText(null);
         });
         right = new WButtonIcon(xPos + xSize - SIZE, yPos, SIZE, SIZE, WGT_ARR_R).setListener(i -> {
             if (temp == null) move(1);
-            else setTemp(null);
+            else setText(null);
         });
         wRect = new WRectangle(xPos + SIZE, yPos, xSize - 2 * SIZE, SIZE, COLOR_GUI_GREY);
         wText = new WText(xPos + SIZE, yPos + 2, xSize - 2 * SIZE, SHADOW, "", true);
         index = new Circulator(keys.size());
         refresh();
         add(left, right, wRect, wText);
+    }
+
+    public WSwitcher setDisabled(boolean b) {
+        left.setDisabled(b);
+        right.setDisabled(b);
+        return this;
     }
 
     public void move(int diff) {
@@ -75,12 +81,6 @@ public class WSwitcher extends WContainer {
     public WSwitcher setListener(ListenerAction<? super WSwitcher> listener) {
         this.listener = listener;
         return this;
-    }
-
-    public void setTemp(@Nullable String temp) {
-        this.temp = temp;
-        notifyLsnr();
-        refresh();
     }
 
     public int getIndex() {
@@ -106,6 +106,15 @@ public class WSwitcher extends WContainer {
         left.setDisabled(b);
         right.setDisabled(b);
         wText.key = temp == null ? (keys.isEmpty() ? "" : keys.get(index.current())) : temp;
+    }
+
+    public WSwitcher setText(@Nullable String s) {
+        int i = keys.indexOf(s);
+        if (i != -1) setIndex(i);
+        else temp = s;
+        notifyLsnr();
+        refresh();
+        return this;
     }
 
     public void notifyLsnr() {

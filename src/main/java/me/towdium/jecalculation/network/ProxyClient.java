@@ -18,7 +18,7 @@ import static org.lwjgl.input.Keyboard.KEY_NONE;
  * Date:   8/10/17.
  */
 @SideOnly(Side.CLIENT)
-public class ProxyClient extends ProxyServer {
+public class ProxyClient extends ProxyCommon {
     public static final KeyBinding keyOpenGuiCraft = new KeyBinding("jecalculation.key.gui_craft", KEY_NONE, "jecalculation.key.category");
     public static final KeyBinding keyOpenGuiMath = new KeyBinding("jecalculation.key.gui_math", KEY_NONE, "jecalculation.key.category");
 

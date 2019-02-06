@@ -14,7 +14,7 @@ import java.util.stream.StreamSupport;
  * Author: Towdium
  * Date: 19-1-20
  */
-public class RecordCraft {
+public class RecordCraft implements IRecord {
     public static final String KEY_RECENTS = "recents";
     public static final String KEY_AMOUNT = "amount";
     public static final String KEY_INVENTORY = "inventory";

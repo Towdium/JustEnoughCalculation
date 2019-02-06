@@ -31,6 +31,7 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.File;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -101,16 +102,19 @@ public class Controller {
         for (Recipe r : buffer) addRecipe(group, r);
     }
 
-    public static File export(String group) {
-        File f = new File(Loader.instance().getConfigDir(), "JustEnoughCalculation/data/" + group + ".json");
-        Utilities.Json.write(getRecipes().serialize(Collections.singleton(group)), f);
-        return f;
+    private static void export(String s, Function<Recipes, NBTTagCompound> r) {
+        File f = new File(Loader.instance().getConfigDir(), "JustEnoughCalculation/data/" + s + ".json");
+        Utilities.Json.write(r.apply(getRecipes()), f);
+        Minecraft.getMinecraft().player.sendMessage(new TextComponentTranslation(
+                "jecalculation.chat.export", f.getAbsolutePath()));
     }
 
-    public static File export() {
-        File f = new File(Loader.instance().getConfigDir(), "JustEnoughCalculation/data/groups.json");
-        Utilities.Json.write(getRecipes().serialize(), f);
-        return f;
+    public static void export(String group) {
+        export(group, i -> i.serialize(Collections.singleton(group)));
+    }
+
+    public static void export() {
+        export("groups", Recipes::serialize);
     }
 
     @Nullable
@@ -127,22 +131,34 @@ public class Controller {
         return getRecipes().getGroups();
     }
 
+    public static void setRecipe(String neu, String old, int index, Recipe recipe) {
+        getRecipes().set(neu, old, index, recipe);
+        setLast(neu);
+        if (isServerActive()) network.sendToServer(new PEdit(neu, old, index, recipe));
+    }
+
+    public static void renameGroup(String old, String neu) {
+        getRecipes().renameGroup(old, neu);
+        setLast(neu);
+        if (isServerActive()) network.sendToServer(new PEdit(neu, old, -1, null));
+    }
+
     public static void addRecipe(String group, Recipe recipe) {
         getRecipes().add(group, recipe);
         setLast(group);
-        if (isServerActive()) network.sendToServer(new PEdit(group, -1, recipe));
+        if (isServerActive()) network.sendToServer(new PEdit(group, null, -1, recipe));
     }
 
     public static void setRecipe(String group, int index, Recipe recipe) {
         getRecipes().set(group, index, recipe);
         setLast(group);
-        if (isServerActive()) network.sendToServer(new PEdit(group, index, recipe));
+        if (isServerActive()) network.sendToServer(new PEdit(group, null, index, recipe));
     }
 
     public static void removeRecipe(String group, int index) {
         getRecipes().remove(group, index);
         setLast(group);
-        if (isServerActive()) network.sendToServer(new PEdit(group, index, null));
+        if (isServerActive()) network.sendToServer(new PEdit(group, null, index, null));
     }
 
     public static Recipe getRecipe(String group, int index) {
@@ -162,43 +178,43 @@ public class Controller {
     }
 
     public static void setRMath(RecordMath math) {
-        if (!isServerActive()) rMathClient = math;
-        else {
-            Optional<ItemStack> ois = getStack();
-            ois.ifPresent(is -> {
-                Utilities.getTag(is).setTag(KEY_MATH, math.serialize());
-                network.sendToServer(new PCalculator(is));
-            });
-        }
-    }
-
-    public static RecordCraft getRCraft() {
-        if (!isServerActive()) return rCraftClient;
-        else return new RecordCraft(getStack()
-                .map(i -> Utilities.getTag(i).getCompoundTag(KEY_CRAFT))
-                .orElse(new NBTTagCompound()));
+        setR(math, i -> rMathClient = i, KEY_MATH);
     }
 
     public static void setRCraft(RecordCraft rc) {
-        if (!isServerActive()) rCraftClient = rc;
+        setR(rc, i -> rCraftClient = i, KEY_CRAFT);
+    }
+
+    public static RecordCraft getRCraft() {
+        return getR(rCraftClient, KEY_CRAFT, RecordCraft::new);
+    }
+
+    public static RecordMath getRMath() {
+        return getR(rMathClient, KEY_MATH, RecordMath::new);
+    }
+
+    private static <T extends IRecord> void setR(T t, Consumer<T> c, String s) {
+        if (!isServerActive()) c.accept(t);
         else {
             Optional<ItemStack> ois = getStack();
             ois.ifPresent(is -> {
-                Utilities.getTag(is).setTag(KEY_CRAFT, rc.serialize());
+                Utilities.getTag(is).setTag(s, t.serialize());
                 network.sendToServer(new PCalculator(is));
             });
         }
     }
 
-    public static RecordMath getRMath() {
-        if (!isServerActive()) return rMathClient;
-        else return new RecordMath(getStack()
-                .map(i -> Utilities.getTag(i).getCompoundTag(KEY_MATH))
+    public static <T> T getR(T t, String s, Function<NBTTagCompound, T> f) {
+        if (!isServerActive()) return t;
+        else return f.apply(getStack()
+                .map(i -> Utilities.getTag(i).getCompoundTag(s))
                 .orElse(new NBTTagCompound()));
     }
 
-    public static boolean hasDuplicate(Recipe r) {
-        return getRecipes().hasDuplicate(r);
+    public static boolean hasDuplicate(Recipe r, String group) {
+        List<Recipe> g = getRecipes().getGroup(group);
+        //noinspection ConstantConditions
+        return g != null && g.contains(r);
     }
 
     public static void loadFromLocal() {

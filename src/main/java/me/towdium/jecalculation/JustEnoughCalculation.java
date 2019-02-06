@@ -39,7 +39,7 @@ public class JustEnoughCalculation {
     public static JustEnoughCalculation instance;
     @SidedProxy(modId = "jecalculation",
             clientSide = "me.towdium.jecalculation.network.ProxyClient",
-            serverSide = "me.towdium.jecalculation.network.ProxyServer")
+            serverSide = "me.towdium.jecalculation.network.ProxyCommon")
     public static IProxy proxy;
     public static SimpleNetworkWrapper network;
     public static Logger logger = LogManager.getLogger(Reference.MODID);

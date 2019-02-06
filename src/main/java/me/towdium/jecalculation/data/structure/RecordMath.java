@@ -13,7 +13,7 @@ import java.util.List;
  * Author: Towdium
  * Date: 19-1-20
  */
-public class RecordMath {
+public class RecordMath implements IRecord {
     public static MathContext context = new MathContext(7, RoundingMode.HALF_UP);
     public static final int DOT_NONE = -1;
     static final String KEY_CURRENT = "current";
