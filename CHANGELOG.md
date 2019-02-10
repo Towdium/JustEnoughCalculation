@@ -80,3 +80,7 @@ Fixed Crash when adding recipe in client mode
 Added ru_ru.lang  
 Added Group renaming  
 Fixed Recipe selecting order
+
+#### 3.1.1
+
+Fixed #50

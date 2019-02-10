@@ -94,11 +94,11 @@ public class Controller {
 
     public static void inport(Recipes recipes, String group) {
         ArrayList<Recipe> buffer = new ArrayList<>();
-        recipes.getGroup(group).forEach(i ->
-                getRecipes().getGroup(group).stream().filter(j -> j.equals(i)).findAny().orElseGet(() -> {
-                    buffer.add(i);
-                    return null;
-                }));
+        List<Recipe> data = getRecipes().getGroup(group);
+        recipes.getGroup(group).forEach(i -> {
+            //noinspection ConstantConditions
+            if (data == null || !data.contains(i)) buffer.add(i);
+        });
         for (Recipe r : buffer) addRecipe(group, r);
     }
 
