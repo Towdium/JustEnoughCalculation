@@ -34,7 +34,7 @@ import static me.towdium.jecalculation.gui.Resource.*;
 public class GuiRecipe extends WContainer implements IGui {
     Pair<String, Integer> dest;
     HashMap<Integer, List<ILabel>> disambCache = new HashMap<>();
-    WSwitcher group = new WSwitcher(7, 7, 162, Controller.getGroups());
+    WSwitcher group = new WSwitcher(7, 7, 162, Controller.getGroups()).setListener(i -> refresh());
     WTextField text = new WTextField(49, 31, 119);
     WLabelGroup catalyst = new WLabelGroup(29, 87, 7, 1, 20, 20, Mode.EDITOR).setListener((i, v) -> {
         disambCache.remove(v + 14);
@@ -216,7 +216,8 @@ public class GuiRecipe extends WContainer implements IGui {
         disamb.setDisabled(disambCache.isEmpty());
         try {
             Recipe r = toRecipe();
-            boolean d = Controller.hasDuplicate(r, group.getText());
+            boolean d = dest == null ? Controller.hasDuplicate(r) :
+                    Controller.hasDuplicate(r, dest.one, dest.two);
             save.setDisabled(d);
             if (dest != null) copy.setDisabled(d);
         } catch (IllegalArgumentException e) {

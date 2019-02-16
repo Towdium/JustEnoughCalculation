@@ -84,3 +84,8 @@ Fixed Recipe selecting order
 #### 3.1.1
 
 Fixed #50
+
+
+#### 3.1.2
+
+Fix Cannot change group when editing recipe

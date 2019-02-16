@@ -94,11 +94,7 @@ public class Controller {
 
     public static void inport(Recipes recipes, String group) {
         ArrayList<Recipe> buffer = new ArrayList<>();
-        List<Recipe> data = getRecipes().getGroup(group);
-        recipes.getGroup(group).forEach(i -> {
-            //noinspection ConstantConditions
-            if (data == null || !data.contains(i)) buffer.add(i);
-        });
+        recipes.getGroup(group).stream().filter(i -> !hasDuplicate(i)).forEach(buffer::add);
         for (Recipe r : buffer) addRecipe(group, r);
     }
 
@@ -211,10 +207,25 @@ public class Controller {
                 .orElse(new NBTTagCompound()));
     }
 
-    public static boolean hasDuplicate(Recipe r, String group) {
-        List<Recipe> g = getRecipes().getGroup(group);
-        //noinspection ConstantConditions
-        return g != null && g.contains(r);
+
+    /**
+     * Checks if recipe has duplications, except the recipe at group->index
+     *
+     * @param r     Recipe to check
+     * @param group Group exclusive
+     * @param index Index exclusive
+     * @return if duplicate found
+     */
+    public static boolean hasDuplicate(Recipe r, String group, int index) {
+        Recipes.RecipeIterator ri = recipeIterator();
+        return ri.stream().anyMatch(i -> {
+            if (ri.getIndex() == index && ri.getGroup().equals(group)) return false;
+            else return i.equals(r);
+        });
+    }
+
+    public static boolean hasDuplicate(Recipe r) {
+        return recipeIterator().stream().anyMatch(i -> i.equals(r));
     }
 
     public static void loadFromLocal() {
