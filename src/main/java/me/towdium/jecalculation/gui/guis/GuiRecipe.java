@@ -35,7 +35,7 @@ public class GuiRecipe extends WContainer implements IGui {
     Pair<String, Integer> dest;
     HashMap<Integer, List<ILabel>> disambCache = new HashMap<>();
     WSwitcher group = new WSwitcher(7, 7, 162, Controller.getGroups()).setListener(i -> refresh());
-    WTextField text = new WTextField(49, 31, 119);
+    WTextField text = new WTextField(49, 32, 119);
     WLabelGroup catalyst = new WLabelGroup(29, 87, 7, 1, 20, 20, Mode.EDITOR).setListener((i, v) -> {
         disambCache.remove(v + 14);
         refresh();
@@ -48,25 +48,25 @@ public class GuiRecipe extends WContainer implements IGui {
         disambCache.remove(v + 21);
         refresh();
     });
-    WButton disamb = new WButtonIcon(121, 31, 20, 20, BTN_DISAMB, "recipe.disamb").setListener(i -> {
+    WButton disamb = new WButtonIcon(102, 32, 20, 20, BTN_DISAMB, "recipe.disamb").setListener(i -> {
         if (disambCache != null) JecaGui.displayGui(new GuiDisamb(new ArrayList<>(disambCache.values()))
                 .setCallback(l -> {
                     JecaGui.displayParent();
                     JecaGui.getCurrent().hand = l;
                 }));
     });
-    WButton clear = new WButtonIcon(64, 31, 20, 20, BTN_DEL, "recipe.clear").setListener(i -> reset());
+    WButton clear = new WButtonIcon(64, 32, 20, 20, BTN_DEL, "recipe.clear").setListener(i -> reset());
     // check duplicate and valid
-    WButton copy = new WButtonIcon(83, 31, 20, 20, BTN_COPY, "recipe.copy").setListener(i -> {
+    WButton copy = new WButtonIcon(83, 32, 20, 20, BTN_COPY, "recipe.copy").setListener(i -> {
         Controller.addRecipe(group.getText(), toRecipe());
         JecaGui.displayParent();
     });
-    WButton label = new WButtonIcon(45, 31, 20, 20, BTN_LABEL, "recipe.label").setListener(i ->
+    WButton label = new WButtonIcon(45, 32, 20, 20, BTN_LABEL, "recipe.label").setListener(i ->
             JecaGui.displayGui(new GuiLabel((l) -> {
                 JecaGui.displayParent();
                 JecaGui.getCurrent().hand = l;
             })));
-    WButton save = new WButtonIcon(26, 31, 20, 20, BTN_SAVE, "recipe.save").setDisabled(true).setListener(i -> {
+    WButton save = new WButtonIcon(26, 32, 20, 20, BTN_SAVE, "recipe.save").setDisabled(true).setListener(i -> {
         if (dest == null)
             Controller.addRecipe(group.getText(), toRecipe());
         else {
@@ -76,18 +76,14 @@ public class GuiRecipe extends WContainer implements IGui {
         }
         JecaGui.displayParent();
     });
-    WButton delete = new WButtonIcon(102, 31, 20, 20, BTN_NO, "recipe.delete").setListener(i -> {
-        Controller.removeRecipe(dest.one, dest.two);
-        JecaGui.displayParent();
-    });
-    WButton yes = new WButtonIcon(7, 31, 20, 20, BTN_YES, "recipe.confirm").setDisabled(true).setListener(i -> {
+    WButton yes = new WButtonIcon(7, 32, 20, 20, BTN_YES, "recipe.confirm").setDisabled(true).setListener(i -> {
         group.setText(text.getText());
         text.setText("");
         setNewGroup(false);
         refresh();
     });
-    WButton no = new WButtonIcon(26, 31, 20, 20, BTN_NO, "common.cancel").setListener(i -> setNewGroup(false));
-    WButton neu = new WButtonIcon(7, 31, 20, 20, BTN_NEW, "recipe.new").setListener(i -> setNewGroup(true));
+    WButton no = new WButtonIcon(26, 32, 20, 20, BTN_NO, "common.cancel").setListener(i -> setNewGroup(false));
+    WButton neu = new WButtonIcon(7, 32, 20, 20, BTN_NEW, "recipe.new").setListener(i -> setNewGroup(true));
 
     public GuiRecipe(String group, int index) {
         this();
@@ -95,7 +91,6 @@ public class GuiRecipe extends WContainer implements IGui {
         Recipe r = Controller.getRecipe(group, index);
         fromRecipe(r);
         this.group.setIndex(Controller.getGroups().indexOf(group));
-        delete.setDisabled(false);
         refresh();
     }
 
@@ -113,7 +108,6 @@ public class GuiRecipe extends WContainer implements IGui {
         if (index != -1) group.setIndex(index);
         setNewGroup(false);
         copy.setDisabled(true);
-        delete.setDisabled(true);
         disamb.setDisabled(true);
         text.setListener(i -> yes.setDisabled(i.getText().isEmpty()));
     }
@@ -129,10 +123,10 @@ public class GuiRecipe extends WContainer implements IGui {
 
     public void setNewGroup(boolean b) {
         if (b) {
-            remove(neu, label, clear, copy, save, disamb, delete);
+            remove(neu, label, clear, copy, save, disamb);
             add(yes, no, text);
         } else {
-            add(neu, label, clear, copy, save, disamb, delete);
+            add(neu, label, clear, copy, save, disamb);
             remove(yes, no, text);
             text.setText("");
             yes.setDisabled(true);

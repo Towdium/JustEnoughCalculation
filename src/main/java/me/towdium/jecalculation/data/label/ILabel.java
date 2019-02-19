@@ -16,6 +16,7 @@ import me.towdium.jecalculation.utils.Utilities.ReversedIterator;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import mezz.jei.api.gui.IRecipeLayout;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -31,6 +32,8 @@ import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
+import static net.minecraft.item.ItemEnchantedBook.getEnchantedItemStack;
 
 /**
  * Author: towdium
@@ -77,7 +80,6 @@ public interface ILabel {
 
     ILabel multiply(float i);
 
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     boolean acceptPercent();
 
     @SuppressWarnings("UnusedReturnValue")
@@ -238,6 +240,7 @@ public interface ILabel {
             if (o == null) return ILabel.EMPTY;
             else if (o instanceof ItemStack) return new LItemStack((ItemStack) o);
             else if (o instanceof FluidStack) return new LFluidStack((FluidStack) o);
+            else if (o instanceof EnchantmentData) return new LItemStack(getEnchantedItemStack((EnchantmentData) o));
             else throw new RuntimeException("Unrecognized ingredient type: " + o.getClass());
         }
 

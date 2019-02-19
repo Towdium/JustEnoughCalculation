@@ -78,12 +78,22 @@ public class JecaGui extends GuiContainer {
         if (inventorySlots instanceof JecContainer) ((JecContainer) inventorySlots).setGui(this);
     }
 
+    public static int getMouseX() {
+        JecaGui gui = getCurrent();
+        return Mouse.getEventX() * gui.width / gui.mc.displayWidth - gui.guiLeft;
+    }
+
+    public static int getMouseY() {
+        JecaGui gui = getCurrent();
+        return gui.height - Mouse.getEventY() * gui.height / gui.mc.displayHeight - 1 - gui.guiTop;
+    }
+
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onMouse(GuiScreenEvent.MouseInputEvent.Pre event) {
         if (!(event.getGui() instanceof JecaGui)) return;
         JecaGui gui = getCurrent();
-        int xMouse = Mouse.getEventX() * gui.width / gui.mc.displayWidth - gui.guiLeft;
-        int yMouse = gui.height - Mouse.getEventY() * gui.height / gui.mc.displayHeight - 1 - gui.guiTop;
+        int xMouse = getMouseX();
+        int yMouse = getMouseY();
         int button = Mouse.getEventButton();
 
         if (button == -1) {
@@ -291,11 +301,7 @@ public class JecaGui extends GuiContainer {
     }
 
     public void drawResource(Resource r, int xPos, int yPos, int color) {
-        float red = (color >> 16 & 0xFF) / 255.0F;
-        float green = (color >> 8 & 0xFF) / 255.0F;
-        float blue = (color & 0xFF) / 255.0F;
-        float alpha = (~(color >> 24) & 0xFF) / 255.0F;
-        GlStateManager.color(red, green, blue, alpha);
+        setColor(color);
         mc.getTextureManager().bindTexture(r.getResourceLocation());
         drawTexturedModalRect(xPos, yPos, r.getXPos(), r.getYPos(), r.getXSize(), r.getYSize());
     }
@@ -311,14 +317,18 @@ public class JecaGui extends GuiContainer {
                 r.getXSize(), r.getYSize(), borderTop, borderBottom, borderLeft, borderRight, zLevel);
     }
 
-    public void drawFluid(Fluid f, int xPos, int yPos, int xSize, int ySize) {
-        TextureAtlasSprite fluidTexture = mc.getTextureMapBlocks().getTextureExtry(f.getStill().toString());
-        mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-        int color = f.getColor();
+    private void setColor(int color) {
         float red = (color >> 16 & 0xFF) / 255.0F;
         float green = (color >> 8 & 0xFF) / 255.0F;
         float blue = (color & 0xFF) / 255.0F;
-        GlStateManager.color(red, green, blue, 1.0F);
+        float alpha = (~(color >> 24) & 0xFF) / 255.0F;
+        GlStateManager.color(red, green, blue, alpha);
+    }
+
+    public void drawFluid(Fluid f, int xPos, int yPos, int xSize, int ySize) {
+        TextureAtlasSprite fluidTexture = mc.getTextureMapBlocks().getTextureExtry(f.getStill().toString());
+        mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        setColor(f.getColor() & 0x00FFFFFF);
         if (fluidTexture != null) drawTexturedModalRect(xPos, yPos, fluidTexture, xSize, ySize);
     }
 

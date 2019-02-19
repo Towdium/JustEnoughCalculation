@@ -26,10 +26,7 @@ import static me.towdium.jecalculation.gui.widgets.WLabel.Mode.PICKER;
 public class GuiSearch extends WContainer implements IGui {
     IdentityHashMap<ILabel, Trio<Recipe, String, Integer>> recipes;
     WLabelScroll labels = new WLabelScroll(7, 51, 8, 6, PICKER, true)
-            .setListener((i, v) -> {
-                Trio<Recipe, String, Integer> recipe = recipes.get(i.get(v));
-                JecaGui.displayGui(true, true, new GuiRecipe(recipe.two, recipe.three));
-            });
+            .setListener((i, v) -> add(new Overlay(i.get(v))));
     WSwitcher group;
     WTextField text = new WTextField(7, 25, 119);
     WButton no = new WButtonIcon(130, 25, 20, 20, BTN_NO, "common.cancel")
@@ -122,6 +119,28 @@ public class GuiSearch extends WContainer implements IGui {
             remove(yes, no, text);
             text.setText("");
             yes.setDisabled(true);
+        }
+    }
+
+    class Overlay extends WOverlay {
+        public Overlay(ILabel l) {
+            Trio<Recipe, String, Integer> recipe = recipes.get(l);
+            int x = JecaGui.getMouseX();
+            int y = JecaGui.getMouseY();
+            x = ((x - 7) / 18) * 18 + 6;
+            y = ((y - 51) / 18) * 18 + 50;
+            add(new WPanel(x - 5, y - 5, 72, 30));
+            add(new WLabel(x, y, 20, 20, PICKER).setLabel(l));
+            add(new WButtonIcon(x + 23, y, 20, 20, BTN_EDIT, "search.edit").setListener(i -> {
+                JecaGui.displayGui(true, true, new GuiRecipe(recipe.two, recipe.three));
+                GuiSearch.this.remove(this);
+            }));
+            add(new WButtonIcon(x + 42, y, 20, 20, BTN_NO, "search.delete").setListener(i -> {
+                Controller.removeRecipe(recipe.two, recipe.three);
+                GuiSearch.this.remove(this);
+                refreshGroups();
+                refreshDisplay();
+            }));
         }
     }
 }

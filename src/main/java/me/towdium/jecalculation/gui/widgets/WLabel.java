@@ -8,7 +8,6 @@ import me.towdium.jecalculation.utils.Utilities.Timer;
 import mezz.jei.api.recipe.IFocus;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -149,7 +148,7 @@ public class WLabel implements IWidget {
         SELECTOR  // Slots to put labels into. No amount displayed.
     }
 
-    class WAmount extends WContainer {
+    class WAmount extends WOverlay {
         long old = label.getAmount();
         WButton bAmount = new WButtonText(xPos + xSize + 60, yPos, 20, 20, "#", "general.to_percent")
                 .setListener(i -> setPercent(true));
@@ -204,15 +203,6 @@ public class WLabel implements IWidget {
             if (label.acceptPercent()) label.setPercent(b);
             if (b != original) notifyLsnr();
             update();
-        }
-
-        @Override
-        public boolean onKey(JecaGui gui, char ch, int code) {
-            if (super.onKey(gui, ch, code)) return true;
-            if (code == Keyboard.KEY_ESCAPE) {
-                gui.root.remove(this);
-                return true;
-            } else return false;
         }
     }
 

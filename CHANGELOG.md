@@ -1,9 +1,5 @@
 # Changelog
 
-#### Todo list
-
-Add nested grouping
-
 #### 3.0.0-pre13
 
 Fixed #46  
@@ -88,4 +84,7 @@ Fixed #50
 
 #### 3.1.2
 
-Fix Cannot change group when editing recipe
+Changed Move delete recipe button to recipe search interface  
+Fixed Crash when picking enchanted book from JEI  
+Fixed Cannot change group when editing recipe  
+Fixed #51

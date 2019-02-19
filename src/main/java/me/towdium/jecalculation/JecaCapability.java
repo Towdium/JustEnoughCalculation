@@ -1,7 +1,6 @@
 package me.towdium.jecalculation;
 
 import mcp.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.data.structure.Recipes;
 import me.towdium.jecalculation.data.structure.RecordPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -66,14 +65,14 @@ public class JecaCapability {
         }
     }
 
-    public static class Storage implements Capability.IStorage<Recipes> {
+    public static class Storage implements Capability.IStorage<Container> {
         @Override
-        public NBTBase writeNBT(Capability<Recipes> capability, Recipes instance, EnumFacing side) {
+        public NBTBase writeNBT(Capability<Container> capability, Container instance, EnumFacing side) {
             return null;
         }
 
         @Override
-        public void readNBT(Capability<Recipes> capability, Recipes instance, EnumFacing side, NBTBase nbt) {
+        public void readNBT(Capability<Container> capability, Container instance, EnumFacing side, NBTBase nbt) {
         }
     }
 
@@ -86,14 +85,13 @@ public class JecaCapability {
 
         @Override
         public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
-            //noinspection ConstantConditions
             return capability == JecaCapability.CAPABILITY_RECORD;
         }
 
         @Nullable
         @Override
         public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
-            //noinspection unchecked,ConstantConditions
+            //noinspection unchecked
             return capability == JecaCapability.CAPABILITY_RECORD ? (T) container : null;
         }
 
