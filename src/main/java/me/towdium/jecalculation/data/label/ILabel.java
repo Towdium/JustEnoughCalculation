@@ -80,6 +80,7 @@ public interface ILabel {
 
     ILabel multiply(float i);
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     boolean acceptPercent();
 
     @SuppressWarnings("UnusedReturnValue")
@@ -439,16 +440,14 @@ public interface ILabel {
 
         @Override
         public ILabel increaseAmount() {
-            setAmount(getAmount() + getMultiplier());
-            return this;
+            return setAmount(getAmount() + getMultiplier());
         }
 
         @Override
         public ILabel decreaseAmount() {
             if (getAmount() <= getMultiplier()) return ILabel.EMPTY;
             else {
-                setAmount(getAmount() - getMultiplier());
-                return this;
+                return setAmount(getAmount() - getMultiplier());
             }
         }
 
@@ -480,8 +479,7 @@ public interface ILabel {
         public ILabel multiply(float i) {
             float amount = i * getAmount();
             if (amount > Long.MAX_VALUE) throw new ArithmeticException("Multiply overflow");
-            setAmount((long) amount);
-            return this;
+            return setAmount((long) amount);
         }
 
         @Override

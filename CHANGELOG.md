@@ -93,3 +93,7 @@ Fixed #51
 
 Fixed #49  
 Fixed #53
+
+#### 3.1.4
+
+Fixed #54
