@@ -88,3 +88,8 @@ Changed Move delete recipe button to recipe search interface
 Fixed Crash when picking enchanted book from JEI  
 Fixed Cannot change group when editing recipe  
 Fixed #51
+
+#### 3.1.3
+
+Fixed #49  
+Fixed #53

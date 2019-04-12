@@ -458,7 +458,7 @@ public interface ILabel {
         }
 
         protected static Merger.MergerFunction form(Class a, Class b, BiPredicate<ILabel, ILabel> p) {
-            return (c, d) -> {
+            return (c, d) -> {  // TODO set percent when any one is percent
                 if (a.isInstance(d) && b.isInstance(c)) {
                     ILabel tmp = c;
                     c = d;

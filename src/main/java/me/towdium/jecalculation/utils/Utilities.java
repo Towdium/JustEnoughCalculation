@@ -44,7 +44,7 @@ import static net.minecraft.client.resources.I18n.format;
 @ParametersAreNonnullByDefault
 public class Utilities {
     // FLOAT FORMATTING
-    public static char[] suffix = new char[]{'K', 'M', 'B', 'G', 'T'};
+    public static char[] suffix = new char[]{'K', 'M', 'B', 'G', 'T', 'P'};
     public static DecimalFormat[] format = new DecimalFormat[]{
             new DecimalFormat("#."), new DecimalFormat("#.#"), new DecimalFormat("#.##"),
             new DecimalFormat("#.###"), new DecimalFormat("#.####")

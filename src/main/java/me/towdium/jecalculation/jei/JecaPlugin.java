@@ -4,6 +4,7 @@ import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.guis.GuiRecipe;
+import me.towdium.jecalculation.utils.wrappers.Wrapper;
 import mezz.jei.api.IJeiRuntime;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.IModRegistry;
@@ -29,8 +30,10 @@ public class JecaPlugin implements IModPlugin {
     public static IJeiRuntime runtime;
 
     public static ILabel getLabelUnderMouse() {
-        Object o = runtime.getIngredientListOverlay().getIngredientUnderMouse();
-        return ILabel.Converter.from(o);
+        Wrapper<Object> o = new Wrapper<>(null);
+        o.push(runtime.getIngredientListOverlay().getIngredientUnderMouse());
+        o.push(runtime.getBookmarkOverlay().getIngredientUnderMouse());
+        return ILabel.Converter.from(o.value);
     }
 
     @Override
