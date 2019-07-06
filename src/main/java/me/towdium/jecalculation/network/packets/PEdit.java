@@ -26,6 +26,11 @@ public class PEdit implements IMessage {
     public PEdit() {
     }
 
+    // set recipe: Y Y/null Y Y
+    // rename group: Y Y -1 null
+    // add recipe: Y null -1 Y
+    // remove recipe: Y null Y null
+    // remove group: Y null -1 null
     public PEdit(String neu, @Nullable String old, int index, @Nullable Recipe recipe) {
         this.neu = neu;
         this.old = old;

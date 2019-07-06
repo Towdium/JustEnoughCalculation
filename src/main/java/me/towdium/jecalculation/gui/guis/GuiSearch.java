@@ -17,7 +17,6 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static me.towdium.jecalculation.data.Controller.recipeIterator;
 import static me.towdium.jecalculation.gui.Resource.*;
 import static me.towdium.jecalculation.gui.widgets.WLabel.Mode.PICKER;
 
@@ -39,16 +38,28 @@ public class GuiSearch extends WContainer implements IGui {
                 refreshDisplay();
                 setRename(false);
             });
-    WButton exportN = new WButtonIcon(130, 25, 20, 20, BTN_EXPORT_N, "search.export_all")
+    WButton exportN = new WButtonIcon(111, 25, 20, 20, BTN_EXPORT_N, "search.export_all")
             .setListener(i -> Controller.export());
-    WButton export1 = new WButtonIcon(130, 25, 20, 20, BTN_EXPORT_1, "search.export_group")
+    WButton export1 = new WButtonIcon(111, 25, 20, 20, BTN_EXPORT_1, "search.export_group")
             .setListener(i -> Controller.export(group.getText()));
-    WButton inport = new WButtonIcon(112, 25, 20, 20, BTN_IMPORT, "search.import")
+    WButton deleteN = new WButtonIcon(130, 25, 20, 20, BTN_DELETE_N, "search.delete_all")
+            .setListener(i -> {
+                Controller.getGroups().forEach(Controller::removeGroup);
+                refreshGroups();
+                refreshDisplay();
+            });
+    WButton delete1 = new WButtonIcon(130, 25, 20, 20, BTN_DELETE_1, "search.delete_group")
+            .setListener(i -> {
+                Controller.removeGroup(group.getText());
+                refreshGroups();
+                refreshDisplay();
+            });
+    WButton inport = new WButtonIcon(92, 25, 20, 20, BTN_IMPORT, "search.import")
             .setListener(i -> JecaGui.displayGui(new GuiImport()));
     WButton rename = new WButtonIcon(149, 25, 20, 20, BTN_EDIT, "search.rename")
             .setListener(i -> setRename(true));
     WIcon icon = new WIcon(7, 25, 20, 20, ICN_TEXT, "common.search");
-    WSearch search = new WSearch(26, 25, 80, labels);
+    WSearch search = new WSearch(26, 25, 61, labels);
     List<ILabel> identifiers;
 
     public GuiSearch() {
@@ -57,7 +68,7 @@ public class GuiSearch extends WContainer implements IGui {
             yes.setDisabled(s.isEmpty() || Controller.getGroups().contains(s));
         });
         add(new WHelp("search"), new WPanel());
-        add(labels, icon, search, inport, exportN, rename);
+        add(labels, icon, search, inport, exportN, deleteN, rename);
     }
 
     private void generate() {
@@ -69,7 +80,7 @@ public class GuiSearch extends WContainer implements IGui {
             identifiers.add(id);
         };
 
-        Recipes.RecipeIterator it = group.getIndex() == 0 ? recipeIterator() : recipeIterator(group.getText());
+        Recipes.RecipeIterator it = group.getIndex() == 0 ? Controller.recipeIterator() : Controller.recipeIterator(group.getText());
         it.stream().map(j -> new Trio<>(j, it.getGroup(), it.getIndex())).forEach(add);
     }
 
@@ -83,11 +94,13 @@ public class GuiSearch extends WContainer implements IGui {
     }
 
     public void refreshDisplay() {
-        remove(exportN, export1);
+        remove(exportN, export1, deleteN, delete1);
         generate();
         labels.setLabels(identifiers);
         add(group.getIndex() == 0 ? exportN : export1);
+        add(group.getIndex() == 0 ? deleteN : delete1);
         exportN.setDisabled(identifiers.size() == 0);
+        deleteN.setDisabled(identifiers.size() == 0);
         rename.setDisabled(group.getIndex() == 0);
     }
 

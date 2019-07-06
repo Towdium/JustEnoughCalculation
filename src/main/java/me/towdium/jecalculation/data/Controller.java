@@ -157,6 +157,12 @@ public class Controller {
         if (isServerActive()) network.sendToServer(new PEdit(group, null, index, null));
     }
 
+    public static void removeGroup(String group) {
+        getRecipes().remove(group);
+        setLast(group);
+        if (isServerActive()) network.sendToServer(new PEdit(group, null, -1, null));
+    }
+
     public static Recipe getRecipe(String group, int index) {
         return getRecipes().getRecipe(group, index);
     }
