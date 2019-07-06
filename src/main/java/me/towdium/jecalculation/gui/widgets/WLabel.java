@@ -168,12 +168,18 @@ public class WLabel implements IWidget {
                     temp.label.setPercent(false);
                     update();
                 });
-        WButton yes = new WButtonIcon(xPos + xSize + 83, yPos, 20, 20, BTN_YES).setListener(i -> {
+        WButton pick = new WButtonIcon(xPos + xSize + 83, yPos, 20, 20, BTN_PICK, "label.pick").setListener(i -> {
+            JecaGui.getCurrent().hand = temp.label;
+            setLabel(ILabel.EMPTY);
+            notifyLsnr();
+            JecaGui.getCurrent().root.remove(this);
+        });
+        WButton yes = new WButtonIcon(xPos + xSize + 102, yPos, 20, 20, BTN_YES, "label.confirm").setListener(i -> {
             setLabel(temp.label);
             notifyLsnr();
             JecaGui.getCurrent().root.remove(this);
         });
-        WButton no = new WButtonIcon(xPos + xSize + 102, yPos, 20, 20, BTN_NO).setListener(i -> {
+        WButton no = new WButtonIcon(xPos + xSize + 121, yPos, 20, 20, BTN_NO, "label.delete").setListener(i -> {
             setLabel(ILabel.EMPTY);
             notifyLsnr();
             JecaGui.getCurrent().root.remove(this);
@@ -181,9 +187,9 @@ public class WLabel implements IWidget {
 
         public WAmount() {
             temp.setLabel(label.copy());
-            add(new WPanel(xPos - 5, yPos - 5, xSize + 133, ySize + 10));
+            add(new WPanel(xPos - 5, yPos - 5, xSize + 152, ySize + 10));
             add(new WText(xPos + xSize + 3, yPos + 5, PLAIN, "x"));
-            add(temp, text, yes, no);
+            add(temp, text, pick, yes, no);
             text.setListener(i -> {
                 boolean acceptable;
                 long amount;
