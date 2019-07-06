@@ -97,3 +97,10 @@ Fixed #53
 #### 3.1.4
 
 Fixed #54
+
+#### 3.2.0
+
+Fixed #58  
+Added pick label in recipe editor  
+Added delete all recipes and all recipes in group  
+Changed merge entries in steps tab
