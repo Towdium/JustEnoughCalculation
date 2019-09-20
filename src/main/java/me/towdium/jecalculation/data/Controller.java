@@ -5,6 +5,7 @@ import me.towdium.jecalculation.JecaCapability;
 import me.towdium.jecalculation.JecaConfig;
 import me.towdium.jecalculation.JecaItem;
 import me.towdium.jecalculation.JustEnoughCalculation;
+import me.towdium.jecalculation.data.label.labels.LPlaceholder;
 import me.towdium.jecalculation.data.structure.*;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.guis.GuiCraft;
@@ -239,6 +240,8 @@ public class Controller {
         new File(Loader.instance().getConfigDir(), "JustEnoughCalculation/data").mkdirs();
         File file = new File(Loader.instance().getConfigDir(), "JustEnoughCalculation/record.json");
         NBTTagCompound nbt = Utilities.Json.read(file);
+        boolean s = LPlaceholder.state;
+        LPlaceholder.state = true;
         if (nbt != null) {
             rCraftClient = new RecordCraft(nbt.getCompoundTag(KEY_CRAFT));
             rMathClient = new RecordMath(nbt.getCompoundTag(KEY_MATH));
@@ -248,6 +251,7 @@ public class Controller {
             rCraftClient = new RecordCraft(new NBTTagCompound());
             rMathClient = new RecordMath(new NBTTagCompound());
         }
+        LPlaceholder.state = s;
     }
 
     public static void writeToLocal() {

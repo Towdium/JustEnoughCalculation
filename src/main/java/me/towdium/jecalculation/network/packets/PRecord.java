@@ -2,6 +2,7 @@ package me.towdium.jecalculation.network.packets;
 
 import io.netty.buffer.ByteBuf;
 import me.towdium.jecalculation.data.Controller;
+import me.towdium.jecalculation.data.label.labels.LPlaceholder;
 import me.towdium.jecalculation.data.structure.RecordPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -26,6 +27,7 @@ public class PRecord implements IMessage {
     @Override
     public void fromBytes(ByteBuf buf) {
         NBTTagCompound tag = Objects.requireNonNull(ByteBufUtils.readTag(buf));
+        LPlaceholder.state = false;
         record = new RecordPlayer(tag);
     }
 

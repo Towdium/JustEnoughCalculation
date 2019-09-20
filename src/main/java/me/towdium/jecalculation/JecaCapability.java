@@ -1,6 +1,7 @@
 package me.towdium.jecalculation;
 
 import mcp.MethodsReturnNonnullByDefault;
+import me.towdium.jecalculation.data.label.labels.LPlaceholder;
 import me.towdium.jecalculation.data.structure.RecordPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -102,7 +103,10 @@ public class JecaCapability {
 
         @Override
         public void deserializeNBT(NBTTagCompound nbt) {
+            boolean s = LPlaceholder.state;
+            LPlaceholder.state = false;
             container.setRecord(new RecordPlayer(nbt));
+            LPlaceholder.state = s;
         }
     }
 }
