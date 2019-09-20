@@ -104,3 +104,7 @@ Fixed #58
 Added pick label in recipe editor  
 Added delete all recipes and all recipes in group  
 Changed merge entries in steps tab
+
+#### 3.2.1
+
+Fixed placeholder labels not in recent list on game restart
