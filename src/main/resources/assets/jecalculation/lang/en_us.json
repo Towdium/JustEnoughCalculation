@@ -1,3 +1,5 @@
 {
-  "jecalculation.item.calculator_crafting": "Crafting calculator"
+  "jecalculation.item.calculator_crafting": "Crafting calculator",
+  "jecalculation.key.gui_craft": "Open crafting calculator",
+  "jecalculation.key.category": "Just Enough Calculation"
 }
