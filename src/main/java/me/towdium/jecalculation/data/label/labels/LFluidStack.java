@@ -3,6 +3,8 @@ package me.towdium.jecalculation.data.label.labels;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.label.ILabel.Serializer.SerializationException;
+import me.towdium.jecalculation.gui.JecaGui;
+import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.utils.Utilities;
 import mezz.jei.api.gui.IRecipeLayout;
 import net.minecraft.fluid.Fluid;
@@ -126,11 +128,11 @@ public class LFluidStack extends ILabel.Impl {
         existing.add(FORMAT_BLUE + FORMAT_ITALIC + Utilities.getModName(fluid));
     }
 
-//    @Override
-//    public void drawLabel(JecaGui gui) {
-//        gui.drawResource(Resource.LBL_FLUID, 0, 0);
-//        gui.drawFluid(fluid, 2, 2, 12, 12);
-//    }
+    @Override
+    public void drawLabel(JecaGui gui) {
+        gui.drawResource(Resource.LBL_FLUID, 0, 0);
+        gui.drawFluid(fluid, 2, 2, 12, 12);
+    }
 
     @Override
     public int hashCode() {

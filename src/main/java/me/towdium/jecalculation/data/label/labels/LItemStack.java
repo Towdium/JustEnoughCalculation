@@ -3,6 +3,8 @@ package me.towdium.jecalculation.data.label.labels;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.label.ILabel.Serializer.SerializationException;
+import me.towdium.jecalculation.gui.JecaGui;
+import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.utils.Utilities;
 import mezz.jei.api.gui.IRecipeLayout;
 import net.minecraft.item.Item;
@@ -233,14 +235,14 @@ public class LItemStack extends ILabel.Impl {  // TODO fix item damage
         return ret;
     }
 
-//    @Override
-//    public void drawLabel(JecaGui gui) {
-//        gui.drawItemStack(0, 0, temp, false);
-//        if (fCap || fNbt || fMeta) gui.drawResource(Resource.LBL_FRAME, 0, 0);
-//        if (fCap) gui.drawResource(Resource.LBL_FR_LL, 0, 0);
-//        if (fNbt) gui.drawResource(Resource.LBL_FR_UL, 0, 0);
-//        if (fMeta) gui.drawResource(Resource.LBL_FR_UR, 0, 0);
-//    }
+    @Override
+    public void drawLabel(JecaGui gui) {
+        gui.drawItemStack(0, 0, temp, false);
+        if (fCap || fNbt || fMeta) gui.drawResource(Resource.LBL_FRAME, 0, 0);
+        if (fCap) gui.drawResource(Resource.LBL_FR_LL, 0, 0);
+        if (fNbt) gui.drawResource(Resource.LBL_FR_UL, 0, 0);
+        if (fMeta) gui.drawResource(Resource.LBL_FR_UR, 0, 0);
+    }
 
     @Override
     public int hashCode() {

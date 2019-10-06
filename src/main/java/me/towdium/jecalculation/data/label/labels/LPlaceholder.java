@@ -3,8 +3,12 @@ package me.towdium.jecalculation.data.label.labels;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.label.ILabel;
+import me.towdium.jecalculation.gui.JecaGui;
+import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -77,12 +81,12 @@ public class LPlaceholder extends ILabel.Impl {
         return nbt;
     }
 
-//    @Override
-//    @SideOnly(Side.CLIENT)
-//    public void drawLabel(JecaGui gui) {
-//        gui.drawResource(Resource.LBL_UNIV_B, 0, 0);
-//        gui.drawResource(Resource.LBL_UNIV_F, 0, 0, (name.hashCode() * 0x131723) & 0xFFFFFF);
-//    }
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void drawLabel(JecaGui gui) {
+        gui.drawResource(Resource.LBL_UNIV_B, 0, 0);
+        gui.drawResource(Resource.LBL_UNIV_F, 0, 0, (name.hashCode() * 0x131723) & 0xFFFFFF);
+    }
 
     @Override
     public int hashCode() {

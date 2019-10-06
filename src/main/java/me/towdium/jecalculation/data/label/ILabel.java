@@ -1,16 +1,24 @@
 package me.towdium.jecalculation.data.label;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.label.labels.LFluidStack;
 import me.towdium.jecalculation.data.label.labels.LItemStack;
 import me.towdium.jecalculation.data.label.labels.LPlaceholder;
+import me.towdium.jecalculation.gui.JecaGui;
+import me.towdium.jecalculation.gui.guis.pickers.IPicker;
+import me.towdium.jecalculation.gui.guis.pickers.PickerItemStack;
+import me.towdium.jecalculation.gui.guis.pickers.PickerPlaceholder;
+import me.towdium.jecalculation.gui.guis.pickers.PickerSimple;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.Utilities.ReversedIterator;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import mezz.jei.api.gui.IRecipeLayout;
 import net.minecraft.enchantment.EnchantmentData;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -19,6 +27,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static net.minecraft.item.EnchantedBookItem.getEnchantedItemStack;
@@ -33,7 +42,7 @@ public interface ILabel {  // TODO fix oreDict related logic
     Merger MERGER = new Merger();
     Serializer SERIALIZER = new Serializer();
     Converter CONVERTER = new Converter();
-    //RegistryEditor EDITOR = new RegistryEditor();
+    RegistryEditor EDITOR = new RegistryEditor();
     ILabel EMPTY = new LEmpty();
 
     String FORMAT_BLUE = "\u00A79";
@@ -53,10 +62,10 @@ public interface ILabel {  // TODO fix oreDict related logic
         CONVERTER.register(LFluidStack::suggest, Converter.Priority.SUGGEST);
         CONVERTER.register(LItemStack::fallback, Converter.Priority.FALLBACK);
         //CONVERTER.register(LOreDict::fallback, Converter.Priority.FALLBACK);
-//        EDITOR.register(PickerSimple.FluidStack::new, "fluid", new LFluidStack(1000, FluidRegistry.WATER));
-//        EDITOR.register(PickerSimple.OreDict::new, "ore", new LOreDict("ingotIron"));
-//        EDITOR.register(PickerPlaceholder::new, "placeholder", new LPlaceholder("example", 1, true));
-//        EDITOR.register(PickerItemStack::new, "item", new LItemStack(new ItemStack(Items.IRON_PICKAXE)).setFMeta(true));
+        EDITOR.register(PickerSimple.FluidStack::new, "fluid", new LFluidStack(1000, Fluids.WATER));
+        //EDITOR.register(PickerSimple.OreDict::new, "ore", new LOreDict("ingotIron"));
+        EDITOR.register(PickerPlaceholder::new, "placeholder", new LPlaceholder("example", 1, true));
+        EDITOR.register(PickerItemStack::new, "item", new LItemStack(new ItemStack(Items.IRON_PICKAXE)).setFMeta(true));
         MERGER.register("itemStack", "itemStack", Impl.form(LItemStack.class, LItemStack.class, LItemStack::merge));
 //        MERGER.register("oreDict", "oreDict", Impl.form(LOreDict.class, LOreDict.class, LOreDict::mergeSame));
 //        MERGER.register("oreDict", "itemStack", Impl.form(LOreDict.class, LItemStack.class, LOreDict::mergeFuzzy));
@@ -101,7 +110,7 @@ public interface ILabel {  // TODO fix oreDict related logic
     // test two labels are exactly same except amount
     boolean matches(Object l);
 
-    //void drawLabel(JecaGui gui, int xPos, int yPos, boolean center);
+    void drawLabel(JecaGui gui, int xPos, int yPos, boolean center);
 
     /**
      * Since {@link ILabel} merging is bidirectional, it is redundant to
@@ -268,33 +277,33 @@ public interface ILabel {  // TODO fix oreDict related logic
         }
     }
 
-//    class RegistryEditor {
-//
-//        private ArrayList<Record> records = new ArrayList<>();
-//
-//        private RegistryEditor() {
-//        }
-//
-//        public void register(Supplier<IPicker> editor, String unlocalizedName, ILabel representation) {
-//            records.add(new Record(editor, "common.label." + unlocalizedName, representation));
-//        }
-//
-//        public List<Record> getRecords() {
-//            return records;
-//        }
-//
-//        public static class Record {
-//            public Supplier<IPicker> editor;
-//            public String localizeKey;
-//            public ILabel representation;
-//
-//            public Record(Supplier<IPicker> editor, String localizeKey, ILabel representation) {
-//                this.editor = editor;
-//                this.localizeKey = localizeKey;
-//                this.representation = representation;
-//            }
-//        }
-//    }
+    class RegistryEditor {
+
+        private ArrayList<Record> records = new ArrayList<>();
+
+        private RegistryEditor() {
+        }
+
+        public void register(Supplier<IPicker> editor, String unlocalizedName, ILabel representation) {
+            records.add(new Record(editor, "common.label." + unlocalizedName, representation));
+        }
+
+        public List<Record> getRecords() {
+            return records;
+        }
+
+        public static class Record {
+            public Supplier<IPicker> editor;
+            public String localizeKey;
+            public ILabel representation;
+
+            public Record(Supplier<IPicker> editor, String localizeKey, ILabel representation) {
+                this.editor = editor;
+                this.localizeKey = localizeKey;
+                this.representation = representation;
+            }
+        }
+    }
 
     class LEmpty implements ILabel {
         public static final String IDENTIFIER = "empty";
@@ -302,6 +311,10 @@ public interface ILabel {  // TODO fix oreDict related logic
         @Override
         public boolean matches(Object l) {
             return l == this;
+        }
+
+        @Override
+        public void drawLabel(JecaGui gui, int xPos, int yPos, boolean center) {
         }
 
         private LEmpty() {
@@ -417,13 +430,15 @@ public interface ILabel {  // TODO fix oreDict related logic
             return 1;
         }
 
-//        @Override
-//        public void drawLabel(JecaGui gui, int xPos, int yPos, boolean center) {
-//            GlStateManager.pushMatrix();
-//            GlStateManager.translatef(center ? xPos - 8 : xPos, center ? yPos - 8 : yPos, 0);
-//            drawLabel(gui);
-//            GlStateManager.popMatrix();
-//        }
+        @Override
+        public void drawLabel(JecaGui gui, int xPos, int yPos, boolean center) {
+            GlStateManager.pushMatrix();
+            GlStateManager.translatef(center ? xPos - 8 : xPos, center ? yPos - 8 : yPos, 0);
+            drawLabel(gui);
+            GlStateManager.popMatrix();
+        }
+
+        abstract protected void drawLabel(JecaGui gui);
 
         @Override
         public ILabel increaseAmount() {
