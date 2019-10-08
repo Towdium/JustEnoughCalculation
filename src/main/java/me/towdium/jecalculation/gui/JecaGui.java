@@ -310,8 +310,10 @@ public class JecaGui extends Screen {
     }
 
     public void drawFluid(Fluid f, int xPos, int yPos, int xSize, int ySize) {  // getStill
-        TextureAtlasSprite fluidTexture = Objects.requireNonNull(minecraft).getTextureMap().getAtlasSprite(f.getDefaultState().toString());
+        TextureAtlasSprite fluidTexture = Objects.requireNonNull(minecraft).getTextureMap()
+                .getSprite(f.getFluid().getAttributes().getStillTexture());
         minecraft.textureManager.bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
+        setColor(f.getAttributes().getColor() & 0x00FFFFFF);
         blit(xPos, yPos, 0, xSize, ySize, fluidTexture);
     }
 
@@ -335,7 +337,7 @@ public class JecaGui extends Screen {
 ////        tessellator.draw();
 ////        GlStateManager.enableAlpha();
 ////        GlStateManager.enableTexture2D();
-        fill(xPos, yPos, xSize, ySize, color);
+        fill(xPos, yPos, xPos + xSize, yPos + ySize, color);
     }
 
     public int getStringWidth(String s) {
@@ -405,8 +407,8 @@ public class JecaGui extends Screen {
     }
 
     @Override
-    public boolean charTyped(char p_charTyped_1_, int p_charTyped_2_) {
-        return false; // TODO
+    public boolean charTyped(char ch, int modifier) {
+        return root.onChar(this, ch, modifier) || super.charTyped(ch, modifier);
     }
 
     @Override

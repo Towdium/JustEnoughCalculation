@@ -1,6 +1,7 @@
 package me.towdium.jecalculation;
 
 import mcp.MethodsReturnNonnullByDefault;
+import me.towdium.jecalculation.data.Controller;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -48,6 +49,7 @@ public class JecaItem extends Item {
         //boolean recipe = is.getDamage() == 0;
         //if (playerIn.isSneaking()) is.setDamage(recipe ? 1 : 0);
         //else if (worldIn.isRemote) JecaGui.displayGui(true, true, recipe ? new GuiCraft() : new GuiMath());
+        Controller.openGuiCraft();
         return ActionResult.newResult(ActionResultType.SUCCESS, is);
     }
 }

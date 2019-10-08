@@ -39,8 +39,8 @@ public class PickerSimple extends IPicker.Impl implements IGui {
 
     public static class FluidStack extends PickerSimple {
         public FluidStack() {
-            super(ForgeRegistries.FLUIDS.getEntries().stream()
-                    .map(e -> new LFluidStack(1000, e.getValue())).collect(Collectors.toList()));
+            super(ForgeRegistries.FLUIDS.getValues().stream().filter(i -> i.isSource(i.getDefaultState()))
+                    .map(i -> new LFluidStack(1000, i)).collect(Collectors.toList()));
         }
     }
 

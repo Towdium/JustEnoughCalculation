@@ -5,6 +5,8 @@ import me.towdium.jecalculation.JecaItem;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.label.labels.LPlaceholder;
 import me.towdium.jecalculation.data.structure.*;
+import me.towdium.jecalculation.gui.JecaGui;
+import me.towdium.jecalculation.gui.guis.GuiCraft;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import net.minecraft.client.Minecraft;
@@ -250,24 +252,24 @@ public class Controller {
         Utilities.Json.write(nbt, file);
     }
 
-//    public static void openGuiCraft() {
-//        openGuiCraft(false);
-//    }
-//
+    public static void openGuiCraft() {
+        openGuiCraft(false);
+    }
+
 //    public static void openGuiMath() {
 //        openGuiMath(false);
 //    }
 
-//    public static void openGuiCraft(boolean scheduled) {
-//        if (!Controller.isServerActive()) JecaGui.displayGui(true, true, scheduled, new GuiCraft());
-//        else Minecraft.getMinecraft().player.sendMessage(
-//                new TextComponentTranslation("jecalculation.chat.server_mode"));
-//    }
-//
+    public static void openGuiCraft(boolean scheduled) {
+        if (!Controller.isServerActive()) JecaGui.displayGui(true, true, scheduled, new GuiCraft());
+        else Minecraft.getInstance().player.sendMessage(
+                new TranslationTextComponent("jecalculation.chat.server_mode"));
+    }
+
 //    public static void openGuiMath(boolean scheduled) {
 //        if (!Controller.isServerActive()) JecaGui.displayGui(true, true, scheduled, new GuiMath());
-//        else Minecraft.getMinecraft().player.sendMessage(
-//                new TextComponentTranslation("jecalculation.chat.server_mode"));
+//        else Minecraft.getInstance().player.sendMessage(
+//                new TranslationTextComponent("jecalculation.chat.server_mode"));
 //    }
 
     // client side
