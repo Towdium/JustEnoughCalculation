@@ -49,7 +49,7 @@ public class JecaItem extends Item {
         //boolean recipe = is.getDamage() == 0;
         //if (playerIn.isSneaking()) is.setDamage(recipe ? 1 : 0);
         //else if (worldIn.isRemote) JecaGui.displayGui(true, true, recipe ? new GuiCraft() : new GuiMath());
-        Controller.openGuiCraft();
+        if (worldIn.isRemote) Controller.openGuiCraft();
         return ActionResult.newResult(ActionResultType.SUCCESS, is);
     }
 }
