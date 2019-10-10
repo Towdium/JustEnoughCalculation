@@ -9,14 +9,18 @@ import me.towdium.jecalculation.data.structure.Recipe.IO;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.widgets.*;
 import me.towdium.jecalculation.gui.widgets.WLabel.Mode;
+import me.towdium.jecalculation.jei.JecaPlugin;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import me.towdium.jecalculation.utils.wrappers.Trio;
+import mezz.jei.api.gui.IRecipeLayout;
+import mezz.jei.api.gui.ingredient.IGuiIngredient;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static me.towdium.jecalculation.gui.Resource.*;
 
@@ -134,49 +138,49 @@ public class GuiRecipe extends WContainer implements IGui {
         output.setLabel(Collections.nCopies(7, ILabel.EMPTY), 0);
     }
 
-//    public void transfer(IRecipeLayout recipe) {
-//        // item disamb raw
-//        ArrayList<Trio<ILabel, CostList, CostList>> input = new ArrayList<>();
-//        ArrayList<Trio<ILabel, CostList, CostList>> output = new ArrayList<>();
-//        disambCache = new HashMap<>();
-//
-//        // merge jei structure into list input/output
-//        Stream.of(recipe.getFluidStacks(), recipe.getItemStacks())
-//                .flatMap(i -> i.getGuiIngredients().values().stream())
-//                .forEach(i -> merge(i.isInput() ? input : output, i, recipe));
-//
-//        // convert catalyst
-//        List<ILabel> catalysts = JecaPlugin.runtime.getRecipeRegistry().getRecipeCatalysts(recipe.getRecipeCategory())
-//                .stream().map(Converter::from).collect(Collectors.toList());
-//        if (catalysts.size() == 1) catalyst.setLabel(catalysts.get(0), 0);
-//        else if (catalysts.size() > 1) {
-//            catalyst.setLabel(ILabel.CONVERTER.first(catalysts, recipe), 0);
-//            disambCache.put(14, catalysts);
-//        }
-//
-//        // generate disamb info according to content in list input/output
-//        this.input.setLabel(sort(input, 0), 0);
-//        this.output.setLabel(sort(output, 21), 0);
-//        refresh();
-//    }
+    public void transfer(IRecipeLayout recipe) {
+        // item disamb raw
+        ArrayList<Trio<ILabel, CostList, CostList>> input = new ArrayList<>();
+        ArrayList<Trio<ILabel, CostList, CostList>> output = new ArrayList<>();
+        disambCache = new HashMap<>();
 
-//    private void merge(ArrayList<Trio<ILabel, CostList, CostList>> dst, IGuiIngredient<?> gi, IRecipeLayout context) {
-//        List<ILabel> list = gi.getAllIngredients().stream().map(Converter::from).collect(Collectors.toList());
-//        if (list.isEmpty()) return;
-//        dst.stream().filter(p -> {
-//            CostList cl = new CostList(list);
-//            if (p.three.equals(cl)) {
-//                ILabel.MERGER.merge(p.one, ILabel.CONVERTER.first(list, context)).ifPresent(i -> p.one = i);
-//                p.two = p.two.merge(cl, true, false);
-//                return true;
-//            } else return false;
-//        }).findAny().orElseGet(() -> {
-//            Trio<ILabel, CostList, CostList> ret = new Trio<>(
-//                    ILabel.CONVERTER.first(list, context), new CostList(list), new CostList(list));
-//            dst.add(ret);
-//            return ret;
-//        });
-//    }
+        // merge jei structure into list input/output
+        Stream.of(recipe.getFluidStacks(), recipe.getItemStacks())
+                .flatMap(i -> i.getGuiIngredients().values().stream())
+                .forEach(i -> merge(i.isInput() ? input : output, i, recipe));
+
+        // convert catalyst
+        List<ILabel> catalysts = JecaPlugin.runtime.getRecipeManager().getRecipeCatalysts(recipe.getRecipeCategory())
+                .stream().map(ILabel.Converter::from).collect(Collectors.toList());
+        if (catalysts.size() == 1) catalyst.setLabel(catalysts.get(0), 0);
+        else if (catalysts.size() > 1) {
+            catalyst.setLabel(ILabel.CONVERTER.first(catalysts, recipe), 0);
+            disambCache.put(14, catalysts);
+        }
+
+        // generate disamb info according to content in list input/output
+        this.input.setLabel(sort(input, 0), 0);
+        this.output.setLabel(sort(output, 21), 0);
+        refresh();
+    }
+
+    private void merge(ArrayList<Trio<ILabel, CostList, CostList>> dst, IGuiIngredient<?> gi, IRecipeLayout context) {
+        List<ILabel> list = gi.getAllIngredients().stream().map(ILabel.Converter::from).collect(Collectors.toList());
+        if (list.isEmpty()) return;
+        dst.stream().filter(p -> {
+            CostList cl = new CostList(list);
+            if (p.three.equals(cl)) {
+                ILabel.MERGER.merge(p.one, ILabel.CONVERTER.first(list, context)).ifPresent(i -> p.one = i);
+                p.two = p.two.merge(cl, true, false);
+                return true;
+            } else return false;
+        }).findAny().orElseGet(() -> {
+            Trio<ILabel, CostList, CostList> ret = new Trio<>(
+                    ILabel.CONVERTER.first(list, context), new CostList(list), new CostList(list));
+            dst.add(ret);
+            return ret;
+        });
+    }
 
     private ArrayList<ILabel> sort(ArrayList<Trio<ILabel, CostList, CostList>> src, int offset) {
         ArrayList<ILabel> ret = new ArrayList<>();

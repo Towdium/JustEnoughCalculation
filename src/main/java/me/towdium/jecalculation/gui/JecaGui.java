@@ -5,6 +5,7 @@ import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.label.labels.LItemStack;
 import me.towdium.jecalculation.gui.guis.IGui;
+import me.towdium.jecalculation.jei.JecaPlugin;
 import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -70,10 +71,11 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
     }
 
     public JecaGui(@Nullable JecaGui parent, boolean acceptsTransfer, IGui root) {
-        super(new JecaContainer(), Minecraft.getInstance().player.inventory, new StringTextComponent(""));
+        super(acceptsTransfer ? new JecaGui.ContainerTransfer() : new JecaGui.ContainerNonTransfer(),
+                Minecraft.getInstance().player.inventory, new StringTextComponent(""));
         this.parent = parent;
         this.root = root;
-        //if (inventorySlots instanceof JecContainer) ((JecContainer) inventorySlots).setGui(this);
+        if (container != null) container.setGui(this);
     }
 
     public static int getMouseX() {
@@ -104,14 +106,13 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
             else if (gui.hand != ILabel.EMPTY) {
                 gui.hand = ILabel.EMPTY;
                 event.setCanceled(true);
+            } else {
+                ILabel e = JecaPlugin.getLabelUnderMouse();
+                if (e != ILabel.EMPTY) {
+                    gui.hand = e;
+                    event.setCanceled(true);
+                }
             }
-//            else {
-//                ILabel e = JecaPlugin.getLabelUnderMouse();
-//                if (e != ILabel.EMPTY) {
-//                    gui.hand = e;
-//                    event.setCanceled(true);
-//                }
-//            }
         }
     }
 
@@ -230,7 +231,6 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
         super.render(mouseX, mouseY, partialTicks);
         mouseX -= guiLeft;
         mouseY -= guiTop;
-        drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
         GlStateManager.pushMatrix();
         GlStateManager.translatef(guiLeft, guiTop, 0);
         GlStateManager.disableLighting();
