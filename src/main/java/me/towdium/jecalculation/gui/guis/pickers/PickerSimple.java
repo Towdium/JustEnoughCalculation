@@ -3,16 +3,19 @@ package me.towdium.jecalculation.gui.guis.pickers;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.label.labels.LFluidStack;
+import me.towdium.jecalculation.data.label.labels.LItemTag;
 import me.towdium.jecalculation.gui.guis.IGui;
 import me.towdium.jecalculation.gui.widgets.WIcon;
 import me.towdium.jecalculation.gui.widgets.WLabel;
 import me.towdium.jecalculation.gui.widgets.WLabelScroll;
 import me.towdium.jecalculation.gui.widgets.WSearch;
+import net.minecraft.tags.ItemTags;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,15 +47,17 @@ public class PickerSimple extends IPicker.Impl implements IGui {
         }
     }
 
-//    public static class OreDict extends PickerSimple {
-//        public OreDict() {
-//            super(generate());
-//        }
-//
-//        static List<ILabel> generate() {
-//            return Arrays.stream(OreDictionary.getOreNames())
-//                    .filter(i -> !OreDictionary.getOres(i).isEmpty())
-//                    .map(LOreDict::new).collect(Collectors.toList());
-//        }
-//    }
+    public static class Tag extends PickerSimple {
+        public Tag() {
+            super(generate());
+        }
+
+        static List<ILabel> generate() {
+            return ItemTags.getCollection().getTagMap().entrySet().stream()
+                    .filter(i -> !i.getValue().getAllElements().isEmpty())
+                    .map(i -> new LItemTag(i.getKey()))
+                    .sorted(Comparator.comparing(LItemTag::getName))
+                    .collect(Collectors.toList());
+        }
+    }
 }

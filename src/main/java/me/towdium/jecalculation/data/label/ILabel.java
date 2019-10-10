@@ -5,6 +5,7 @@ import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.label.labels.LFluidStack;
 import me.towdium.jecalculation.data.label.labels.LItemStack;
+import me.towdium.jecalculation.data.label.labels.LItemTag;
 import me.towdium.jecalculation.data.label.labels.LPlaceholder;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.guis.pickers.IPicker;
@@ -20,6 +21,7 @@ import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
@@ -58,17 +60,17 @@ public interface ILabel {  // TODO fix oreDict related logic
 
     static void initClient() {
         CONVERTER.register(LItemStack::suggest, Converter.Priority.SUGGEST);
-        //CONVERTER.register(LOreDict::suggest, Converter.Priority.SUGGEST);
+        CONVERTER.register(LItemTag::suggest, Converter.Priority.SUGGEST);
         CONVERTER.register(LFluidStack::suggest, Converter.Priority.SUGGEST);
         CONVERTER.register(LItemStack::fallback, Converter.Priority.FALLBACK);
-        //CONVERTER.register(LOreDict::fallback, Converter.Priority.FALLBACK);
+        CONVERTER.register(LItemTag::fallback, Converter.Priority.FALLBACK);
         EDITOR.register(PickerSimple.FluidStack::new, "fluid", new LFluidStack(1000, Fluids.WATER));
-        //EDITOR.register(PickerSimple.OreDict::new, "ore", new LOreDict("ingotIron"));
+        EDITOR.register(PickerSimple.Tag::new, "ore", new LItemTag(new ResourceLocation("forge:ingots/iron")));  // TODO change label
         EDITOR.register(PickerPlaceholder::new, "placeholder", new LPlaceholder("example", 1, true));
         EDITOR.register(PickerItemStack::new, "item", new LItemStack(new ItemStack(Items.IRON_PICKAXE)).setFMeta(true));
         MERGER.register("itemStack", "itemStack", Impl.form(LItemStack.class, LItemStack.class, LItemStack::merge));
-//        MERGER.register("oreDict", "oreDict", Impl.form(LOreDict.class, LOreDict.class, LOreDict::mergeSame));
-//        MERGER.register("oreDict", "itemStack", Impl.form(LOreDict.class, LItemStack.class, LOreDict::mergeFuzzy));
+        MERGER.register("oreDict", "oreDict", Impl.form(LItemTag.class, LItemTag.class, LItemTag::mergeSame));
+        MERGER.register("oreDict", "itemStack", Impl.form(LItemTag.class, LItemStack.class, LItemTag::mergeFuzzy));
         MERGER.register("fluidStack", "fluidStack", Impl.form(LFluidStack.class, LFluidStack.class, LFluidStack::merge));
         MERGER.register("placeholder", "placeholder", Impl.form(LPlaceholder.class, LPlaceholder.class, LPlaceholder::merge));
     }
@@ -88,7 +90,7 @@ public interface ILabel {  // TODO fix oreDict related logic
     static void initServer() {
         SERIALIZER.register(LFluidStack.IDENTIFIER, LFluidStack::new);
         SERIALIZER.register(LItemStack.IDENTIFIER, LItemStack::new);
-        // SERIALIZER.register(LOreDict.IDENTIFIER, LOreDict::new);
+        SERIALIZER.register(LItemTag.IDENTIFIER, LItemTag::new);
         SERIALIZER.register(LPlaceholder.IDENTIFIER, LPlaceholder::new);
         SERIALIZER.register(LEmpty.IDENTIFIER, i -> EMPTY);
     }
