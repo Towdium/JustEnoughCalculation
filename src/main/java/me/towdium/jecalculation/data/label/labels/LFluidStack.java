@@ -25,7 +25,7 @@ import java.util.List;
  */
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class LFluidStack extends ILabel.Impl {
+public class LFluidStack extends LStack<Fluid> {
     public static final String IDENTIFIER = "fluidStack";
     public static final String KEY_FLUID = "fluid";
     public static final String KEY_NBT = "nbt";
@@ -63,6 +63,16 @@ public class LFluidStack extends ILabel.Impl {
         Fluid f = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(id));
         if (f == null) throw new SerializationException("Fluid " + id + " cannot be resolved, ignoring");
         init(f, nbt.contains(KEY_NBT) ? nbt.getCompound(KEY_NBT) : null);
+    }
+
+    @Override
+    public Fluid get() {
+        return fluid;
+    }
+
+    @Override
+    public Context<Fluid> getContext() {
+        return Context.FLUID;
     }
 
     private void init(Fluid fluid, @Nullable CompoundNBT nbt) {

@@ -11,6 +11,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
@@ -26,7 +28,7 @@ import java.util.Objects;
  */
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class LItemStack extends ILabel.Impl {  // TODO fix item damage
+public class LItemStack extends LStack<Item> {  // TODO fix item damage
     public static final String IDENTIFIER = "itemStack";
 
     public static final String KEY_ITEM = "item";
@@ -62,6 +64,16 @@ public class LItemStack extends ILabel.Impl {  // TODO fix item damage
                 tag.getBoolean(KEY_F_CAP),
                 tag.getBoolean(KEY_F_NBT)
         );
+    }
+
+    @Override
+    public Item get() {
+        return item;
+    }
+
+    @Override
+    public Context<Item> getContext() {
+        return Context.ITEM;
     }
 
     private LItemStack(LItemStack lis) {
@@ -236,6 +248,7 @@ public class LItemStack extends ILabel.Impl {  // TODO fix item damage
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public void drawLabel(JecaGui gui) {
         gui.drawItemStack(0, 0, temp, false);
         if (fCap || fNbt || fMeta) gui.drawResource(Resource.LBL_FRAME, 0, 0);

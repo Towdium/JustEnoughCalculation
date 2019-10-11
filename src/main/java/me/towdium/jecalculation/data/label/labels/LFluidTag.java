@@ -3,48 +3,45 @@ package me.towdium.jecalculation.data.label.labels;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
-/**
- * Author: towdium
- * Date:   17-9-10.
- */
-@MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class LItemTag extends LTag<Item> {
-    public static final String IDENTIFIER = "itemTag";
+@MethodsReturnNonnullByDefault
+public class LFluidTag extends LTag<Fluid> {
+    public static final String IDENTIFIER = "fluidTag";
 
-    public LItemTag(ResourceLocation name) {
+    public LFluidTag(ResourceLocation name) {
         super(name);
     }
 
-    public LItemTag(ResourceLocation name, long amount) {
+    public LFluidTag(ResourceLocation name, long amount) {
         super(name, amount);
     }
 
-    public LItemTag(LTag<Item> lt) {
+    public LFluidTag(LTag<Fluid> lt) {
         super(lt);
     }
 
-    public LItemTag(CompoundNBT nbt) {
+    public LFluidTag(CompoundNBT nbt) {
         super(nbt);
     }
 
     @Override
     protected void drawLabel(JecaGui gui) {
         Object o = getRepresentation();
-        if (o instanceof ItemStack) gui.drawItemStack(0, 0, (ItemStack) o, false);
+        gui.drawResource(Resource.LBL_FLUID, 0, 0);
+        if (o instanceof FluidStack) gui.drawFluid(((FluidStack) o).getFluid(), 2, 2, 12, 12);
         gui.drawResource(Resource.LBL_FRAME, 0, 0);
     }
 
     @Override
     public LTag copy() {
-        return new LItemTag(this);
+        return new LFluidTag(this);
     }
 
     @Override
@@ -53,7 +50,7 @@ public class LItemTag extends LTag<Item> {
     }
 
     @Override
-    public Context<Item> getContext() {
-        return Context.ITEM;
+    public Context<Fluid> getContext() {
+        return Context.FLUID;
     }
 }

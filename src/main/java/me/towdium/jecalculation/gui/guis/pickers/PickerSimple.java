@@ -3,12 +3,14 @@ package me.towdium.jecalculation.gui.guis.pickers;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.label.labels.LFluidStack;
+import me.towdium.jecalculation.data.label.labels.LFluidTag;
 import me.towdium.jecalculation.data.label.labels.LItemTag;
 import me.towdium.jecalculation.gui.guis.IGui;
 import me.towdium.jecalculation.gui.widgets.WIcon;
 import me.towdium.jecalculation.gui.widgets.WLabel;
 import me.towdium.jecalculation.gui.widgets.WLabelScroll;
 import me.towdium.jecalculation.gui.widgets.WSearch;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -18,6 +20,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static me.towdium.jecalculation.gui.Resource.ICN_TEXT;
 
@@ -53,11 +56,15 @@ public class PickerSimple extends IPicker.Impl implements IGui {
         }
 
         static List<ILabel> generate() {
-            return ItemTags.getCollection().getTagMap().entrySet().stream()
+            Stream<LItemTag> items = ItemTags.getCollection().getTagMap().entrySet().stream()
                     .filter(i -> !i.getValue().getAllElements().isEmpty())
                     .map(i -> new LItemTag(i.getKey()))
-                    .sorted(Comparator.comparing(LItemTag::getName))
-                    .collect(Collectors.toList());
+                    .sorted(Comparator.comparing(LItemTag::getName));
+            Stream<LFluidTag> fluids = FluidTags.getCollection().getTagMap().entrySet().stream()
+                    .filter(i -> !i.getValue().getAllElements().isEmpty())
+                    .map(i -> new LFluidTag(i.getKey()))
+                    .sorted(Comparator.comparing(LFluidTag::getName));
+            return Stream.of(items, fluids).flatMap(i -> i).collect(Collectors.toList());
         }
     }
 }
