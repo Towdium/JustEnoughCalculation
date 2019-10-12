@@ -4,6 +4,8 @@ import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.network.packets.PCalculator;
+import me.towdium.jecalculation.network.packets.PEdit;
+import me.towdium.jecalculation.network.packets.PRecord;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -42,6 +44,8 @@ public class JustEnoughCalculation {
                 () -> PROTOCOL, PROTOCOL::equals, PROTOCOL::equals
         );
         network.registerMessage(0, PCalculator.class, PCalculator::write, PCalculator::new, PCalculator::handle);
+        network.registerMessage(1, PEdit.class, PEdit::write, PEdit::new, PEdit::handle);
+        network.registerMessage(2, PRecord.class, PRecord::write, PRecord::new, PRecord::handle);
         CapabilityManager.INSTANCE.register(JecaCapability.Container.class, new JecaCapability.Storage(), JecaCapability.Container::new);
         ILabel.initServer();
     }

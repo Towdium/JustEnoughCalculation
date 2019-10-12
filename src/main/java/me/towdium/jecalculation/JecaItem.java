@@ -3,6 +3,7 @@ package me.towdium.jecalculation;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.Controller;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -26,30 +27,41 @@ import static net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus.MOD;
 @ParametersAreNonnullByDefault
 @Mod.EventBusSubscriber(bus = MOD)
 public class JecaItem extends Item {
-    public static JecaItem INSTANCE = new JecaItem();
+    public static JecaItem CRAFT = new JecaItem("craft");
+    public static JecaItem MATH = new JecaItem("math");
 
-    private JecaItem() {
+    String key;
+
+    private JecaItem(String name) {
         super(new Item.Properties().maxStackSize(1).group(ItemGroup.TOOLS));
-        setRegistryName("item_calculator");
+        setRegistryName("item_calculator_" + name);
+        key = "jecalculation.item.calculator_" + name;
     }
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
-        event.getRegistry().register(INSTANCE);
+        event.getRegistry().registerAll(CRAFT, MATH);
     }
 
     @Override
-    public String getTranslationKey(ItemStack stack) {
-        return "jecalculation.item.calculator_crafting";
+    public String getTranslationKey() {
+        return key;
     }
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
         ItemStack is = playerIn.getHeldItem(handIn);
-        //boolean recipe = is.getDamage() == 0;
-        //if (playerIn.isSneaking()) is.setDamage(recipe ? 1 : 0);
-        //else if (worldIn.isRemote) JecaGui.displayGui(true, true, recipe ? new GuiCraft() : new GuiMath());
-        if (worldIn.isRemote) Controller.openGuiCraft();
+        if (playerIn.isSneaking()) {
+            ItemStack neu = new ItemStack(is.getItem() == CRAFT ? MATH : CRAFT);
+            neu.setTag(is.getTag());
+            PlayerInventory inv = playerIn.inventory;
+            if (handIn == Hand.MAIN_HAND) inv.setInventorySlotContents(inv.currentItem, neu);
+            else if (handIn == Hand.OFF_HAND) inv.offHandInventory.set(0, neu);
+        } else if (worldIn.isRemote) {
+            if (is.getItem() == CRAFT) Controller.openGuiCraft();
+            else if (is.getItem() == MATH) Controller.openGuiCraft();  // TODO change
+            else throw new RuntimeException("Internal error");
+        }
         return ActionResult.newResult(ActionResultType.SUCCESS, is);
     }
 }

@@ -3,7 +3,6 @@ package me.towdium.jecalculation.data.label.labels;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.label.ILabel;
-import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Wrapper;
 import mezz.jei.api.gui.IRecipeLayout;
 import net.minecraft.item.Item;
@@ -65,7 +64,7 @@ public abstract class LTag<T> extends LContext<T> {
             LStack ls = (LStack) b;
             return lt.getContext() == ls.getContext()
                     && lt.getAmount() * ls.getAmount() < 0
-                    && lt.getContext().discover(lt.name).map(Converter::from)
+                    && lt.getContext().discover(lt.name)
                     .anyMatch(i -> MERGER.merge(i, ls).isPresent());
         }
         return false;
@@ -121,12 +120,6 @@ public abstract class LTag<T> extends LContext<T> {
         if (list.isEmpty()) return ItemStack.EMPTY;
         long index = System.currentTimeMillis() / 1500;
         return list.get((int) (index % list.size())).getRepresentation();
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public String getDisplayName() {
-        return Utilities.I18n.get("label.item_tag.name", name);
     }
 
     @Override

@@ -3,9 +3,12 @@ package me.towdium.jecalculation.data.label.labels;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
+import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -52,5 +55,11 @@ public class LFluidTag extends LTag<Fluid> {
     @Override
     public Context<Fluid> getContext() {
         return Context.FLUID;
+    }
+
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public String getDisplayName() {
+        return Utilities.I18n.get("label.fluid_tag.name", name);
     }
 }

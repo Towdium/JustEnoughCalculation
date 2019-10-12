@@ -26,6 +26,7 @@ import net.minecraft.util.concurrent.ThreadTaskExecutor;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.GuiScreenEvent.MouseClickedEvent;
+import net.minecraftforge.client.event.GuiScreenEvent.MouseDragEvent;
 import net.minecraftforge.client.event.GuiScreenEvent.MouseScrollEvent;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.event.RegistryEvent;
@@ -90,6 +91,7 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
         return (int) mc.mouseHelper.getMouseY() * mc.mainWindow.getScaledHeight() / mc.mainWindow.getHeight() - gui.guiTop;
     }
 
+
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onMouse(GuiScreenEvent.MouseInputEvent event) {
         if (!(event.getGui() instanceof JecaGui)) return;
@@ -113,6 +115,9 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
                     event.setCanceled(true);
                 }
             }
+        } else if (event instanceof MouseDragEvent) {
+            MouseDragEvent mde = (MouseDragEvent) event;
+            gui.root.onDragged(gui, xMouse, yMouse, (int) mde.getDragX(), (int) mde.getDragY());
         }
     }
 

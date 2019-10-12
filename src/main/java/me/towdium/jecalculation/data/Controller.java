@@ -1,24 +1,31 @@
 package me.towdium.jecalculation.data;
 
 import mcp.MethodsReturnNonnullByDefault;
+import me.towdium.jecalculation.JecaCapability;
 import me.towdium.jecalculation.JecaItem;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.label.labels.LPlaceholder;
 import me.towdium.jecalculation.data.structure.*;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.guis.GuiCraft;
+import me.towdium.jecalculation.network.packets.PCalculator;
+import me.towdium.jecalculation.network.packets.PEdit;
+import me.towdium.jecalculation.network.packets.PRecord;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -28,6 +35,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static me.towdium.jecalculation.JustEnoughCalculation.network;
 
 /**
  * Author: towdium
@@ -120,37 +129,37 @@ public class Controller {
     public static void setRecipe(String neu, String old, int index, Recipe recipe) {
         getRecipes().set(neu, old, index, recipe);
         setLast(neu);
-        //if (isServerActive()) network.sendToServer(new PEdit(neu, old, index, recipe));
+        if (isServerActive()) network.sendToServer(new PEdit(neu, old, index, recipe));
     }
 
     public static void renameGroup(String old, String neu) {
         getRecipes().renameGroup(old, neu);
         setLast(neu);
-        //if (isServerActive()) network.sendToServer(new PEdit(neu, old, -1, null));
+        if (isServerActive()) network.sendToServer(new PEdit(neu, old, -1, null));
     }
 
     public static void addRecipe(String group, Recipe recipe) {
         getRecipes().add(group, recipe);
         setLast(group);
-        //if (isServerActive()) network.sendToServer(new PEdit(group, null, -1, recipe));
+        if (isServerActive()) network.sendToServer(new PEdit(group, null, -1, recipe));
     }
 
     public static void setRecipe(String group, int index, Recipe recipe) {
         getRecipes().set(group, index, recipe);
         setLast(group);
-        // (isServerActive()) network.sendToServer(new PEdit(group, null, index, recipe));
+        if (isServerActive()) network.sendToServer(new PEdit(group, null, index, recipe));
     }
 
     public static void removeRecipe(String group, int index) {
         getRecipes().remove(group, index);
         setLast(group);
-        // if (isServerActive()) network.sendToServer(new PEdit(group, null, index, null));
+        if (isServerActive()) network.sendToServer(new PEdit(group, null, index, null));
     }
 
     public static void removeGroup(String group) {
         getRecipes().remove(group);
         setLast(group);
-        //if (isServerActive()) network.sendToServer(new PEdit(group, null, -1, null));
+        if (isServerActive()) network.sendToServer(new PEdit(group, null, -1, null));
     }
 
     public static Recipe getRecipe(String group, int index) {
@@ -190,8 +199,8 @@ public class Controller {
         else {
             Optional<ItemStack> ois = getStack();
             ois.ifPresent(is -> {
-                //Utilities.getTag(is).setTag(s, t.serialize());
-                //network.sendToServer(new PCalculator(is));
+                Utilities.getTag(is).put(s, t.serialize());
+                network.sendToServer(new PCalculator(is));
             });
         }
     }
@@ -253,17 +262,17 @@ public class Controller {
     }
 
     public static void openGuiCraft() {
-        openGuiCraft(false);
+        openGuiCraft(false, false);
     }
 
 //    public static void openGuiMath() {
 //        openGuiMath(false);
 //    }
 
-    public static void openGuiCraft(boolean scheduled) {
-        if (!Controller.isServerActive()) JecaGui.displayGui(true, true, scheduled, new GuiCraft());
-        else Minecraft.getInstance().player.sendMessage(
+    public static void openGuiCraft(boolean scheduled, boolean client) {
+        if (client && Controller.isServerActive()) Minecraft.getInstance().player.sendMessage(
                 new TranslationTextComponent("jecalculation.chat.server_mode"));
+        else JecaGui.displayGui(true, true, scheduled, new GuiCraft());
     }
 
 //    public static void openGuiMath(boolean scheduled) {
@@ -273,8 +282,8 @@ public class Controller {
 //    }
 
     // client side
-    @SubscribeEvent  // TODO check logic and side handling
-    public static void onLogOut(PlayerEvent.PlayerLoggedOutEvent event) {
+    @SubscribeEvent
+    public static void onLogOut(ClientPlayerNetworkEvent.LoggedOutEvent event) {
         writeToLocal();
         rPlayerServer = null;
     }
@@ -283,6 +292,7 @@ public class Controller {
     @SubscribeEvent
     public static void onJoin(PlayerEvent.PlayerLoggedInEvent e) {
 //        if (!JecaConfig.clientMode)
-//            network.sendTo(new PRecord(JecaCapability.getRecord(e.player)), (EntityPlayerMP) e.player);
+        network.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) e.getPlayer()),
+                new PRecord(JecaCapability.getRecord(e.getPlayer())));
     }
 }

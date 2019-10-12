@@ -1,6 +1,8 @@
 {
-  "jecalculation.item.calculator_crafting": "Crafting calculator",
+  "jecalculation.item.calculator_craft": "Crafting calculator",
+  "jecalculation.item.calculator_math": "Math calculator",
   "jecalculation.key.gui_craft": "Open crafting calculator",
   "jecalculation.key.category": "Just Enough Calculation",
-  "jecalculation.label.item_tag.name": "Item tag: %s"
+  "jecalculation.label.item_tag.name": "Item tag: %s",
+  "jecalculation.label.fluid_tag.name": "Fluid tag: %s"
 }

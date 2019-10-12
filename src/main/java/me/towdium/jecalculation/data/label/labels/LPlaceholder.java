@@ -9,7 +9,7 @@ import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  */
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-@Mod.EventBusSubscriber  // TODO check event correctly handled
+@Mod.EventBusSubscriber
 public class LPlaceholder extends ILabel.Impl {
     public static final String KEY_NAME = "name";
     public static final String IDENTIFIER = "placeholder";
@@ -60,7 +60,7 @@ public class LPlaceholder extends ILabel.Impl {
     }
 
     @SubscribeEvent
-    public static void onLogOut(PlayerEvent.PlayerLoggedOutEvent e) {
+    public static void onLogOut(ClientPlayerNetworkEvent.LoggedOutEvent e) {
         recentServer.clear();
         state = true;
     }

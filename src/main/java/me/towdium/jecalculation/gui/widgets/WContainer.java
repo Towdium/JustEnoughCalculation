@@ -76,6 +76,12 @@ public class WContainer implements IContainer {
     }
 
     @Override
+    public boolean onDragged(JecaGui gui, int xMouse, int yMouse, int xDrag, int yDrag) {
+        return new Utilities.ReversedIterator<>(widgets).stream()
+                .anyMatch(i -> i.onDragged(gui, xMouse, yMouse, xDrag, yDrag));
+    }
+
+    @Override
     public boolean onTooltip(JecaGui gui, int xMouse, int yMouse, List<String> tooltip) {
         return new Utilities.ReversedIterator<>(widgets).stream()
                 .anyMatch(i -> i.onTooltip(gui, xMouse, yMouse, tooltip));

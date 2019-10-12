@@ -25,6 +25,10 @@ public interface IWidget {
         return false;
     }
 
+    default boolean onDragged(JecaGui gui, int xMouse, int yMouse, int xDrag, int yDrag) {
+        return false;
+    }
+
     default boolean onKey(JecaGui gui, int key, int modifier) {
         return false;
     }

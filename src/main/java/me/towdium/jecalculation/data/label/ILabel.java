@@ -37,7 +37,7 @@ import static net.minecraft.item.EnchantedBookItem.getEnchantedItemStack;
  */
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public interface ILabel {  // TODO fix oreDict related logic
+public interface ILabel {
     Merger MERGER = new Merger();
     Serializer SERIALIZER = new Serializer();
     Converter CONVERTER = new Converter();
@@ -62,14 +62,14 @@ public interface ILabel {  // TODO fix oreDict related logic
         CONVERTER.register(LItemStack::fallback, Converter.Priority.FALLBACK);
         CONVERTER.register(LTag::fallback, Converter.Priority.FALLBACK);
         EDITOR.register(PickerSimple.FluidStack::new, "fluid", new LFluidStack(1000, Fluids.WATER));
-        EDITOR.register(PickerSimple.Tag::new, "tag", new LItemTag(new ResourceLocation("forge:ingots/iron")));  // TODO change label
+        EDITOR.register(PickerSimple.Tag::new, "tag", new LItemTag(new ResourceLocation("forge:ingots/iron")));
         EDITOR.register(PickerPlaceholder::new, "placeholder", new LPlaceholder("example", 1, true));
         EDITOR.register(PickerItemStack::new, "item", new LItemStack(new ItemStack(Items.IRON_PICKAXE)).setFMeta(true));
         MERGER.register("itemStack", "itemStack", Impl.form(LItemStack.class, LItemStack.class, LItemStack::merge));
         MERGER.register("itemTag", "itemTag", Impl.form(LItemTag.class, LItemTag.class, LItemTag::mergeSame));
         MERGER.register("itemTag", "itemStack", Impl.form(LItemTag.class, LItemStack.class, LItemTag::mergeFuzzy));
         MERGER.register("fluidTag", "fluidTag", Impl.form(LFluidTag.class, LFluidTag.class, LFluidTag::mergeSame));
-        MERGER.register("fluidTag", "itemStack", Impl.form(LFluidTag.class, LFluidStack.class, LFluidTag::mergeFuzzy));
+        MERGER.register("fluidTag", "fluidStack", Impl.form(LFluidTag.class, LFluidStack.class, LFluidTag::mergeFuzzy));
         MERGER.register("fluidStack", "fluidStack", Impl.form(LFluidStack.class, LFluidStack.class, LFluidStack::merge));
         MERGER.register("placeholder", "placeholder", Impl.form(LPlaceholder.class, LPlaceholder.class, LPlaceholder::merge));
     }
@@ -90,6 +90,7 @@ public interface ILabel {  // TODO fix oreDict related logic
         SERIALIZER.register(LFluidStack.IDENTIFIER, LFluidStack::new);
         SERIALIZER.register(LItemStack.IDENTIFIER, LItemStack::new);
         SERIALIZER.register(LItemTag.IDENTIFIER, LItemTag::new);
+        SERIALIZER.register(LFluidTag.IDENTIFIER, LFluidTag::new);
         SERIALIZER.register(LPlaceholder.IDENTIFIER, LPlaceholder::new);
         SERIALIZER.register(LEmpty.IDENTIFIER, i -> EMPTY);
     }

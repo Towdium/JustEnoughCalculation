@@ -30,7 +30,7 @@ minecraft {
             workingDirectory project.file('run')
             property 'forge.logging.console.level', 'debug'
             mods {
-                examplemod {
+                jecharacters {
                     source sourceSets.main
                 }
             }
@@ -40,7 +40,7 @@ minecraft {
             workingDirectory project.file('run')
             property 'forge.logging.console.level', 'debug'
             mods {
-                examplemod {
+                jecharacters {
                     source sourceSets.main
                 }
             }
@@ -51,7 +51,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
             args '--mod', 'jecalculation', '--all', '--output', file('src/generated/resources/')
             mods {
-                examplemod {
+                jecharacters {
                     source sourceSets.main
                 }
             }
@@ -61,8 +61,9 @@ minecraft {
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.14.4-28.1.17'
-    compileOnly fg.deobf("mezz.jei:jei-1.14.4:6.0.0.13:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-1.14.4:6.0.0.13")
+    compileOnly fg.deobf('mezz.jei:jei-1.14.4:6.0.0.13:api')
+    runtimeOnly fg.deobf('mezz.jei:jei-1.14.4:6.0.0.13')
+    testCompile 'org.junit.jupiter:junit-jupiter-api:5.2.0'
 }
 
 jar {

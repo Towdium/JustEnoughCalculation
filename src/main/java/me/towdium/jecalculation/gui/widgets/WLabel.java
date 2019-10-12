@@ -4,6 +4,7 @@ import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.utils.Utilities.Timer;
+import mezz.jei.api.recipe.IFocus;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -16,6 +17,7 @@ import static me.towdium.jecalculation.gui.JecaGui.COLOR_TEXT_WHITE;
 import static me.towdium.jecalculation.gui.JecaGui.Font.HALF;
 import static me.towdium.jecalculation.gui.JecaGui.Font.PLAIN;
 import static me.towdium.jecalculation.gui.Resource.*;
+import static me.towdium.jecalculation.jei.JecaPlugin.runtime;
 
 /**
  * Author: towdium
@@ -111,8 +113,8 @@ public class WLabel implements IWidget {
                 } else return false;
             case RESULT:
                 Object rep = label.getRepresentation();
-                // TODO
-//runtime.getRecipesGui().show(runtime.getRecipeRegistry().createFocus(IFocus.Mode.OUTPUT, rep));
+                if (rep != null) runtime.getRecipesGui().show(runtime.getRecipeManager()
+                        .createFocus(IFocus.Mode.OUTPUT, rep));
                 return rep != null;
             case PICKER:
                 if (label != label.EMPTY) {

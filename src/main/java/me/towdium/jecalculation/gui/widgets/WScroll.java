@@ -3,7 +3,6 @@ package me.towdium.jecalculation.gui.widgets;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -21,7 +20,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class WScroll implements IWidget {
     public int xPos, yPos, ySize, current;
     public ListenerAction<? super WScroll> listener;
-    protected boolean drag;
 
     public WScroll(int xPos, int yPos, int ySize) {
         this.xPos = xPos;
@@ -31,18 +29,14 @@ public class WScroll implements IWidget {
 
     @Override
     public void onDraw(JecaGui gui, int xMouse, int yMouse) {
-        if (Minecraft.getInstance().mouseHelper.isLeftDown() && drag) setCurrent(yMouse - yPos - 9, true);
-        else drag = false;
-
         gui.drawResourceContinuous(Resource.WGT_SLOT, xPos, yPos, 14, ySize, 3, 3, 3, 3);
         gui.drawResource(Resource.WGT_SCROLL, xPos, yPos + current);
     }
 
     @Override
-    public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
-        drag = mouseIn(xMouse, yMouse);
-        if (drag) setCurrent(yMouse - yPos - 9, true);
-        return drag;
+    public boolean onDragged(JecaGui gui, int xMouse, int yMouse, int xDrag, int yDrag) {
+        setCurrent(yMouse - yPos - 9, true);
+        return false;
     }
 
     private void setCurrent(int pos, boolean notify) {
