@@ -35,7 +35,7 @@ public class JecaCapability {
     @CapabilityInject(Container.class)
     public static final Capability<Container> CAPABILITY_RECORD = null;
 
-    public static RecordPlayer getRecord(PlayerEntity player) {  // TODO check logic
+    public static RecordPlayer getRecord(PlayerEntity player) {
         //noinspection ConstantConditions
         return player.getCapability(JecaCapability.CAPABILITY_RECORD, Direction.UP).orElseGet(Container::new).getRecord();
     }
@@ -49,10 +49,10 @@ public class JecaCapability {
     }
 
     @SubscribeEvent
-    public static void onCloneCapability(PlayerEvent.Clone e) {  // TODO check logic
+    public static void onCloneCapability(PlayerEvent.Clone e) {
         RecordPlayer r = JecaCapability.getRecord(e.getOriginal());
         //noinspection ConstantConditions
-        e.getEntityPlayer().getCapability(JecaCapability.CAPABILITY_RECORD, Direction.UP).orElseGet(Container::new).setRecord(r);
+        e.getPlayer().getCapability(JecaCapability.CAPABILITY_RECORD, Direction.UP).orElseGet(Container::new).setRecord(r);
     }
 
     public static class Container {

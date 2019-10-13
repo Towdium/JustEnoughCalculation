@@ -8,6 +8,7 @@ import me.towdium.jecalculation.data.label.labels.LPlaceholder;
 import me.towdium.jecalculation.data.structure.*;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.guis.GuiCraft;
+import me.towdium.jecalculation.gui.guis.GuiMath;
 import me.towdium.jecalculation.network.packets.PCalculator;
 import me.towdium.jecalculation.network.packets.PEdit;
 import me.towdium.jecalculation.network.packets.PRecord;
@@ -265,9 +266,15 @@ public class Controller {
         openGuiCraft(false, false);
     }
 
-//    public static void openGuiMath() {
-//        openGuiMath(false);
-//    }
+    public static void openGuiMath() {
+        openGuiMath(false, false);
+    }
+
+    public static void openGuiMath(boolean scheduled, boolean client) {
+        if (client && Controller.isServerActive()) Minecraft.getInstance().player.sendMessage(
+                new TranslationTextComponent("jecalculation.chat.server_mode"));
+        else JecaGui.displayGui(true, true, scheduled, new GuiMath());
+    }
 
     public static void openGuiCraft(boolean scheduled, boolean client) {
         if (client && Controller.isServerActive()) Minecraft.getInstance().player.sendMessage(

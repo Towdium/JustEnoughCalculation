@@ -28,11 +28,10 @@ import java.util.Objects;
  */
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class LItemStack extends LStack<Item> {  // TODO fix item damage
+public class LItemStack extends LStack<Item> {
     public static final String IDENTIFIER = "itemStack";
 
     public static final String KEY_ITEM = "item";
-    public static final String KEY_META = "meta";
     public static final String KEY_NBT = "nbt";
     public static final String KEY_CAP = "cap";
     public static final String KEY_F_META = "fMeta";
@@ -45,7 +44,7 @@ public class LItemStack extends LStack<Item> {  // TODO fix item damage
     boolean fMeta;
     boolean fNbt;
     boolean fCap;
-    transient ItemStack temp;
+    transient ItemStack rep;
 
     // Convert from itemStack
     public LItemStack(ItemStack is) {
@@ -79,25 +78,25 @@ public class LItemStack extends LStack<Item> {  // TODO fix item damage
     private LItemStack(LItemStack lis) {
         super(lis);
         item = lis.item;
-        nbt = lis.nbt;
-        cap = lis.cap;
+        nbt = lis.nbt == null ? null : lis.nbt.copy();
+        cap = lis.cap == null ? null : lis.cap.copy();
         fMeta = lis.fMeta;
         fNbt = lis.fNbt;
         fCap = lis.fCap;
-        temp = lis.temp;
+        rep = lis.rep;
     }
 
     private void init(@Nullable Item item, @Nullable CompoundNBT cap,
                       @Nullable CompoundNBT nbt, boolean fMeta, boolean fCap, boolean fNbt) {
         Objects.requireNonNull(item);
         this.item = item;
-        this.cap = fCap ? null : cap;
-        this.nbt = fNbt ? null : nbt;
+        this.cap = cap;
+        this.nbt = nbt;
         this.fMeta = fMeta;
         this.fCap = fCap;
         this.fNbt = fNbt;
-        temp = new ItemStack(item, 1, this.cap);
-        temp.setTag(this.nbt);
+        rep = new ItemStack(item, 1, this.cap);
+        rep.setTag(this.nbt);
     }
 
     @Nullable
@@ -111,8 +110,8 @@ public class LItemStack extends LStack<Item> {  // TODO fix item damage
             LItemStack lisA = (LItemStack) a;
             LItemStack lisB = (LItemStack) b;
 
-//            if (lisA.meta != lisB.meta && !lisA.fMeta
-//                    && !lisB.fMeta && lisB.meta != WILDCARD_VALUE) return false;
+            if (lisA.rep.getDamage() != lisB.rep.getDamage()
+                    && !lisA.fMeta && !lisB.fMeta) return false;
             if (!lisA.fNbt && !lisB.fNbt) {
                 if (lisA.nbt == null) {
                     if (lisB.nbt != null) return false;
@@ -138,7 +137,7 @@ public class LItemStack extends LStack<Item> {  // TODO fix item damage
         for (ILabel i : iss) {
             LItemStack ii = (LItemStack) i;
             if (ii.item != lis.item) return new ArrayList<>();
-            //if (ii.meta != lis.meta || ii.fMeta) fMeta = true;
+            if (ii.rep.getDamage() != lis.rep.getDamage() || ii.fMeta) fMeta = true;
             if (ii.nbt == null ? lis.nbt != null : !ii.nbt.equals(lis.nbt)) fNbt = true;
             if (ii.cap == null ? lis.cap != null : !ii.cap.equals(lis.cap)) fCap = true;
         }
@@ -164,30 +163,21 @@ public class LItemStack extends LStack<Item> {  // TODO fix item damage
 
     public LItemStack setFMeta(boolean f) {
         fMeta = f;
-        //if (f) meta = 0;
-        temp = new ItemStack(item, 1, cap);
-        temp.setTag(nbt);
         return this;
     }
 
     public LItemStack setFNbt(boolean f) {
         fNbt = f;
-        if (f) nbt = null;
-        temp = new ItemStack(item, 1, cap);
-        temp.setTag(nbt);
         return this;
     }
 
     public LItemStack setFCap(boolean f) {
         fCap = f;
-        if (f) cap = null;
-        temp = new ItemStack(item, 1, cap);
-        temp.setTag(nbt);
         return this;
     }
 
     public ItemStack getRep() {
-        return temp;
+        return rep;
     }
 
     @Override
@@ -201,12 +191,12 @@ public class LItemStack extends LStack<Item> {  // TODO fix item damage
 
     @Override
     public ItemStack getRepresentation() {
-        return temp;
+        return rep;
     }
 
     @Override
     public String getDisplayName() {
-        return temp.getDisplayName().getFormattedText();
+        return rep.getDisplayName().getFormattedText();
     }
 
     @Override
@@ -220,7 +210,6 @@ public class LItemStack extends LStack<Item> {  // TODO fix item damage
             LItemStack lis = (LItemStack) l;
             return (nbt == null ? lis.nbt == null : nbt.equals(lis.nbt))
                     && (cap == null ? lis.cap == null : cap.equals(lis.cap))
-                    //&& meta == lis.meta
                     && item == lis.item
                     && fNbt == lis.fNbt && super.matches(l)
                     && fCap == lis.fCap && fMeta == lis.fMeta;
@@ -237,7 +226,6 @@ public class LItemStack extends LStack<Item> {  // TODO fix item damage
         ResourceLocation rl = ForgeRegistries.ITEMS.getKey(item);
         if (rl == null) return ILabel.EMPTY.toNbt();
         CompoundNBT ret = super.toNbt();
-        //if (meta != 0) ret.putInt(KEY_META, meta);
         ret.putString(KEY_ITEM, rl.toString());
         if (nbt != null) ret.put(KEY_NBT, nbt);
         if (cap != null) ret.put(KEY_CAP, cap);
@@ -250,7 +238,7 @@ public class LItemStack extends LStack<Item> {  // TODO fix item damage
     @Override
     @OnlyIn(Dist.CLIENT)
     public void drawLabel(JecaGui gui) {
-        gui.drawItemStack(0, 0, temp, false);
+        gui.drawItemStack(0, 0, rep, false);
         if (fCap || fNbt || fMeta) gui.drawResource(Resource.LBL_FRAME, 0, 0);
         if (fCap) gui.drawResource(Resource.LBL_FR_LL, 0, 0);
         if (fNbt) gui.drawResource(Resource.LBL_FR_UL, 0, 0);
@@ -260,7 +248,6 @@ public class LItemStack extends LStack<Item> {  // TODO fix item damage
     @Override
     public int hashCode() {
         return (nbt == null ? 0 : nbt.hashCode()) ^ (cap == null ? 0 : cap.hashCode())
-                //^ meta
                 ^ item.getTranslationKey().hashCode() ^ super.hashCode();
     }
 }

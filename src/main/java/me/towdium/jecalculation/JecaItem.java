@@ -59,7 +59,7 @@ public class JecaItem extends Item {
             else if (handIn == Hand.OFF_HAND) inv.offHandInventory.set(0, neu);
         } else if (worldIn.isRemote) {
             if (is.getItem() == CRAFT) Controller.openGuiCraft();
-            else if (is.getItem() == MATH) Controller.openGuiCraft();  // TODO change
+            else if (is.getItem() == MATH) Controller.openGuiMath();
             else throw new RuntimeException("Internal error");
         }
         return ActionResult.newResult(ActionResultType.SUCCESS, is);

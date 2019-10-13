@@ -208,7 +208,7 @@ public class Utilities {
         }
     }
 
-    public static class I18n {
+    public static class I18n {  // TODO convert lang files
         public static boolean contains(String s1, String s2) {
             return s1.contains(s2);
         }
