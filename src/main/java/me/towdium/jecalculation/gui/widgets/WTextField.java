@@ -53,6 +53,12 @@ public class WTextField implements IWidget {
     }
 
     @Override
+    public boolean onReleased(JecaGui gui, int key, int modifier) {
+        textField.keyReleased(key, GLFW.glfwGetKeyScancode(key), modifier);
+        return false;
+    }
+
+    @Override
     public boolean onChar(JecaGui gui, char ch, int modifier) {
         boolean ret = textField.charTyped(ch, modifier);
         if (ret) notifyLsnr();

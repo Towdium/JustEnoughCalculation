@@ -11,7 +11,9 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static me.towdium.jecalculation.gui.Resource.*;
 
@@ -26,7 +28,7 @@ public abstract class WButton extends WTooltip {
     protected int xPos, yPos, xSize, ySize;
     protected ListenerAction<? super WButton> listener;
     protected boolean disabled;
-    protected int[] keys;
+    protected Map<Integer, Boolean> keys = new HashMap<>();
 
     public WButton(int xPos, int yPos, int xSize, int ySize, @Nullable String name) {
         super(name);
@@ -45,8 +47,7 @@ public abstract class WButton extends WTooltip {
     public void onDraw(JecaGui gui, int xMouse, int yMouse) {
         super.onDraw(gui, xMouse, yMouse);
         boolean hovered = JecaGui.mouseIn(xPos + 1, yPos + 1, xSize - 2, ySize - 2, xMouse, yMouse);
-        // TODO
-        //if (keys != null) for (int i : keys) if (Keyboard.isKeyDown(i)) hovered = true;
+        hovered = hovered || keys.entrySet().stream().anyMatch(Map.Entry::getValue);
         gui.drawResourceContinuous(disabled ? WGT_BUTTON_D : (hovered ? WGT_BUTTON_F : WGT_BUTTON_N)
                 , xPos, yPos, xSize, ySize, 5, 5, 5, 5);
     }
@@ -68,12 +69,19 @@ public abstract class WButton extends WTooltip {
 
     @Override
     public boolean onPressed(JecaGui gui, int key, int modifier) {
-        // JustEnoughCalculation.logger.info(code);
-        if (keys != null) for (int i : keys) {
-            if (i == key) {
-                trigger();
-                return true;
-            }
+        if (keys.containsKey(key)) {
+            keys.put(key, true);
+            trigger();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onReleased(JecaGui gui, int key, int modifier) {
+        if (keys.containsKey(key)) {
+            keys.put(key, false);
+            return true;
         }
         return false;
     }
@@ -95,7 +103,8 @@ public abstract class WButton extends WTooltip {
     }
 
     public WButton setKeyBind(int... keys) {
-        this.keys = keys;
+        this.keys.clear();
+        for (int key : keys) this.keys.put(key, false);
         return this;
     }
 }

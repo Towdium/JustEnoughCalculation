@@ -167,8 +167,13 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
     }
 
     @Override
-    public boolean keyReleased(int p_223281_1_, int p_223281_2_, int p_223281_3_) {
-        return false;
+    public boolean keyReleased(int key, int scan, int modifier) {
+        if (key == GLFW.GLFW_KEY_ESCAPE && hand != ILabel.EMPTY) hand = ILabel.EMPTY;
+        else if (!root.onReleased(this, key, modifier)) {
+            if (key == GLFW.GLFW_KEY_ESCAPE && parent != null) displayParent();
+            else return super.keyReleased(key, scan, modifier);
+        }
+        return true;
     }
 
     private static void displayGuiUnsafe(boolean updateParent, boolean acceptsTransfer, IGui root) {
@@ -419,12 +424,8 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
 
     @Override
     public boolean keyPressed(int key, int scan, int modifier) {
-        if (key == GLFW.GLFW_KEY_ESCAPE && hand != ILabel.EMPTY) hand = ILabel.EMPTY;
-        else if (!root.onPressed(this, key, modifier)) {
-            if (key == GLFW.GLFW_KEY_ESCAPE && parent != null) displayParent();
-            else return super.keyPressed(key, scan, modifier);
-        }
-        return true;
+        return root.onPressed(this, key, modifier)
+                || super.keyPressed(key, scan, modifier);
     }
 
     public static class Font {
