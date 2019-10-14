@@ -14,8 +14,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class WOverlay extends WContainer {
     @Override
-    public boolean onKey(JecaGui gui, int key, int modifier) {
-        if (super.onKey(gui, key, modifier)) return true;
+    public boolean onPressed(JecaGui gui, int key, int modifier) {
+        if (super.onPressed(gui, key, modifier)) return true;
         if (key == GLFW.GLFW_KEY_ESCAPE) {
             gui.root.remove(this);
             return true;

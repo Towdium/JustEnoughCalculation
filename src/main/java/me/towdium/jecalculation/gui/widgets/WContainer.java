@@ -58,10 +58,17 @@ public class WContainer implements IContainer {
     }
 
     @Override
-    public boolean onKey(JecaGui gui, int key, int modifier) {
+    public boolean onPressed(JecaGui gui, int key, int modifier) {
         return new Utilities.ReversedIterator<>(widgets).stream()
-                .anyMatch(i -> i.onKey(gui, key, modifier));
+                .anyMatch(i -> i.onPressed(gui, key, modifier));
     }
+
+    @Override
+    public boolean onReleased(JecaGui gui, int key, int modifier) {
+        return new Utilities.ReversedIterator<>(widgets).stream()
+                .anyMatch(i -> i.onReleased(gui, key, modifier));
+    }
+
 
     @Override
     public boolean onChar(JecaGui gui, char ch, int modifier) {

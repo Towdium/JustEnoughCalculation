@@ -46,7 +46,7 @@ public class WTextField implements IWidget {
     }
 
     @Override
-    public boolean onKey(JecaGui gui, int key, int modifier) {
+    public boolean onPressed(JecaGui gui, int key, int modifier) {
         boolean ret = textField.keyPressed(key, GLFW.glfwGetKeyScancode(key), modifier);
         if (ret) notifyLsnr();
         return ret;

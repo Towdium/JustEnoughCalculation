@@ -112,12 +112,12 @@ public class GuiRecipe extends WContainer implements IGui {
     }
 
     @Override
-    public boolean onKey(JecaGui gui, int key, int modifier) {
+    public boolean onPressed(JecaGui gui, int key, int modifier) {
         if (key == GLFW.GLFW_KEY_ESCAPE && contains(text)) {
             setNewGroup(false);
             return true;
         }
-        return super.onKey(gui, key, modifier);
+        return super.onPressed(gui, key, modifier);
     }
 
     public void setNewGroup(boolean b) {

@@ -29,7 +29,11 @@ public interface IWidget {
         return false;
     }
 
-    default boolean onKey(JecaGui gui, int key, int modifier) {
+    default boolean onPressed(JecaGui gui, int key, int modifier) {
+        return false;
+    }
+
+    default boolean onReleased(JecaGui gui, int key, int modifier) {
         return false;
     }
 

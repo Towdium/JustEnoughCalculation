@@ -67,7 +67,7 @@ public abstract class WButton extends WTooltip {
     }
 
     @Override
-    public boolean onKey(JecaGui gui, int key, int modifier) {
+    public boolean onPressed(JecaGui gui, int key, int modifier) {
         // JustEnoughCalculation.logger.info(code);
         if (keys != null) for (int i : keys) {
             if (i == key) {
