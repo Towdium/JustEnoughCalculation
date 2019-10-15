@@ -18,6 +18,7 @@
   "jecalculation.gui.craft.title": "Калькулятор создания",
   "jecalculation.gui.craft.label": "Добавить метку",
   "jecalculation.gui.craft.step": "Этапы",
+  "_jecalculation.gui.craft.output": "Extra outputs",
   "jecalculation.gui.craft.search": "Поиск рецепта",
   "jecalculation.gui.craft.suggest": "Предложения",
   "jecalculation.gui.math.title": "Математический калькулятор",

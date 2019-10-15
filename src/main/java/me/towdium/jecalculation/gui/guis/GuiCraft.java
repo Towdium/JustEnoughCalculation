@@ -40,7 +40,7 @@ public class GuiCraft extends WContainer implements IGui {
             .setListener(i -> setMode(Mode.STEPS));
     WButton catalyst = new WButtonIcon(45, 62, 20, 20, Resource.BTN_CAT, "common.catalyst")
             .setListener(i -> setMode(Mode.CATALYST));
-    WButton output = new WButtonIcon(26, 62, 20, 20, Resource.BTN_OUT, "common.output")
+    WButton output = new WButtonIcon(26, 62, 20, 20, Resource.BTN_OUT, "craft.output")
             .setListener(i -> setMode(Mode.OUTPUT));
     WButton input = new WButtonIcon(7, 62, 20, 20, Resource.BTN_IN, "common.input")
             .setListener(i -> setMode(Mode.INPUT));
