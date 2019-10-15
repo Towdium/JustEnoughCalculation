@@ -43,6 +43,11 @@ public class LFluidTag extends LTag<Fluid> {
     }
 
     @Override
+    public String getAmountString(boolean round) {
+        return LFluidStack.format(amount);
+    }
+
+    @Override
     public LTag copy() {
         return new LFluidTag(this);
     }

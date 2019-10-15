@@ -109,7 +109,7 @@ public abstract class LTag<T> extends LContext<T> {
         if (biDir) ores.filter(ore -> labels.stream().noneMatch(ore::matches))
                 .findAny().ifPresent(i -> acceptable.value = false);
         labels.stream().filter(label -> label instanceof LItemStack)
-                .filter(label -> tag.contains(((LItemStack) label).item))
+                .filter(label -> !tag.contains(((LItemStack) label).item))
                 .findAny().ifPresent(i -> acceptable.value = false);
         return acceptable.value;
     }

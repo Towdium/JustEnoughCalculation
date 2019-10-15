@@ -3,7 +3,6 @@ package me.towdium.jecalculation.gui;
 import com.mojang.blaze3d.platform.GlStateManager;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
-import me.towdium.jecalculation.data.label.labels.LItemStack;
 import me.towdium.jecalculation.gui.guis.IGui;
 import me.towdium.jecalculation.jei.JecaPlugin;
 import me.towdium.jecalculation.utils.Utilities;
@@ -127,7 +126,8 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
         IInventory i = new Inventory(ItemStack.EMPTY);
         Slot s = new Slot(i, 0, 0, 0);
         ILabel l = getLabelUnderMouse();
-        if (l instanceof LItemStack) s.putStack(((LItemStack) l).getRep());
+        Object rep = l == null ? null : l.getRepresentation();
+        if (rep instanceof ItemStack) s.putStack((ItemStack) rep);
         return s;
     }
 
@@ -164,16 +164,6 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
         JecaGui ret = gui instanceof JecaGui ? (JecaGui) gui : null;
         Objects.requireNonNull(ret);
         return ret;
-    }
-
-    @Override
-    public boolean keyReleased(int key, int scan, int modifier) {
-        if (key == GLFW.GLFW_KEY_ESCAPE && hand != ILabel.EMPTY) hand = ILabel.EMPTY;
-        else if (!root.onReleased(this, key, modifier)) {
-            if (key == GLFW.GLFW_KEY_ESCAPE && parent != null) displayParent();
-            else return super.keyReleased(key, scan, modifier);
-        }
-        return true;
     }
 
     private static void displayGuiUnsafe(boolean updateParent, boolean acceptsTransfer, IGui root) {
@@ -424,8 +414,19 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
 
     @Override
     public boolean keyPressed(int key, int scan, int modifier) {
-        return root.onPressed(this, key, modifier)
-                || super.keyPressed(key, scan, modifier);
+        if (key == GLFW.GLFW_KEY_ESCAPE && hand != ILabel.EMPTY) hand = ILabel.EMPTY;
+        else if (!root.onPressed(this, key, modifier)) {
+            if (key == GLFW.GLFW_KEY_ESCAPE && parent != null) displayParent();
+            else return super.keyPressed(key, scan, modifier);
+        }
+        return true;
+
+    }
+
+    @Override
+    public boolean keyReleased(int key, int scan, int modifier) {
+        return root.onReleased(this, key, modifier)
+                || super.keyReleased(key, scan, modifier);
     }
 
     public static class Font {

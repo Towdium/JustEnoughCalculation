@@ -95,6 +95,10 @@ public class LFluidStack extends LStack<Fluid> {
 
     @Override
     public String getAmountString(boolean round) {
+        return format(amount);
+    }
+
+    public static String format(long amount) {
         return amount >= 1000 ? Utilities.cutNumber(amount / 1000f, 4) + "B"
                 : Long.toString(amount) + "mB";
     }

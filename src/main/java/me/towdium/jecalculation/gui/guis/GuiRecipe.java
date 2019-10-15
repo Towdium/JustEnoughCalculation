@@ -147,7 +147,7 @@ public class GuiRecipe extends WContainer implements IGui {
         // merge jei structure into list input/output
         Stream.of(recipe.getFluidStacks(), recipe.getItemStacks())
                 .flatMap(i -> i.getGuiIngredients().values().stream())
-                .forEach(i -> merge(i.isInput() ? input : output, i, recipe));
+                .forEach(i -> merge(i.isInput() ? input : output, i, recipe, i.isInput()));
 
         // convert catalyst
         List<ILabel> catalysts = JecaPlugin.runtime.getRecipeManager().getRecipeCatalysts(recipe.getRecipeCategory())
@@ -164,7 +164,7 @@ public class GuiRecipe extends WContainer implements IGui {
         refresh();
     }
 
-    private void merge(ArrayList<Trio<ILabel, CostList, CostList>> dst, IGuiIngredient<?> gi, IRecipeLayout context) {
+    private void merge(ArrayList<Trio<ILabel, CostList, CostList>> dst, IGuiIngredient<?> gi, IRecipeLayout context, boolean input) {
         List<ILabel> list = gi.getAllIngredients().stream().map(ILabel.Converter::from).collect(Collectors.toList());
         if (list.isEmpty()) return;
         dst.stream().filter(p -> {
@@ -175,8 +175,10 @@ public class GuiRecipe extends WContainer implements IGui {
                 return true;
             } else return false;
         }).findAny().orElseGet(() -> {
+            ILabel rep = ILabel.CONVERTER.first(list, context);
+            if (!input && list.size() == 1) rep = list.get(0).copy();
             Trio<ILabel, CostList, CostList> ret = new Trio<>(
-                    ILabel.CONVERTER.first(list, context), new CostList(list), new CostList(list));
+                    rep, new CostList(list), new CostList(list));
             dst.add(ret);
             return ret;
         });
