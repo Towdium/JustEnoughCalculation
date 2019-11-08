@@ -98,10 +98,10 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
         int xMouse = getMouseX();
         int yMouse = getMouseY();
 
-        if (event instanceof MouseScrollEvent) {
-            double diff = ((MouseScrollEvent) event).getScrollDelta() / 120;
+        if (event instanceof MouseScrollEvent.Pre) {
+            double diff = ((MouseScrollEvent) event).getScrollDelta();
             if (diff != 0) gui.root.onScroll(gui, xMouse, yMouse, (int) diff);
-        } else if (event instanceof MouseClickedEvent) {
+        } else if (event instanceof MouseClickedEvent.Pre) {
             int button = ((MouseClickedEvent) event).getButton();
             if (gui.root.onClicked(gui, xMouse, yMouse, button)) event.setCanceled(true);
             else if (gui.hand != ILabel.EMPTY) {
@@ -114,7 +114,7 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
                     event.setCanceled(true);
                 }
             }
-        } else if (event instanceof MouseDragEvent) {
+        } else if (event instanceof MouseDragEvent.Pre) {
             MouseDragEvent mde = (MouseDragEvent) event;
             gui.root.onDragged(gui, xMouse, yMouse, (int) mde.getDragX(), (int) mde.getDragY());
         }

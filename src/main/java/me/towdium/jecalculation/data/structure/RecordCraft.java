@@ -8,7 +8,6 @@ import net.minecraft.nbt.ListNBT;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * Author: Towdium
@@ -25,7 +24,7 @@ public class RecordCraft implements IRecord {
     public boolean inventory;
 
     public RecordCraft(CompoundNBT nbt) {
-        List<ILabel> ls = StreamSupport.stream(nbt.getList(KEY_RECENTS, 10).spliterator(), false)
+        List<ILabel> ls = nbt.getList(KEY_RECENTS, 10).stream()
                 .filter(n -> n instanceof CompoundNBT)
                 .map(n -> ILabel.SERIALIZER.deserialize((CompoundNBT) n))
                 .collect(Collectors.toList());

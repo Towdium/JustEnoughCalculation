@@ -45,8 +45,7 @@ public class Recipes {
     protected void deserialize(CompoundNBT nbt) {
         nbt.keySet().stream().sorted().forEach(i -> {
             ListNBT group = nbt.getList(i, 10);
-            StreamSupport.stream(group.spliterator(), false)
-                    .filter(r -> r instanceof CompoundNBT)
+            group.stream().filter(r -> r instanceof CompoundNBT)
                     .forEach(r -> {
                         try {
                             add(i, new Recipe((CompoundNBT) r));
