@@ -15,6 +15,8 @@ import me.towdium.jecalculation.utils.wrappers.Pair;
 import me.towdium.jecalculation.utils.wrappers.Trio;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.ingredient.IGuiIngredient;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -30,6 +32,7 @@ import static me.towdium.jecalculation.gui.Resource.*;
  */
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
+@OnlyIn(Dist.CLIENT)
 public class GuiRecipe extends WContainer implements IGui {
     Pair<String, Integer> dest;
     HashMap<Integer, List<ILabel>> disambCache = new HashMap<>();

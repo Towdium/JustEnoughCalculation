@@ -21,6 +21,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -43,7 +45,6 @@ import static me.towdium.jecalculation.JustEnoughCalculation.network;
  * Author: towdium
  * Date:   17-10-15.
  */
-@Mod.EventBusSubscriber
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class Controller {
@@ -262,44 +263,48 @@ public class Controller {
         Utilities.Json.write(nbt, file);
     }
 
+    @OnlyIn(Dist.CLIENT)
     public static void openGuiCraft() {
         openGuiCraft(false, false);
     }
 
+    @OnlyIn(Dist.CLIENT)
     public static void openGuiMath() {
         openGuiMath(false, false);
     }
 
+    @OnlyIn(Dist.CLIENT)
     public static void openGuiMath(boolean scheduled, boolean client) {
         if (client && Controller.isServerActive()) Minecraft.getInstance().player.sendMessage(
                 new TranslationTextComponent("jecalculation.chat.server_mode"));
         else JecaGui.displayGui(true, true, scheduled, new GuiMath());
     }
 
+    @OnlyIn(Dist.CLIENT)
     public static void openGuiCraft(boolean scheduled, boolean client) {
         if (client && Controller.isServerActive()) Minecraft.getInstance().player.sendMessage(
                 new TranslationTextComponent("jecalculation.chat.server_mode"));
         else JecaGui.displayGui(true, true, scheduled, new GuiCraft());
     }
 
-//    public static void openGuiMath(boolean scheduled) {
-//        if (!Controller.isServerActive()) JecaGui.displayGui(true, true, scheduled, new GuiMath());
-//        else Minecraft.getInstance().player.sendMessage(
-//                new TranslationTextComponent("jecalculation.chat.server_mode"));
-//    }
-
-    // client side
-    @SubscribeEvent
-    public static void onLogOut(ClientPlayerNetworkEvent.LoggedOutEvent event) {
-        writeToLocal();
-        rPlayerServer = null;
+    @Mod.EventBusSubscriber(Dist.CLIENT)
+    static class Client {
+        // client side
+        @SubscribeEvent
+        public static void onLogOut(ClientPlayerNetworkEvent.LoggedOutEvent event) {
+            writeToLocal();
+            rPlayerServer = null;
+        }
     }
 
-    // server side
-    @SubscribeEvent
-    public static void onJoin(PlayerEvent.PlayerLoggedInEvent e) {
-//        if (!JecaConfig.clientMode)
-        network.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) e.getPlayer()),
-                new PRecord(JecaCapability.getRecord(e.getPlayer())));
+    @Mod.EventBusSubscriber(Dist.DEDICATED_SERVER)
+    static class Server {
+        // server side
+        @SubscribeEvent
+        public static void onJoin(PlayerEvent.PlayerLoggedInEvent e) {
+//        if (!JecaConfig.clientMode)  // TODO
+            network.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) e.getPlayer()),
+                    new PRecord(JecaCapability.getRecord(e.getPlayer())));
+        }
     }
 }

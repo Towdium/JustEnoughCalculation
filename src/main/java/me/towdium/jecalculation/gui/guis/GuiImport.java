@@ -8,6 +8,8 @@ import me.towdium.jecalculation.gui.widgets.*;
 import me.towdium.jecalculation.utils.Utilities.I18n;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import me.towdium.jecalculation.utils.wrappers.Quad;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
@@ -24,6 +26,7 @@ import static me.towdium.jecalculation.gui.Resource.ICN_TEXT;
  */
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
+@OnlyIn(Dist.CLIENT)
 public class GuiImport extends WContainer implements IGui, ISearchable {
     List<Quad<Boolean, String, String, Recipes>> data;  // selected, file, group, recipes
     List<Quad<Boolean, String, String, Recipes>> filtered;

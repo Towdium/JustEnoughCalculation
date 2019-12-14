@@ -8,6 +8,8 @@ import me.towdium.jecalculation.data.structure.RecordMath.State;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.gui.widgets.*;
 import me.towdium.jecalculation.utils.Utilities;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -24,6 +26,7 @@ import static me.towdium.jecalculation.data.structure.RecordMath.context;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
+@OnlyIn(Dist.CLIENT)
 public class GuiMath extends WContainer implements IGui {
     WLcd lcd = new WLcd(7);
     LinkedList<BigDecimal> numbers;

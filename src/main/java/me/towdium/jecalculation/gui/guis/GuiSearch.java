@@ -9,6 +9,8 @@ import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.widgets.*;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Trio;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -22,6 +24,7 @@ import static me.towdium.jecalculation.gui.widgets.WLabel.Mode.PICKER;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
+@OnlyIn(Dist.CLIENT)
 public class GuiSearch extends WContainer implements IGui {
     IdentityHashMap<ILabel, Trio<Recipe, String, Integer>> recipes;
     WLabelScroll labels = new WLabelScroll(7, 51, 8, 6, PICKER, true)

@@ -23,6 +23,8 @@ import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.concurrent.ThreadTaskExecutor;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.GuiScreenEvent.MouseClickedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent.MouseDragEvent;
@@ -52,7 +54,8 @@ import static net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus.MOD;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-@Mod.EventBusSubscriber
+@Mod.EventBusSubscriber(Dist.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
     public static final int COLOR_GUI_GREY = 0xFFA1A1A1;
     public static final int COLOR_TEXT_RED = 0xFF0000;
@@ -429,6 +432,7 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
                 || super.keyReleased(key, scan, modifier);
     }
 
+    @OnlyIn(Dist.CLIENT)
     public static class Font {
         public static final Font SHADOW = new Font(JecaGui.COLOR_TEXT_WHITE, true, false, false);
         public static final Font PLAIN = new Font(JecaGui.COLOR_TEXT_GREY, false, false, false);
@@ -463,7 +467,8 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
         }
     }
 
-    @Mod.EventBusSubscriber(bus = MOD)
+    @Mod.EventBusSubscriber(value = Dist.CLIENT, bus = MOD)
+    @OnlyIn(Dist.CLIENT)
     public static class JecaContainer extends Container {
         JecaGui gui;
         public static ContainerType<JecaContainer> GENERIC;
@@ -471,7 +476,6 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
         protected JecaContainer() {
             super(GENERIC, 0);
         }
-
 
         @SubscribeEvent
         public static void registerContainer(RegistryEvent.Register<ContainerType<?>> event) {
@@ -494,9 +498,11 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
         }
     }
 
+    @OnlyIn(Dist.CLIENT)
     public static class ContainerTransfer extends JecaContainer {
     }
 
+    @OnlyIn(Dist.CLIENT)
     public static class ContainerNonTransfer extends JecaContainer {
     }
 }

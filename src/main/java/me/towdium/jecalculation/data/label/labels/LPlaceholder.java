@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  */
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-@Mod.EventBusSubscriber
+@Mod.EventBusSubscriber(Dist.CLIENT)
 public class LPlaceholder extends ILabel.Impl {
     public static final String KEY_NAME = "name";
     public static final String IDENTIFIER = "placeholder";
