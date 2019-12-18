@@ -8,10 +8,12 @@ import me.towdium.jecalculation.data.structure.RecordMath.State;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.gui.widgets.*;
 import me.towdium.jecalculation.utils.Utilities;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.glfw.GLFW;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.math.BigDecimal;
 import java.util.LinkedList;
@@ -31,12 +33,14 @@ public class GuiMath extends WContainer implements IGui {
     WLcd lcd = new WLcd(7);
     LinkedList<BigDecimal> numbers;
     BigDecimal last;
+    ItemStack itemStack;
     int dot;
     boolean sign;
     Operator operator;
     State state;
 
-    public GuiMath() {
+    public GuiMath(@Nullable ItemStack is) {
+        itemStack = is;
         add(new WHelp("math"));
         add(new WPanel(), lcd);
         add(new WButtonText(7, 67, 28, 20, "7", null, true).setListener(i -> append(7)).setKeyBind(GLFW.GLFW_KEY_7, GLFW.GLFW_KEY_KP_7));
@@ -62,7 +66,7 @@ public class GuiMath extends WContainer implements IGui {
         add(new WButtonText(141, 115, 28, 20, "x", null, true).setListener(i -> operate(Operator.TIMES)).setKeyBind(GLFW.GLFW_KEY_APOSTROPHE, GLFW.GLFW_KEY_KP_MULTIPLY));
         add(new WButtonText(141, 139, 28, 20, "/", null, true).setListener(i -> operate(Operator.DIVIDE)).setKeyBind(GLFW.GLFW_KEY_SLASH, GLFW.GLFW_KEY_KP_DIVIDE));
         add(new WLine(61), new WLine(103, 61, 98, false), new WLine.Joint(103, 61, false, true, true, true));
-        RecordMath recordMath = Controller.getRMath();
+        RecordMath recordMath = Controller.getRMath(itemStack);
         state = recordMath.state;
         operator = recordMath.operator;
         last = recordMath.last;
@@ -98,7 +102,7 @@ public class GuiMath extends WContainer implements IGui {
     }
 
     private void sync() {
-        Controller.setRMath(new RecordMath(state, operator, last, sign, dot, numbers));
+        Controller.setRMath(new RecordMath(state, operator, last, sign, dot, numbers), itemStack);
     }
 
     private void operate(Operator operator) {

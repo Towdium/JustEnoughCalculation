@@ -1,7 +1,7 @@
 package me.towdium.jecalculation;
 
 import mcp.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.data.Controller;
+import me.towdium.jecalculation.gui.JecaGui;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
@@ -58,8 +58,8 @@ public class JecaItem extends Item {
             if (handIn == Hand.MAIN_HAND) inv.setInventorySlotContents(inv.currentItem, neu);
             else if (handIn == Hand.OFF_HAND) inv.offHandInventory.set(0, neu);
         } else if (worldIn.isRemote) {
-            if (is.getItem() == CRAFT) Controller.openGuiCraft();
-            else if (is.getItem() == MATH) Controller.openGuiMath();
+            if (is.getItem() == CRAFT) JecaGui.openGuiCraft(is);
+            else if (is.getItem() == MATH) JecaGui.openGuiMath(is);
             else throw new RuntimeException("Internal error");
         }
         return ActionResult.newResult(ActionResultType.SUCCESS, is);

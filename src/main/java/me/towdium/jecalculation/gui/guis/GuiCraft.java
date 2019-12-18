@@ -16,6 +16,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 import java.util.function.Consumer;
@@ -31,8 +32,9 @@ import java.util.stream.Stream;
 @OnlyIn(Dist.CLIENT)
 public class GuiCraft extends WContainer implements IGui {
     Mode mode = Mode.INPUT;
+    ItemStack itemStack;
     Calculator calculator = null;
-    RecordCraft record = Controller.getRCraft();
+    RecordCraft record;
     WLabelGroup recent = new WLabelGroup(7, 31, 8, 1, WLabel.Mode.PICKER)
             .setListener((i, v) -> JecaGui.getCurrent().hand = i.get(v));
     WLabelScroll result = new WLabelScroll(7, 87, 8, 4, WLabel.Mode.RESULT, true);
@@ -48,13 +50,16 @@ public class GuiCraft extends WContainer implements IGui {
     WLabel label = new WLabel(31, 7, 20, 20, WLabel.Mode.SELECTOR).setListener((i, v) -> refreshLabel(v, false, true));
     WButton invE = new WButtonIcon(149, 62, 20, 20, Resource.BTN_INV_E, "craft.inventory_enabled");
     WButton invD = new WButtonIcon(149, 62, 20, 20, Resource.BTN_INV_D, "craft.inventory_disabled");
-    WTextField amount = new WTextField(60, 7, 65).setText(record.amount).setListener(i -> {
+    WTextField amount = new WTextField(60, 7, 65).setListener(i -> {
         record.amount = i.getText();
-        Controller.setRCraft(record);
+        Controller.setRCraft(record, itemStack);
         refreshCalculator();
     });
 
-    public GuiCraft() {
+    public GuiCraft(@Nullable ItemStack is) {
+        itemStack = is;
+        record = Controller.getRCraft(is);
+        amount.setText(record.amount);
         add(new WHelp("craft"));
         add(new WPanel());
         add(new WButtonIcon(7, 7, 20, 20, Resource.BTN_LABEL, "craft.label")
@@ -72,14 +77,14 @@ public class GuiCraft extends WContainer implements IGui {
         add(recent, label, input, output, catalyst, steps, result, amount, record.inventory ? invE : invD);
         invE.setListener(i -> {
             record.inventory = false;
-            Controller.setRCraft(record);
+            Controller.setRCraft(record, itemStack);
             remove(invE);
             add(invD);
             refreshCalculator();
         });
         invD.setListener(i -> {
             record.inventory = true;
-            Controller.setRCraft(record);
+            Controller.setRCraft(record, itemStack);
             remove(invD);
             add(invE);
             refreshCalculator();
@@ -158,7 +163,7 @@ public class GuiCraft extends WContainer implements IGui {
 
     private void refreshLabel(ILabel l, boolean replace, boolean suggest) {
         boolean dup = record.push(l, replace);
-        Controller.setRCraft(record);
+        Controller.setRCraft(record, itemStack);
         refreshRecent();
         refreshCalculator();
         if (suggest && findRecipe(l).isEmpty()) {

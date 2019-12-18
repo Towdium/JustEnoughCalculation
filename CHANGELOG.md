@@ -120,3 +120,7 @@ Port to Minecraft 1.14
 #### 3.3.1
 
 Fix mouse scroll
+
+#### 3.3.2
+
+Fix crash on server side

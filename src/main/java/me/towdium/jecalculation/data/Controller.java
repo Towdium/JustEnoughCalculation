@@ -2,27 +2,21 @@ package me.towdium.jecalculation.data;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JecaCapability;
-import me.towdium.jecalculation.JecaItem;
+import me.towdium.jecalculation.JecaConfig;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.label.labels.LPlaceholder;
 import me.towdium.jecalculation.data.structure.*;
-import me.towdium.jecalculation.gui.JecaGui;
-import me.towdium.jecalculation.gui.guis.GuiCraft;
-import me.towdium.jecalculation.gui.guis.GuiMath;
 import me.towdium.jecalculation.network.packets.PCalculator;
 import me.towdium.jecalculation.network.packets.PEdit;
 import me.towdium.jecalculation.network.packets.PRecord;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Hand;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -33,7 +27,10 @@ import net.minecraftforge.fml.network.PacketDistributor;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -70,13 +67,13 @@ public class Controller {
         else return rPlayerClient.recipes;
     }
 
-    public static Optional<ItemStack> getStack() {
-        ClientPlayerEntity player = Minecraft.getInstance().player;
-        ItemStack is = player.getHeldItem(Hand.MAIN_HAND);
-        if (is.getItem() instanceof JecaItem) return Optional.of(is);
-        is = player.getHeldItem(Hand.OFF_HAND);
-        return Optional.ofNullable(is.getItem() instanceof JecaItem ? is : null);
-    }
+//    public static Optional<ItemStack> getStack() {
+//        ClientPlayerEntity player = Minecraft.getInstance().player;
+//        ItemStack is = player.getHeldItem(Hand.MAIN_HAND);
+//        if (is.getItem() instanceof JecaItem) return Optional.of(is);
+//        is = player.getHeldItem(Hand.OFF_HAND);
+//        return Optional.ofNullable(is.getItem() instanceof JecaItem ? is : null);
+//    }
 
     // file, recipes
     public static List<Pair<String, Recipes>> discover() {
@@ -180,38 +177,34 @@ public class Controller {
         return getRecipes().recipeIterator(group);
     }
 
-    public static void setRMath(RecordMath math) {
-        setR(math, i -> rMathClient = i, KEY_MATH);
+    public static void setRMath(RecordMath math, @Nullable ItemStack is) {
+        setR(math, i -> rMathClient = i, KEY_MATH, is);
     }
 
-    public static void setRCraft(RecordCraft rc) {
-        setR(rc, i -> rCraftClient = i, KEY_CRAFT);
+    public static void setRCraft(RecordCraft rc, @Nullable ItemStack is) {
+        setR(rc, i -> rCraftClient = i, KEY_CRAFT, is);
     }
 
-    public static RecordCraft getRCraft() {
-        return getR(rCraftClient, KEY_CRAFT, RecordCraft::new);
+    public static RecordCraft getRCraft(@Nullable ItemStack is) {
+        return getR(rCraftClient, KEY_CRAFT, RecordCraft::new, is);
     }
 
-    public static RecordMath getRMath() {
-        return getR(rMathClient, KEY_MATH, RecordMath::new);
+    public static RecordMath getRMath(@Nullable ItemStack is) {
+        return getR(rMathClient, KEY_MATH, RecordMath::new, is);
     }
 
-    private static <T extends IRecord> void setR(T t, Consumer<T> c, String s) {
+    private static <T extends IRecord> void setR(T t, Consumer<T> c, String s, @Nullable ItemStack is) {
         if (!isServerActive()) c.accept(t);
-        else {
-            Optional<ItemStack> ois = getStack();
-            ois.ifPresent(is -> {
-                Utilities.getTag(is).put(s, t.serialize());
-                network.sendToServer(new PCalculator(is));
-            });
+        else if (is != null) {
+            Utilities.getTag(is).put(s, t.serialize());
+            network.sendToServer(new PCalculator(is));
         }
     }
 
-    public static <T> T getR(T t, String s, Function<CompoundNBT, T> f) {
+    public static <T> T getR(T t, String s, Function<CompoundNBT, T> f, @Nullable ItemStack is) {
         if (!isServerActive()) return t;
-        else return f.apply(getStack()
-                .map(i -> Utilities.getTag(i).getCompound(s))
-                .orElse(new CompoundNBT()));
+        else if (is != null) return f.apply(Utilities.getTag(is).getCompound(s));
+        else throw new RuntimeException("Internal error");
     }
 
 
@@ -263,30 +256,6 @@ public class Controller {
         Utilities.Json.write(nbt, file);
     }
 
-    @OnlyIn(Dist.CLIENT)
-    public static void openGuiCraft() {
-        openGuiCraft(false, false);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static void openGuiMath() {
-        openGuiMath(false, false);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static void openGuiMath(boolean scheduled, boolean client) {
-        if (client && Controller.isServerActive()) Minecraft.getInstance().player.sendMessage(
-                new TranslationTextComponent("jecalculation.chat.server_mode"));
-        else JecaGui.displayGui(true, true, scheduled, new GuiMath());
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static void openGuiCraft(boolean scheduled, boolean client) {
-        if (client && Controller.isServerActive()) Minecraft.getInstance().player.sendMessage(
-                new TranslationTextComponent("jecalculation.chat.server_mode"));
-        else JecaGui.displayGui(true, true, scheduled, new GuiCraft());
-    }
-
     @Mod.EventBusSubscriber(Dist.CLIENT)
     static class Client {
         // client side
@@ -297,14 +266,13 @@ public class Controller {
         }
     }
 
-    @Mod.EventBusSubscriber(Dist.DEDICATED_SERVER)
+    @Mod.EventBusSubscriber
     static class Server {
-        // server side
         @SubscribeEvent
         public static void onJoin(PlayerEvent.PlayerLoggedInEvent e) {
-//        if (!JecaConfig.clientMode)  // TODO
-            network.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) e.getPlayer()),
-                    new PRecord(JecaCapability.getRecord(e.getPlayer())));
+            if (!JecaConfig.bClientMode.get())
+                network.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) e.getPlayer()),
+                        new PRecord(JecaCapability.getRecord(e.getPlayer())));
         }
     }
 }

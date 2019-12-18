@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 public class LPlaceholder extends ILabel.Impl {
     public static final String KEY_NAME = "name";
     public static final String IDENTIFIER = "placeholder";
-    public static boolean state = true;  // true for client, false for server
+    public static boolean state = true;  // true for client, false for common
     static Utilities.Recent<LPlaceholder> recentClient = new Utilities.Recent<>(100);
     static Utilities.Recent<LPlaceholder> recentServer = new Utilities.Recent<>(100);
 

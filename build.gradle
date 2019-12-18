@@ -30,7 +30,7 @@ minecraft {
             workingDirectory project.file('run')
             property 'forge.logging.console.level', 'debug'
             mods {
-                jecharacters {
+                jecalculation {
                     source sourceSets.main
                 }
             }
@@ -40,7 +40,7 @@ minecraft {
             workingDirectory project.file('run')
             property 'forge.logging.console.level', 'debug'
             mods {
-                jecharacters {
+                jecalculation {
                     source sourceSets.main
                 }
             }
@@ -51,7 +51,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
             args '--mod', 'jecalculation', '--all', '--output', file('src/generated/resources/')
             mods {
-                jecharacters {
+                jecalculation {
                     source sourceSets.main
                 }
             }
@@ -70,8 +70,8 @@ jar {
     manifest {
         attributes([
             "Specification-Title": "Just Enough Calculation",
-            "Specification-Vendor": "${verspec}",
-            "Specification-Version": "1",
+            "Specification-Vendor": "Towdium",
+            "Specification-Version": "${verspec}",
             "Implementation-Title": project.name,
             "Implementation-Version": "${verspec}.${verbuild}",
             "Implementation-Vendor" :"Towdium",

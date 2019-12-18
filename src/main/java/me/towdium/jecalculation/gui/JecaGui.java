@@ -2,7 +2,11 @@ package me.towdium.jecalculation.gui;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import mcp.MethodsReturnNonnullByDefault;
+import me.towdium.jecalculation.JustEnoughCalculation;
+import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
+import me.towdium.jecalculation.gui.guis.GuiCraft;
+import me.towdium.jecalculation.gui.guis.GuiMath;
 import me.towdium.jecalculation.gui.guis.IGui;
 import me.towdium.jecalculation.jei.JecaPlugin;
 import me.towdium.jecalculation.utils.Utilities;
@@ -23,12 +27,14 @@ import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.concurrent.ThreadTaskExecutor;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.GuiScreenEvent.MouseClickedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent.MouseDragEvent;
 import net.minecraftforge.client.event.GuiScreenEvent.MouseScrollEvent;
+import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.TickEvent;
@@ -143,12 +149,8 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
     }
 
     public static void displayGui(boolean updateParent, boolean acceptsTransfer, IGui root) {
-        displayGui(updateParent, acceptsTransfer, false, root);
-    }
-
-    public static void displayGui(boolean updateParent, boolean acceptsTransfer, boolean scheduled, IGui root) {
         Runnable r = () -> displayGuiUnsafe(updateParent, acceptsTransfer, root);
-        if (scheduled) {
+        if (Minecraft.getInstance().currentScreen != null) {
             JecaGui.scheduled = r;
             JecaGui.timeout = 2;
         } else {
@@ -195,9 +197,9 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
     }
 
     @SubscribeEvent
-    public static void onKey(GuiScreenEvent.KeyboardKeyPressedEvent event) {
-//        if (JustEnoughCalculation.keyOpenGuiCraft.isPressed()) Controller.openGuiCraft();
-//        if (JustEnoughCalculation.keyOpenGuiMath.isPressed()) Controller.openGuiMath();
+    public static void onKey(InputEvent.KeyInputEvent event) {
+        if (JustEnoughCalculation.keyOpenGuiCraft.isKeyDown()) JecaGui.openGuiCraft(null);
+        if (JustEnoughCalculation.keyOpenGuiMath.isKeyDown()) JecaGui.openGuiMath(null);
     }
 
     @SubscribeEvent
@@ -218,6 +220,20 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
                 r.run();
             } else timeout--;
         }
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static void openGuiMath(@Nullable ItemStack is) {
+        if (is == null && Controller.isServerActive()) Minecraft.getInstance().player.sendMessage(
+                new TranslationTextComponent("jecalculation.chat.server_mode"));
+        else JecaGui.displayGui(true, true, new GuiMath(is));
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static void openGuiCraft(@Nullable ItemStack is) {
+        if (is == null && Controller.isServerActive()) Minecraft.getInstance().player.sendMessage(
+                new TranslationTextComponent("jecalculation.chat.server_mode"));
+        else JecaGui.displayGui(true, true, new GuiCraft(is));
     }
 
     public static boolean isShiftDown() {

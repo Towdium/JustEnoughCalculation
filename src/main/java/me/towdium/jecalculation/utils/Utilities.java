@@ -208,7 +208,7 @@ public class Utilities {
         }
     }
 
-    public static class I18n {  // TODO convert lang files
+    public static class I18n {
         public static boolean contains(String s1, String s2) {
             return s1.contains(s2);
         }
@@ -386,6 +386,7 @@ public class Utilities {
                     w.sb.append('"');
                     w.sb.append(i);
                     w.sb.append("\": ");
+                    //noinspection ConstantConditions
                     write(tags.get(i), w);
                 }
                 if (wrap) {
