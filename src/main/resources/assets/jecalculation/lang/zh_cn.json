@@ -10,6 +10,7 @@
   "jecalculation.chat.max_loop": "抱歉，由于计算过程已经超过1000次迭代，计算已经被强制终止。如果你认为该计算存在合理的结果，请联系开发者。",
   "jecalculation.chat.server_mode": "抱歉，本模组目前不在客户端模式下运行，所以你无法使用右击计算器以外的方式打开界面。",
   "jecalculation.chat.export": "选中的配方已经导出到“%s”。",
+  "jecalculation.chat.help": "/jeca craft - 打开合成计算器\n/jeca math - 打开数学计算器",
   "jecalculation.gui.craft.inventory_enabled": "启用物品栏检测",
   "jecalculation.gui.craft.inventory_disabled": "禁用物品栏检测",
   "jecalculation.gui.craft.recipe": "新建配方",

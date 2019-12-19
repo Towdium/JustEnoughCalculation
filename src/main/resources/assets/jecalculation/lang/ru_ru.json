@@ -10,6 +10,7 @@
   "jecalculation.chat.max_loop": "Извините, похоже, расчет не сходится за 1000 итераций. Пожалуйста, свяжитесь с разработчиком, если вы думаете, что этот процесс должен иметь результат.",
   "jecalculation.chat.server_mode": "Мод не работает в клиентском режиме, поэтому вы не сможете открыть интерфейс без калькулятора",
   "jecalculation.chat.export": "Выбранные рецепты были экспортированы в \"%s\".",
+  "_jecalculation.chat.help": "/jeca craft - open crafting calculator\n/jeca math - open math calculator",
   "jecalculation.gui.craft.inventory_enabled": "Обнаружение инвентаря включено",
   "jecalculation.gui.craft.inventory_disabled": "Обнаружение инвентаря выключено",
   "jecalculation.gui.craft.recipe": "Новый рецепт",

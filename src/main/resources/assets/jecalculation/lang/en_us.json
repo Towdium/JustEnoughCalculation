@@ -10,6 +10,7 @@
   "jecalculation.chat.max_loop": "Sorry, it seems the calculation does not converge in 1000 iterations. Please contact the developer if you think this process should have a result.",
   "jecalculation.chat.server_mode": "The mod is not working in client mode, so you cannot open the interface without an calculator item",
   "jecalculation.chat.export": "Selected recipes has been exported to \"%s\".",
+  "jecalculation.chat.help": "/jeca craft - open crafting calculator\n/jeca math - open math calculator",
   "jecalculation.gui.craft.inventory_enabled": "Inventory detection enabled",
   "jecalculation.gui.craft.inventory_disabled": "Inventory detection disabled",
   "jecalculation.gui.craft.recipe": "New recipe",
