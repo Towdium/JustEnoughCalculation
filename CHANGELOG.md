@@ -124,3 +124,9 @@ Fix mouse scroll
 #### 3.3.2
 
 Fix crash on server side
+
+#### 3.4.0
+
+Port client mode  
+Port key binding  
+Port commands

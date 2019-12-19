@@ -152,7 +152,7 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
         Runnable r = () -> displayGuiUnsafe(updateParent, acceptsTransfer, root);
         if (Minecraft.getInstance().currentScreen != null) {
             JecaGui.scheduled = r;
-            JecaGui.timeout = 2;
+            JecaGui.timeout = 1;
         } else {
             ThreadTaskExecutor<?> executor = WORKQUEUE.get(LogicalSide.CLIENT);
             executor.deferTask(r);
@@ -223,17 +223,21 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static void openGuiMath(@Nullable ItemStack is) {
-        if (is == null && Controller.isServerActive()) Minecraft.getInstance().player.sendMessage(
-                new TranslationTextComponent("jecalculation.chat.server_mode"));
+    public static int openGuiMath(@Nullable ItemStack is) {
+        boolean ret = is == null && Controller.isServerActive();
+        String s = "jecalculation.chat.server_mode";
+        if (ret) Minecraft.getInstance().player.sendMessage(new TranslationTextComponent(s));
         else JecaGui.displayGui(true, true, new GuiMath(is));
+        return ret ? 1 : 0;
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static void openGuiCraft(@Nullable ItemStack is) {
-        if (is == null && Controller.isServerActive()) Minecraft.getInstance().player.sendMessage(
-                new TranslationTextComponent("jecalculation.chat.server_mode"));
+    public static int openGuiCraft(@Nullable ItemStack is) {
+        boolean ret = is == null && Controller.isServerActive();
+        String s = "jecalculation.chat.server_mode";
+        if (ret) Minecraft.getInstance().player.sendMessage(new TranslationTextComponent(s));
         else JecaGui.displayGui(true, true, new GuiCraft(is));
+        return ret ? 1 : 0;
     }
 
     public static boolean isShiftDown() {
