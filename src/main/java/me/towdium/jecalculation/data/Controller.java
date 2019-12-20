@@ -270,7 +270,7 @@ public class Controller {
     static class Server {
         @SubscribeEvent
         public static void onJoin(PlayerEvent.PlayerLoggedInEvent e) {
-            if (!JecaConfig.bClientMode.get())
+            if (!JecaConfig.clientMode.get())
                 network.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) e.getPlayer()),
                         new PRecord(JecaCapability.getRecord(e.getPlayer())));
         }
