@@ -137,6 +137,8 @@ public class GuiRecipe extends WContainer implements IGui {
         input.setLabel(Collections.nCopies(14, ILabel.EMPTY), 0);
         catalyst.setLabel(Collections.nCopies(7, ILabel.EMPTY), 0);
         output.setLabel(Collections.nCopies(7, ILabel.EMPTY), 0);
+        disambCache.clear();
+        refresh();
     }
 
     public void transfer(IRecipeLayout recipe) {
