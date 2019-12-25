@@ -20,15 +20,17 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static me.towdium.jecalculation.gui.Resource.*;
-import static me.towdium.jecalculation.gui.widgets.WLabel.Mode.PICKER;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 @OnlyIn(Dist.CLIENT)
 public class GuiSearch extends WContainer implements IGui {
     IdentityHashMap<ILabel, Trio<Recipe, String, Integer>> recipes;
-    WLabelScroll labels = new WLabelScroll(7, 51, 8, 6, PICKER, true)
-            .setListener((i, v) -> add(new Overlay(i.get(v))));
+    WLabelScroll labels = new WLabelScroll(7, 51, 8, 6, false, true, false, true)
+            .setLsnrClick((i, v) -> {
+                ILabel l = i.get(v).getLabel();
+                if (l != ILabel.EMPTY) add(new Overlay(i.get(v)));
+            });
     WSwitcher group;
     WTextField text = new WTextField(7, 25, 119);
     WButton no = new WButtonIcon(130, 25, 20, 20, BTN_NO, "common.cancel")
@@ -88,12 +90,12 @@ public class GuiSearch extends WContainer implements IGui {
     }
 
     @Override
-    public boolean onPressed(JecaGui gui, int key, int modifier) {
+    public boolean onKeyPressed(JecaGui gui, int key, int modifier) {
         if (key == GLFW.GLFW_KEY_ESCAPE && contains(text)) {
             setRename(false);
             return true;
         }
-        return super.onPressed(gui, key, modifier);
+        return super.onKeyPressed(gui, key, modifier);
     }
 
     public void refreshDisplay() {
@@ -139,14 +141,12 @@ public class GuiSearch extends WContainer implements IGui {
     }
 
     class Overlay extends WOverlay {
-        public Overlay(ILabel l) {
-            Trio<Recipe, String, Integer> recipe = recipes.get(l);
-            int x = JecaGui.getMouseX();
-            int y = JecaGui.getMouseY();
-            x = ((x - 7) / 18) * 18 + 6;
-            y = ((y - 51) / 18) * 18 + 50;
+        public Overlay(WLabel l) {
+            Trio<Recipe, String, Integer> recipe = recipes.get(l.getLabel());
+            int x = l.xPos - 1;
+            int y = l.yPos - 1;
             add(new WPanel(x - 5, y - 5, 72, 30));
-            add(new WLabel(x, y, 20, 20, PICKER).setLabel(l));
+            add(new WLabel(x, y, 20, 20, false, false).setLabel(l.getLabel()));
             add(new WButtonIcon(x + 23, y, 20, 20, BTN_EDIT, "search.edit").setListener(i -> {
                 JecaGui.displayGui(true, true, new GuiRecipe(recipe.two, recipe.three));
                 GuiSearch.this.remove(this);

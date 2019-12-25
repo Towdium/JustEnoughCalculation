@@ -53,7 +53,7 @@ public abstract class WButton extends WTooltip {
     }
 
     @Override
-    public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
+    public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
         if (JecaGui.mouseIn(xPos + 1, yPos + 1, xSize - 2, ySize - 2, xMouse, yMouse) &&
                 !disabled && button == 0 && listener != null) {
             trigger();
@@ -68,7 +68,7 @@ public abstract class WButton extends WTooltip {
     }
 
     @Override
-    public boolean onPressed(JecaGui gui, int key, int modifier) {
+    public boolean onKeyPressed(JecaGui gui, int key, int modifier) {
         if (keys.containsKey(key)) {
             keys.put(key, true);
             trigger();
@@ -78,7 +78,7 @@ public abstract class WButton extends WTooltip {
     }
 
     @Override
-    public boolean onReleased(JecaGui gui, int key, int modifier) {
+    public boolean onKeyReleased(JecaGui gui, int key, int modifier) {
         if (keys.containsKey(key)) {
             keys.put(key, false);
             return true;

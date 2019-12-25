@@ -52,23 +52,28 @@ public class WContainer implements IContainer {
     }
 
     @Override
-    public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
+    public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
         return new Utilities.ReversedIterator<>(widgets).stream()
-                .anyMatch(i -> i.onClicked(gui, xMouse, yMouse, button));
+                .anyMatch(i -> i.onMouseClicked(gui, xMouse, yMouse, button));
     }
 
     @Override
-    public boolean onPressed(JecaGui gui, int key, int modifier) {
+    public boolean onKeyPressed(JecaGui gui, int key, int modifier) {
         return new Utilities.ReversedIterator<>(widgets).stream()
-                .anyMatch(i -> i.onPressed(gui, key, modifier));
+                .anyMatch(i -> i.onKeyPressed(gui, key, modifier));
     }
 
     @Override
-    public boolean onReleased(JecaGui gui, int key, int modifier) {
+    public boolean onKeyReleased(JecaGui gui, int key, int modifier) {
         return new Utilities.ReversedIterator<>(widgets).stream()
-                .anyMatch(i -> i.onReleased(gui, key, modifier));
+                .anyMatch(i -> i.onKeyReleased(gui, key, modifier));
     }
 
+    @Override
+    public boolean onMouseReleased(JecaGui gui, int xMouse, int yMouse, int button) {
+        return new Utilities.ReversedIterator<>(widgets).stream()
+                .anyMatch(i -> i.onMouseReleased(gui, xMouse, yMouse, button));
+    }
 
     @Override
     public boolean onChar(JecaGui gui, char ch, int modifier) {
@@ -77,15 +82,15 @@ public class WContainer implements IContainer {
     }
 
     @Override
-    public boolean onScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
+    public boolean onMouseScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
         return new Utilities.ReversedIterator<>(widgets).stream()
-                .anyMatch(i -> i.onScroll(gui, xMouse, yMouse, diff));
+                .anyMatch(i -> i.onMouseScroll(gui, xMouse, yMouse, diff));
     }
 
     @Override
-    public boolean onDragged(JecaGui gui, int xMouse, int yMouse, int xDrag, int yDrag) {
+    public boolean onMouseDragged(JecaGui gui, int xMouse, int yMouse, int xDrag, int yDrag) {
         return new Utilities.ReversedIterator<>(widgets).stream()
-                .anyMatch(i -> i.onDragged(gui, xMouse, yMouse, xDrag, yDrag));
+                .anyMatch(i -> i.onMouseDragged(gui, xMouse, yMouse, xDrag, yDrag));
     }
 
     @Override

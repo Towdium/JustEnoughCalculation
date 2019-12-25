@@ -10,6 +10,7 @@ import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.gui.widgets.*;
 import me.towdium.jecalculation.utils.wrappers.Pair;
+import mezz.jei.api.recipe.IFocus;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -23,6 +24,8 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static me.towdium.jecalculation.jei.JecaPlugin.runtime;
+
 /**
  * Author: towdium
  * Date:   8/14/17.
@@ -35,9 +38,14 @@ public class GuiCraft extends WContainer implements IGui {
     ItemStack itemStack;
     Calculator calculator = null;
     RecordCraft record;
-    WLabelGroup recent = new WLabelGroup(7, 31, 8, 1, WLabel.Mode.PICKER)
-            .setListener((i, v) -> JecaGui.getCurrent().hand = i.get(v));
-    WLabelScroll result = new WLabelScroll(7, 87, 8, 4, WLabel.Mode.RESULT, true);
+    WLabelGroup recent = new WLabelGroup(7, 31, 8, 1, false, false)
+            .setLsnrClick((i, v) -> JecaGui.getCurrent().hand = i.get(v).getLabel());
+    WLabelScroll result = new WLabelScroll(7, 87, 8, 4, true, false, false, true)
+            .setLsnrClick((i, v) -> {
+                Object rep = i.get(v).getLabel().getRepresentation();
+                if (rep != null) runtime.getRecipesGui().show(runtime.getRecipeManager()
+                        .createFocus(IFocus.Mode.OUTPUT, rep));
+            }).setFormatter(i -> i.getAmountString(true));
     WButton steps = new WButtonIcon(64, 62, 20, 20, Resource.BTN_LIST, "craft.step")
             .setListener(i -> setMode(Mode.STEPS));
     WButton catalyst = new WButtonIcon(45, 62, 20, 20, Resource.BTN_CAT, "common.catalyst")
@@ -46,8 +54,8 @@ public class GuiCraft extends WContainer implements IGui {
             .setListener(i -> setMode(Mode.OUTPUT));
     WButton input = new WButtonIcon(7, 62, 20, 20, Resource.BTN_IN, "common.input")
             .setListener(i -> setMode(Mode.INPUT));
-
-    WLabel label = new WLabel(31, 7, 20, 20, WLabel.Mode.SELECTOR).setListener((i, v) -> refreshLabel(v, false, true));
+    WLabel label = new WLabel(31, 7, 20, 20, false, true)
+            .setLsnrUpdate((i, v) -> refreshLabel(v, false, true));
     WButton invE = new WButtonIcon(149, 62, 20, 20, Resource.BTN_INV_E, "craft.inventory_enabled");
     WButton invD = new WButtonIcon(149, 62, 20, 20, Resource.BTN_INV_D, "craft.inventory_disabled");
     WTextField amount = new WTextField(60, 7, 65).setListener(i -> {
@@ -193,6 +201,7 @@ public class GuiCraft extends WContainer implements IGui {
         INPUT, OUTPUT, CATALYST, STEPS
     }
 
+
     class Suggest extends WOverlay {
         boolean replace;
 
@@ -200,13 +209,13 @@ public class GuiCraft extends WContainer implements IGui {
             this.replace = replace;
             int width = labels.size() * 20;
             add(new WPanel(0 - width, 2, 56 + width, 30));
-            add(new WLabel(31, 7, 20, 20, WLabel.Mode.PICKER).setLabel(label.getLabel())
-                    .setListener((i, v) -> refresh(v)));
+            add(new WLabel(31, 7, 20, 20, false, false)
+                    .setLabel(label.getLabel()).setLsnrUpdate((i, v) -> refresh(v)));
             add(new WIcon(5 - width, 7, 18, 20, Resource.ICN_HELP, "craft.suggest"));
             add(new WLine(26, 7, 20, false));
             for (int i = 0; i < labels.size(); i++) {
-                add(new WLabel(3 - i * 20, 7, 20, 20, WLabel.Mode.PICKER).setLabel(labels.get(i))
-                        .setListener((j, v) -> refresh(v)));
+                add(new WLabel(3 - i * 20, 7, 20, 20, false, false)
+                        .setLabel(labels.get(i)).setLsnrUpdate((j, v) -> refresh(v)));
             }
         }
 

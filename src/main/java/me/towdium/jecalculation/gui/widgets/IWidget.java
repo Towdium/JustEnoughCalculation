@@ -21,19 +21,23 @@ public interface IWidget {
         return false;
     }
 
-    default boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
+    default boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
         return false;
     }
 
-    default boolean onDragged(JecaGui gui, int xMouse, int yMouse, int xDrag, int yDrag) {
+    default boolean onMouseDragged(JecaGui gui, int xMouse, int yMouse, int xDrag, int yDrag) {
         return false;
     }
 
-    default boolean onPressed(JecaGui gui, int key, int modifier) {
+    default boolean onMouseReleased(JecaGui gui, int xMouse, int yMouse, int button) {
         return false;
     }
 
-    default boolean onReleased(JecaGui gui, int key, int modifier) {
+    default boolean onKeyPressed(JecaGui gui, int key, int modifier) {
+        return false;
+    }
+
+    default boolean onKeyReleased(JecaGui gui, int key, int modifier) {
         return false;
     }
 
@@ -41,7 +45,7 @@ public interface IWidget {
         return false;
     }
 
-    default boolean onScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
+    default boolean onMouseScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
         return false;
     }
 

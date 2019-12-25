@@ -33,6 +33,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.GuiScreenEvent.MouseClickedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent.MouseDragEvent;
+import net.minecraftforge.client.event.GuiScreenEvent.MouseReleasedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent.MouseScrollEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderTooltipEvent;
@@ -109,10 +110,10 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
 
         if (event instanceof MouseScrollEvent.Pre) {
             double diff = ((MouseScrollEvent) event).getScrollDelta();
-            if (diff != 0) gui.root.onScroll(gui, xMouse, yMouse, (int) diff);
+            if (diff != 0) gui.root.onMouseScroll(gui, xMouse, yMouse, (int) diff);
         } else if (event instanceof MouseClickedEvent.Pre) {
             int button = ((MouseClickedEvent) event).getButton();
-            if (gui.root.onClicked(gui, xMouse, yMouse, button)) event.setCanceled(true);
+            if (gui.root.onMouseClicked(gui, xMouse, yMouse, button)) event.setCanceled(true);
             else if (gui.hand != ILabel.EMPTY) {
                 gui.hand = ILabel.EMPTY;
                 event.setCanceled(true);
@@ -125,7 +126,10 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
             }
         } else if (event instanceof MouseDragEvent.Pre) {
             MouseDragEvent mde = (MouseDragEvent) event;
-            gui.root.onDragged(gui, xMouse, yMouse, (int) mde.getDragX(), (int) mde.getDragY());
+            gui.root.onMouseDragged(gui, xMouse, yMouse, (int) mde.getDragX(), (int) mde.getDragY());
+        } else if (event instanceof MouseReleasedEvent.Pre) {
+            int button = ((MouseReleasedEvent) event).getButton();
+            gui.root.onMouseReleased(gui, xMouse, yMouse, button);
         }
     }
 
@@ -212,7 +216,7 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
     }
 
     @SubscribeEvent
-    public static void onGameTike(TickEvent.PlayerTickEvent e) {
+    public static void onGameTick(TickEvent.PlayerTickEvent e) {
         if (e.player.world.isRemote && scheduled != null) {
             if (timeout <= 0) {
                 Runnable r = scheduled;
@@ -438,17 +442,16 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
     @Override
     public boolean keyPressed(int key, int scan, int modifier) {
         if (key == GLFW.GLFW_KEY_ESCAPE && hand != ILabel.EMPTY) hand = ILabel.EMPTY;
-        else if (!root.onPressed(this, key, modifier)) {
+        else if (!root.onKeyPressed(this, key, modifier)) {
             if (key == GLFW.GLFW_KEY_ESCAPE && parent != null) displayParent();
             else return super.keyPressed(key, scan, modifier);
         }
         return true;
-
     }
 
     @Override
     public boolean keyReleased(int key, int scan, int modifier) {
-        return root.onReleased(this, key, modifier)
+        return root.onKeyReleased(this, key, modifier)
                 || super.keyReleased(key, scan, modifier);
     }
 

@@ -4,7 +4,6 @@ import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.labels.LPlaceholder;
 import me.towdium.jecalculation.gui.guis.IGui;
 import me.towdium.jecalculation.gui.widgets.*;
-import me.towdium.jecalculation.gui.widgets.WLabel.Mode;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -24,8 +23,8 @@ import static me.towdium.jecalculation.gui.Resource.ICN_TEXT;
 @OnlyIn(Dist.CLIENT)
 public class PickerPlaceholder extends IPicker.Impl implements IGui {
     public PickerPlaceholder() {
-        WLabelScroll scroll = new WLabelScroll(7, 69, 8, 5, Mode.PICKER, true)
-                .setLabels(LPlaceholder.getRecent()).setListener((i, v) -> notifyLsnr(i.get(v)));
+        WLabelScroll scroll = new WLabelScroll(7, 69, 8, 5, false, true, false, true)
+                .setLabels(LPlaceholder.getRecent()).setLsnrUpdate((i, v) -> notifyLsnr(i.get(v).getLabel()));
         WTextField create = new WTextField(26, 7, 69)
                 .setListener(i -> i.setColor(i.getText().equals("") ? COLOR_TEXT_RED : COLOR_TEXT_WHITE));
         add(new WSearch(26, 45, 90, scroll));

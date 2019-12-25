@@ -10,6 +10,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -26,16 +27,20 @@ public class WLabelScroll extends WContainer implements ISearchable {
     protected WScroll scroll;
     protected int xPos, yPos, column, row, current;
     protected String filter = "";
-    protected ListenerValue<? super WLabelScroll, Integer> listener;
+    protected ListenerValue<? super WLabelScroll, Integer> lsnrUpdate;
+    protected ListenerValue<? super WLabelScroll, Integer> lsnrClick;
 
-    public WLabelScroll(int xPos, int yPos, int column, int row, WLabel.Mode mode, boolean drawConnection) {
+    public WLabelScroll(int xPos, int yPos, int column, int row, boolean multiple, boolean accurate, boolean accept, boolean drawConnection) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.column = column;
         this.row = row;
-        labelGroup = new WLabelGroup(xPos, yPos, column, row, mode).setListener((i, v) -> {
-            if (listener != null) listener.invoke(this, column * current + v);
-        });
+        labelGroup = new WLabelGroup(xPos, yPos, column, row, multiple, accept)
+                .setLsnrUpdate((i, v) -> {
+                    if (lsnrUpdate != null) lsnrUpdate.invoke(this, column * current + v);
+                }).setLsnrClick((i, v) -> {
+                    if (lsnrClick != null) lsnrClick.invoke(this, column * current + v);
+                });
         scroll = new WScroll(xPos + column * 18 + 4, yPos, row * 18).setListener(i -> update(i.getCurrent()));
         add(labelGroup);
         add(scroll);
@@ -52,7 +57,7 @@ public class WLabelScroll extends WContainer implements ISearchable {
     }
 
     @Override
-    public boolean onScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
+    public boolean onMouseScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
         boolean in = JecaGui.mouseIn(xPos, yPos, column * 18, row * 18, xMouse, yMouse);
         if (in) {
             float pos = getPos(current - diff);
@@ -62,8 +67,8 @@ public class WLabelScroll extends WContainer implements ISearchable {
         return in;
     }
 
-    public ILabel get(int index) {
-        return filtered.get(index);
+    public WLabel get(int index) {
+        return labelGroup.get(index - column * current);
     }
 
     private float getPos(int step) {
@@ -86,8 +91,18 @@ public class WLabelScroll extends WContainer implements ISearchable {
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    public WLabelScroll setListener(ListenerValue<? super WLabelScroll, Integer> listener) {
-        this.listener = listener;
+    public WLabelScroll setLsnrUpdate(ListenerValue<? super WLabelScroll, Integer> listener) {
+        lsnrUpdate = listener;
+        return this;
+    }
+
+    public WLabelScroll setLsnrClick(ListenerValue<? super WLabelScroll, Integer> listener) {
+        lsnrClick = listener;
+        return this;
+    }
+
+    public WLabelScroll setFormatter(Function<ILabel, String> f) {
+        labelGroup.setFormatter(f);
         return this;
     }
 

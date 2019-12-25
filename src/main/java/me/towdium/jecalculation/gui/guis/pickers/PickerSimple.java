@@ -7,7 +7,6 @@ import me.towdium.jecalculation.data.label.labels.LFluidTag;
 import me.towdium.jecalculation.data.label.labels.LItemTag;
 import me.towdium.jecalculation.gui.guis.IGui;
 import me.towdium.jecalculation.gui.widgets.WIcon;
-import me.towdium.jecalculation.gui.widgets.WLabel;
 import me.towdium.jecalculation.gui.widgets.WLabelScroll;
 import me.towdium.jecalculation.gui.widgets.WSearch;
 import net.minecraft.tags.FluidTags;
@@ -36,8 +35,8 @@ public class PickerSimple extends IPicker.Impl implements IGui {
      * @param labels label to be displayed for selection
      */
     public PickerSimple(List<ILabel> labels) {
-        WLabelScroll ls = new WLabelScroll(7, 33, 8, 7, WLabel.Mode.PICKER, true).setLabels(labels)
-                .setListener((i, v) -> notifyLsnr(i.get(v)));
+        WLabelScroll ls = new WLabelScroll(7, 33, 8, 7, false, true, false, true).setLabels(labels)
+                .setLsnrUpdate((i, v) -> notifyLsnr(i.get(v).getLabel()));
         add(new WSearch(26, 7, 90, ls));
         add(new WIcon(7, 7, 20, 20, ICN_TEXT, "common.search"));
         add(ls);

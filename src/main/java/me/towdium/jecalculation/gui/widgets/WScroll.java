@@ -19,6 +19,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @OnlyIn(Dist.CLIENT)
 public class WScroll implements IWidget {
     public int xPos, yPos, ySize, current;
+    boolean active = false;
     public ListenerAction<? super WScroll> listener;
 
     public WScroll(int xPos, int yPos, int ySize) {
@@ -34,8 +35,17 @@ public class WScroll implements IWidget {
     }
 
     @Override
-    public boolean onDragged(JecaGui gui, int xMouse, int yMouse, int xDrag, int yDrag) {
-        setCurrent(yMouse - yPos - 9, true);
+    public boolean onMouseDragged(JecaGui gui, int xMouse, int yMouse, int xDrag, int yDrag) {
+        if (mouseIn(xMouse, yMouse) || active) {
+            active = true;
+            setCurrent(yMouse - yPos - 9, true);
+            return true;
+        } else return false;
+    }
+
+    @Override
+    public boolean onMouseReleased(JecaGui gui, int xMouse, int yMouse, int button) {
+        active = false;
         return false;
     }
 
