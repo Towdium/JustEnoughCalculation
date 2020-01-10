@@ -48,7 +48,7 @@ public class LFluidTag extends LTag<Fluid> {
     }
 
     @Override
-    public LTag copy() {
+    public LTag<Fluid> copy() {
         return new LFluidTag(this);
     }
 

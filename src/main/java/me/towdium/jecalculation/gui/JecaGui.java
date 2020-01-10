@@ -8,6 +8,7 @@ import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.guis.GuiCraft;
 import me.towdium.jecalculation.gui.guis.GuiMath;
 import me.towdium.jecalculation.gui.guis.IGui;
+import me.towdium.jecalculation.gui.widgets.WLabel;
 import me.towdium.jecalculation.jei.JecaPlugin;
 import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.client.Minecraft;
@@ -197,7 +198,8 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
 
     @Nullable
     public ILabel getLabelUnderMouse() {
-        return root.getLabelUnderMouse(getMouseX(), getMouseY());
+        WLabel w = root.getLabelUnderMouse(getMouseX(), getMouseY());
+        return w == null ? null : w.getLabel();
     }
 
     @SubscribeEvent
@@ -244,10 +246,6 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
         return ret ? 1 : 0;
     }
 
-    public static boolean isShiftDown() {
-        return Minecraft.getInstance().player.isSneaking();
-    }
-
     @Override
     public boolean isPauseScreen() {
         return false;
@@ -279,47 +277,6 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
         GlStateManager.enableLighting();
         GlStateManager.enableDepthTest();
     }
-
-    // modified from vanilla
-//    public void drawHoveringText(List<String> textLines, int x, int y, FontRenderer font) {
-//        if (!textLines.isEmpty()) {
-//            GlStateManager.disableRescaleNormal();
-//            RenderHelper.disableStandardItemLighting();
-//            GlStateManager.disableLighting();
-//            GlStateManager.disableDepthTest();
-//            int i = 0;
-//            for (String s : textLines) {
-//                int j = this.font.getStringWidth(s);
-//                if (j > i) i = j;
-//            }
-//            int l1 = x + 12;
-//            int i2 = y - 12;
-//            int k = 8 + (textLines.size() - 1) * 10;
-//            if (l1 + i > this.width) l1 -= 28 + i;
-//            if (i2 + k + 6 > this.height) i2 = this.height - k - 6;
-//            //zLevel = 300.0F;
-//            itemRenderer.zLevel = 300.0F;
-//            drawGradientRect(l1 - 3, i2 - 4, l1 + i + 3, i2 - 3, -267386864, -267386864);
-//            drawGradientRect(l1 - 3, i2 + k + 3, l1 + i + 3, i2 + k + 4, -267386864, -267386864);
-//            drawGradientRect(l1 - 3, i2 - 3, l1 + i + 3, i2 + k + 3, -267386864, -267386864);
-//            drawGradientRect(l1 - 4, i2 - 3, l1 - 3, i2 + k + 3, -267386864, -267386864);
-//            drawGradientRect(l1 + i + 3, i2 - 3, l1 + i + 4, i2 + k + 3, -267386864, -267386864);
-//            drawGradientRect(l1 - 3, i2 - 3 + 1, l1 - 3 + 1, i2 + k + 3 - 1, 1347420415, 1344798847);
-//            drawGradientRect(l1 + i + 2, i2 - 3 + 1, l1 + i + 3, i2 + k + 3 - 1, 1347420415, 1344798847);
-//            drawGradientRect(l1 - 3, i2 - 3, l1 + i + 3, i2 - 3 + 1, 1347420415, 1347420415);
-//            drawGradientRect(l1 - 3, i2 + k + 2, l1 + i + 3, i2 + k + 3, 1344798847, 1344798847);
-//            for (String s1 : textLines) {
-//                font.drawStringWithShadow(s1, (float) l1, (float) i2, -1);
-//                i2 += 10;
-//            }
-//            //zLevel = 0.0F;
-//            itemRenderer.zLevel = 0.0F;
-//            GlStateManager.enableLighting();
-//            GlStateManager.enableDepth();
-//            RenderHelper.enableStandardItemLighting();
-//            GlStateManager.enableRescaleNormal();
-//        }
-//    }
 
     public void drawResource(Resource r, int xPos, int yPos) {
         drawResource(r, xPos, yPos, 0xFFFFFF);
@@ -364,10 +321,6 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
 
     public int getStringWidth(String s) {
         return font.getStringWidth(s);
-    }
-
-    public void drawSplitText(float xPos, float yPos, Font f, String s) {
-        drawSplitText(xPos, yPos, Integer.MAX_VALUE, f, s);
     }
 
     public void drawSplitText(float xPos, float yPos, int width, Font f, String s) {

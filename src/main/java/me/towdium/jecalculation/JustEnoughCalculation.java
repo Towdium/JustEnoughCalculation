@@ -6,6 +6,7 @@ import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.network.packets.PCalculator;
 import me.towdium.jecalculation.network.packets.PEdit;
 import me.towdium.jecalculation.network.packets.PRecord;
+import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -42,6 +43,8 @@ public class JustEnoughCalculation {  // TODO commands to open gui
     public static final KeyBinding keyOpenGuiMath = new KeyBinding("jecalculation.key.gui_math", GLFW.GLFW_KEY_UNKNOWN, "jecalculation.key.category");
 
     public JustEnoughCalculation() {
+        //noinspection ResultOfMethodCallIgnored
+        Utilities.config().mkdirs();
         ModLoadingContext.get().registerConfig(COMMON, JecaConfig.common,
                 FMLPaths.CONFIGDIR.get().resolve(PATH).toString());
     }

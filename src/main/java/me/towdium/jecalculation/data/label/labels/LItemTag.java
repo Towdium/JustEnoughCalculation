@@ -46,7 +46,7 @@ public class LItemTag extends LTag<Item> {
     }
 
     @Override
-    public LTag copy() {
+    public LTag<Item> copy() {
         return new LItemTag(this);
     }
 

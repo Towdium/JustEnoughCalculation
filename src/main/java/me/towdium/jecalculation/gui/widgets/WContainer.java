@@ -1,7 +1,6 @@
 package me.towdium.jecalculation.gui.widgets;
 
 import mcp.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.utils.Utilities;
 import net.minecraftforge.api.distmarker.Dist;
@@ -101,7 +100,7 @@ public class WContainer implements IContainer {
 
     @Nullable
     @Override
-    public ILabel getLabelUnderMouse(int xMouse, int yMouse) {
+    public WLabel getLabelUnderMouse(int xMouse, int yMouse) {
         return new Utilities.ReversedIterator<>(widgets).stream()
                 .map(i -> i.getLabelUnderMouse(xMouse, yMouse))
                 .filter(Objects::nonNull)

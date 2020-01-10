@@ -121,6 +121,18 @@ public class GuiRecipe extends WContainer implements IGui {
         return super.onKeyPressed(gui, key, modifier);
     }
 
+    @Override
+    public boolean onMouseScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
+        WLabel w = getLabelUnderMouse(xMouse, yMouse);
+        if (w == null) return super.onMouseScroll(gui, xMouse, yMouse, diff);
+        ILabel l = w.getLabel();
+        for (int i = 0; i < Math.abs(diff); i++)
+            l = diff > 0 ? l.increaseAmount() : l.decreaseAmount();
+        w.setLabel(l);
+        refresh();
+        return true;
+    }
+
     public void setNewGroup(boolean b) {
         if (b) {
             remove(neu, label, clear, copy, save);

@@ -227,6 +227,12 @@ public interface ILabel {
     class Converter {
         static EnumMap<Priority, ArrayList<ConverterFunction>> handlers;
 
+        /**
+         * Suggest: the suggested type is a very reasonable representation
+         * Fallback: the suggestion is related, like suggest to tag label
+         * while input does not contain all entries recorded in tag
+         * Fallback is also used with one input label to guess possible conventions
+         */
         public enum Priority {SUGGEST, FALLBACK}
 
         static {
@@ -253,17 +259,8 @@ public interface ILabel {
             return guess.isEmpty() ? labels.get(0) : guess.get(0);
         }
 
-        public ILabel first(List<ILabel> labels) {
-            return first(labels, null);
-        }
-
         // to test if the labels can be converted to other labels (like oreDict)
-        public Pair<List<ILabel>, List<ILabel>> guess(List<ILabel> labels) {
-            return guess(labels, null);
-        }
-
         public Pair<List<ILabel>, List<ILabel>> guess(List<ILabel> labels, @Nullable IRecipeLayout context) {
-            List<ILabel> ret = new ArrayList<>();
             List<ILabel> suggest = new ReversedIterator<>(handlers.get(Priority.SUGGEST)).stream()
                     .flatMap(h -> h.convert(labels, context).stream())
                     .collect(Collectors.toList());
@@ -460,7 +457,7 @@ public interface ILabel {
             return (int) (amount ^ (percent ? 1 : 0));
         }
 
-        protected static Merger.MergerFunction form(Class a, Class b, BiPredicate<ILabel, ILabel> p) {
+        protected static Merger.MergerFunction form(Class<?> a, Class<?> b, BiPredicate<ILabel, ILabel> p) {
             return (c, d) -> {
                 if (a.isInstance(d) && b.isInstance(c)) {
                     ILabel tmp = c;

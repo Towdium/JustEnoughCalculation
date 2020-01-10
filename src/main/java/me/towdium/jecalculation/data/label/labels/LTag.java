@@ -51,8 +51,8 @@ public abstract class LTag<T> extends LContext<T> {
 
     public static boolean mergeSame(ILabel a, ILabel b) {
         if (a instanceof LTag && b instanceof LTag) {
-            LTag lodA = (LTag) a;
-            LTag lodB = (LTag) b;
+            LTag<?> lodA = (LTag<?>) a;
+            LTag<?> lodB = (LTag<?>) b;
             return lodA.getName().equals(lodB.getName())
                     && lodA.getContext() == lodB.getContext();
         } else return false;
@@ -60,8 +60,8 @@ public abstract class LTag<T> extends LContext<T> {
 
     public static boolean mergeFuzzy(ILabel a, ILabel b) {
         if (a instanceof LTag && b instanceof LStack) {
-            LTag<?> lt = (LTag) a;
-            LStack ls = (LStack) b;
+            LTag<?> lt = (LTag<?>) a;
+            LStack<?> ls = (LStack<?>) b;
             return lt.getContext() == ls.getContext()
                     && lt.getAmount() * ls.getAmount() < 0
                     && lt.getContext().discover(lt.name)
@@ -70,13 +70,7 @@ public abstract class LTag<T> extends LContext<T> {
         return false;
     }
 
-    private static <T> boolean matches(ResourceLocation tag, ILabel label) {
-        if (!(label instanceof LStack)) return false;
-        @SuppressWarnings("unchecked") LStack<T> ls = (LStack<T>) label;
-        Tag<T> tags = ls.getContext().tags().get(tag);
-        return tags != null && tags.contains(ls.get());
-    }
-
+    @SuppressWarnings("unused")
     public static List<ILabel> suggest(List<ILabel> is, @Nullable IRecipeLayout rl) {
         return convert(is, true);
     }
@@ -95,6 +89,7 @@ public abstract class LTag<T> extends LContext<T> {
                 .collect(Collectors.toList());
     }
 
+    @SuppressWarnings("unused")
     public static List<ILabel> fallback(List<ILabel> is, @Nullable IRecipeLayout rl) {
         return convert(is, false);
     }
@@ -130,7 +125,7 @@ public abstract class LTag<T> extends LContext<T> {
     }
 
     @Override
-    public abstract LTag copy();
+    public abstract LTag<T> copy();
 
     @Override
     public CompoundNBT toNbt() {

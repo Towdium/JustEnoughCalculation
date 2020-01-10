@@ -18,6 +18,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Author: towdium
@@ -100,7 +101,7 @@ public class LFluidStack extends LStack<Fluid> {
 
     public static String format(long amount) {
         return amount >= 1000 ? Utilities.cutNumber(amount / 1000f, 4) + "B"
-                : Long.toString(amount) + "mB";
+                : amount + "mB";
     }
 
     @Override
@@ -117,7 +118,7 @@ public class LFluidStack extends LStack<Fluid> {
     public boolean matches(Object l) {
         if (l instanceof LFluidStack) {
             LFluidStack lfs = (LFluidStack) l;
-            return (nbt == null ? lfs.nbt == null : nbt.equals(lfs.nbt)) && fluid == lfs.fluid;
+            return (Objects.equals(nbt, lfs.nbt)) && fluid == lfs.fluid;
         } else return false;
     }
 

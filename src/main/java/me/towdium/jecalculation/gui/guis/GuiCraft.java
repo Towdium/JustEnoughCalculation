@@ -175,7 +175,7 @@ public class GuiCraft extends WContainer implements IGui {
         refreshRecent();
         refreshCalculator();
         if (suggest && findRecipe(l).isEmpty()) {
-            Pair<List<ILabel>, List<ILabel>> guess = ILabel.CONVERTER.guess(Collections.singletonList(l));
+            Pair<List<ILabel>, List<ILabel>> guess = ILabel.CONVERTER.guess(Collections.singletonList(l), null);
             LinkedHashSet<ILabel> match = new LinkedHashSet<>();
             List<ILabel> fuzzy = new ArrayList<>();
             Stream.of(guess.one, guess.two).flatMap(Collection::stream).forEach(i -> {
@@ -208,7 +208,7 @@ public class GuiCraft extends WContainer implements IGui {
         public Suggest(List<ILabel> labels, boolean replace) {
             this.replace = replace;
             int width = labels.size() * 20;
-            add(new WPanel(0 - width, 2, 56 + width, 30));
+            add(new WPanel(-width, 2, 56 + width, 30));
             add(new WLabel(31, 7, 20, 20, false, false)
                     .setLabel(label.getLabel()).setLsnrUpdate((i, v) -> refresh(v)));
             add(new WIcon(5 - width, 7, 18, 20, Resource.ICN_HELP, "craft.suggest"));

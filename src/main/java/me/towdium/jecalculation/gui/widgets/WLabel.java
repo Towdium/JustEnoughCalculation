@@ -78,8 +78,8 @@ public class WLabel implements IWidget {
 
     @Nullable
     @Override
-    public ILabel getLabelUnderMouse(int xMouse, int yMouse) {
-        return mouseIn(xMouse, yMouse) ? label : null;
+    public WLabel getLabelUnderMouse(int xMouse, int yMouse) {
+        return mouseIn(xMouse, yMouse) ? this : null;
     }
 
     @Override

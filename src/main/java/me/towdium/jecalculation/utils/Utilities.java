@@ -26,7 +26,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.BreakIterator;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -218,7 +218,7 @@ public class Utilities {
             translateKey = "jecalculation." + translateKey;
             String buffer = format(translateKey, parameters);
             ret.two = !buffer.equals(translateKey);
-            buffer = StringEscapeUtils.unescapeJava(buffer);
+            buffer = StringEscapeUtils.unescapeJava(buffer);  // TODO
             ret.one = buffer.replace("\t", "    ");
             return ret;
         }
@@ -351,7 +351,7 @@ public class Utilities {
             FileOutputStream fos = null;
             try {
                 fos = new FileOutputStream(f);
-                fos.write(write(nbt).getBytes(Charset.forName("UTF-8")));
+                fos.write(write(nbt).getBytes(StandardCharsets.UTF_8));
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {

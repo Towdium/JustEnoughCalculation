@@ -127,6 +127,7 @@ public class LItemStack extends LStack<Item> {
         return false;
     }
 
+    @SuppressWarnings("unused")
     public static List<ILabel> suggest(List<ILabel> iss, @Nullable IRecipeLayout rl) {
         if (iss.size() == 0) return new ArrayList<>();
         for (ILabel i : iss) if (!(i instanceof LItemStack)) return new ArrayList<>();
@@ -138,14 +139,15 @@ public class LItemStack extends LStack<Item> {
             LItemStack ii = (LItemStack) i;
             if (ii.item != lis.item) return new ArrayList<>();
             if (ii.rep.getDamage() != lis.rep.getDamage() || ii.fMeta) fMeta = true;
-            if (ii.nbt == null ? lis.nbt != null : !ii.nbt.equals(lis.nbt)) fNbt = true;
-            if (ii.cap == null ? lis.cap != null : !ii.cap.equals(lis.cap)) fCap = true;
+            if (!Objects.equals(ii.nbt, lis.nbt)) fNbt = true;
+            if (!Objects.equals(ii.cap, lis.cap)) fCap = true;
         }
         if (fMeta || fNbt || fCap) return Collections.singletonList(
                 lis.copy().setFCap(fCap).setFMeta(fMeta).setFNbt(fNbt));
         else return new ArrayList<>();
     }
 
+    @SuppressWarnings("unused")
     public static List<ILabel> fallback(List<ILabel> iss, @Nullable IRecipeLayout rl) {
         List<ILabel> ret = new ArrayList<>();
         if (iss.size() == 1) {
@@ -174,10 +176,6 @@ public class LItemStack extends LStack<Item> {
     public LItemStack setFCap(boolean f) {
         fCap = f;
         return this;
-    }
-
-    public ItemStack getRep() {
-        return rep;
     }
 
     @Override

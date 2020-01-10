@@ -14,7 +14,6 @@ import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mezz.jei.api.registration.IRecipeTransferRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.container.Container;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
@@ -52,19 +51,19 @@ public class JecaPlugin implements IModPlugin {
         runtime = jeiRuntime;
     }
 
-    public static class TransferHandler implements IRecipeTransferHandler {
+    public static class TransferHandler implements IRecipeTransferHandler<JecaGui.ContainerTransfer> {
         @Override
-        public Class getContainerClass() {
+        public Class<JecaGui.ContainerTransfer> getContainerClass() {
             return JecaGui.ContainerTransfer.class;
         }
 
         @Nullable
         @Override
         public IRecipeTransferError transferRecipe(
-                Container container, IRecipeLayout recipeLayout, PlayerEntity player,
-                boolean maxTransfer, boolean doTransfer) {
-            if (doTransfer && container instanceof JecaGui.JecaContainer) {
-                JecaGui gui = ((JecaGui.JecaContainer) container).getGui();
+                JecaGui.ContainerTransfer container, IRecipeLayout recipeLayout,
+                PlayerEntity player, boolean maxTransfer, boolean doTransfer) {
+            if (doTransfer) {
+                JecaGui gui = container.getGui();
                 if (gui.root instanceof GuiRecipe) {
                     ((GuiRecipe) gui.root).transfer(recipeLayout);
                 } else {
@@ -72,8 +71,8 @@ public class JecaPlugin implements IModPlugin {
                     JecaGui.displayGui(true, true, guiRecipe);
                     guiRecipe.transfer(recipeLayout);
                 }
-                return null;
-            } else return null;
+            }
+            return null;
         }
     }
 }

@@ -131,3 +131,7 @@ Port client mode
 Port key binding  
 Port commands  
 Port recipes
+
+#### 3.4.1
+
+Fix #65

@@ -1,7 +1,6 @@
 package me.towdium.jecalculation.gui.widgets;
 
 import mcp.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
 
 import javax.annotation.Nullable;
@@ -50,7 +49,7 @@ public interface IWidget {
     }
 
     @Nullable
-    default ILabel getLabelUnderMouse(int xMouse, int yMouse) {
+    default WLabel getLabelUnderMouse(int xMouse, int yMouse) {
         return null;
     }
 
