@@ -19,7 +19,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -218,9 +217,40 @@ public class Utilities {
             translateKey = "jecalculation." + translateKey;
             String buffer = format(translateKey, parameters);
             ret.two = !buffer.equals(translateKey);
-            buffer = StringEscapeUtils.unescapeJava(buffer);  // TODO
+            buffer = unescape(buffer);
             ret.one = buffer.replace("\t", "    ");
             return ret;
+        }
+
+        public static String unescape(String s) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < s.length(); i++) {
+                char c = s.charAt(i);
+                if (c != '\\' || i + 1 >= s.length()) {
+                    sb.append(c);
+                    continue;
+                }
+                char nc = s.charAt(i + 1);
+                char ec = nc;
+                if (nc == 'u' && i + 5 < s.length()) {
+                    String u = s.substring(i + 2, i + 6);
+                    ec = (char) Integer.parseInt(u, 16);
+                    i += 4;
+                } else if (nc >= '0' && nc <= '7') {
+                    char nnc = s.charAt(i + 2);
+                    boolean duo = nnc >= '0' && nnc <= '7';
+                    String o = s.substring(i + 1, i + (duo ? 3 : 2));
+                    ec = (char) Integer.parseInt(o, 8);
+                    if (duo) i++;
+                } else if (nc == 'r') ec = '\r';
+                else if (nc == 't') ec = '\t';
+                else if (nc == 'b') ec = '\b';
+                else if (nc == 'f') ec = '\f';
+                else if (nc == 'n') ec = '\n';
+                i++;
+                sb.append(ec);
+            }
+            return sb.toString();
         }
 
         public static String get(String translateKey, Object... parameters) {
