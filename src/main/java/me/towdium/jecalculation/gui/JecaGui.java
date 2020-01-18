@@ -2,7 +2,6 @@ package me.towdium.jecalculation.gui;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import mcp.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.guis.GuiCraft;
@@ -18,12 +17,12 @@ import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.concurrent.ThreadTaskExecutor;
@@ -38,7 +37,6 @@ import net.minecraftforge.client.event.GuiScreenEvent.MouseReleasedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent.MouseScrollEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderTooltipEvent;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -65,6 +63,10 @@ import static net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus.MOD;
 @Mod.EventBusSubscriber(Dist.CLIENT)
 @OnlyIn(Dist.CLIENT)
 public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
+    public static final KeyBinding keyOpenGuiCraft = new KeyBinding(
+            "jecalculation.key.gui_craft", GLFW.GLFW_KEY_UNKNOWN, "jecalculation.key.category");
+    public static final KeyBinding keyOpenGuiMath = new KeyBinding(
+            "jecalculation.key.gui_math", GLFW.GLFW_KEY_UNKNOWN, "jecalculation.key.category");
     public static final int COLOR_GUI_GREY = 0xFFA1A1A1;
     public static final int COLOR_TEXT_RED = 0xFF0000;
     public static final int COLOR_TEXT_GREY = 0x404040;
@@ -204,8 +206,8 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
 
     @SubscribeEvent
     public static void onKey(InputEvent.KeyInputEvent event) {
-        if (JustEnoughCalculation.keyOpenGuiCraft.isKeyDown()) JecaGui.openGuiCraft(null);
-        if (JustEnoughCalculation.keyOpenGuiMath.isKeyDown()) JecaGui.openGuiMath(null);
+        if (keyOpenGuiCraft.isKeyDown()) JecaGui.openGuiCraft(null);
+        if (keyOpenGuiMath.isKeyDown()) JecaGui.openGuiMath(null);
     }
 
     @SubscribeEvent
@@ -447,17 +449,9 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
     @OnlyIn(Dist.CLIENT)
     public static class JecaContainer extends Container {
         JecaGui gui;
-        public static ContainerType<JecaContainer> GENERIC;
 
         protected JecaContainer() {
-            super(GENERIC, 0);
-        }
-
-        @SubscribeEvent
-        public static void registerContainer(RegistryEvent.Register<ContainerType<?>> event) {
-            GENERIC = new ContainerType<>((i, j) -> new JecaContainer());
-            GENERIC.setRegistryName("generic");
-            event.getRegistry().register(GENERIC);
+            super(null, 0);
         }
 
         public JecaGui getGui() {

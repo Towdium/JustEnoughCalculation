@@ -30,7 +30,7 @@ public interface IPicker extends IGui {
         }
 
         protected void notifyLsnr(ILabel l) {
-            if (callback != null) callback.accept(l);
+            if (callback != null && l != ILabel.EMPTY) callback.accept(l);
         }
     }
 }

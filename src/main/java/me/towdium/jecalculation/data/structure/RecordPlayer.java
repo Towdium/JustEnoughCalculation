@@ -11,7 +11,7 @@ public class RecordPlayer implements IRecord {
     public static final String KEY_LAST = "last";
 
     public Recipes recipes;
-    public String last;
+    public String last;  // last group edited
 
     public RecordPlayer() {
         recipes = new Recipes();

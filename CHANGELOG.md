@@ -135,3 +135,9 @@ Port recipes
 #### 3.4.1
 
 Fix #65
+
+#### 3.4.2
+
+Fix crash on server start  
+Fix cannot pick labels in label editor  
+Fix cannot type E in textfield

@@ -67,14 +67,6 @@ public class Controller {
         else return rPlayerClient.recipes;
     }
 
-//    public static Optional<ItemStack> getStack() {
-//        ClientPlayerEntity player = Minecraft.getInstance().player;
-//        ItemStack is = player.getHeldItem(Hand.MAIN_HAND);
-//        if (is.getItem() instanceof JecaItem) return Optional.of(is);
-//        is = player.getHeldItem(Hand.OFF_HAND);
-//        return Optional.ofNullable(is.getItem() instanceof JecaItem ? is : null);
-//    }
-
     // file, recipes
     public static List<Pair<String, Recipes>> discover() {
         File dir = new File(FMLPaths.CONFIGDIR.get().toFile(), JustEnoughCalculation.MODID + "/data");

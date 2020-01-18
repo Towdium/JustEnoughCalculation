@@ -41,7 +41,7 @@ public class GuiCraft extends WContainer implements IGui {
     WLabelGroup recent = new WLabelGroup(7, 31, 8, 1, false, false)
             .setLsnrClick((i, v) -> JecaGui.getCurrent().hand = i.get(v).getLabel());
     WLabelScroll result = new WLabelScroll(7, 87, 8, 4, true, false, false, true)
-            .setLsnrClick((i, v) -> {
+            .setListener((i, v) -> {
                 Object rep = i.get(v).getLabel().getRepresentation();
                 if (rep != null) runtime.getRecipesGui().show(runtime.getRecipeManager()
                         .createFocus(IFocus.Mode.OUTPUT, rep));

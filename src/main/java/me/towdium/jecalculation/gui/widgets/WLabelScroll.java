@@ -28,7 +28,7 @@ public class WLabelScroll extends WContainer implements ISearchable {
     protected int xPos, yPos, column, row, current;
     protected String filter = "";
     protected ListenerValue<? super WLabelScroll, Integer> lsnrUpdate;
-    protected ListenerValue<? super WLabelScroll, Integer> lsnrClick;
+    protected ListenerValue<? super WLabelScroll, Integer> listener;
 
     public WLabelScroll(int xPos, int yPos, int column, int row, boolean multiple, boolean accurate, boolean accept, boolean drawConnection) {
         this.xPos = xPos;
@@ -39,7 +39,7 @@ public class WLabelScroll extends WContainer implements ISearchable {
                 .setLsnrUpdate((i, v) -> {
                     if (lsnrUpdate != null) lsnrUpdate.invoke(this, column * current + v);
                 }).setLsnrClick((i, v) -> {
-                    if (lsnrClick != null) lsnrClick.invoke(this, column * current + v);
+                    if (listener != null) listener.invoke(this, column * current + v);
                 });
         scroll = new WScroll(xPos + column * 18 + 4, yPos, row * 18).setListener(i -> update(i.getCurrent()));
         add(labelGroup);
@@ -90,14 +90,8 @@ public class WLabelScroll extends WContainer implements ISearchable {
         return filtered.size() != 0;
     }
 
-    @SuppressWarnings("UnusedReturnValue")
-    public WLabelScroll setLsnrUpdate(ListenerValue<? super WLabelScroll, Integer> listener) {
-        lsnrUpdate = listener;
-        return this;
-    }
-
-    public WLabelScroll setLsnrClick(ListenerValue<? super WLabelScroll, Integer> listener) {
-        lsnrClick = listener;
+    public WLabelScroll setListener(ListenerValue<? super WLabelScroll, Integer> listener) {
+        this.listener = listener;
         return this;
     }
 

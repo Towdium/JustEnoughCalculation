@@ -27,7 +27,7 @@ import static me.towdium.jecalculation.gui.Resource.*;
 public class GuiSearch extends WContainer implements IGui {
     IdentityHashMap<ILabel, Trio<Recipe, String, Integer>> recipes;
     WLabelScroll labels = new WLabelScroll(7, 51, 8, 6, false, true, false, true)
-            .setLsnrClick((i, v) -> {
+            .setListener((i, v) -> {
                 ILabel l = i.get(v).getLabel();
                 if (l != ILabel.EMPTY) add(new Overlay(i.get(v)));
             });

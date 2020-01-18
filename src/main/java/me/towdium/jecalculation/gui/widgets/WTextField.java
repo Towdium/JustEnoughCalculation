@@ -49,7 +49,7 @@ public class WTextField implements IWidget {
     public boolean onKeyPressed(JecaGui gui, int key, int modifier) {
         boolean ret = textField.keyPressed(key, GLFW.glfwGetKeyScancode(key), modifier);
         if (ret) notifyLsnr();
-        return ret;
+        return textField.isFocused() && textField.getVisible() && key != 256;
     }
 
     @Override
