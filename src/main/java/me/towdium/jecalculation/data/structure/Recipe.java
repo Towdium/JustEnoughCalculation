@@ -3,18 +3,18 @@ package me.towdium.jecalculation.data.structure;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.utils.Utilities;
-import me.towdium.jecalculation.utils.wrappers.Wrapper;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.*;
-import java.util.function.BiFunction;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Author: towdium
@@ -26,10 +26,9 @@ public class Recipe {
     public static final String KEY_INPUT = "input";
     public static final String KEY_CATALYST = "catalyst";
     public static final String KEY_OUTPUT = "output";
-    static final ILabel[] EMPTY_ARRAY = new ILabel[0];
-    ILabel[] input;
-    ILabel[] catalyst;
-    ILabel[] output;
+    List<ILabel> input;
+    List<ILabel> catalyst;
+    List<ILabel> output;
 
     public Recipe(CompoundNBT nbt) {
         this(readNbtList(nbt.getList(KEY_INPUT, 10)),
@@ -38,22 +37,21 @@ public class Recipe {
     }
 
     public Recipe(List<ILabel> input, List<ILabel> catalyst, List<ILabel> output) {
-        this(input.toArray(EMPTY_ARRAY), catalyst.toArray(EMPTY_ARRAY), output.toArray(EMPTY_ARRAY));
-    }
-
-    public Recipe(ILabel[] input, ILabel[] catalyst, ILabel[] output) {
-        BiFunction<ILabel[], Integer, ILabel[]> convert = (ls, i) -> {
-            ILabel[] ret = new ILabel[i];
-            if (ls.length > i) throw new RuntimeException("Too many labels");
-            System.arraycopy(ls, 0, ret, 0, ls.length);
-            for (int j = ls.length; j < i; j++) ret[j] = ILabel.EMPTY;
-            return ret;
+        Consumer<List<ILabel>> check = ls -> {
+            boolean ret = false;
+            for (ILabel i : ls) {
+                Objects.requireNonNull(i);
+                if (i != ILabel.EMPTY) ret = true;
+            }
+            if (!ret || ls.get(ls.size() - 1) == ILabel.EMPTY)
+                throw new IllegalArgumentException("Invalid recipe");
         };
-        this.input = convert.apply(input, 14);
-        this.catalyst = convert.apply(catalyst, 7);
-        this.output = convert.apply(output, 7);
-        Stream.of(input, output).forEach(i -> Arrays.stream(i).filter(j -> j != ILabel.EMPTY).findAny()
-                .orElseThrow(() -> new IllegalArgumentException("Invalid recipe")));
+        check.accept(input);
+        check.accept(catalyst);
+        check.accept(output);
+        this.input = input;
+        this.catalyst = catalyst;
+        this.output = output;
     }
 
     static private List<ILabel> readNbtList(ListNBT list) {
@@ -64,29 +62,33 @@ public class Recipe {
 
     @Override
     public int hashCode() {
-        Wrapper<Integer> hash = new Wrapper<>(0);
-        Consumer<ILabel[]> hasher = (ls) -> Arrays.stream(ls)
-                .filter(Objects::nonNull).forEach(i -> hash.value ^= i.hashCode());
+        int[] hash = new int[1];
+        Consumer<List<ILabel>> hasher = (ls) -> ls.stream()
+                .filter(Objects::nonNull).forEach(i -> hash[0] ^= i.hashCode());
         hasher.accept(input);
         hasher.accept(catalyst);
         hasher.accept(output);
-        return hash.value;
+        return hash[0];
     }
 
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof Recipe)) return false;
         Recipe r = (Recipe) obj;
-        BiPredicate<ILabel[], ILabel[]> p = (i, j) -> {
-            if (i.length != j.length) return false;
-            for (int k = 0; k < i.length; k++)
-                if (!i[k].equals(j[k])) return false;
+        BiPredicate<List<ILabel>, List<ILabel>> p = (i, j) -> {
+            if (i.size() != j.size()) return false;
+            for (int k = 0; k < i.size(); k++)
+                if (!i.get(k).equals(j.get(k))) return false;
             return true;
         };
         return p.test(input, r.input) && p.test(catalyst, r.catalyst) && p.test(output, r.output);
     }
 
-    public ILabel[] getLabel(IO type) {
+    public List<ILabel> getLabel(IO type) {
+        return get(type, input, output, catalyst);
+    }
+
+    public static <T> T get(IO type, T input, T output, T catalyst) {
         switch (type) {
             case INPUT:
                 return input;
@@ -101,18 +103,18 @@ public class Recipe {
 
     public ILabel getRep() {
         for (int i = 0; i < 8; i++)
-            if (output[i] != ILabel.EMPTY) return output[i];
+            if (output.get(i) != ILabel.EMPTY) return output.get(i);
         return ILabel.EMPTY;
     }
 
     public CompoundNBT serialize() {
         CompoundNBT ret = new CompoundNBT();
-        Function<ILabel[], ListNBT> convert = (ls) -> {
+        Function<List<ILabel>, ListNBT> convert = (ls) -> {
             ArrayList<ILabel> labels = new ArrayList<>();
             boolean start = false;
-            for (int i = ls.length - 1; i >= 0; i--) {
-                if (start || ls[i] != ILabel.EMPTY) {
-                    labels.add(ls[i]);
+            for (int i = ls.size() - 1; i >= 0; i--) {
+                if (start || ls.get(i) != ILabel.EMPTY) {
+                    labels.add(ls.get(i));
                     start = true;
                 }
             }
@@ -129,11 +131,11 @@ public class Recipe {
     }
 
     public Optional<ILabel> matches(ILabel label) {
-        return Arrays.stream(output).filter(i -> ILabel.MERGER.merge(label, i).isPresent()).findAny();
+        return output.stream().filter(i -> ILabel.MERGER.merge(label, i).isPresent()).findAny();
     }
 
     public long multiplier(ILabel label) {
-        return Arrays.stream(output).filter(i -> ILabel.MERGER.merge(label, i).isPresent()).findAny()
+        return output.stream().filter(i -> ILabel.MERGER.merge(label, i).isPresent()).findAny()
                 .map(i -> {
                     long amountA = label.getAmount();
                     if (!label.isPercent()) amountA = Math.multiplyExact(amountA, 100L);

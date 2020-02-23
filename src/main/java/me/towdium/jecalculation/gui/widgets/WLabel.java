@@ -45,7 +45,12 @@ public class WLabel implements IWidget {
     }
 
     public WLabel setLabel(ILabel label) {
+        return setLabel(label, false);
+    }
+
+    public WLabel setLabel(ILabel label, boolean notify) {
         this.label = label;
+        if (notify) notifyUpdate();
         return this;
     }
 
@@ -121,7 +126,7 @@ public class WLabel implements IWidget {
         if (click != null) click.invoke(this);
     }
 
-    void notifyUpdate() {
+    private void notifyUpdate() {
         if (update != null) update.invoke(this, label);
     }
 }

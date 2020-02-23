@@ -19,7 +19,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -37,12 +38,14 @@ import static me.towdium.jecalculation.gui.Resource.*;
 @OnlyIn(Dist.CLIENT)
 public class GuiRecipe extends WContainer implements IGui {
     Pair<String, Integer> dest;
-    HashMap<Integer, List<ILabel>> disambCache = new HashMap<>();
     WSwitcher group = new WSwitcher(7, 7, 162, Controller.getGroups()).setListener(i -> refresh());
     WTextField text = new WTextField(49, 32, 119);
-    WLabelGroup catalyst = new WLabelGroup(29, 87, 7, 1, 20, 20, true, true);
-    WLabelGroup input = new WLabelGroup(29, 111, 7, 2, 20, 20, true, true);
-    WLabelGroup output = new WLabelGroup(29, 63, 7, 1, 20, 20, true, true);
+    List<ILabel> input = new ArrayList<>();
+    List<ILabel> output = new ArrayList<>();
+    List<ILabel> catalyst = new ArrayList<>();
+    WLabelGroup mid = new WLabelGroup(29, 87, 7, 1, 20, 20, true, true);
+    WLabelGroup down = new WLabelGroup(29, 111, 7, 2, 20, 20, true, true);
+    WLabelGroup up = new WLabelGroup(29, 63, 7, 1, 20, 20, true, true);
     WButton clear = new WButtonIcon(64, 32, 20, 20, BTN_DEL, "recipe.clear").setListener(i -> reset());
     // check duplicate and valid
     WButton copy = new WButtonIcon(83, 32, 20, 20, BTN_COPY, "recipe.copy").setListener(i -> {
@@ -77,21 +80,24 @@ public class GuiRecipe extends WContainer implements IGui {
         this();
         dest = new Pair<>(group, index);
         Recipe r = Controller.getRecipe(group, index);
-        fromRecipe(r);
+        input = r.getLabel(IO.INPUT).stream()
+                .map(ILabel::copy).collect(Collectors.toList());
+        catalyst = r.getLabel(IO.CATALYST).stream()
+                .map(ILabel::copy).collect(Collectors.toList());
+        output = r.getLabel(IO.OUTPUT).stream()
+                .map(ILabel::copy).collect(Collectors.toList());
         this.group.setIndex(Controller.getGroups().indexOf(group));
         refresh();
     }
 
     public GuiRecipe() {
-        setup(input, 0);
-        setup(catalyst, 14);
-        setup(output, 21);
+        for (IO i : IO.values()) setup(getWidget(i), i);
         add(new WHelp("recipe"), new WPanel());
         add(new WIcon(7, 63, 22, 20, ICN_OUTPUT, "common.output"));
         add(new WIcon(7, 87, 22, 20, ICN_CATALYST, "common.catalyst"));
         add(new WIcon(7, 111, 22, 40, ICN_INPUT, "common.input"));
         add(new WLine(57));
-        add(input, catalyst, output, group);
+        add(up, down, mid, group);
         if (group.getTexts().isEmpty()) group.setText(Utilities.I18n.get("gui.common.default"));
         String last = Controller.getLast();
         int index = -1;
@@ -102,13 +108,24 @@ public class GuiRecipe extends WContainer implements IGui {
         text.setListener(i -> yes.setDisabled(i.getText().isEmpty()));
     }
 
-    private void setup(WLabelGroup w, int offset) {
+    public List<ILabel> getLabel(IO type) {
+        return Recipe.get(type, input, output, catalyst);
+    }
+
+    public WLabelGroup getWidget(IO type) {
+        return Recipe.get(type, down, up, mid);
+    }
+
+    private void setup(WLabelGroup w, IO type) {
         w.setLsnrUpdate((i, v) -> {
-            disambCache.remove(v + offset);
+            List<ILabel> ls = getLabel(type);
+            while (ls.size() <= v) ls.add(ILabel.EMPTY);
+            ls.set(v, i.get(v).getLabel());
+            trim(ls);
             refresh();
         }).setLsnrClick((i, v) -> {
             ILabel l = i.get(v).getLabel();
-            if (l != ILabel.EMPTY) add(new WAmount(i.get(v), v + offset));
+            if (l != ILabel.EMPTY) add(new WAmount(i.get(v)));
         });
     }
 
@@ -128,8 +145,7 @@ public class GuiRecipe extends WContainer implements IGui {
         ILabel l = w.getLabel();
         for (int i = 0; i < Math.abs(diff); i++)
             l = diff > 0 ? l.increaseAmount() : l.decreaseAmount();
-        w.setLabel(l);
-        refresh();
+        w.setLabel(l, true);
         return true;
     }
 
@@ -146,10 +162,10 @@ public class GuiRecipe extends WContainer implements IGui {
     }
 
     public void reset() {
-        input.setLabel(Collections.nCopies(14, ILabel.EMPTY), 0);
-        catalyst.setLabel(Collections.nCopies(7, ILabel.EMPTY), 0);
-        output.setLabel(Collections.nCopies(7, ILabel.EMPTY), 0);
-        disambCache.clear();
+        input = new ArrayList<>();
+        catalyst = new ArrayList<>();
+        output = new ArrayList<>();
+        // disambCache.clear();
         refresh();
     }
 
@@ -157,7 +173,7 @@ public class GuiRecipe extends WContainer implements IGui {
         // item disamb raw
         ArrayList<Trio<ILabel, CostList, CostList>> input = new ArrayList<>();
         ArrayList<Trio<ILabel, CostList, CostList>> output = new ArrayList<>();
-        disambCache = new HashMap<>();
+        //disambCache = new HashMap<>();
 
         // merge jei structure into list input/output
         Stream.of(recipe.getFluidStacks(), recipe.getItemStacks())
@@ -167,15 +183,14 @@ public class GuiRecipe extends WContainer implements IGui {
         // convert catalyst
         List<ILabel> catalysts = JecaPlugin.runtime.getRecipeManager().getRecipeCatalysts(recipe.getRecipeCategory())
                 .stream().map(ILabel.Converter::from).collect(Collectors.toList());
-        if (catalysts.size() == 1) catalyst.setLabel(catalysts.get(0), 0);
-        else if (catalysts.size() > 1) {
-            catalyst.setLabel(ILabel.CONVERTER.first(catalysts, recipe), 0);
-            disambCache.put(14, catalysts);
-        }
+        catalyst = new ArrayList<>();
+        catalyst.add(ILabel.CONVERTER.first(catalysts, recipe));
+        //disambCache.put(14, catalysts);
+
 
         // generate disamb info according to content in list input/output
-        this.input.setLabel(sort(input, 0), 0);
-        this.output.setLabel(sort(output, 21), 0);
+        this.input = extract(input);
+        this.output = extract(output);
         refresh();
     }
 
@@ -199,30 +214,32 @@ public class GuiRecipe extends WContainer implements IGui {
         });
     }
 
-    private ArrayList<ILabel> sort(ArrayList<Trio<ILabel, CostList, CostList>> src, int offset) {
+    private ArrayList<ILabel> extract(ArrayList<Trio<ILabel, CostList, CostList>> src) {
         ArrayList<ILabel> ret = new ArrayList<>();
         for (int i = 0; i < src.size(); i++) {
             Trio<ILabel, CostList, CostList> p = src.get(i);
             ret.add(p.one);
-            if (p.two.getLabels().size() > 1) disambCache.put(i + offset, p.two.getLabels());
+            // TODO disamb
+            // if (p.two.getLabels().size() > 1) disambCache.put(i + offset, p.two.getLabels());
         }
         return ret;
     }
 
-    private Recipe toRecipe() {
-        return new Recipe(input.getLabels(), catalyst.getLabels(), output.getLabels());
+    private void trim(List<ILabel> ls) {
+        for (int i = ls.size() - 1; i >= 0; i--) {
+            if (ls.get(i) == ILabel.EMPTY) ls.remove(i);
+        }
     }
 
-    void fromRecipe(Recipe r) {
-        input.setLabel(Arrays.stream(r.getLabel(IO.INPUT))
-                .map(ILabel::copy).collect(Collectors.toList()), 0);
-        catalyst.setLabel(Arrays.stream(r.getLabel(IO.CATALYST))
-                .map(ILabel::copy).collect(Collectors.toList()), 0);
-        output.setLabel(Arrays.stream(r.getLabel(IO.OUTPUT))
-                .map(ILabel::copy).collect(Collectors.toList()), 0);
+    private Recipe toRecipe() {  // TODO
+        return new Recipe(input, catalyst, output);
     }
 
     void refresh() {
+        up.setLabel(output, 0);
+        mid.setLabel(catalyst, 0);
+        down.setLabel(input, 0);
+
         try {
             Recipe r = toRecipe();
             boolean d = dest == null ? Controller.hasDuplicate(r) :
@@ -235,7 +252,7 @@ public class GuiRecipe extends WContainer implements IGui {
         }
     }
 
-    class WAmount extends WOverlay {
+    static class WAmount extends WOverlay {
         WLabel temp;
         WButton number;
         WTextField text;
@@ -245,7 +262,7 @@ public class GuiRecipe extends WContainer implements IGui {
         WButton no;
         WLabel ref;
 
-        public WAmount(WLabel w, int index) {
+        public WAmount(WLabel w) {
             ref = w;
             number = new WButtonText(ref.xPos + ref.xSize + 60, ref.yPos, 20, 20, "#", "general.to_percent")
                     .setListener(i -> {
@@ -265,12 +282,12 @@ public class GuiRecipe extends WContainer implements IGui {
             pick = new WButtonIcon(ref.xPos + ref.xSize + 83, ref.yPos, 20, 20, BTN_PICK, "label.pick")
                     .setListener(i -> {
                         JecaGui.getCurrent().hand = temp.getLabel();
-                        set(ILabel.EMPTY, index);
+                        set(ILabel.EMPTY);
                     });
             yes = new WButtonIcon(ref.xPos + ref.xSize + 102, ref.yPos, 20, 20, BTN_YES, "label.confirm")
-                    .setListener(i -> set(temp.getLabel(), index));
+                    .setListener(i -> set(temp.getLabel()));
             no = new WButtonIcon(ref.xPos + ref.xSize + 121, ref.yPos, 20, 20, BTN_NO, "label.delete")
-                    .setListener(i -> set(ILabel.EMPTY, index));
+                    .setListener(i -> set(ILabel.EMPTY));
             add(temp, text, pick, yes, no);
             text.setListener(i -> {
                 boolean acceptable;
@@ -291,10 +308,10 @@ public class GuiRecipe extends WContainer implements IGui {
 
         }
 
-        private void set(ILabel l, int idx) {
-            ref.setLabel(l);
-            refresh();
-            disambCache.remove(idx);
+        private void set(ILabel l) {
+            ref.setLabel(l, true);
+            //refresh();
+            //disambCache.remove(idx);
             JecaGui.getCurrent().root.remove(this);
         }
 

@@ -118,11 +118,11 @@ public class CostList {
             int count = 0;
             while (next != null) {
                 CostList original = getCurrent();
-                List<ILabel> outL = Arrays.stream(next.one.getLabel(OUTPUT))
+                List<ILabel> outL = next.one.getLabel(OUTPUT).stream()
                         .filter(i -> i != ILabel.EMPTY).collect(Collectors.toList());
                 CostList outC = new CostList(outL);
                 outC.multiply(-next.two);
-                List<ILabel> inL = Arrays.stream(next.one.getLabel(INPUT))
+                List<ILabel> inL = next.one.getLabel(INPUT).stream()
                         .filter(i -> i != ILabel.EMPTY).collect(Collectors.toList());
                 CostList inC = new CostList(inL);
                 inC.multiply(next.two);
@@ -161,9 +161,8 @@ public class CostList {
             return null;
         }
 
-        private void addCatalyst(ILabel[] labels) {
-            Arrays.stream(labels)
-                    .filter(i -> i != ILabel.EMPTY)
+        private void addCatalyst(List<ILabel> labels) {
+            labels.stream().filter(i -> i != ILabel.EMPTY)
                     .forEach(i -> catalysts.stream()
                             .filter(j -> j.matches(i)).findAny()
                             .map(j -> j.setAmount(Math.max(i.getAmount(), j.getAmount())))
