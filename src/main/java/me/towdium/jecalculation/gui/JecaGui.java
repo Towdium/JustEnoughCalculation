@@ -62,7 +62,7 @@ import static net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus.MOD;
 @MethodsReturnNonnullByDefault
 @Mod.EventBusSubscriber(Dist.CLIENT)
 @OnlyIn(Dist.CLIENT)
-public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
+public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {  // TODO tooltip line spacing
     public static final KeyBinding keyOpenGuiCraft = new KeyBinding(
             "jecalculation.key.gui_craft", GLFW.GLFW_KEY_UNKNOWN, "jecalculation.key.category");
     public static final KeyBinding keyOpenGuiMath = new KeyBinding(

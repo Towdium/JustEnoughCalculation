@@ -35,8 +35,8 @@ public class PickerSimple extends IPicker.Impl implements IGui {
      * @param labels label to be displayed for selection
      */
     public PickerSimple(List<ILabel> labels) {
-        WLabelScroll ls = new WLabelScroll(7, 33, 8, 7, false, true, false, true).setLabels(labels)
-                .setListener((i, v) -> notifyLsnr(i.get(v).getLabel()));
+        WLabelScroll ls = new WLabelScroll(7, 33, 8, 7, false).setLabels(labels)
+                .setLsnrClick((i, v) -> notifyLsnr(i.get(v).getLabel()));
         add(new WSearch(26, 7, 90, ls));
         add(new WIcon(7, 7, 20, 20, ICN_TEXT, "common.search"));
         add(ls);

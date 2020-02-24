@@ -9,6 +9,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import static me.towdium.jecalculation.gui.Resource.*;
+
 /**
  * Author: towdium
  * Date:   17-9-16.
@@ -18,11 +20,15 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 @OnlyIn(Dist.CLIENT)
 public class WScroll implements IWidget {
-    public int xPos, yPos, ySize, current;
+    public int xPos, yPos, ySize;
+    public float current;
     boolean active = false;
+    float step = 0f;
     public ListenerAction<? super WScroll> listener;
+    int height;
 
     public WScroll(int xPos, int yPos, int ySize) {
+        height = 17;
         this.xPos = xPos;
         this.yPos = yPos;
         this.ySize = ySize;
@@ -30,17 +36,24 @@ public class WScroll implements IWidget {
 
     @Override
     public void onDraw(JecaGui gui, int xMouse, int yMouse) {
-        gui.drawResourceContinuous(Resource.WGT_SLOT, xPos, yPos, 14, ySize, 3, 3, 3, 3);
-        gui.drawResource(Resource.WGT_SCROLL, xPos, yPos + current);
+        int offset = (int) (current * (ySize - height));
+        boolean in = mouseIn(xMouse, yMouse);
+        Resource r = in ? WGT_SCROLL_F : WGT_SCROLL_N;
+        gui.drawResourceContinuous(WGT_SLOT, xPos, yPos, 14, ySize, 3, 3, 3, 3);
+        gui.drawResourceContinuous(r, xPos, yPos + offset, 14, height, 3);
     }
 
     @Override
     public boolean onMouseDragged(JecaGui gui, int xMouse, int yMouse, int xDrag, int yDrag) {
-        if (mouseIn(xMouse, yMouse) || active) {
-            active = true;
-            setCurrent(yMouse - yPos - 9, true);
-            return true;
-        } else return false;
+        if (active) setCurrent(yMouse - yPos - height / 2, true);
+        return active;
+    }
+
+    @Override
+    public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
+        active = mouseIn(xMouse, yMouse);
+        if (active) setCurrent(yMouse - yPos - height / 2, true);
+        return active;
     }
 
     @Override
@@ -49,19 +62,43 @@ public class WScroll implements IWidget {
         return false;
     }
 
+    @Override
+    public boolean onMouseScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
+        boolean in = mouseIn(xMouse, yMouse);
+        if (in) setCurrent(getCurrent() - diff * step, true);
+        return in;
+    }
+
+    public WScroll setStep(float step) {
+        this.step = step;
+        return this;
+    }
+
+    public WScroll setRatio(float ratio) {
+        height = Math.max((int) ((ySize - 6) * ratio), 2) + 6;
+        return this;
+    }
+
     private void setCurrent(int pos, boolean notify) {
-        current = pos;
-        if (current < 0) current = 0;
-        if (current > ySize - 17) current = ySize - 17;
-        if (notify && listener != null) listener.invoke(this);
+        setCurrent(pos / (float) (ySize - height), notify);
     }
 
     public float getCurrent() {
-        return current / (ySize - 17f);
+        return current;
     }
 
-    public void setCurrent(float ratio) {
-        setCurrent((int) ((ySize - 17) * ratio), false);
+    public WScroll setCurrent(float ratio, boolean notify) {
+        //setCurrent((int) ((ySize - height) * ratio), false);
+        current = ratio;
+        if (current < 0) current = 0;
+        if (current > 1) current = 1;
+        if (notify && listener != null) listener.invoke(this);
+        return this;
+    }
+
+    public WScroll setCurrent(float ratio) {
+        setCurrent(ratio, false);
+        return this;
     }
 
     public boolean mouseIn(int xMouse, int yMouse) {

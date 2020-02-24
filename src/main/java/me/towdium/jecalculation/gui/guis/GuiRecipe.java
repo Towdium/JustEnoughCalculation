@@ -40,24 +40,21 @@ public class GuiRecipe extends WContainer implements IGui {
     Pair<String, Integer> dest;
     WSwitcher group = new WSwitcher(7, 7, 162, Controller.getGroups()).setListener(i -> refresh());
     WTextField text = new WTextField(49, 32, 119);
-    List<ILabel> input = new ArrayList<>();
-    List<ILabel> output = new ArrayList<>();
-    List<ILabel> catalyst = new ArrayList<>();
-    WLabelGroup mid = new WLabelGroup(29, 87, 7, 1, 20, 20, true, true);
-    WLabelGroup down = new WLabelGroup(29, 111, 7, 2, 20, 20, true, true);
-    WLabelGroup up = new WLabelGroup(29, 63, 7, 1, 20, 20, true, true);
-    WButton clear = new WButtonIcon(64, 32, 20, 20, BTN_DEL, "recipe.clear").setListener(i -> reset());
+    WLabelScroll catalyst = new WLabelScroll(25, 101, 7, 1, true);
+    WLabelScroll input = new WLabelScroll(25, 123, 7, 2, true);
+    WLabelScroll output = new WLabelScroll(25, 61, 7, 2, true);
+    WButton clear = new WButtonIcon(64, 25, 20, 20, BTN_DEL, "recipe.clear").setListener(i -> reset());
     // check duplicate and valid
-    WButton copy = new WButtonIcon(83, 32, 20, 20, BTN_COPY, "recipe.copy").setListener(i -> {
+    WButton copy = new WButtonIcon(83, 25, 20, 20, BTN_COPY, "recipe.copy").setListener(i -> {
         Controller.addRecipe(group.getText(), toRecipe());
         JecaGui.displayParent();
     });
-    WButton label = new WButtonIcon(45, 32, 20, 20, BTN_LABEL, "recipe.label").setListener(i ->
+    WButton label = new WButtonIcon(45, 25, 20, 20, BTN_LABEL, "recipe.label").setListener(i ->
             JecaGui.displayGui(new GuiLabel((l) -> {
                 JecaGui.displayParent();
                 JecaGui.getCurrent().hand = l;
             })));
-    WButton save = new WButtonIcon(26, 32, 20, 20, BTN_SAVE, "recipe.save").setDisabled(true).setListener(i -> {
+    WButton save = new WButtonIcon(26, 25, 20, 20, BTN_SAVE, "recipe.save").setDisabled(true).setListener(i -> {
         if (dest == null)
             Controller.addRecipe(group.getText(), toRecipe());
         else {
@@ -67,37 +64,43 @@ public class GuiRecipe extends WContainer implements IGui {
         }
         JecaGui.displayParent();
     });
-    WButton yes = new WButtonIcon(7, 32, 20, 20, BTN_YES, "recipe.confirm").setDisabled(true).setListener(i -> {
+    WButton yes = new WButtonIcon(7, 25, 20, 20, BTN_YES, "recipe.confirm").setDisabled(true).setListener(i -> {
         group.setText(text.getText());
         text.setText("");
         setNewGroup(false);
         refresh();
     });
-    WButton no = new WButtonIcon(26, 32, 20, 20, BTN_NO, "common.cancel").setListener(i -> setNewGroup(false));
-    WButton neu = new WButtonIcon(7, 32, 20, 20, BTN_NEW, "recipe.new").setListener(i -> setNewGroup(true));
+    WButton no = new WButtonIcon(26, 25, 20, 20, BTN_NO, "common.cancel").setListener(i -> setNewGroup(false));
+    WButton neu = new WButtonIcon(7, 25, 20, 20, BTN_NEW, "recipe.new").setListener(i -> setNewGroup(true));
 
     public GuiRecipe(String group, int index) {
         this();
         dest = new Pair<>(group, index);
         Recipe r = Controller.getRecipe(group, index);
-        input = r.getLabel(IO.INPUT).stream()
-                .map(ILabel::copy).collect(Collectors.toList());
-        catalyst = r.getLabel(IO.CATALYST).stream()
-                .map(ILabel::copy).collect(Collectors.toList());
-        output = r.getLabel(IO.OUTPUT).stream()
-                .map(ILabel::copy).collect(Collectors.toList());
+        for (IO i : IO.values()) {
+            getWidget(i).setLabels(r.getLabel(i).stream()
+                    .map(ILabel::copy).collect(Collectors.toList()));
+        }
         this.group.setIndex(Controller.getGroups().indexOf(group));
         refresh();
     }
 
     public GuiRecipe() {
-        for (IO i : IO.values()) setup(getWidget(i), i);
+        for (IO j : IO.values()) {
+            getWidget(j).setLsnrUpdate((i, v) -> refresh())
+                    .setFmtAmount(i -> i.getAmountString(false))
+                    .setFmtTooltip((i, k) -> i.getToolTip(k, true))
+                    .setLsnrClick((i, v) -> {
+                        ILabel l = i.get(v).getLabel();
+                        if (l != ILabel.EMPTY) add(new WAmount(i.get(v)));
+                    });
+        }
         add(new WHelp("recipe"), new WPanel());
-        add(new WIcon(7, 63, 22, 20, ICN_OUTPUT, "common.output"));
-        add(new WIcon(7, 87, 22, 20, ICN_CATALYST, "common.catalyst"));
-        add(new WIcon(7, 111, 22, 40, ICN_INPUT, "common.input"));
-        add(new WLine(57));
-        add(up, down, mid, group);
+        add(new WIcon(7, 61, 18, 36, ICN_OUTPUT, "common.output"));
+        add(new WIcon(7, 101, 18, 18, ICN_CATALYST, "common.catalyst"));
+        add(new WIcon(7, 123, 18, 36, ICN_INPUT, "common.input"));
+        add(new WLine(52));
+        add(catalyst, input, output, group);
         if (group.getTexts().isEmpty()) group.setText(Utilities.I18n.get("gui.common.default"));
         String last = Controller.getLast();
         int index = -1;
@@ -108,25 +111,8 @@ public class GuiRecipe extends WContainer implements IGui {
         text.setListener(i -> yes.setDisabled(i.getText().isEmpty()));
     }
 
-    public List<ILabel> getLabel(IO type) {
-        return Recipe.get(type, input, output, catalyst);
-    }
-
-    public WLabelGroup getWidget(IO type) {
-        return Recipe.get(type, down, up, mid);
-    }
-
-    private void setup(WLabelGroup w, IO type) {
-        w.setLsnrUpdate((i, v) -> {
-            List<ILabel> ls = getLabel(type);
-            while (ls.size() <= v) ls.add(ILabel.EMPTY);
-            ls.set(v, i.get(v).getLabel());
-            trim(ls);
-            refresh();
-        }).setLsnrClick((i, v) -> {
-            ILabel l = i.get(v).getLabel();
-            if (l != ILabel.EMPTY) add(new WAmount(i.get(v)));
-        });
+    public WLabelScroll getWidget(IO type) {
+        return Recipe.get(type, input, catalyst, output);
     }
 
     @Override
@@ -162,9 +148,7 @@ public class GuiRecipe extends WContainer implements IGui {
     }
 
     public void reset() {
-        input = new ArrayList<>();
-        catalyst = new ArrayList<>();
-        output = new ArrayList<>();
+        for (IO i : IO.values()) getWidget(i).setLabels(new ArrayList<>());
         // disambCache.clear();
         refresh();
     }
@@ -183,14 +167,14 @@ public class GuiRecipe extends WContainer implements IGui {
         // convert catalyst
         List<ILabel> catalysts = JecaPlugin.runtime.getRecipeManager().getRecipeCatalysts(recipe.getRecipeCategory())
                 .stream().map(ILabel.Converter::from).collect(Collectors.toList());
-        catalyst = new ArrayList<>();
-        catalyst.add(ILabel.CONVERTER.first(catalysts, recipe));
+        List<ILabel> tmp = new ArrayList<>();
+        tmp.add(ILabel.CONVERTER.first(catalysts, recipe));
+        catalyst.setLabels(tmp);
         //disambCache.put(14, catalysts);
 
-
         // generate disamb info according to content in list input/output
-        this.input = extract(input);
-        this.output = extract(output);
+        this.input.setLabels(extract(input));
+        this.output.setLabels(extract(output));
         refresh();
     }
 
@@ -225,21 +209,18 @@ public class GuiRecipe extends WContainer implements IGui {
         return ret;
     }
 
-    private void trim(List<ILabel> ls) {
+    private List<ILabel> trim(List<ILabel> ls) {
         for (int i = ls.size() - 1; i >= 0; i--) {
             if (ls.get(i) == ILabel.EMPTY) ls.remove(i);
         }
+        return ls;
     }
 
-    private Recipe toRecipe() {  // TODO
-        return new Recipe(input, catalyst, output);
+    private Recipe toRecipe() {
+        return new Recipe(trim(input.getLabels()), trim(catalyst.getLabels()), trim(output.getLabels()));
     }
 
     void refresh() {
-        up.setLabel(output, 0);
-        mid.setLabel(catalyst, 0);
-        down.setLabel(input, 0);
-
         try {
             Recipe r = toRecipe();
             boolean d = dest == null ? Controller.hasDuplicate(r) :
@@ -264,29 +245,29 @@ public class GuiRecipe extends WContainer implements IGui {
 
         public WAmount(WLabel w) {
             ref = w;
-            number = new WButtonText(ref.xPos + ref.xSize + 60, ref.yPos, 20, 20, "#", "general.to_percent")
+            number = new WButtonText(ref.xPos + ref.xSize + 60, ref.yPos - 1, 20, 20, "#", "general.to_percent")
                     .setListener(i -> {
                         temp.getLabel().setPercent(true);
                         update();
                     });
-            percent = new WButtonText(ref.xPos + ref.xSize + 60, ref.yPos, 20, 20, "%", "general.to_percent")
+            percent = new WButtonText(ref.xPos + ref.xSize + 60, ref.yPos - 1, 20, 20, "%", "general.to_percent")
                     .setListener(i -> {
                         temp.getLabel().setPercent(false);
                         update();
                     });
-            temp = new WLabel(ref.xPos, ref.yPos, ref.xSize, ref.ySize, false, true).setLsnrUpdate((i, v) -> update());
+            temp = new WLabel(ref.xPos, ref.yPos, ref.xSize, ref.ySize, true).setLsnrUpdate((i, v) -> update());
             temp.setLabel(ref.getLabel().copy());
             add(new WPanel(ref.xPos - 5, ref.yPos - 5, ref.xSize + 152, ref.ySize + 10));
             add(new WText(ref.xPos + ref.xSize + 3, ref.yPos + 5, PLAIN, "x"));
             text = new WTextField(ref.xPos + ref.xSize + 10, ref.yPos + ref.ySize / 2 - WTextField.HEIGHT / 2, 50);
-            pick = new WButtonIcon(ref.xPos + ref.xSize + 83, ref.yPos, 20, 20, BTN_PICK, "label.pick")
+            pick = new WButtonIcon(ref.xPos + ref.xSize + 83, ref.yPos - 1, 20, 20, BTN_PICK, "label.pick")
                     .setListener(i -> {
                         JecaGui.getCurrent().hand = temp.getLabel();
                         set(ILabel.EMPTY);
                     });
-            yes = new WButtonIcon(ref.xPos + ref.xSize + 102, ref.yPos, 20, 20, BTN_YES, "label.confirm")
+            yes = new WButtonIcon(ref.xPos + ref.xSize + 102, ref.yPos - 1, 20, 20, BTN_YES, "label.confirm")
                     .setListener(i -> set(temp.getLabel()));
-            no = new WButtonIcon(ref.xPos + ref.xSize + 121, ref.yPos, 20, 20, BTN_NO, "label.delete")
+            no = new WButtonIcon(ref.xPos + ref.xSize + 121, ref.yPos - 1, 20, 20, BTN_NO, "label.delete")
                     .setListener(i -> set(ILabel.EMPTY));
             add(temp, text, pick, yes, no);
             text.setListener(i -> {
@@ -305,7 +286,6 @@ public class GuiRecipe extends WContainer implements IGui {
                 temp.setLabel(temp.getLabel().setAmount(amount));
             });
             update();
-
         }
 
         private void set(ILabel l) {

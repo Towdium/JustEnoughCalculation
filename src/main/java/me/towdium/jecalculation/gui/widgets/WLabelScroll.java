@@ -10,6 +10,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -22,86 +23,114 @@ import java.util.stream.Collectors;
 @OnlyIn(Dist.CLIENT)
 public class WLabelScroll extends WContainer implements ISearchable {
     protected List<ILabel> labels = new ArrayList<>();
-    protected List<ILabel> filtered = new ArrayList<>();
+    protected List<ILabel> filtered = null;
     protected WLabelGroup labelGroup;
     protected WScroll scroll;
-    protected int xPos, yPos, column, row, current;
     protected String filter = "";
-    protected ListenerValue<? super WLabelScroll, Integer> lsnrUpdate;
-    protected ListenerValue<? super WLabelScroll, Integer> listener;
+    protected int xPos, yPos, column, row, current;
+    private ListenerValue<? super WLabelScroll, Integer> lsnrUpdate;
+    private ListenerValue<? super WLabelScroll, Integer> lsnrClick;
+    protected final boolean accept;
 
-    public WLabelScroll(int xPos, int yPos, int column, int row, boolean multiple, boolean accurate, boolean accept, boolean drawConnection) {
+    public WLabelScroll(int xPos, int yPos, int column, int row, boolean accept) {
+        this.accept = accept;
         this.xPos = xPos;
         this.yPos = yPos;
         this.column = column;
         this.row = row;
-        labelGroup = new WLabelGroup(xPos, yPos, column, row, multiple, accept)
-                .setLsnrUpdate((i, v) -> {
-                    if (lsnrUpdate != null) lsnrUpdate.invoke(this, column * current + v);
-                }).setLsnrClick((i, v) -> {
-                    if (listener != null) listener.invoke(this, column * current + v);
-                });
-        scroll = new WScroll(xPos + column * 18 + 4, yPos, row * 18).setListener(i -> update(i.getCurrent()));
+        labelGroup = new WLabelGroup(xPos, yPos, column, row, accept)
+                .setLsnrUpdate(this::onUpdate).setLsnrClick(this::onClick);
+        scroll = new WScroll(xPos + column * 18 + 4, yPos, row * 18)
+                .setListener(i -> update(i.getCurrent()))
+                .setStep(Float.POSITIVE_INFINITY)
+                .setRatio(1);
         add(labelGroup);
         add(scroll);
-        if (drawConnection) add(new WRectangle(xPos + column * 18, yPos, 4, row * 18, JecaGui.COLOR_GUI_GREY));
+        add(new WRectangle(xPos + column * 18, yPos, 4, row * 18, JecaGui.COLOR_GUI_GREY));
     }
 
     public void update(float f) {
         if (f < 0) f = 0;
         if (f > 1) f = 1;
-        int step = getStepAmount();
-        current = (int) (step * f);
-        if (current == step) current--;
-        labelGroup.setLabel(filtered, current * column);
-    }
-
-    @Override
-    public boolean onMouseScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
-        boolean in = JecaGui.mouseIn(xPos, yPos, column * 18, row * 18, xMouse, yMouse);
-        if (in) {
-            float pos = getPos(current - diff);
-            scroll.setCurrent(pos);
-            update(pos);
-        }
-        return in;
+        int amount = getAmountSteps();
+        current = (int) (amount * f);
+        if (current == amount) current--;
+        List<ILabel> ls = accept ? labels : filtered;
+        labelGroup.setLabel(ls, current * column);
+        float step = 1f / (amount - 1);
+        scroll.setRatio(Math.min(row / (float) getAmountRows(), 1f))
+                .setCurrent(f).setStep(step);
     }
 
     public WLabel get(int index) {
         return labelGroup.get(index - column * current);
     }
 
-    private float getPos(int step) {
-        return 1f / (getStepAmount() - 1) * step;
-    }
-
     public WLabelScroll setLabels(List<ILabel> labels) {
         this.labels = labels;
-        setFilter(filter);
+        if (accept) update(0);
+        else setFilter(filter);
         return this;
     }
 
     public boolean setFilter(String str) {
-        filter = str;
+        if (accept) throw new RuntimeException("Filtering not allowed when editing");
         filtered = labels.stream().filter(l -> I18n.contains(l.getDisplayName().toLowerCase(), str.toLowerCase()))
                 .collect(Collectors.toList());
-        scroll.setCurrent(0);
         update(0);
         return filtered.size() != 0;
     }
 
-    public WLabelScroll setListener(ListenerValue<? super WLabelScroll, Integer> listener) {
-        this.listener = listener;
+    public WLabelScroll setLsnrUpdate(ListenerValue<? super WLabelScroll, Integer> lsnrUpdate) {
+        this.lsnrUpdate = lsnrUpdate;
         return this;
     }
 
-    public WLabelScroll setFormatter(Function<ILabel, String> f) {
-        labelGroup.setFormatter(f);
+    public WLabelScroll setLsnrClick(ListenerValue<? super WLabelScroll, Integer> lsnrClick) {
+        this.lsnrClick = lsnrClick;
         return this;
     }
 
-    private int getStepAmount() {
-        int line = (labels.size() + column - 1) / column;
-        return Math.max(line - row + 1, 1);
+    public List<ILabel> getLabels() {
+        return new ArrayList<>(labels);
+    }
+
+    protected void onUpdate(WLabelGroup w, int index) {
+        ILabel l = w.get(index).getLabel();
+        int i = column * current + index;
+        while (labels.size() <= i) labels.add(ILabel.EMPTY);
+        labels.set(i, l);
+        if (lsnrUpdate != null) lsnrUpdate.invoke(this, i);
+
+        if (index + 1 == row * column && l != ILabel.EMPTY
+                && (row + current) * column == labels.size()) {
+            labels.add(ILabel.EMPTY);
+            int amount = getAmountSteps();
+            float step = 1f / (amount - 1);
+            update(step * current);
+        }
+    }
+
+    protected void onClick(WLabelGroup w, int index) {
+        if (lsnrClick != null) lsnrClick.invoke(this, column * current + index);
+    }
+
+    public WLabelScroll setFmtAmount(Function<ILabel, String> f) {
+        labelGroup.setFmtAmount(f);
+        return this;
+    }
+
+    public WLabelScroll setFmtTooltip(BiConsumer<ILabel, List<String>> f) {
+        labelGroup.setFmtTooltip(f);
+        return this;
+    }
+
+    protected int getAmountSteps() {
+        return Math.max(getAmountRows() - row + 1, 1);
+    }
+
+    protected int getAmountRows() {
+        List<ILabel> ls = accept ? labels : filtered;
+        return (ls.size() + column - 1) / column;
     }
 }

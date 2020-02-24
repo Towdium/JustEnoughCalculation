@@ -26,8 +26,8 @@ import static me.towdium.jecalculation.gui.Resource.*;
 @OnlyIn(Dist.CLIENT)
 public class GuiSearch extends WContainer implements IGui {
     IdentityHashMap<ILabel, Trio<Recipe, String, Integer>> recipes;
-    WLabelScroll labels = new WLabelScroll(7, 51, 8, 6, false, true, false, true)
-            .setListener((i, v) -> {
+    WLabelScroll labels = new WLabelScroll(7, 51, 8, 6, false)
+            .setLsnrClick((i, v) -> {
                 ILabel l = i.get(v).getLabel();
                 if (l != ILabel.EMPTY) add(new Overlay(i.get(v)));
             });
@@ -146,7 +146,7 @@ public class GuiSearch extends WContainer implements IGui {
             int x = l.xPos - 1;
             int y = l.yPos - 1;
             add(new WPanel(x - 5, y - 5, 72, 30));
-            add(new WLabel(x, y, 20, 20, false, false).setLabel(l.getLabel()));
+            add(new WLabel(x, y, 20, 20, false).setLabel(l.getLabel()));
             add(new WButtonIcon(x + 23, y, 20, 20, BTN_EDIT, "search.edit").setListener(i -> {
                 JecaGui.displayGui(true, true, new GuiRecipe(recipe.two, recipe.three));
                 GuiSearch.this.remove(this);

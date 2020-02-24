@@ -20,6 +20,7 @@ public class Resource {
             JustEnoughCalculation.MODID, "textures/gui/resources.png");
     // letters abbr for button & icon: N - normal, F - focused, D - disabled
     // letters abbr for fuzzy related: N - normal, F - fuzzy
+    // letters abbr for state related: N - normal, A - active
     public static final Resource BTN_LABEL_N = getIcon(0, 1);
     public static final Resource BTN_LABEL_F = getIcon(0, 0);
     public static final Resource BTN_NEW_N = getIcon(1, 1);
@@ -94,6 +95,12 @@ public class Resource {
     public static final Resource BTN_DELETE_1_N = getIcon(9, 4);
     public static final Resource BTN_DELETE_1_F = getIcon(9, 3);
     public static final Resource BTN_DELETE_1_D = getIcon(9, 5);
+    public static final Resource BTN_DOWN_N_N = getIcon(10, 4);
+    public static final Resource BTN_DOWN_N_F = getIcon(10, 3);
+    public static final Resource BTN_DOWN_A_N = getIcon(11, 4);
+    public static final Resource BTN_DOWN_A_F = getIcon(11, 3);
+    public static final Resource BTN_UP_N_N = getIcon(12, 4);
+    public static final Resource BTN_UP_N_F = getIcon(12, 3);
 
     public static final Resource WGT_BUTTON_N = getWidget(0);
     public static final Resource WGT_BUTTON_F = getWidget(1);
@@ -114,7 +121,8 @@ public class Resource {
     public static final Resource WGT_ARR_R_F = new Resource(112, 142, 7, 10);
     public static final Resource WGT_ARR_R_N = new Resource(119, 142, 7, 10);
     public static final Resource WGT_ARR_R_D = new Resource(126, 142, 7, 10);
-    public static final Resource WGT_SCROLL = new Resource(133, 132, 14, 17);
+    public static final Resource WGT_SCROLL_N = new Resource(133, 132, 14, 10);
+    public static final Resource WGT_SCROLL_F = new Resource(133, 142, 14, 10);
     public static final Resource WGT_HELP_F = new Resource(147, 132, 20, 20);
     public static final Resource WGT_HELP_N = new Resource(167, 132, 20, 20);
     public static final Resource WGT_LCD_UL_F = new Resource(187, 132, 4, 16);
@@ -194,6 +202,9 @@ public class Resource {
     public static final ResourceGroup BTN_PICK = new ResourceGroup(BTN_PICK_N, BTN_PICK_F);
     public static final ResourceGroup BTN_DELETE_N = new ResourceGroup(BTN_DELETE_N_N, BTN_DELETE_N_F, BTN_DELETE_N_D);
     public static final ResourceGroup BTN_DELETE_1 = new ResourceGroup(BTN_DELETE_1_N, BTN_DELETE_1_F, BTN_DELETE_1_D);
+    public static final ResourceGroup BTN_DOWN_N = new ResourceGroup(BTN_DOWN_N_N, BTN_DOWN_N_F);
+    public static final ResourceGroup BTN_DOWN_A = new ResourceGroup(BTN_DOWN_A_N, BTN_DOWN_A_F);
+    public static final ResourceGroup BTN_UP_N = new ResourceGroup(BTN_UP_N_N, BTN_UP_N_F);
 
     public static final ResourceGroup WGT_ARR_L = new ResourceGroup(WGT_ARR_L_N, WGT_ARR_L_F, WGT_ARR_L_D);
     public static final ResourceGroup WGT_ARR_R = new ResourceGroup(WGT_ARR_R_N, WGT_ARR_R_F, WGT_ARR_R_D);
