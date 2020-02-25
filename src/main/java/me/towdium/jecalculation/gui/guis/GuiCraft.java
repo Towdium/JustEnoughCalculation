@@ -24,6 +24,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static me.towdium.jecalculation.data.structure.RecordCraft.Mode.*;
 import static me.towdium.jecalculation.jei.JecaPlugin.runtime;
 
 /**
@@ -34,7 +35,6 @@ import static me.towdium.jecalculation.jei.JecaPlugin.runtime;
 @MethodsReturnNonnullByDefault
 @OnlyIn(Dist.CLIENT)
 public class GuiCraft extends WContainer implements IGui {
-    Mode mode = Mode.INPUT;
     ItemStack itemStack;
     Calculator calculator = null;
     RecordCraft record;
@@ -50,13 +50,13 @@ public class GuiCraft extends WContainer implements IGui {
             }).setFmtAmount(i -> i.getAmountString(true))
             .setFmtTooltip((i, j) -> i.getToolTip(j, true));
     WButton steps = new WButtonIcon(64, 62, 20, 20, Resource.BTN_LIST, "craft.step")
-            .setListener(i -> setMode(Mode.STEPS));
+            .setListener(i -> setMode(STEPS));
     WButton catalyst = new WButtonIcon(45, 62, 20, 20, Resource.BTN_CAT, "common.catalyst")
-            .setListener(i -> setMode(Mode.CATALYST));
+            .setListener(i -> setMode(CATALYST));
     WButton output = new WButtonIcon(26, 62, 20, 20, Resource.BTN_OUT, "craft.output")
-            .setListener(i -> setMode(Mode.OUTPUT));
+            .setListener(i -> setMode(OUTPUT));
     WButton input = new WButtonIcon(7, 62, 20, 20, Resource.BTN_IN, "common.input")
-            .setListener(i -> setMode(Mode.INPUT));
+            .setListener(i -> setMode(INPUT));
     WButton invE = new WButtonIcon(149, 62, 20, 20, Resource.BTN_INV_E, "craft.inventory_enabled");
     WButton invD = new WButtonIcon(149, 62, 20, 20, Resource.BTN_INV_D, "craft.inventory_disabled");
     WTextField amount = new WTextField(60, 7, 65).setListener(i -> {
@@ -99,7 +99,7 @@ public class GuiCraft extends WContainer implements IGui {
             refreshCalculator();
         });
         refreshRecent();
-        setMode(Mode.INPUT);
+        setMode(record.mode);
     }
 
     @Override
@@ -107,12 +107,13 @@ public class GuiCraft extends WContainer implements IGui {
         refreshCalculator();
     }
 
-    void setMode(Mode mode) {
-        this.mode = mode;
-        input.setDisabled(mode == Mode.INPUT);
-        output.setDisabled(mode == Mode.OUTPUT);
-        catalyst.setDisabled(mode == Mode.CATALYST);
-        steps.setDisabled(mode == Mode.STEPS);
+    void setMode(RecordCraft.Mode mode) {
+        record.mode = mode;
+        Controller.setRCraft(record, itemStack);
+        input.setDisabled(mode == INPUT);
+        output.setDisabled(mode == OUTPUT);
+        catalyst.setDisabled(mode == CATALYST);
+        steps.setDisabled(mode == STEPS);
         refreshResult();
     }
 
@@ -153,7 +154,7 @@ public class GuiCraft extends WContainer implements IGui {
         if (calculator == null) {
             result.setLabels(new ArrayList<>());
         } else {
-            switch (mode) {
+            switch (record.mode) {
                 case INPUT:
                     result.setLabels(calculator.getInputs());
                     break;
@@ -197,11 +198,6 @@ public class GuiCraft extends WContainer implements IGui {
                 .map(Optional::get)
                 .collect(Collectors.toList());
     }
-
-    enum Mode {
-        INPUT, OUTPUT, CATALYST, STEPS
-    }
-
 
     class Suggest extends WOverlay {
         boolean replace;
