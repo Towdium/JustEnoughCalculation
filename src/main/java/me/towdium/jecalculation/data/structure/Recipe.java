@@ -140,10 +140,6 @@ public class Recipe {
     }
 
     public enum IO {
-        INPUT, OUTPUT, CATALYST;
-
-        public int getSize() {
-            return this == INPUT ? 16 : 8;
-        }
+        INPUT, OUTPUT, CATALYST
     }
 }

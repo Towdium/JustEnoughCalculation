@@ -1,5 +1,6 @@
 package me.towdium.jecalculation.gui.widgets;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 import org.lwjgl.glfw.GLFW;
@@ -32,5 +33,13 @@ public class WOverlay extends WContainer {
     public boolean onMouseScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
         if (!super.onMouseScroll(gui, xMouse, yMouse, diff)) gui.root.remove(this);
         return true;
+    }
+
+    @Override
+    public void onDraw(JecaGui gui, int mouseX, int mouseY) {
+        GlStateManager.pushMatrix();
+        GlStateManager.translatef(0, 0, 40);
+        super.onDraw(gui, mouseX, mouseY);
+        GlStateManager.popMatrix();
     }
 }

@@ -38,8 +38,10 @@ public class GuiCraft extends WContainer implements IGui {
     ItemStack itemStack;
     Calculator calculator = null;
     RecordCraft record;
+    WLabel label = new WLabel(31, 7, 20, 20, true)
+            .setLsnrUpdate((i, v) -> refreshLabel(v, false, true));
     WLabelGroup recent = new WLabelGroup(7, 31, 8, 1, false)
-            .setLsnrClick((i, v) -> JecaGui.getCurrent().hand = i.get(v).getLabel());
+            .setLsnrClick((i, v) -> label.setLabel(i.get(v).getLabel().copy(), true));
     WLabelScroll result = new WLabelScroll(7, 87, 8, 4, false)
             .setLsnrClick((i, v) -> {
                 Object rep = i.get(v).getLabel().getRepresentation();
@@ -55,8 +57,6 @@ public class GuiCraft extends WContainer implements IGui {
             .setListener(i -> setMode(Mode.OUTPUT));
     WButton input = new WButtonIcon(7, 62, 20, 20, Resource.BTN_IN, "common.input")
             .setListener(i -> setMode(Mode.INPUT));
-    WLabel label = new WLabel(31, 7, 20, 20, true)
-            .setLsnrUpdate((i, v) -> refreshLabel(v, false, true));
     WButton invE = new WButtonIcon(149, 62, 20, 20, Resource.BTN_INV_E, "craft.inventory_enabled");
     WButton invD = new WButtonIcon(149, 62, 20, 20, Resource.BTN_INV_D, "craft.inventory_disabled");
     WTextField amount = new WTextField(60, 7, 65).setListener(i -> {
