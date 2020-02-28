@@ -72,6 +72,8 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {  // TODO t
     public static final int COLOR_TEXT_GREY = 0x404040;
     public static final int COLOR_TEXT_WHITE = 0xFFFFFF;
     public static final boolean ALWAYS_TOOLTIP = false;
+    @SuppressWarnings("StringOperationCanBeSimplified")
+    public static final String SEPARATOR = new String();
     public ILabel hand = ILabel.EMPTY;
     protected static JecaGui last;
     protected static Runnable scheduled;
@@ -214,8 +216,9 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {  // TODO t
     public static void onTooltip(RenderTooltipEvent.Pre event) {
         if (Minecraft.getInstance().currentScreen instanceof JecaGui) {
             JecaGui gui = getCurrent();
-            if (gui.root.onTooltip(gui, event.getX(), event.getY(), new ArrayList<>())
-                    && !event.getStack().isEmpty()) event.setCanceled(true);
+            boolean overlap = gui.root.onTooltip(gui, event.getX() - gui.guiLeft,
+                    event.getY() - gui.guiTop, new ArrayList<>());
+            if (overlap && !event.getStack().isEmpty()) event.setCanceled(true);
         }
     }
 
@@ -275,9 +278,55 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {  // TODO t
         GlStateManager.popMatrix();
         List<String> tooltip = new ArrayList<>();
         root.onTooltip(this, mouseX, mouseY, tooltip);
-        renderTooltip(tooltip, mouseX + guiLeft, mouseY + guiTop, font);
+        drawHoveringText(tooltip, mouseX + guiLeft, mouseY + guiTop, font);
         GlStateManager.enableLighting();
         GlStateManager.enableDepthTest();
+    }
+
+    // modified from vanilla
+    public void drawHoveringText(List<String> textLines, int x, int y, FontRenderer font) {
+        if (!textLines.isEmpty()) {
+            GlStateManager.disableRescaleNormal();
+            RenderHelper.disableStandardItemLighting();
+            GlStateManager.disableLighting();
+            GlStateManager.disableDepthTest();
+            int i = 0;
+            int separators = 0;
+            for (String s : textLines) {
+                int j = this.font.getStringWidth(s);
+                if (j > i) i = j;
+                //noinspection StringEquality
+                if (s == JecaGui.SEPARATOR) separators++;
+            }
+            //noinspection StringEquality
+            if (textLines.get(textLines.size() - 1) == SEPARATOR) separators--;
+            int l1 = x + 12;
+            int i2 = y - 12;
+            int k = 8 + (textLines.size() - separators - 1) * 10 + 2 * separators;
+            if (l1 + i > this.width) l1 -= 28 + i;
+            if (i2 + k + 6 > this.height) i2 = this.height - k - 6;
+            fillGradient(l1 - 3, i2 - 4, l1 + i + 3, i2 - 3, -267386864, -267386864);
+            fillGradient(l1 - 3, i2 + k + 3, l1 + i + 3, i2 + k + 4, -267386864, -267386864);
+            fillGradient(l1 - 3, i2 - 3, l1 + i + 3, i2 + k + 3, -267386864, -267386864);
+            fillGradient(l1 - 4, i2 - 3, l1 - 3, i2 + k + 3, -267386864, -267386864);
+            fillGradient(l1 + i + 3, i2 - 3, l1 + i + 4, i2 + k + 3, -267386864, -267386864);
+            fillGradient(l1 - 3, i2 - 3 + 1, l1 - 3 + 1, i2 + k + 3 - 1, 1347420415, 1344798847);
+            fillGradient(l1 + i + 2, i2 - 3 + 1, l1 + i + 3, i2 + k + 3 - 1, 1347420415, 1344798847);
+            fillGradient(l1 - 3, i2 - 3, l1 + i + 3, i2 - 3 + 1, 1347420415, 1347420415);
+            fillGradient(l1 - 3, i2 + k + 2, l1 + i + 3, i2 + k + 3, 1344798847, 1344798847);
+            for (String s1 : textLines) {
+                //noinspection StringEquality
+                if (s1 == SEPARATOR) i2 += 2;
+                else {
+                    font.drawStringWithShadow(s1, (float) l1, (float) i2, -1);
+                    i2 += 10;
+                }
+            }
+            GlStateManager.enableLighting();
+            GlStateManager.enableDepthTest();
+            RenderHelper.enableStandardItemLighting();
+            GlStateManager.enableRescaleNormal();
+        }
     }
 
     public void drawResource(Resource r, int xPos, int yPos) {

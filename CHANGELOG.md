@@ -119,31 +119,32 @@ Port to Minecraft 1.14
 
 #### 3.3.1
 
-Fix mouse scroll
+Fixed mouse scroll
 
 #### 3.3.2
 
-Fix crash on server side
+Fixed crash on server side
 
 #### 3.4.0
 
-Port client mode  
-Port key binding  
-Port commands  
-Port recipes
+Ported client mode  
+Ported key binding  
+Ported commands  
+Ported recipes
 
 #### 3.4.1
 
-Fix #65
+Fixed #65
 
 #### 3.4.2
 
-Fix crash on server start  
-Fix cannot pick labels in label editor  
-Fix cannot type E in textfield
+Fixed crash on server start  
+Fixed cannot pick labels in label editor  
+Fixed cannot type E in textfield
 
 #### 3.5.0
 
-Add support for variable sized recipes  
+Added support for variable sized recipes  
+Added save current tab in calculator GUI  
 Changed disambiguation settings to label-wise  
 Improved performance when merging tags

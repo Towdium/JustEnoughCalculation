@@ -75,6 +75,7 @@ public class WLabel implements IWidget {  // TODO clean up tooltip and amount fo
         if (!mouseIn(xMouse, yMouse)) return false;
         if (label != ILabel.EMPTY) {
             tooltip.add(label.getDisplayName());
+            tooltip.add(JecaGui.SEPARATOR);
             fmtTooltip.accept(label, tooltip);
         }
         return false;

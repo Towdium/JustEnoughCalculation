@@ -254,12 +254,12 @@ public class GuiRecipe extends WContainer implements IGui {
             ref = getWidget(type).get(idx);
             int x = ref.xPos;
             int y = ref.yPos;
-            number = new WButtonText(x + 78, y - 1, 20, 20, "#", "general.to_percent")
+            number = new WButtonText(x + 78, y - 1, 20, 20, "#", "recipe.to_percent")
                     .setListener(i -> {
                         temp.getLabel().setPercent(true);
                         update();
                     });
-            percent = new WButtonText(x + 78, y - 1, 20, 20, "%", "general.to_percent")
+            percent = new WButtonText(x + 78, y - 1, 20, 20, "%", "recipe.to_amount")
                     .setListener(i -> {
                         temp.getLabel().setPercent(false);
                         update();
@@ -269,16 +269,16 @@ public class GuiRecipe extends WContainer implements IGui {
             add(new WPanel(x - 7, y - 30, 111, 55));
             add(new WText(x + 21, y + 5, PLAIN, "x"));
             text = new WTextField(x + 28, y + 9 - WTextField.HEIGHT / 2, 50);
-            pick = new WButtonIcon(x + 21, y - 24, 20, 20, BTN_PICK, "label.pick")
+            pick = new WButtonIcon(x + 21, y - 24, 20, 20, BTN_PICK, "recipe.pick")
                     .setListener(i -> {
                         JecaGui.getCurrent().hand = temp.getLabel();
                         set(ILabel.EMPTY, type, idx);
                     });
-            yes = new WButtonIcon(x + 59, y - 24, 20, 20, BTN_YES, "label.confirm")
+            yes = new WButtonIcon(x + 59, y - 24, 20, 20, BTN_YES, "recipe.confirm")
                     .setListener(i -> set(temp.getLabel(), type, idx));
-            no = new WButtonIcon(x + 78, y - 24, 20, 20, BTN_NO, "label.delete")
+            no = new WButtonIcon(x + 78, y - 24, 20, 20, BTN_NO, "recipe.delete")
                     .setListener(i -> set(ILabel.EMPTY, type, idx));
-            disamb = new WButtonIcon(x + 40, y - 24, 20, 20, BTN_DISAMB, "label.disamb");
+            disamb = new WButtonIcon(x + 40, y - 24, 20, 20, BTN_DISAMB, "recipe.disamb");
             Map<Integer, List<ILabel>> entry = GuiRecipe.this.disamb.get(type);
             if (entry != null && entry.containsKey(idx)) {
                 disamb.setListener(i -> {
@@ -340,7 +340,7 @@ public class GuiRecipe extends WContainer implements IGui {
             content = new WLabelScroll(x + 8, y - 40, 4, 2, false)
                     .setLabels(disamb.get(type).get(idx))
                     .setLsnrClick((i, v) -> {
-                        ref.setLabel(i.get(v).getLabel().copy().multiply(-1), true);
+                        ref.setLabel(i.get(v).getLabel().copy().multiply(-1), false);
                         GuiRecipe.this.remove(this);
                         refresh();
                     });
