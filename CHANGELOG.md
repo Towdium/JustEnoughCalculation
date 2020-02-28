@@ -141,3 +141,9 @@ Fix #65
 Fix crash on server start  
 Fix cannot pick labels in label editor  
 Fix cannot type E in textfield
+
+#### 3.5.0
+
+Add support for variable sized recipes  
+Changed disambiguation settings to label-wise  
+Improved performance when merging tags
