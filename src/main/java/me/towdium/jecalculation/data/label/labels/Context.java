@@ -32,6 +32,12 @@ public interface Context<T> {
                 records.getAllElements().stream().map(this::create);
     }
 
+    default boolean matches(ResourceLocation tag, LStack<?> t) {
+        Tag<T> records = tags().get(tag);
+        //noinspection unchecked
+        return records != null && t.getContext() == this && records.contains((T) t.get());
+    }
+
     Context<Item> ITEM = new Context<Item>() {
         @Override
         public LStack<Item> create(Item item) {

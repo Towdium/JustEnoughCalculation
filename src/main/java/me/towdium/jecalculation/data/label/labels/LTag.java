@@ -25,7 +25,6 @@ import java.util.stream.Stream;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public abstract class LTag<T> extends LContext<T> {
-    //public static final String IDENTIFIER = "tag";
     public static final String KEY_NAME = "name";
 
     protected ResourceLocation name;
@@ -62,10 +61,8 @@ public abstract class LTag<T> extends LContext<T> {
         if (a instanceof LTag && b instanceof LStack) {
             LTag<?> lt = (LTag<?>) a;
             LStack<?> ls = (LStack<?>) b;
-            return lt.getContext() == ls.getContext()
-                    && lt.getAmount() * ls.getAmount() < 0
-                    && lt.getContext().discover(lt.name)
-                    .anyMatch(i -> MERGER.merge(i, ls).isPresent());
+            return lt.getAmount() * ls.getAmount() < 0
+                    && lt.getContext().matches(lt.name, ls);
         }
         return false;
     }
