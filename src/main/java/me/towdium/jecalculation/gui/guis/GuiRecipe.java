@@ -175,17 +175,19 @@ public class GuiRecipe extends WContainer implements IGui {
     private void merge(EnumMap<IO, List<Trio<ILabel, CostList, CostList>>> dst, List<?> objs, IRecipeLayout context, IO type) {
         List<ILabel> list = objs.stream().map(ILabel.Converter::from).collect(Collectors.toList());
         if (list.isEmpty()) return;
+        ILabel rep = list.get(0).copy();
+        if (type == IO.INPUT && list.size() != 1) rep = ILabel.CONVERTER.first(list, context);
+        ILabel fin = rep;
+
         dst.computeIfAbsent(type, i -> new ArrayList<>()).stream().filter(p -> {
             CostList cl = new CostList(list);
             if (p.three.equals(cl)) {
-                ILabel.MERGER.merge(p.one, ILabel.CONVERTER.first(list, context)).ifPresent(i -> p.one = i);
+                ILabel.MERGER.merge(p.one, fin).ifPresent(i -> p.one = i);
                 p.two = p.two.merge(cl, true, false);
                 return true;
             } else return false;
         }).findAny().orElseGet(() -> {
-            ILabel rep = list.get(0).copy();
-            if (type == IO.INPUT && list.size() != 1) rep = ILabel.CONVERTER.first(list, context);
-            Trio<ILabel, CostList, CostList> ret = new Trio<>(rep, new CostList(list), new CostList(list));
+            Trio<ILabel, CostList, CostList> ret = new Trio<>(fin, new CostList(list), new CostList(list));
             dst.get(type).add(ret);
             return ret;
         });
