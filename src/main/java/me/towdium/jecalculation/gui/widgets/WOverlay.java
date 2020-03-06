@@ -1,6 +1,6 @@
 package me.towdium.jecalculation.gui.widgets;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 import org.lwjgl.glfw.GLFW;
@@ -37,9 +37,9 @@ public class WOverlay extends WContainer {
 
     @Override
     public void onDraw(JecaGui gui, int mouseX, int mouseY) {
-        GlStateManager.pushMatrix();
-        GlStateManager.translatef(0, 0, 40);
+        RenderSystem.pushMatrix();
+        RenderSystem.translatef(0, 0, 100);
         super.onDraw(gui, mouseX, mouseY);
-        GlStateManager.popMatrix();
+        RenderSystem.popMatrix();
     }
 }

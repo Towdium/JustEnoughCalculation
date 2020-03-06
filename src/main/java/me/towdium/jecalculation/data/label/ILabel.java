@@ -1,6 +1,6 @@
 package me.towdium.jecalculation.data.label;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.label.labels.*;
@@ -393,10 +393,6 @@ public interface ILabel {
         public String getIdentifier() {
             return IDENTIFIER;
         }
-
-//        @Override
-//        public void drawLabel(JecaGui gui, int xPos, int yPos, boolean center) {
-//        }
     }
 
     abstract class Impl implements ILabel {
@@ -431,10 +427,10 @@ public interface ILabel {
 
         @Override
         public void drawLabel(JecaGui gui, int xPos, int yPos, boolean center) {
-            GlStateManager.pushMatrix();
-            GlStateManager.translatef(center ? xPos - 8 : xPos, center ? yPos - 8 : yPos, 0);
+            RenderSystem.pushMatrix();
+            RenderSystem.translatef(center ? xPos - 8 : xPos, center ? yPos - 8 : yPos, 0);
             drawLabel(gui);
-            GlStateManager.popMatrix();
+            RenderSystem.popMatrix();
         }
 
         abstract protected void drawLabel(JecaGui gui);

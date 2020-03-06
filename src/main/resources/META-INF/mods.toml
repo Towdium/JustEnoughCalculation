@@ -13,6 +13,6 @@ description="A simple mod to help you with recipe calculation."
 [[dependencies.jecalculation]]
     modId="jei"
     mandatory=true
-    versionRange="[6.0.0.13,)"
+    versionRange="[6.0.0.2,)"
     ordering="AFTER"
     side="BOTH"

@@ -5,6 +5,7 @@ import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
@@ -101,11 +102,15 @@ public class Utilities {
         FluidStack fs = new FluidStack(fluid, 1000);
         String name = fs.getDisplayName().getFormattedText();
         if (name.equals("lava") || name.equals("water")) return "Minecraft";
-        else return getModName(fluid.getAttributes().getStill(fs).getNamespace());
+        else return getModName(fluid.getAttributes().getStillTexture(fs).getNamespace());
     }
 
     public static CompoundNBT getTag(ItemStack is) {
         return is.getOrCreateChildTag(JustEnoughCalculation.MODID);
+    }
+
+    public static ClientPlayerEntity getPlayer() {
+        return Objects.requireNonNull(Minecraft.getInstance().player);
     }
 
     public static class Relation<K, V> {

@@ -37,7 +37,7 @@ import static me.towdium.jecalculation.gui.Resource.*;
 public class GuiRecipe extends WContainer implements IGui {
     Pair<String, Integer> dest;
     WSwitcher group = new WSwitcher(7, 7, 162, Controller.getGroups()).setListener(i -> refresh());
-    WTextField text = new WTextField(49, 32, 119);
+    WTextField text = new WTextField(49, 25, 119);
     WLabelScroll catalyst = new WLabelScroll(25, 101, 7, 1, true);
     WLabelScroll input = new WLabelScroll(25, 123, 7, 2, true);
     WLabelScroll output = new WLabelScroll(25, 61, 7, 2, true);

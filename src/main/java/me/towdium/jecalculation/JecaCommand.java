@@ -22,6 +22,7 @@ import net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
+import static me.towdium.jecalculation.utils.Utilities.getPlayer;
 import static net.minecraft.util.text.TextFormatting.*;
 import static net.minecraft.util.text.event.ClickEvent.Action.SUGGEST_COMMAND;
 
@@ -36,7 +37,7 @@ public class JecaCommand {
             LiteralArgumentBuilder<ISuggestionProvider> lab = LiteralArgumentBuilder.<ISuggestionProvider>literal("jeca")
                     .executes((c) -> {
                         String key = "jecalculation.chat.help";
-                        Minecraft.getInstance().player.sendMessage(new TranslationTextComponent(key));
+                        getPlayer().sendMessage(new TranslationTextComponent(key));
                         return 0;
                     })
                     .then(LiteralArgumentBuilder.<ISuggestionProvider>literal("craft")
@@ -45,7 +46,7 @@ public class JecaCommand {
                             .executes((c) -> JecaGui.openGuiMath(null)));
             dispatcher = new CommandDispatcher<>();
             dispatcher.register(lab);
-            Minecraft.getInstance().player.connection.func_195515_i().register(lab);
+            getPlayer().connection.getCommandDispatcher().register(lab);
             active = true;
         }
     }
@@ -58,7 +59,7 @@ public class JecaCommand {
 
     @SubscribeEvent
     public static void onCommand(ClientChatEvent event) {
-        CommandSource cs = Minecraft.getInstance().player.getCommandSource();
+        CommandSource cs = getPlayer().getCommandSource();
         String msg = event.getMessage();
         if (msg.startsWith("/jeca ") || msg.equals("/jeca")) {
             event.setCanceled(true);

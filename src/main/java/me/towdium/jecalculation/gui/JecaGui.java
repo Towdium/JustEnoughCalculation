@@ -1,6 +1,6 @@
 package me.towdium.jecalculation.gui;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
@@ -15,7 +15,6 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.PlayerEntity;
@@ -23,6 +22,7 @@ import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.concurrent.ThreadTaskExecutor;
@@ -41,7 +41,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.client.config.GuiUtils;
+import net.minecraftforge.fml.client.gui.GuiUtils;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
 
@@ -51,6 +51,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static me.towdium.jecalculation.utils.Utilities.getPlayer;
 import static net.minecraftforge.fml.LogicalSidedProvider.WORKQUEUE;
 import static net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus.MOD;
 
@@ -62,7 +63,7 @@ import static net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus.MOD;
 @MethodsReturnNonnullByDefault
 @Mod.EventBusSubscriber(Dist.CLIENT)
 @OnlyIn(Dist.CLIENT)
-public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {  // TODO tooltip line spacing
+public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
     public static final KeyBinding keyOpenGuiCraft = new KeyBinding(
             "jecalculation.key.gui_craft", GLFW.GLFW_KEY_UNKNOWN, "jecalculation.key.category");
     public static final KeyBinding keyOpenGuiMath = new KeyBinding(
@@ -87,7 +88,7 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {  // TODO t
 
     public JecaGui(@Nullable JecaGui parent, boolean acceptsTransfer, IGui root) {
         super(acceptsTransfer ? new JecaGui.ContainerTransfer() : new JecaGui.ContainerNonTransfer(),
-                Minecraft.getInstance().player.inventory, new StringTextComponent(""));
+                getPlayer().inventory, new StringTextComponent(""));
         this.parent = parent;
         this.root = root;
         if (container != null) container.setGui(this);
@@ -96,13 +97,13 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {  // TODO t
     public static int getMouseX() {
         JecaGui gui = getCurrent();
         Minecraft mc = Objects.requireNonNull(gui.minecraft, "Internal error");
-        return (int) mc.mouseHelper.getMouseX() * mc.mainWindow.getScaledWidth() / mc.mainWindow.getWidth() - gui.guiLeft;
+        return (int) mc.mouseHelper.getMouseX() * mc.getMainWindow().getScaledWidth() / mc.getMainWindow().getWidth() - gui.guiLeft;
     }
 
     public static int getMouseY() {
         JecaGui gui = getCurrent();
         Minecraft mc = Objects.requireNonNull(gui.minecraft, "Internal error");
-        return (int) mc.mouseHelper.getMouseY() * mc.mainWindow.getScaledHeight() / mc.mainWindow.getHeight() - gui.guiTop;
+        return (int) mc.mouseHelper.getMouseY() * mc.getMainWindow().getScaledHeight() / mc.getMainWindow().getHeight() - gui.guiTop;
     }
 
 
@@ -237,7 +238,7 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {  // TODO t
     public static int openGuiMath(@Nullable ItemStack is) {
         boolean ret = is == null && Controller.isServerActive();
         String s = "jecalculation.chat.server_mode";
-        if (ret) Minecraft.getInstance().player.sendMessage(new TranslationTextComponent(s));
+        if (ret) getPlayer().sendMessage(new TranslationTextComponent(s));
         else JecaGui.displayGui(true, true, new GuiMath(is));
         return ret ? 1 : 0;
     }
@@ -246,7 +247,7 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {  // TODO t
     public static int openGuiCraft(@Nullable ItemStack is) {
         boolean ret = is == null && Controller.isServerActive();
         String s = "jecalculation.chat.server_mode";
-        if (ret) Minecraft.getInstance().player.sendMessage(new TranslationTextComponent(s));
+        if (ret) getPlayer().sendMessage(new TranslationTextComponent(s));
         else JecaGui.displayGui(true, true, new GuiCraft(is));
         return ret ? 1 : 0;
     }
@@ -266,30 +267,26 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {  // TODO t
         super.render(mouseX, mouseY, partialTicks);
         mouseX -= guiLeft;
         mouseY -= guiTop;
-        GlStateManager.pushMatrix();
-        GlStateManager.translatef(guiLeft, guiTop, 0);
-        GlStateManager.disableLighting();
-        GlStateManager.disableDepthTest();
+        RenderSystem.pushMatrix();
+        RenderSystem.translatef(guiLeft, guiTop, 0);
         root.onDraw(this, mouseX, mouseY);
-        GlStateManager.popMatrix();
-        GlStateManager.pushMatrix();
-        GlStateManager.translatef(0, 0, 80);
+        RenderSystem.popMatrix();
+        RenderSystem.pushMatrix();
+        RenderSystem.translatef(0, 0, 80);
         hand.drawLabel(this, mouseX + guiLeft, mouseY + guiTop, true);
-        GlStateManager.popMatrix();
+        RenderSystem.popMatrix();
         List<String> tooltip = new ArrayList<>();
         root.onTooltip(this, mouseX, mouseY, tooltip);
         drawHoveringText(tooltip, mouseX + guiLeft, mouseY + guiTop, font);
-        GlStateManager.enableLighting();
-        GlStateManager.enableDepthTest();
     }
 
     // modified from vanilla
     public void drawHoveringText(List<String> textLines, int x, int y, FontRenderer font) {
         if (!textLines.isEmpty()) {
-            GlStateManager.disableRescaleNormal();
-            RenderHelper.disableStandardItemLighting();
-            GlStateManager.disableLighting();
-            GlStateManager.disableDepthTest();
+            RenderSystem.disableRescaleNormal();
+            RenderSystem.disableDepthTest();
+            RenderSystem.pushMatrix();
+            RenderSystem.translatef(0, 0, 300);
             int i = 0;
             int separators = 0;
             for (String s : textLines) {
@@ -322,10 +319,9 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {  // TODO t
                     i2 += 10;
                 }
             }
-            GlStateManager.enableLighting();
-            GlStateManager.enableDepthTest();
-            RenderHelper.enableStandardItemLighting();
-            GlStateManager.enableRescaleNormal();
+            RenderSystem.popMatrix();
+            RenderSystem.enableDepthTest();
+            RenderSystem.enableRescaleNormal();
         }
     }
 
@@ -355,13 +351,14 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {  // TODO t
         float green = (color >> 8 & 0xFF) / 255.0F;
         float blue = (color & 0xFF) / 255.0F;
         float alpha = (~(color >> 24) & 0xFF) / 255.0F;
-        GlStateManager.color4f(red, green, blue, alpha);
+        RenderSystem.color4f(red, green, blue, alpha);
     }
 
-    public void drawFluid(Fluid f, int xPos, int yPos, int xSize, int ySize) {  // getStill
-        TextureAtlasSprite fluidTexture = Objects.requireNonNull(minecraft).getTextureMap()
+    public void drawFluid(Fluid f, int xPos, int yPos, int xSize, int ySize) {
+        TextureAtlasSprite fluidTexture = Objects.requireNonNull(minecraft)
+                .getModelManager().getAtlasTexture(PlayerContainer.LOCATION_BLOCKS_TEXTURE)
                 .getSprite(f.getFluid().getAttributes().getStillTexture());
-        minecraft.textureManager.bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
+        minecraft.textureManager.bindTexture(PlayerContainer.LOCATION_BLOCKS_TEXTURE);
         setColor(f.getAttributes().getColor() & 0x00FFFFFF);
         blit(xPos, yPos, 0, xSize, ySize, fluidTexture);
     }
@@ -408,11 +405,11 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {  // TODO t
     private void drawText(float xPos, float yPos, Font f, Runnable r) {
         boolean unicode = font.getBidiFlag();
         if (f.raw) font.setBidiFlag(false);
-        GlStateManager.pushMatrix();
-        GlStateManager.translatef(xPos, yPos, 0);
-        if (f.half) GlStateManager.scalef(0.5f, 0.5f, 1);
+        RenderSystem.pushMatrix();
+        RenderSystem.translatef(xPos, yPos, 200);
+        if (f.half) RenderSystem.scalef(0.5f, 0.5f, 1);
         r.run();
-        GlStateManager.popMatrix();
+        RenderSystem.popMatrix();
         font.setBidiFlag(unicode);
     }
 
@@ -421,15 +418,14 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {  // TODO t
             xPos -= 8;
             yPos -= 8;
         }
-        GlStateManager.enableDepthTest();
-        RenderHelper.enableGUIStandardItemLighting();
+        RenderSystem.enableDepthTest();
         FontRenderer font = is.getItem().getFontRenderer(is);
         if (font == null) font = this.font;
         itemRenderer.renderItemAndEffectIntoGUI(is, xPos, yPos);
         itemRenderer.renderItemOverlayIntoGUI(font, is, xPos, yPos, null);
         itemRenderer.renderItemIntoGUI(is, xPos, yPos);
         RenderHelper.disableStandardItemLighting();
-        GlStateManager.disableDepthTest();
+        RenderSystem.disableDepthTest();
     }
 
     @Override

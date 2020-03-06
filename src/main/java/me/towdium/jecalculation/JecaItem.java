@@ -8,7 +8,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import net.minecraftforge.event.RegistryEvent;
@@ -51,7 +50,7 @@ public class JecaItem extends Item {
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
         ItemStack is = playerIn.getHeldItem(handIn);
-        if (playerIn.isSneaking()) {
+        if (playerIn.isShiftKeyDown()) {
             ItemStack neu = new ItemStack(is.getItem() == CRAFT ? MATH : CRAFT);
             neu.setTag(is.getTag());
             PlayerInventory inv = playerIn.inventory;
@@ -62,6 +61,6 @@ public class JecaItem extends Item {
             else if (is.getItem() == MATH) JecaGui.openGuiMath(is);
             else throw new RuntimeException("Internal error");
         }
-        return ActionResult.newResult(ActionResultType.SUCCESS, is);
+        return ActionResult.resultSuccess(is);
     }
 }
