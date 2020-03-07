@@ -36,9 +36,10 @@ public class WText implements IWidget {
     }
 
     @Override
-    public void onDraw(JecaGui gui, int xMouse, int yMouse) {
+    public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
         int x = xPos + (centred ? xSize / 2 - font.getTextWidth(key) / 2 : 0);
         if (xSize == UNDEFINED) gui.drawText(x, yPos, font, key);
         else gui.drawText(x, yPos, xSize, font, key);
+        return false;
     }
 }

@@ -32,8 +32,9 @@ public abstract class WTooltip implements IWidget {
     }
 
     @Override
-    public void onDraw(JecaGui gui, int xMouse, int yMouse) {
+    public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
         if (name != null) timer.setState(mouseIn(xMouse, yMouse));
+        return false;
     }
 
     @Override

@@ -11,7 +11,6 @@ import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.gui.widgets.*;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import mezz.jei.api.recipe.IFocus;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -26,6 +25,7 @@ import java.util.stream.Stream;
 
 import static me.towdium.jecalculation.data.structure.RecordCraft.Mode.*;
 import static me.towdium.jecalculation.jei.JecaPlugin.runtime;
+import static me.towdium.jecalculation.utils.Utilities.getPlayer;
 
 /**
  * Author: towdium
@@ -138,7 +138,7 @@ public class GuiCraft extends WContainer implements IGui {
     }
 
     List<ILabel> getInventory() {
-        PlayerInventory inv = Minecraft.getInstance().player.inventory;
+        PlayerInventory inv = getPlayer().inventory;
         ArrayList<ILabel> labels = new ArrayList<>();
         Consumer<List<ItemStack>> add = i -> i.stream()
                 .filter(j -> !j.isEmpty())
@@ -187,7 +187,7 @@ public class GuiCraft extends WContainer implements IGui {
             });
             match.addAll(fuzzy);
             List<ILabel> list = new ArrayList<>(match);
-            if (!match.isEmpty()) add(new Suggest(list.size() > 3 ? list.subList(0, 3) : list, !dup));
+            if (!match.isEmpty()) setOverlay(new Suggest(list.size() > 3 ? list.subList(0, 3) : list, !dup));
         }
     }
 
@@ -217,7 +217,7 @@ public class GuiCraft extends WContainer implements IGui {
         }
 
         public void refresh(ILabel l) {
-            GuiCraft.this.remove(this);
+            GuiCraft.this.setOverlay(null);
             refreshLabel(l, replace, false);
         }
     }

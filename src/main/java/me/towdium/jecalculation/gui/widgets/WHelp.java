@@ -36,10 +36,11 @@ public class WHelp extends WContainer {
         }
 
         @Override
-        public void onDraw(JecaGui gui, int xMouse, int yMouse) {
+        public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
             super.onDraw(gui, xMouse, yMouse);
             gui.drawResourceContinuous(WGT_PANEL_N, -21, 0, 25, 24, 4);
             gui.drawResource(WGT_HELP_N, -19, 2);
+            return false;
         }
 
         @Override
@@ -105,8 +106,9 @@ public class WHelp extends WContainer {
             }
 
             @Override
-            public void onDraw(JecaGui gui, int xMouse, int yMouse) {
+            public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
                 gui.drawSplitText(7, 21, PLAIN, pages.get(page));
+                return false;
             }
 
             public int amount() {
@@ -124,10 +126,11 @@ public class WHelp extends WContainer {
             }
 
             @Override
-            public void onDraw(JecaGui gui, int xMouse, int yMouse) {
+            public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
                 super.onDraw(gui, xMouse, yMouse);
                 gui.drawResourceContinuous(WGT_HELP_B, -21, 0, 25, 24, 4);
                 gui.drawResource(WGT_HELP_F, -19, 2);
+                return false;
             }
 
             @Override

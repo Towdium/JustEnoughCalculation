@@ -18,28 +18,29 @@ public class WOverlay extends WContainer {
     public boolean onKeyPressed(JecaGui gui, int key, int modifier) {
         if (super.onKeyPressed(gui, key, modifier)) return true;
         if (key == GLFW.GLFW_KEY_ESCAPE) {
-            gui.root.remove(this);
+            gui.root.setOverlay(null);
             return true;
         } else return false;
     }
 
     @Override
     public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
-        if (!super.onMouseClicked(gui, xMouse, yMouse, button)) gui.root.remove(this);
+        if (!super.onMouseClicked(gui, xMouse, yMouse, button)) gui.root.setOverlay(null);
         return true;
     }
 
     @Override
     public boolean onMouseScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
-        if (!super.onMouseScroll(gui, xMouse, yMouse, diff)) gui.root.remove(this);
+        if (!super.onMouseScroll(gui, xMouse, yMouse, diff)) gui.root.setOverlay(null);
         return true;
     }
 
     @Override
-    public void onDraw(JecaGui gui, int mouseX, int mouseY) {
+    public boolean onDraw(JecaGui gui, int mouseX, int mouseY) {
         RenderSystem.pushMatrix();
         RenderSystem.translatef(0, 0, 100);
         super.onDraw(gui, mouseX, mouseY);
         RenderSystem.popMatrix();
+        return false;
     }
 }

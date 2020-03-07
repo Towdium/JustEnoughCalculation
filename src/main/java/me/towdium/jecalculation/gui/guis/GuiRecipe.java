@@ -90,7 +90,7 @@ public class GuiRecipe extends WContainer implements IGui {
                     .setFmtTooltip((i, k) -> i.getToolTip(k, true))
                     .setLsnrClick((i, v) -> {
                         ILabel l = i.get(v).getLabel();
-                        if (l != ILabel.EMPTY) add(new WAmount(j, v));
+                        if (l != ILabel.EMPTY) setOverlay(new WAmount(j, v));
                     })
                     .setLsnrUpdate((i, v) -> {
                         refresh();
@@ -281,10 +281,7 @@ public class GuiRecipe extends WContainer implements IGui {
             disamb = new WButtonIcon(x + 40, y - 24, 20, 20, BTN_DISAMB, "recipe.disamb");
             Map<Integer, List<ILabel>> entry = GuiRecipe.this.disamb.get(type);
             if (entry != null && entry.containsKey(idx)) {
-                disamb.setListener(i -> {
-                    GuiRecipe.this.remove(this);
-                    GuiRecipe.this.add(new WDisamb(type, idx));
-                });
+                disamb.setListener(i -> GuiRecipe.this.setOverlay(new WDisamb(type, idx)));
             } else disamb.setDisabled(true);
             add(temp, text, pick, yes, no, disamb);
             text.setListener(i -> {
@@ -308,7 +305,7 @@ public class GuiRecipe extends WContainer implements IGui {
         private void set(ILabel l, IO type, int idx) {
             ref.setLabel(l, true);
             removeDisamb(type, idx);
-            GuiRecipe.this.remove(this);
+            GuiRecipe.this.setOverlay(null);
         }
 
         private void update() {
@@ -341,7 +338,7 @@ public class GuiRecipe extends WContainer implements IGui {
                     .setLabels(disamb.get(type).get(idx))
                     .setLsnrClick((i, v) -> {
                         ref.setLabel(i.get(v).getLabel().copy().multiply(-1), false);
-                        GuiRecipe.this.remove(this);
+                        GuiRecipe.this.setOverlay(null);
                         refresh();
                     });
             add(new WIcon(x + 22, y - 1, 20, 20, ICN_TEXT, "common.search"));

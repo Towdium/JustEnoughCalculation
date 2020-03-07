@@ -88,11 +88,11 @@ public class WTick extends WContainer {
         }
 
         @Override
-        public void onDraw(JecaGui gui, int xMouse, int yMouse) {
-            super.onDraw(gui, xMouse, yMouse);
-            boolean hovered = JecaGui.mouseIn(xPos + 1, yPos + 1, xSize - 2, ySize - 2, xMouse, yMouse);
-            gui.drawResourceContinuous(disabled ? WGT_BUTTON_S_D : (hovered ? WGT_BUTTON_S_F : WGT_BUTTON_S_N)
+        public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
+            boolean ret = super.onDraw(gui, xMouse, yMouse);
+            gui.drawResourceContinuous(disabled ? WGT_BUTTON_S_D : (ret ? WGT_BUTTON_S_F : WGT_BUTTON_S_N)
                     , xPos, yPos, xSize, ySize, 5, 5, 5, 5);
+            return ret;
         }
     }
 }

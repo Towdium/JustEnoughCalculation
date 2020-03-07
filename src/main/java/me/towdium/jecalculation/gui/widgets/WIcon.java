@@ -23,11 +23,11 @@ public class WIcon extends WTooltip {
     public Resource normal, focused;
 
     public WIcon(int xPos, int yPos, int xSize, int ySize, Resource.ResourceGroup res) {
-        this(xPos, yPos, xSize, ySize, res.normal, res.focused, null);
+        this(xPos, yPos, xSize, ySize, res.one, res.two, null);
     }
 
     public WIcon(int xPos, int yPos, int xSize, int ySize, Resource.ResourceGroup res, String name) {
-        this(xPos, yPos, xSize, ySize, res.normal, res.focused, name);
+        this(xPos, yPos, xSize, ySize, res.one, res.two, name);
     }
 
     private WIcon(int xPos, int yPos, int xSize, int ySize,
@@ -42,11 +42,12 @@ public class WIcon extends WTooltip {
     }
 
     @Override
-    public void onDraw(JecaGui gui, int xMouse, int yMouse) {
+    public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
         super.onDraw(gui, xMouse, yMouse);
         gui.drawRectangle(xPos, yPos, xSize, ySize, COLOR_GUI_GREY);
         Resource r = mouseIn(xMouse, yMouse) ? focused : normal;
         gui.drawResource(r, (xSize - r.getXSize()) / 2 + xPos, (ySize - r.getYSize()) / 2 + yPos);
+        return false;
     }
 
     @Override

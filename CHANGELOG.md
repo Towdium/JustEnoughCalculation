@@ -148,3 +148,7 @@ Added support for variable sized recipes
 Added save current tab in calculator GUI  
 Changed disambiguation settings to label-wise  
 Improved performance when merging tags
+
+#### 3.6.0
+
+Changed to 1.15 art style

@@ -14,7 +14,7 @@ import java.util.List;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public interface IWidget {
-    void onDraw(JecaGui gui, int xMouse, int yMouse);
+    boolean onDraw(JecaGui gui, int xMouse, int yMouse);
 
     default boolean onTooltip(JecaGui gui, int xMouse, int yMouse, List<String> tooltip) {
         return false;

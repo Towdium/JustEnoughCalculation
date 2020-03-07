@@ -29,7 +29,7 @@ public class GuiSearch extends WContainer implements IGui {
     WLabelScroll labels = new WLabelScroll(7, 51, 8, 6, false)
             .setLsnrClick((i, v) -> {
                 ILabel l = i.get(v).getLabel();
-                if (l != ILabel.EMPTY) add(new Overlay(i.get(v)));
+                if (l != ILabel.EMPTY) setOverlay(new Overlay(i.get(v)));
             });
     WSwitcher group;
     WTextField text = new WTextField(7, 25, 119);
@@ -149,11 +149,11 @@ public class GuiSearch extends WContainer implements IGui {
             add(new WLabel(x, y, 20, 20, false).setLabel(l.getLabel()));
             add(new WButtonIcon(x + 23, y, 20, 20, BTN_EDIT, "search.edit").setListener(i -> {
                 JecaGui.displayGui(true, true, new GuiRecipe(recipe.two, recipe.three));
-                GuiSearch.this.remove(this);
+                GuiSearch.this.setOverlay(null);
             }));
             add(new WButtonIcon(x + 42, y, 20, 20, BTN_NO, "search.delete").setListener(i -> {
                 Controller.removeRecipe(recipe.two, recipe.three);
-                GuiSearch.this.remove(this);
+                GuiSearch.this.setOverlay(null);
                 refreshGroups();
                 refreshDisplay();
             }));

@@ -39,10 +39,11 @@ public class WButtonText extends WButton {
     }
 
     @Override
-    public void onDraw(JecaGui gui, int xMouse, int yMouse) {
-        super.onDraw(gui, xMouse, yMouse);
+    public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
+        boolean ret = super.onDraw(gui, xMouse, yMouse);
         JecaGui.Font font = mouseIn(xMouse, yMouse) ? focused : normal;
         float x = xPos + Math.max(3, xSize / 2.0f - font.getTextWidth(text) / 2.0f);
         gui.drawText(x, yPos + ySize / 2.0f - font.getTextHeight() / 2.0f, xSize - 6, font, text);
+        return ret;
     }
 }

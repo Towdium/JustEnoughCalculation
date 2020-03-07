@@ -44,12 +44,13 @@ public abstract class WButton extends WTooltip {
     }
 
     @Override
-    public void onDraw(JecaGui gui, int xMouse, int yMouse) {
+    public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
         super.onDraw(gui, xMouse, yMouse);
         boolean hovered = JecaGui.mouseIn(xPos + 1, yPos + 1, xSize - 2, ySize - 2, xMouse, yMouse);
         hovered = hovered || keys.entrySet().stream().anyMatch(Map.Entry::getValue);
         gui.drawResourceContinuous(disabled ? WGT_BUTTON_D : (hovered ? WGT_BUTTON_F : WGT_BUTTON_N)
                 , xPos, yPos, xSize, ySize, 5, 5, 5, 5);
+        return hovered;
     }
 
     @Override

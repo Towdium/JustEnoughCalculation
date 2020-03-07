@@ -100,7 +100,7 @@ public class GuiImport extends WContainer implements IGui, ISearchable {
 
         //WRectangle rect = new WRectangle(22, 49 + 16 * i, 146, 13, JecaGui.COLOR_GUI_GREY);
         @Override
-        public void onDraw(JecaGui gui, int xMouse, int yMouse) {
+        public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
             gui.drawRectangle(22, yPos - 2, 146, 13, JecaGui.COLOR_GUI_GREY);
             super.onDraw(gui, xMouse, yMouse);
             if (expand) {
@@ -113,6 +113,7 @@ public class GuiImport extends WContainer implements IGui, ISearchable {
                 gui.drawText(25, yPos, JecaGui.Font.SHADOW, key);
                 expand = true;
             }
+            return false;
         }
 
         @Override

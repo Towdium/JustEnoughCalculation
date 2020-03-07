@@ -36,8 +36,9 @@ public class WLine implements IWidget {
     }
 
     @Override
-    public void onDraw(JecaGui gui, int xMouse, int yMouse) {
+    public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
         gui.drawResourceContinuous(Resource.WGT_SLOT, xPos, yPos, xSize, ySize, 1);
+        return false;
     }
 
     public static class Joint implements IWidget {
@@ -62,7 +63,7 @@ public class WLine implements IWidget {
         }
 
         @Override
-        public void onDraw(JecaGui gui, int xMouse, int yMouse) {
+        public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
             if (!up) gui.drawResource(u, xPos, yPos);
             if (!down) gui.drawResource(d, xPos, yPos + 1);
             if (!left) gui.drawResource(l, xPos, yPos);
@@ -71,6 +72,7 @@ public class WLine implements IWidget {
             if (right == up) gui.drawResource(ur, xPos + 1, yPos);
             if (left == down) gui.drawResource(ll, xPos, 1 + yPos);
             if (right == down) gui.drawResource(lr, xPos + 1, yPos + 1);
+            return false;
         }
     }
 }
