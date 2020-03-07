@@ -22,84 +22,54 @@ public class Resource {
     // letters abbr for fuzzy related: N - normal, F - fuzzy
     // letters abbr for state related: N - normal, A - active
     public static final Resource BTN_LABEL_N = getIcon(0, 0);
-
     public static final Resource BTN_NEW_N = getIcon(1, 0);
-
     public static final Resource BTN_SEARCH_N = getIcon(2, 0);
-
     public static final Resource BTN_SAVE_N = getIcon(3, 0);
-
     public static final Resource BTN_SAVE_D = getIcon(3, 1);
     public static final Resource BTN_COPY_N = getIcon(4, 0);
-
     public static final Resource BTN_COPY_D = getIcon(4, 1);
     public static final Resource BTN_DEL_N = getIcon(5, 0);
     public static final Resource BTN_YES_N = getIcon(6, 0);
-
     public static final Resource BTN_YES_D = getIcon(6, 1);
     public static final Resource BTN_NO_N = getIcon(7, 0);
-
     public static final Resource BTN_NO_D = getIcon(7, 1);
     public static final Resource BTN_DISAMB_N = getIcon(8, 0);
-
     public static final Resource BTN_DISAMB_D = getIcon(8, 1);
     public static final Resource BTN_IN_N = getIcon(9, 0);
-
     public static final Resource BTN_IN_D = getIcon(9, 1);
     public static final Resource BTN_OUT_N = getIcon(10, 0);
-
     public static final Resource BTN_OUT_D = getIcon(10, 1);
     public static final Resource BTN_CAT_N = getIcon(11, 0);
-
     public static final Resource BTN_CAT_D = getIcon(11, 1);
     public static final Resource BTN_LIST_N = getIcon(12, 0);
-
     public static final Resource BTN_LIST_D = getIcon(12, 1);
     public static final Resource BTN_IMPORT_N = getIcon(13, 0);
-
     public static final Resource BTN_IMPORT_D = getIcon(13, 1);
     public static final Resource BTN_EXPORT_N_N = getIcon(14, 0);
-
     public static final Resource BTN_EXPORT_N_D = getIcon(14, 1);
     public static final Resource BTN_EXPORT_1_N = getIcon(15, 0);
-
     public static final Resource BTN_EXPORT_1_D = getIcon(15, 1);
     public static final Resource BTN_INV_E_N = getIcon(16, 0);
-
     public static final Resource BTN_INV_D_N = getIcon(17, 0);
-
     public static final Resource BTN_CAP_N_N = getIcon(0, 2);
-
     public static final Resource BTN_CAP_F_N = getIcon(1, 2);
-
     public static final Resource BTN_CAP_D = getIcon(0, 3);
     public static final Resource BTN_META_N_N = getIcon(2, 2);
-
     public static final Resource BTN_META_F_N = getIcon(3, 2);
-
     public static final Resource BTN_META_D = getIcon(2, 3);
     public static final Resource BTN_NBT_N_N = getIcon(4, 2);
-
     public static final Resource BTN_NBT_F_N = getIcon(5, 2);
-
     public static final Resource BTN_NBT_D = getIcon(4, 3);
     public static final Resource BTN_EDIT_N = getIcon(6, 2);
-
     public static final Resource BTN_EDIT_D = getIcon(6, 3);
     public static final Resource BTN_PICK_N = getIcon(7, 2);
-
     public static final Resource BTN_DELETE_N_N = getIcon(8, 2);
-
     public static final Resource BTN_DELETE_N_D = getIcon(8, 3);
     public static final Resource BTN_DELETE_1_N = getIcon(9, 2);
-
     public static final Resource BTN_DELETE_1_D = getIcon(9, 3);
     public static final Resource BTN_DOWN_N_N = getIcon(10, 2);
-
     public static final Resource BTN_DOWN_A_N = getIcon(11, 2);
-
     public static final Resource BTN_UP_N_N = getIcon(12, 2);
-
 
     public static final Resource WGT_BUTTON_N = getWidget(0);
     public static final Resource WGT_BUTTON_F = getWidget(1);
