@@ -246,7 +246,7 @@ public interface ILabel {
             else if (o instanceof ItemStack) return new LItemStack((ItemStack) o);
             else if (o instanceof FluidStack) return new LFluidStack((FluidStack) o);
             else if (o instanceof EnchantmentData) return new LItemStack(getEnchantedItemStack((EnchantmentData) o));
-            else throw new RuntimeException("Unrecognized ingredient type: " + o.getClass());
+            else return new LPlaceholder(o.toString(), 1);
         }
 
         public void register(ConverterFunction handler, Priority priority) {
