@@ -155,4 +155,4 @@ Changed to 1.15 art style
 
 #### 3.6.1
 
-Changed no crash when converting unknown ingrediemt
+Changed no crash when converting unknown ingredient
