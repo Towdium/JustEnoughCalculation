@@ -1,5 +1,6 @@
 package me.towdium.jecalculation.gui.widgets;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel.RegistryEditor.Record;
 import me.towdium.jecalculation.gui.JecaGui;
@@ -34,11 +35,11 @@ public class WPage extends WTooltip {
     }
 
     @Override
-    public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
+    public boolean onDraw(MatrixStack matrixStack, JecaGui gui, int xMouse, int yMouse) {
         Resource resource = focused ? WGT_PAGER_F : WGT_PANEL_N;
         gui.drawResourceContinuous(resource, index * 24 + 3, -21, 24, 25, 4, 4, 4, 4);
-        record.representation.drawLabel(gui, index * 24 + 7, -17, false);
-        super.onDraw(gui, xMouse, yMouse);
+        record.representation.drawLabel(matrixStack, gui, index * 24 + 7, -17, false);
+        super.onDraw(matrixStack, gui, xMouse, yMouse);
         return false;
     }
 

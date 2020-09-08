@@ -1,5 +1,6 @@
 package me.towdium.jecalculation.gui.widgets;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.utils.Utilities.I18n;
@@ -36,10 +37,10 @@ public class WHelp extends WContainer {
         }
 
         @Override
-        public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
-            super.onDraw(gui, xMouse, yMouse);
+        public boolean onDraw(MatrixStack matrixStack, JecaGui gui, int xMouse, int yMouse) {
+            super.onDraw(matrixStack, gui, xMouse, yMouse);
             gui.drawResourceContinuous(WGT_PANEL_N, -21, 0, 25, 24, 4);
-            gui.drawResource(WGT_HELP_N, -19, 2);
+            gui.drawResource(matrixStack, WGT_HELP_N, -19, 2);
             return false;
         }
 
@@ -106,8 +107,8 @@ public class WHelp extends WContainer {
             }
 
             @Override
-            public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
-                gui.drawSplitText(7, 21, PLAIN, pages.get(page));
+            public boolean onDraw(MatrixStack matrixStack, JecaGui gui, int xMouse, int yMouse) {
+                gui.drawSplitText(matrixStack, 7, 21, PLAIN, pages.get(page));
                 return false;
             }
 
@@ -126,10 +127,10 @@ public class WHelp extends WContainer {
             }
 
             @Override
-            public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
-                super.onDraw(gui, xMouse, yMouse);
+            public boolean onDraw(MatrixStack matrixStack, JecaGui gui, int xMouse, int yMouse) {
+                super.onDraw(matrixStack, gui, xMouse, yMouse);
                 gui.drawResourceContinuous(WGT_HELP_B, -21, 0, 25, 24, 4);
-                gui.drawResource(WGT_HELP_F, -19, 2);
+                gui.drawResource(matrixStack, WGT_HELP_F, -19, 2);
                 return false;
             }
 

@@ -10,7 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.ISuggestionProvider;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextComponentUtils;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -37,7 +37,7 @@ public class JecaCommand {
             LiteralArgumentBuilder<ISuggestionProvider> lab = LiteralArgumentBuilder.<ISuggestionProvider>literal("jeca")
                     .executes((c) -> {
                         String key = "jecalculation.chat.help";
-                        getPlayer().sendMessage(new TranslationTextComponent(key));
+                        getPlayer().sendStatusMessage(new TranslationTextComponent(key), false);
                         return 0;
                     })
                     .then(LiteralArgumentBuilder.<ISuggestionProvider>literal("craft")
@@ -75,17 +75,17 @@ public class JecaCommand {
                 cs.sendErrorMessage(TextComponentUtils.toTextComponent(var7.getRawMessage()));
                 if (var7.getInput() != null && var7.getCursor() >= 0) {
                     int k = Math.min(var7.getInput().length(), var7.getCursor());
-                    ITextComponent tc1 = new StringTextComponent("").applyTextStyle(GRAY).applyTextStyle(i ->
+                    IFormattableTextComponent tc1 = new StringTextComponent("").mergeStyle(GRAY).modifyStyle(i ->
                             i.setClickEvent(new ClickEvent(SUGGEST_COMMAND, event.getMessage())));
-                    if (k > 10) tc1.appendText("...");
-                    tc1.appendText(var7.getInput().substring(Math.max(0, k - 10), k));
+                    if (k > 10) tc1.appendString("...");
+                    tc1.appendString(var7.getInput().substring(Math.max(0, k - 10), k));
                     if (k < var7.getInput().length()) {
-                        ITextComponent tc2 = (new StringTextComponent(var7.getInput().substring(k)))
-                                .applyTextStyles(RED, UNDERLINE);
-                        tc1.appendSibling(tc2);
+                        IFormattableTextComponent tc2 = (new StringTextComponent(var7.getInput().substring(k)))
+                                .mergeStyle(RED, UNDERLINE);
+                        tc1.append(tc2);
                     }
-                    tc1.appendSibling((new TranslationTextComponent("command.context.here"))
-                            .applyTextStyles(RED, ITALIC));
+                    tc1.append((new TranslationTextComponent("command.context.here"))
+                            .mergeStyle(RED, ITALIC));
                     cs.sendErrorMessage(tc1);
                 }
             }

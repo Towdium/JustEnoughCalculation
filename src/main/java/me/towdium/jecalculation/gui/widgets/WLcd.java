@@ -1,5 +1,6 @@
 package me.towdium.jecalculation.gui.widgets;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.structure.RecordMath.Operator;
 import me.towdium.jecalculation.gui.JecaGui;
@@ -54,66 +55,66 @@ public class WLcd implements IWidget {
     }
 
     @Override
-    public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
-        drawBackground(gui);
-        drawStr(gui, text);
-        if (dot != DOT_NONE) drawDot(gui, 6 - dot);
-        drawOperator(gui, operator);
+    public boolean onDraw(MatrixStack matrixStack, JecaGui gui, int xMouse, int yMouse) {
+        drawBackground(matrixStack, gui);
+        drawStr(matrixStack, gui, text);
+        if (dot != DOT_NONE) drawDot(matrixStack, gui, 6 - dot);
+        drawOperator(matrixStack, gui, operator);
         return false;
     }
 
-    protected void drawBackground(JecaGui gui) {
+    protected void drawBackground(MatrixStack matrixStack, JecaGui gui) {
         gui.drawResourceContinuous(Resource.WGT_LCD_BG, 7, yPos, 162, 50, 8);
         for (int i = 0; i < 7; i++) {
-            gui.drawResource(Resource.WGT_LCD_UL_N, 16 + i * 21, yPos + 14);
-            gui.drawResource(Resource.WGT_LCD_UR_N, 30 + i * 21, yPos + 14);
-            gui.drawResource(Resource.WGT_LCD_LL_N, 16 + i * 21, yPos + 28);
-            gui.drawResource(Resource.WGT_LCD_LR_N, 30 + i * 21, yPos + 28);
-            gui.drawResource(Resource.WGT_LCD_H_N, 19 + i * 21, yPos + 14);
-            gui.drawResource(Resource.WGT_LCD_H_N, 19 + i * 21, yPos + 27);
-            gui.drawResource(Resource.WGT_LCD_H_N, 19 + i * 21, yPos + 40);
-            gui.drawResource(Resource.WGT_LCD_DO_N, 33 + i * 21, yPos + 40);
+            gui.drawResource(matrixStack, Resource.WGT_LCD_UL_N, 16 + i * 21, yPos + 14);
+            gui.drawResource(matrixStack, Resource.WGT_LCD_UR_N, 30 + i * 21, yPos + 14);
+            gui.drawResource(matrixStack, Resource.WGT_LCD_LL_N, 16 + i * 21, yPos + 28);
+            gui.drawResource(matrixStack, Resource.WGT_LCD_LR_N, 30 + i * 21, yPos + 28);
+            gui.drawResource(matrixStack, Resource.WGT_LCD_H_N, 19 + i * 21, yPos + 14);
+            gui.drawResource(matrixStack, Resource.WGT_LCD_H_N, 19 + i * 21, yPos + 27);
+            gui.drawResource(matrixStack, Resource.WGT_LCD_H_N, 19 + i * 21, yPos + 40);
+            gui.drawResource(matrixStack, Resource.WGT_LCD_DO_N, 33 + i * 21, yPos + 40);
         }
-        gui.drawResource(Resource.WGT_LCD_P_N, 132, yPos + 6);
-        gui.drawResource(Resource.WGT_LCD_M_N, 139, yPos + 6);
-        gui.drawResource(Resource.WGT_LCD_T_N, 146, yPos + 6);
-        gui.drawResource(Resource.WGT_LCD_D_N, 153, yPos + 6);
+        gui.drawResource(matrixStack, Resource.WGT_LCD_P_N, 132, yPos + 6);
+        gui.drawResource(matrixStack, Resource.WGT_LCD_M_N, 139, yPos + 6);
+        gui.drawResource(matrixStack, Resource.WGT_LCD_T_N, 146, yPos + 6);
+        gui.drawResource(matrixStack, Resource.WGT_LCD_D_N, 153, yPos + 6);
     }
 
-    protected void drawChar(JecaGui gui, char ch, int index) {
+    protected void drawChar(MatrixStack matrixStack, JecaGui gui, char ch, int index) {
         boolean[] pattern = PATTERN.get(ch);
         Objects.requireNonNull(pattern, "Unsupported char: " + ch + ".");
-        if (pattern[0]) gui.drawResource(Resource.WGT_LCD_H_F, 19 + index * 21, yPos + 14);
-        if (pattern[1]) gui.drawResource(Resource.WGT_LCD_UR_F, 30 + index * 21, yPos + 14);
-        if (pattern[2]) gui.drawResource(Resource.WGT_LCD_LR_F, 30 + index * 21, yPos + 28);
-        if (pattern[3]) gui.drawResource(Resource.WGT_LCD_H_F, 19 + index * 21, yPos + 40);
-        if (pattern[4]) gui.drawResource(Resource.WGT_LCD_LL_F, 16 + index * 21, yPos + 28);
-        if (pattern[5]) gui.drawResource(Resource.WGT_LCD_UL_F, 16 + index * 21, yPos + 14);
-        if (pattern[6]) gui.drawResource(Resource.WGT_LCD_H_F, 19 + index * 21, yPos + 27);
+        if (pattern[0]) gui.drawResource(matrixStack, Resource.WGT_LCD_H_F, 19 + index * 21, yPos + 14);
+        if (pattern[1]) gui.drawResource(matrixStack, Resource.WGT_LCD_UR_F, 30 + index * 21, yPos + 14);
+        if (pattern[2]) gui.drawResource(matrixStack, Resource.WGT_LCD_LR_F, 30 + index * 21, yPos + 28);
+        if (pattern[3]) gui.drawResource(matrixStack, Resource.WGT_LCD_H_F, 19 + index * 21, yPos + 40);
+        if (pattern[4]) gui.drawResource(matrixStack, Resource.WGT_LCD_LL_F, 16 + index * 21, yPos + 28);
+        if (pattern[5]) gui.drawResource(matrixStack, Resource.WGT_LCD_UL_F, 16 + index * 21, yPos + 14);
+        if (pattern[6]) gui.drawResource(matrixStack, Resource.WGT_LCD_H_F, 19 + index * 21, yPos + 27);
     }
 
-    protected void drawStr(JecaGui gui, String str) {
+    protected void drawStr(MatrixStack matrixStack, JecaGui gui, String str) {
         int offset = 7 - str.length();
-        for (int i = offset; i < 7; i++) drawChar(gui, str.charAt(i - offset), i);
+        for (int i = offset; i < 7; i++) drawChar(matrixStack, gui, str.charAt(i - offset), i);
     }
 
-    protected void drawDot(JecaGui gui, int index) {
-        gui.drawResource(Resource.WGT_LCD_DO_F, 33 + index * 21, yPos + 40);
+    protected void drawDot(MatrixStack matrixStack, JecaGui gui, int index) {
+        gui.drawResource(matrixStack, Resource.WGT_LCD_DO_F, 33 + index * 21, yPos + 40);
     }
 
-    protected void drawOperator(JecaGui gui, Operator operator) {
+    protected void drawOperator(MatrixStack matrixStack, JecaGui gui, Operator operator) {
         switch (operator) {
             case PLUS:
-                gui.drawResource(Resource.WGT_LCD_P_F, 132, yPos + 6);
+                gui.drawResource(matrixStack, Resource.WGT_LCD_P_F, 132, yPos + 6);
                 break;
             case MINUS:
-                gui.drawResource(Resource.WGT_LCD_M_F, 139, yPos + 6);
+                gui.drawResource(matrixStack, Resource.WGT_LCD_M_F, 139, yPos + 6);
                 break;
             case TIMES:
-                gui.drawResource(Resource.WGT_LCD_T_F, 146, yPos + 6);
+                gui.drawResource(matrixStack, Resource.WGT_LCD_T_F, 146, yPos + 6);
                 break;
             case DIVIDE:
-                gui.drawResource(Resource.WGT_LCD_D_F, 153, yPos + 6);
+                gui.drawResource(matrixStack, Resource.WGT_LCD_D_F, 153, yPos + 6);
                 break;
         }
     }

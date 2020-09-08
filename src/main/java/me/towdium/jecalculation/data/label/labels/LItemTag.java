@@ -1,5 +1,6 @@
 package me.towdium.jecalculation.data.label.labels;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
@@ -39,10 +40,10 @@ public class LItemTag extends LTag<Item> {
     }
 
     @Override
-    protected void drawLabel(JecaGui gui) {
+    protected void drawLabel(MatrixStack matrixStack, JecaGui gui) {
         Object o = getRepresentation();
         if (o instanceof ItemStack) gui.drawItemStack(0, 0, (ItemStack) o, false);
-        gui.drawResource(Resource.LBL_FRAME, 0, 0);
+        gui.drawResource(matrixStack, Resource.LBL_FRAME, 0, 0);
     }
 
     @Override

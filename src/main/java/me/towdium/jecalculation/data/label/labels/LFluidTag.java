@@ -1,5 +1,6 @@
 package me.towdium.jecalculation.data.label.labels;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
@@ -35,11 +36,11 @@ public class LFluidTag extends LTag<Fluid> {
     }
 
     @Override
-    protected void drawLabel(JecaGui gui) {
+    protected void drawLabel(MatrixStack matrixStack, JecaGui gui) {
         Object o = getRepresentation();
-        gui.drawResource(Resource.LBL_FLUID, 0, 0);
-        if (o instanceof FluidStack) gui.drawFluid(((FluidStack) o).getFluid(), 2, 2, 12, 12);
-        gui.drawResource(Resource.LBL_FRAME, 0, 0);
+        gui.drawResource(matrixStack, Resource.LBL_FLUID, 0, 0);
+        if (o instanceof FluidStack) gui.drawFluid(matrixStack, ((FluidStack) o).getFluid(), 2, 2, 12, 12);
+        gui.drawResource(matrixStack, Resource.LBL_FRAME, 0, 0);
     }
 
     @Override

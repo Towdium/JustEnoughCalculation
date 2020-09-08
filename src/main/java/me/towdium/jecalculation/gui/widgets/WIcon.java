@@ -1,5 +1,6 @@
 package me.towdium.jecalculation.gui.widgets;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
@@ -42,11 +43,11 @@ public class WIcon extends WTooltip {
     }
 
     @Override
-    public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
-        super.onDraw(gui, xMouse, yMouse);
-        gui.drawRectangle(xPos, yPos, xSize, ySize, COLOR_GUI_GREY);
+    public boolean onDraw(MatrixStack matrixStack, JecaGui gui, int xMouse, int yMouse) {
+        super.onDraw(matrixStack, gui, xMouse, yMouse);
+        gui.drawRectangle(matrixStack, xPos, yPos, xSize, ySize, COLOR_GUI_GREY);
         Resource r = mouseIn(xMouse, yMouse) ? focused : normal;
-        gui.drawResource(r, (xSize - r.getXSize()) / 2 + xPos, (ySize - r.getYSize()) / 2 + yPos);
+        gui.drawResource(matrixStack, r, (xSize - r.getXSize()) / 2 + xPos, (ySize - r.getYSize()) / 2 + yPos);
         return false;
     }
 

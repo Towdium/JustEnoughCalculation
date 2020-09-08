@@ -1,5 +1,6 @@
 package me.towdium.jecalculation.gui.widgets;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 import net.minecraftforge.api.distmarker.Dist;
@@ -36,10 +37,10 @@ public class WText implements IWidget {
     }
 
     @Override
-    public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
+    public boolean onDraw(MatrixStack matrixStack, JecaGui gui, int xMouse, int yMouse) {
         int x = xPos + (centred ? xSize / 2 - font.getTextWidth(key) / 2 : 0);
-        if (xSize == UNDEFINED) gui.drawText(x, yPos, font, key);
-        else gui.drawText(x, yPos, xSize, font, key);
+        if (xSize == UNDEFINED) gui.drawText(matrixStack, x, yPos, font, key);
+        else gui.drawText(matrixStack, x, yPos, xSize, font, key);
         return false;
     }
 }

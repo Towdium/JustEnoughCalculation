@@ -100,7 +100,7 @@ public class Utilities {
 
     public static String getModName(Fluid fluid) {
         FluidStack fs = new FluidStack(fluid, 1000);
-        String name = fs.getDisplayName().getFormattedText();
+        String name = fs.getDisplayName().getString(); //.getFormattedText();
         if (name.equals("lava") || name.equals("water")) return "Minecraft";
         else return getModName(fluid.getAttributes().getStillTexture(fs).getNamespace());
     }
@@ -264,7 +264,7 @@ public class Utilities {
 
         public static List<String> wrap(String s, int width) {
             return new TextWrapper().wrap(s, MinecraftForgeClient.getLocale(),
-                    i -> TextWrapper.renderer.getCharWidth(i), width);
+                    i -> TextWrapper.renderer.getStringWidth(String.valueOf(i)), width);
         }
 
         static class TextWrapper {
@@ -273,7 +273,7 @@ public class Utilities {
             String str;
             BreakIterator it;
             List<String> temp = new ArrayList<>();
-            Function<Character, Float> func;
+            Function<Character, Integer> func;
             float section, space, width;
             int start, cursor, end;
 
@@ -294,7 +294,7 @@ public class Utilities {
                 space = width;
             }
 
-            private List<String> wrap(String s, Locale l, Function<Character, Float> func, int width) {
+            private List<String> wrap(String s, Locale l, Function<Character, Integer> func, int width) {
                 temp.clear();
                 start = 0;
                 end = 0;

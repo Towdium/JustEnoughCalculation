@@ -7,8 +7,8 @@ import me.towdium.jecalculation.utils.wrappers.Wrapper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tags.ITag;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -66,7 +66,6 @@ public abstract class LTag<T> extends LContext<T> {
         return false;
     }
 
-    @SuppressWarnings("unused")
     public static List<ILabel> suggest(List<ILabel> is, @Nullable Class<?> context) {
         return convert(is, true);
     }
@@ -85,7 +84,6 @@ public abstract class LTag<T> extends LContext<T> {
                 .collect(Collectors.toList());
     }
 
-    @SuppressWarnings("unused")
     public static List<ILabel> fallback(List<ILabel> is, @Nullable Class<?> context) {
         return convert(is, false);
     }
@@ -93,7 +91,7 @@ public abstract class LTag<T> extends LContext<T> {
     // check labels in the list suitable for the ore id
     private static <T> boolean check(ResourceLocation id, List<LStack<T>> labels, boolean biDir) {
         Stream<LStack<T>> ores = labels.get(0).getContext().discover(id);
-        Tag<Item> tag = ItemTags.getCollection().get(id);
+        ITag<Item> tag = ItemTags.getCollection().get(id);
         if (tag == null) return false;
 
         Wrapper<Boolean> acceptable = new Wrapper<>(true);

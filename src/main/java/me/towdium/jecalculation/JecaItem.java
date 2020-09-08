@@ -50,7 +50,7 @@ public class JecaItem extends Item {
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
         ItemStack is = playerIn.getHeldItem(handIn);
-        if (playerIn.isShiftKeyDown()) {
+        if (playerIn.isSneaking()) {
             ItemStack neu = new ItemStack(is.getItem() == CRAFT ? MATH : CRAFT);
             neu.setTag(is.getTag());
             PlayerInventory inv = playerIn.inventory;

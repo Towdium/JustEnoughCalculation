@@ -1,5 +1,6 @@
 package me.towdium.jecalculation.data.label;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
@@ -111,7 +112,7 @@ public interface ILabel {
     // test two labels are exactly same except amount
     boolean matches(Object l);
 
-    void drawLabel(JecaGui gui, int xPos, int yPos, boolean center);
+    void drawLabel(MatrixStack matrixStack, JecaGui gui, int xPos, int yPos, boolean center);
 
     /**
      * Since {@link ILabel} merging is bidirectional, it is redundant to
@@ -122,7 +123,7 @@ public interface ILabel {
      * For registering, see {@link Serializer}.
      */
     class Merger {
-        private Utilities.Relation<String, MergerFunction> functions = new Utilities.Relation<>();
+        private final Utilities.Relation<String, MergerFunction> functions = new Utilities.Relation<>();
 
         private Merger() {
         }
@@ -170,7 +171,7 @@ public interface ILabel {
         public static final String KEY_IDENTIFIER = "type";
         public static final String KEY_CONTENT = "content";
 
-        private HashMap<String, Function<CompoundNBT, ILabel>> idToData = new HashMap<>();
+        private final HashMap<String, Function<CompoundNBT, ILabel>> idToData = new HashMap<>();
 
         private Serializer() {
         }
@@ -277,7 +278,7 @@ public interface ILabel {
 
     class RegistryEditor {
 
-        private ArrayList<Record> records = new ArrayList<>();
+        private final ArrayList<Record> records = new ArrayList<>();
 
         private RegistryEditor() {
         }
@@ -312,7 +313,7 @@ public interface ILabel {
         }
 
         @Override
-        public void drawLabel(JecaGui gui, int xPos, int yPos, boolean center) {
+        public void drawLabel(MatrixStack matrixStack, JecaGui gui, int xPos, int yPos, boolean center) {
         }
 
         private LEmpty() {
@@ -425,14 +426,15 @@ public interface ILabel {
         }
 
         @Override
-        public void drawLabel(JecaGui gui, int xPos, int yPos, boolean center) {
+        @SuppressWarnings("deprecation")
+        public void drawLabel(MatrixStack matrixStack, JecaGui gui, int xPos, int yPos, boolean center) {
             RenderSystem.pushMatrix();
             RenderSystem.translatef(center ? xPos - 8 : xPos, center ? yPos - 8 : yPos, 0);
-            drawLabel(gui);
+            drawLabel(matrixStack, gui);
             RenderSystem.popMatrix();
         }
 
-        abstract protected void drawLabel(JecaGui gui);
+        abstract protected void drawLabel(MatrixStack matrixStack, JecaGui gui);
 
         @Override
         public ILabel increaseAmount() {

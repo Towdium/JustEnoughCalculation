@@ -1,5 +1,6 @@
 package me.towdium.jecalculation.gui.widgets;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
@@ -36,10 +37,11 @@ public class WOverlay extends WContainer {
     }
 
     @Override
-    public boolean onDraw(JecaGui gui, int mouseX, int mouseY) {
+    @SuppressWarnings("deprecation")
+    public boolean onDraw(MatrixStack matrixStack, JecaGui gui, int mouseX, int mouseY) {
         RenderSystem.pushMatrix();
         RenderSystem.translatef(0, 0, 100);
-        super.onDraw(gui, mouseX, mouseY);
+        super.onDraw(matrixStack, gui, mouseX, mouseY);
         RenderSystem.popMatrix();
         return false;
     }

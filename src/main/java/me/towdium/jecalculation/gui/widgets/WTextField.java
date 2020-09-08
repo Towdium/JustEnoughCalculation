@@ -1,9 +1,11 @@
 package me.towdium.jecalculation.gui.widgets;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.glfw.GLFW;
@@ -27,7 +29,7 @@ public class WTextField implements IWidget {
         this.xPos = xPos;
         this.yPos = yPos;
         this.xSize = xSize;
-        textField = new TextFieldWidget(Minecraft.getInstance().fontRenderer, xPos + 1, yPos + 1, xSize - 2, 18, "WIP");
+        textField = new TextFieldWidget(Minecraft.getInstance().fontRenderer, xPos + 1, yPos + 1, xSize - 2, 18, new StringTextComponent("WIP"));
     }
 
     @Override
@@ -41,8 +43,8 @@ public class WTextField implements IWidget {
     }
 
     @Override
-    public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
-        textField.renderButton(0, 0, 0);
+    public boolean onDraw(MatrixStack matrixStack, JecaGui gui, int xMouse, int yMouse) {
+        textField.renderButton(matrixStack, 0, 0, 0);
         return false;
     }
 
