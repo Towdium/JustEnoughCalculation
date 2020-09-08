@@ -1,5 +1,6 @@
 package me.towdium.jecalculation.data.label.labels;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.label.ILabel.Serializer.SerializationException;
@@ -127,7 +128,6 @@ public class LItemStack extends LStack<Item> {
         return false;
     }
 
-    @SuppressWarnings("unused")
     public static List<ILabel> suggest(List<ILabel> iss, @Nullable IRecipeLayout rl) {
         if (iss.size() == 0) return new ArrayList<>();
         for (ILabel i : iss) if (!(i instanceof LItemStack)) return new ArrayList<>();
@@ -147,7 +147,6 @@ public class LItemStack extends LStack<Item> {
         else return new ArrayList<>();
     }
 
-    @SuppressWarnings("unused")
     public static List<ILabel> fallback(List<ILabel> iss, @Nullable IRecipeLayout rl) {
         List<ILabel> ret = new ArrayList<>();
         if (iss.size() == 1) {
@@ -194,7 +193,7 @@ public class LItemStack extends LStack<Item> {
 
     @Override
     public String getDisplayName() {
-        return rep.getDisplayName().getFormattedText();
+        return rep.getDisplayName().getString();//.getFormattedText();
     }
 
     @Override
@@ -235,12 +234,12 @@ public class LItemStack extends LStack<Item> {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void drawLabel(JecaGui gui) {
+    public void drawLabel(MatrixStack matrixStack, JecaGui gui) {
         gui.drawItemStack(0, 0, rep, false);
-        if (fCap || fNbt || fMeta) gui.drawResource(Resource.LBL_FRAME, 0, 0);
-        if (fCap) gui.drawResource(Resource.LBL_FR_LL, 0, 0);
-        if (fNbt) gui.drawResource(Resource.LBL_FR_UL, 0, 0);
-        if (fMeta) gui.drawResource(Resource.LBL_FR_UR, 0, 0);
+        if (fCap || fNbt || fMeta) gui.drawResource(matrixStack, Resource.LBL_FRAME, 0, 0);
+        if (fCap) gui.drawResource(matrixStack, Resource.LBL_FR_LL, 0, 0);
+        if (fNbt) gui.drawResource(matrixStack, Resource.LBL_FR_UL, 0, 0);
+        if (fMeta) gui.drawResource(matrixStack, Resource.LBL_FR_UR, 0, 0);
     }
 
     @Override

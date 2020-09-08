@@ -43,15 +43,14 @@ public class JustEnoughCalculation {
     public JustEnoughCalculation() {
         //noinspection ResultOfMethodCallIgnored
         Utilities.config().mkdirs();
-        ModLoadingContext.get().registerConfig(COMMON, JecaConfig.common,
-                FMLPaths.CONFIGDIR.get().resolve(PATH).toString());
+        ModLoadingContext.get().registerConfig(COMMON, JecaConfig.common, FMLPaths.CONFIGDIR.get().resolve(PATH).toString());
     }
 
     @SubscribeEvent
     public static void setupCommon(FMLCommonSetupEvent event) {
         network = NetworkRegistry.newSimpleChannel(
-                new ResourceLocation(MODID, "main"),
-                () -> PROTOCOL, PROTOCOL::equals, PROTOCOL::equals
+            new ResourceLocation(MODID, "main"),
+            () -> PROTOCOL, PROTOCOL::equals, PROTOCOL::equals
         );
         network.registerMessage(0, PCalculator.class, PCalculator::write, PCalculator::new, PCalculator::handle);
         network.registerMessage(1, PEdit.class, PEdit::write, PEdit::new, PEdit::handle);

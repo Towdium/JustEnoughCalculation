@@ -1,5 +1,6 @@
 package me.towdium.jecalculation.gui;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.Controller;
@@ -238,7 +239,7 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
     public static int openGuiMath(@Nullable ItemStack is) {
         boolean ret = is == null && Controller.isServerActive();
         String s = "jecalculation.chat.server_mode";
-        if (ret) getPlayer().sendMessage(new TranslationTextComponent(s));
+        if (ret) getPlayer().sendStatusMessage(new TranslationTextComponent(s), false);
         else JecaGui.displayGui(true, true, new GuiMath(is));
         return ret ? 1 : 0;
     }
@@ -247,7 +248,7 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
     public static int openGuiCraft(@Nullable ItemStack is) {
         boolean ret = is == null && Controller.isServerActive();
         String s = "jecalculation.chat.server_mode";
-        if (ret) getPlayer().sendMessage(new TranslationTextComponent(s));
+        if (ret) getPlayer().sendStatusMessage(new TranslationTextComponent(s), false);
         else JecaGui.displayGui(true, true, new GuiCraft(is));
         return ret ? 1 : 0;
     }
@@ -258,30 +259,32 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        renderBackground();
+    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {
+        renderBackground(matrixStack);
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks) {
-        super.render(mouseX, mouseY, partialTicks);
+    @SuppressWarnings("deprecation")
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        super.render(matrixStack, mouseX, mouseY, partialTicks);
         mouseX -= guiLeft;
         mouseY -= guiTop;
         RenderSystem.pushMatrix();
         RenderSystem.translatef(guiLeft, guiTop, 0);
-        root.onDraw(this, mouseX, mouseY);
+        root.onDraw(matrixStack, this, mouseX, mouseY);
         RenderSystem.popMatrix();
         RenderSystem.pushMatrix();
         RenderSystem.translatef(0, 0, 80);
-        hand.drawLabel(this, mouseX + guiLeft, mouseY + guiTop, true);
+        hand.drawLabel(matrixStack, this, mouseX + guiLeft, mouseY + guiTop, true);
         RenderSystem.popMatrix();
         List<String> tooltip = new ArrayList<>();
         root.onTooltip(this, mouseX, mouseY, tooltip);
-        drawHoveringText(tooltip, mouseX + guiLeft, mouseY + guiTop, font);
+        drawHoveringText(matrixStack, tooltip, mouseX + guiLeft, mouseY + guiTop, font);
     }
 
     // modified from vanilla
-    public void drawHoveringText(List<String> textLines, int x, int y, FontRenderer font) {
+    @SuppressWarnings("deprecation")
+    public void drawHoveringText(MatrixStack matrixStack, List<String> textLines, int x, int y, FontRenderer font) {
         if (!textLines.isEmpty()) {
             RenderSystem.disableRescaleNormal();
             RenderSystem.disableDepthTest();
@@ -302,20 +305,20 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
             int k = 8 + (textLines.size() - separators - 1) * 10 + 2 * separators;
             if (l1 + i > this.width) l1 -= 28 + i;
             if (i2 + k + 6 > this.height) i2 = this.height - k - 6;
-            fillGradient(l1 - 3, i2 - 4, l1 + i + 3, i2 - 3, -267386864, -267386864);
-            fillGradient(l1 - 3, i2 + k + 3, l1 + i + 3, i2 + k + 4, -267386864, -267386864);
-            fillGradient(l1 - 3, i2 - 3, l1 + i + 3, i2 + k + 3, -267386864, -267386864);
-            fillGradient(l1 - 4, i2 - 3, l1 - 3, i2 + k + 3, -267386864, -267386864);
-            fillGradient(l1 + i + 3, i2 - 3, l1 + i + 4, i2 + k + 3, -267386864, -267386864);
-            fillGradient(l1 - 3, i2 - 3 + 1, l1 - 3 + 1, i2 + k + 3 - 1, 1347420415, 1344798847);
-            fillGradient(l1 + i + 2, i2 - 3 + 1, l1 + i + 3, i2 + k + 3 - 1, 1347420415, 1344798847);
-            fillGradient(l1 - 3, i2 - 3, l1 + i + 3, i2 - 3 + 1, 1347420415, 1347420415);
-            fillGradient(l1 - 3, i2 + k + 2, l1 + i + 3, i2 + k + 3, 1344798847, 1344798847);
+            fillGradient(matrixStack,l1 - 3, i2 - 4, l1 + i + 3, i2 - 3, -267386864, -267386864);
+            fillGradient(matrixStack,l1 - 3, i2 + k + 3, l1 + i + 3, i2 + k + 4, -267386864, -267386864);
+            fillGradient(matrixStack,l1 - 3, i2 - 3, l1 + i + 3, i2 + k + 3, -267386864, -267386864);
+            fillGradient(matrixStack,l1 - 4, i2 - 3, l1 - 3, i2 + k + 3, -267386864, -267386864);
+            fillGradient(matrixStack,l1 + i + 3, i2 - 3, l1 + i + 4, i2 + k + 3, -267386864, -267386864);
+            fillGradient(matrixStack,l1 - 3, i2 - 3 + 1, l1 - 3 + 1, i2 + k + 3 - 1, 1347420415, 1344798847);
+            fillGradient(matrixStack,l1 + i + 2, i2 - 3 + 1, l1 + i + 3, i2 + k + 3 - 1, 1347420415, 1344798847);
+            fillGradient(matrixStack,l1 - 3, i2 - 3, l1 + i + 3, i2 - 3 + 1, 1347420415, 1347420415);
+            fillGradient(matrixStack,l1 - 3, i2 + k + 2, l1 + i + 3, i2 + k + 3, 1344798847, 1344798847);
             for (String s1 : textLines) {
                 //noinspection StringEquality
                 if (s1 == SEPARATOR) i2 += 2;
                 else {
-                    font.drawStringWithShadow(s1, (float) l1, (float) i2, -1);
+                    font.drawStringWithShadow(matrixStack, s1, (float) l1, (float) i2, -1);
                     i2 += 10;
                 }
             }
@@ -325,14 +328,14 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
         }
     }
 
-    public void drawResource(Resource r, int xPos, int yPos) {
-        drawResource(r, xPos, yPos, 0xFFFFFF);
+    public void drawResource(MatrixStack matrixStack, Resource r, int xPos, int yPos) {
+        drawResource(matrixStack, r, xPos, yPos, 0xFFFFFF);
     }
 
-    public void drawResource(Resource r, int xPos, int yPos, int color) {
+    public void drawResource(MatrixStack matrixStack, Resource r, int xPos, int yPos, int color) {
         setColor(color);
         Objects.requireNonNull(minecraft).getTextureManager().bindTexture(r.getResourceLocation());
-        blit(xPos, yPos, r.getXPos(), r.getYPos(), r.getXSize(), r.getYSize());
+        blit(matrixStack, xPos, yPos, r.getXPos(), r.getYPos(), r.getXSize(), r.getYSize());
     }
 
     public void drawResourceContinuous(Resource r, int xPos, int yPos, int xSize, int ySize, int border) {
@@ -346,6 +349,7 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
                 r.getXSize(), r.getYSize(), borderTop, borderBottom, borderLeft, borderRight, 0);
     }
 
+    @SuppressWarnings("deprecation")
     private void setColor(int color) {
         float red = (color >> 16 & 0xFF) / 255.0F;
         float green = (color >> 8 & 0xFF) / 255.0F;
@@ -354,63 +358,61 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
         RenderSystem.color4f(red, green, blue, alpha);
     }
 
-    public void drawFluid(Fluid f, int xPos, int yPos, int xSize, int ySize) {
+    public void drawFluid(MatrixStack matrixStack, Fluid f, int xPos, int yPos, int xSize, int ySize) {
         TextureAtlasSprite fluidTexture = Objects.requireNonNull(minecraft)
                 .getModelManager().getAtlasTexture(PlayerContainer.LOCATION_BLOCKS_TEXTURE)
                 .getSprite(f.getFluid().getAttributes().getStillTexture());
         minecraft.textureManager.bindTexture(PlayerContainer.LOCATION_BLOCKS_TEXTURE);
         setColor(f.getAttributes().getColor() & 0x00FFFFFF);
-        blit(xPos, yPos, 0, xSize, ySize, fluidTexture);
+        blit(matrixStack, xPos, yPos, 0, xSize, ySize, fluidTexture);
     }
 
-    public void drawRectangle(int xPos, int yPos, int xSize, int ySize, int color) {
-        fill(xPos, yPos, xPos + xSize, yPos + ySize, color);
+    public void drawRectangle(MatrixStack matrixStack, int xPos, int yPos, int xSize, int ySize, int color) {
+        fill(matrixStack, xPos, yPos, xPos + xSize, yPos + ySize, color);
     }
 
     public int getStringWidth(String s) {
         return font.getStringWidth(s);
     }
 
-    public void drawSplitText(float xPos, float yPos, int width, Font f, String s) {
-        drawSplitText(xPos, yPos, f, Utilities.I18n.wrap(s, width));
+    public void drawSplitText(MatrixStack matrixStack, float xPos, float yPos, int width, Font f, String s) {
+        drawSplitText(matrixStack, xPos, yPos, f, Utilities.I18n.wrap(s, width));
     }
 
-    public void drawSplitText(float xPos, float yPos, Font f, List<String> ss) {
+    public void drawSplitText(MatrixStack matrixStack, float xPos, float yPos, Font f, List<String> ss) {
         drawText(xPos, yPos, f, () -> {
             int y = 0;
             for (String i : ss) {
-                if (f.shadow) font.drawStringWithShadow(i, 0, y, f.color);
-                else font.drawString(i, 0, y, f.color);
+                if (f.shadow) font.drawStringWithShadow(matrixStack, i, 0, y, f.color);
+                else font.drawString(matrixStack, i, 0, y, f.color);
                 y += font.FONT_HEIGHT + 1;
             }
         });
     }
 
-    public void drawText(float xPos, float yPos, Font f, String s) {
-        drawText(xPos, yPos, Integer.MAX_VALUE, f, s);
+    public void drawText(MatrixStack matrixStack, float xPos, float yPos, Font f, String s) {
+        drawText(matrixStack, xPos, yPos, Integer.MAX_VALUE, f, s);
     }
 
-    public void drawText(float xPos, float yPos, int width, Font f, String s) {
+    public void drawText(MatrixStack matrixStack, float xPos, float yPos, int width, Font f, String s) {
         drawText(xPos, yPos, f, () -> {
             String str = s;
             int strWidth = f.getTextWidth(str);
             int ellipsisWidth = f.getTextWidth("...");
             if (strWidth > width && strWidth > ellipsisWidth)
                 str = f.trimToWidth(str, width - ellipsisWidth).trim() + "...";
-            if (f.shadow) font.drawStringWithShadow(str, 0, 0, f.color);
-            else font.drawString(str, 0, 0, f.color);
+            if (f.shadow) font.drawStringWithShadow(matrixStack, str, 0, 0, f.color);
+            else font.drawString(matrixStack, str, 0, 0, f.color);
         });
     }
 
+    @SuppressWarnings("deprecation")
     private void drawText(float xPos, float yPos, Font f, Runnable r) {
-        boolean unicode = font.getBidiFlag();
-        if (f.raw) font.setBidiFlag(false);
         RenderSystem.pushMatrix();
         RenderSystem.translatef(xPos, yPos, 200);
         if (f.half) RenderSystem.scalef(0.5f, 0.5f, 1);
         r.run();
         RenderSystem.popMatrix();
-        font.setBidiFlag(unicode);
     }
 
     public void drawItemStack(int xPos, int yPos, ItemStack is, boolean centred) {
@@ -473,12 +475,7 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
         }
 
         public int getTextWidth(String s) {
-            FontRenderer fr = getCurrent().font;
-            boolean flag = fr.getBidiFlag();
-            if (raw) fr.setBidiFlag(false);
-            int ret = (int) Math.ceil(fr.getStringWidth(s) * (half ? 0.5f : 1));
-            fr.setBidiFlag(flag);
-            return ret;
+            return (int) Math.ceil(getCurrent().font.getStringWidth(s) * (half ? 0.5f : 1));
         }
 
         public int getTextHeight() {
@@ -486,7 +483,7 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
         }
 
         public String trimToWidth(String s, int i) {
-            return getCurrent().font.trimStringToWidth(s, i * (half ? 2 : 1));
+            return getCurrent().font.func_238412_a_(s, i * (half ? 2 : 1));
         }
     }
 

@@ -1,5 +1,6 @@
 package me.towdium.jecalculation.gui.widgets;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
@@ -36,7 +37,7 @@ public class WLine implements IWidget {
     }
 
     @Override
-    public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
+    public boolean onDraw(MatrixStack matrixStack, JecaGui gui, int xMouse, int yMouse) {
         gui.drawResourceContinuous(Resource.WGT_SLOT, xPos, yPos, xSize, ySize, 1);
         return false;
     }
@@ -63,15 +64,15 @@ public class WLine implements IWidget {
         }
 
         @Override
-        public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
-            if (!up) gui.drawResource(u, xPos, yPos);
-            if (!down) gui.drawResource(d, xPos, yPos + 1);
-            if (!left) gui.drawResource(l, xPos, yPos);
-            if (!right) gui.drawResource(r, xPos + 1, yPos);
-            if (left == up) gui.drawResource(ul, xPos, yPos);
-            if (right == up) gui.drawResource(ur, xPos + 1, yPos);
-            if (left == down) gui.drawResource(ll, xPos, 1 + yPos);
-            if (right == down) gui.drawResource(lr, xPos + 1, yPos + 1);
+        public boolean onDraw(MatrixStack matrixStack, JecaGui gui, int xMouse, int yMouse) {
+            if (!up) gui.drawResource(matrixStack, u, xPos, yPos);
+            if (!down) gui.drawResource(matrixStack, d, xPos, yPos + 1);
+            if (!left) gui.drawResource(matrixStack, l, xPos, yPos);
+            if (!right) gui.drawResource(matrixStack, r, xPos + 1, yPos);
+            if (left == up) gui.drawResource(matrixStack, ul, xPos, yPos);
+            if (right == up) gui.drawResource(matrixStack, ur, xPos + 1, yPos);
+            if (left == down) gui.drawResource(matrixStack, ll, xPos, 1 + yPos);
+            if (right == down) gui.drawResource(matrixStack, lr, xPos + 1, yPos + 1);
             return false;
         }
     }

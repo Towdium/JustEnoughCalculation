@@ -12,6 +12,7 @@ import me.towdium.jecalculation.network.packets.PRecord;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -90,9 +91,12 @@ public class Controller {
     }
 
     private static void export(String s, Function<Recipes, CompoundNBT> r) {
+        ClientPlayerEntity player = Minecraft.getInstance().player;
+        if (player == null) return;
+
         File f = new File(FMLPaths.CONFIGDIR.get().toFile(), JustEnoughCalculation.MODID + "/data/" + s + ".json");
-        Minecraft.getInstance().player.sendMessage(new TranslationTextComponent(
-                "jecalculation.chat.export", f.getAbsolutePath()));
+        player.sendStatusMessage(new TranslationTextComponent(
+                "jecalculation.chat.export", f.getAbsolutePath()), false);
     }
 
     public static void export(String group) {

@@ -1,5 +1,6 @@
 package me.towdium.jecalculation.data.label.labels;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.label.ILabel.Serializer.SerializationException;
@@ -106,7 +107,7 @@ public class LFluidStack extends LStack<Fluid> {
 
     @Override
     public String getDisplayName() {
-        return temp.getDisplayName().getFormattedText();
+        return temp.getDisplayName().getString(); //.getFormattedText();
     }
 
     @Override
@@ -144,9 +145,9 @@ public class LFluidStack extends LStack<Fluid> {
     }
 
     @Override
-    public void drawLabel(JecaGui gui) {
-        gui.drawResource(Resource.LBL_FLUID, 0, 0);
-        gui.drawFluid(fluid, 2, 2, 12, 12);
+    public void drawLabel(MatrixStack matrixStack, JecaGui gui) {
+        gui.drawResource(matrixStack, Resource.LBL_FLUID, 0, 0);
+        gui.drawFluid(matrixStack, fluid, 2, 2, 12, 12);
     }
 
     @Override

@@ -4,8 +4,8 @@ import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.tags.ITag;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagCollection;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
@@ -27,13 +27,13 @@ public interface Context<T> {
     }
 
     default Stream<LStack<T>> discover(ResourceLocation tag) {
-        Tag<T> records = tags().get(tag);
+        ITag<T> records = tags().get(tag);
         return records == null ? Stream.empty() :
                 records.getAllElements().stream().map(this::create);
     }
 
     default boolean matches(ResourceLocation tag, LStack<?> t) {
-        Tag<T> records = tags().get(tag);
+        ITag<T> records = tags().get(tag);
         //noinspection unchecked
         return records != null && t.getContext() == this && records.contains((T) t.get());
     }
