@@ -110,8 +110,8 @@ public class JecaCapability {
 
         @Nonnull
         @Override
+        @SuppressWarnings({"unchecked", "ConstantConditions"})
         public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap) {
-            //noinspection ConstantConditions,unchecked
             return LazyOptional.of(cap == JecaCapability.CAPABILITY_RECORD ? () -> (T) container : null);
         }
     }

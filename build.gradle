@@ -60,9 +60,9 @@ minecraft {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.15.2-31.1.18'
-    compileOnly fg.deobf('mezz.jei:jei-1.15.2:6.0.0.2:api')
-    runtimeOnly fg.deobf('mezz.jei:jei-1.15.2:6.0.0.2')
+    minecraft 'net.minecraftforge:forge:1.15.2-31.2.0'
+    compileOnly fg.deobf('mezz.jei:jei-1.15.2:6.0.3.15:api')
+    runtimeOnly fg.deobf('mezz.jei:jei-1.15.2:6.0.3.15')
     testCompile 'org.junit.jupiter:junit-jupiter-api:5.2.0'
 }
 

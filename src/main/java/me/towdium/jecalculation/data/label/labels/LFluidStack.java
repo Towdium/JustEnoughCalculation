@@ -6,7 +6,6 @@ import me.towdium.jecalculation.data.label.ILabel.Serializer.SerializationExcept
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.utils.Utilities;
-import mezz.jei.api.gui.IRecipeLayout;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
@@ -138,8 +137,6 @@ public class LFluidStack extends LStack<Fluid> {
 
     @Override
     public void getToolTip(List<String> existing, boolean detailed) {
-        if (detailed) existing.add(FORMAT_GREY +
-                Utilities.I18n.get("label.common.amount", Long.toString(getAmount())) + "mB");
         existing.add(FORMAT_BLUE + FORMAT_ITALIC + Utilities.getModName(fluid));
     }
 
@@ -157,8 +154,8 @@ public class LFluidStack extends LStack<Fluid> {
 
     private static final String TIC_CLASS = "slimeknights.tconstruct.plugin.jei.casting.CastingRecipeCategory";
 
-    public static List<ILabel> suggest(List<ILabel> iss, @Nullable IRecipeLayout rl) {
-        if (rl != null && rl.getRecipeCategory().getClass().getName().equals(TIC_CLASS) && iss.get(0) instanceof LFluidStack)
+    public static List<ILabel> suggest(List<ILabel> iss, @Nullable Class<?> context) {
+        if (context != null && context.getName().equals(TIC_CLASS) && iss.get(0) instanceof LFluidStack)
             return Collections.singletonList(iss.get(0).copy().multiply(0.5f));
         return new ArrayList<>();
     }

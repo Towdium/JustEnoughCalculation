@@ -156,3 +156,9 @@ Changed to 1.15 art style
 #### 3.6.1
 
 Changed no crash when converting unknown ingredient
+
+#### 3.6.2
+
+Changed tooltip show amount in stacks  
+Added support for unknown ingredients in recipes  
+Improved unknown ingredient conversion

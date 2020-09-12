@@ -19,25 +19,13 @@ public class Pair<K, V> {
     }
 
     @Override
+    @SuppressWarnings("rawtypes")
     public boolean equals(Object obj) {
         if (obj instanceof Pair) {
             Pair p = (Pair) obj;
             return one.equals(p.one) && two.equals(p.two);
         }
         return false;
-    }
-
-    public boolean swap(Class<? extends K> ke, Class<? extends V> ve) {
-        if (ke.isInstance(one) && ve.isInstance(two)) return true;
-        else if (!(ke.isInstance(two) && ve.isInstance(one))) return false;
-        else {
-            //noinspection unchecked
-            K o = (K) two;
-            //noinspection unchecked
-            two = (V) one;
-            one = o;
-            return true;
-        }
     }
 
     public Pair<K, V> setOne(K one) {

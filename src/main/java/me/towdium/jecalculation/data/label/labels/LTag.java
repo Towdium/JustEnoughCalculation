@@ -4,7 +4,6 @@ import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.utils.wrappers.Wrapper;
-import mezz.jei.api.gui.IRecipeLayout;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -68,7 +67,7 @@ public abstract class LTag<T> extends LContext<T> {
     }
 
     @SuppressWarnings("unused")
-    public static List<ILabel> suggest(List<ILabel> is, @Nullable IRecipeLayout rl) {
+    public static List<ILabel> suggest(List<ILabel> is, @Nullable Class<?> context) {
         return convert(is, true);
     }
 
@@ -87,7 +86,7 @@ public abstract class LTag<T> extends LContext<T> {
     }
 
     @SuppressWarnings("unused")
-    public static List<ILabel> fallback(List<ILabel> is, @Nullable IRecipeLayout rl) {
+    public static List<ILabel> fallback(List<ILabel> is, @Nullable Class<?> context) {
         return convert(is, false);
     }
 

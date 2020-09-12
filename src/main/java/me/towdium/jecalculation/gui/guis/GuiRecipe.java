@@ -8,11 +8,9 @@ import me.towdium.jecalculation.data.structure.Recipe;
 import me.towdium.jecalculation.data.structure.Recipe.IO;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.widgets.*;
-import me.towdium.jecalculation.jei.JecaPlugin;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import me.towdium.jecalculation.utils.wrappers.Trio;
-import mezz.jei.api.gui.IRecipeLayout;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.glfw.GLFW;
@@ -20,7 +18,6 @@ import org.lwjgl.glfw.GLFW;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static me.towdium.jecalculation.gui.JecaGui.COLOR_TEXT_RED;
 import static me.towdium.jecalculation.gui.JecaGui.COLOR_TEXT_WHITE;
@@ -155,47 +152,18 @@ public class GuiRecipe extends WContainer implements IGui {
         refresh();
     }
 
-    public void transfer(IRecipeLayout recipe) {
-        // item disamb raw
-        EnumMap<IO, List<Trio<ILabel, CostList, CostList>>> merged = new EnumMap<>(IO.class);
+    public void transfer(EnumMap<IO, List<Trio<ILabel, CostList, CostList>>> recipe, Class<?> context) {
         disamb.clear();
 
-        // merge recipe input, output and catalysts
-        Stream.of(recipe.getFluidStacks(), recipe.getItemStacks())
-                .flatMap(i -> i.getGuiIngredients().values().stream())
-                .forEach(i -> merge(merged, i.getAllIngredients(), recipe, i.isInput() ? IO.INPUT : IO.OUTPUT));
-        List<Object> catalysts = JecaPlugin.runtime.getRecipeManager().getRecipeCatalysts(recipe.getRecipeCategory());
-        merge(merged, catalysts, recipe, IO.CATALYST);
-
         // generate disamb and fill slots
-        for (IO i : IO.values()) getWidget(i).setLabels(extract(merged, i, recipe));
+        for (IO i : IO.values()) getWidget(i).setLabels(extract(recipe, i, context));
         refresh();
     }
 
-    private void merge(EnumMap<IO, List<Trio<ILabel, CostList, CostList>>> dst, List<?> objs, IRecipeLayout context, IO type) {
-        List<ILabel> list = objs.stream().map(ILabel.Converter::from).collect(Collectors.toList());
-        if (list.isEmpty()) return;
-        ILabel rep = list.get(0).copy();
-        if (type == IO.INPUT && list.size() != 1) rep = ILabel.CONVERTER.first(list, context);
-        ILabel fin = rep;
-
-        dst.computeIfAbsent(type, i -> new ArrayList<>()).stream().filter(p -> {
-            CostList cl = new CostList(list);
-            if (p.three.equals(cl)) {
-                ILabel.MERGER.merge(p.one, fin).ifPresent(i -> p.one = i);
-                p.two = p.two.merge(cl, true, false);
-                return true;
-            } else return false;
-        }).findAny().orElseGet(() -> {
-            Trio<ILabel, CostList, CostList> ret = new Trio<>(fin, new CostList(list), new CostList(list));
-            dst.get(type).add(ret);
-            return ret;
-        });
-    }
-
-    private ArrayList<ILabel> extract(EnumMap<IO, List<Trio<ILabel, CostList, CostList>>> src, IO type, IRecipeLayout context) {
+    private ArrayList<ILabel> extract(EnumMap<IO, List<Trio<ILabel, CostList, CostList>>> src, IO type, Class<?> context) {
         List<Trio<ILabel, CostList, CostList>> l = src.get(type);
         ArrayList<ILabel> ret = new ArrayList<>();
+        if (l == null) return ret;
         for (int i = 0; i < l.size(); i++) {
             Trio<ILabel, CostList, CostList> p = l.get(i);
             ret.add(p.one);

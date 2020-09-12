@@ -348,8 +348,7 @@ public class Utilities {
         }
 
         public List<T> toList() {
-            //noinspection unchecked
-            return (List<T>) data.clone();
+            return new ArrayList<>(data);
         }
 
         public void clear() {

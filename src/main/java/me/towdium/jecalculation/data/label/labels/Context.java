@@ -32,9 +32,9 @@ public interface Context<T> {
                 records.getAllElements().stream().map(this::create);
     }
 
+    @SuppressWarnings("unchecked")
     default boolean matches(ResourceLocation tag, LStack<?> t) {
         Tag<T> records = tags().get(tag);
-        //noinspection unchecked
         return records != null && t.getContext() == this && records.contains((T) t.get());
     }
 

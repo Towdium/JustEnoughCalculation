@@ -6,7 +6,6 @@ import me.towdium.jecalculation.data.label.ILabel.Serializer.SerializationExcept
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.utils.Utilities;
-import mezz.jei.api.gui.IRecipeLayout;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -128,7 +127,7 @@ public class LItemStack extends LStack<Item> {
     }
 
     @SuppressWarnings("unused")
-    public static List<ILabel> suggest(List<ILabel> iss, @Nullable IRecipeLayout rl) {
+    public static List<ILabel> suggest(List<ILabel> iss, @Nullable Class<?> context) {
         if (iss.size() == 0) return new ArrayList<>();
         for (ILabel i : iss) if (!(i instanceof LItemStack)) return new ArrayList<>();
         LItemStack lis = (LItemStack) iss.get(0);
@@ -148,7 +147,7 @@ public class LItemStack extends LStack<Item> {
     }
 
     @SuppressWarnings("unused")
-    public static List<ILabel> fallback(List<ILabel> iss, @Nullable IRecipeLayout rl) {
+    public static List<ILabel> fallback(List<ILabel> iss, @Nullable Class<?> context) {
         List<ILabel> ret = new ArrayList<>();
         if (iss.size() == 1) {
             ILabel label = iss.get(0);
