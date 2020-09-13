@@ -161,4 +161,5 @@ Changed no crash when converting unknown ingredient
 
 Changed tooltip show amount in stacks  
 Added support for unknown ingredients in recipes  
-Improved unknown ingredient conversion
+Improved unknown ingredient conversion  
+Fixed crash when recipe has no catalyst
