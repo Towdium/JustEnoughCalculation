@@ -113,6 +113,10 @@ Fixed placeholder labels not in recent list on game restart
 
 Fixed #61
 
-#### 3.2.2
+#### 3.2.3
 
 Fixed #54
+
+#### 3.2.4
+
+Fixed #68

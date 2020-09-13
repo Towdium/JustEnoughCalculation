@@ -153,8 +153,11 @@ public class GuiRecipe extends WContainer implements IGui {
                 .forEach(i -> merge(i.isInput() ? input : output, i, recipe));
 
         // convert catalyst
-        List<ILabel> catalysts = JecaPlugin.runtime.getRecipeRegistry().getRecipeCatalysts(recipe.getRecipeCategory())
-                .stream().map(Converter::from).collect(Collectors.toList());
+        List<ILabel> catalysts = JecaPlugin.runtime.getRecipeRegistry()
+                .getRecipeCatalysts(recipe.getRecipeCategory()).stream()
+                .map(Converter::from)
+                .filter(i -> i != ILabel.EMPTY)
+                .collect(Collectors.toList());
         if (catalysts.size() == 1) catalyst.setLabel(catalysts.get(0), 0);
         else if (catalysts.size() > 1) {
             catalyst.setLabel(ILabel.CONVERTER.first(catalysts, recipe), 0);
@@ -168,7 +171,10 @@ public class GuiRecipe extends WContainer implements IGui {
     }
 
     private void merge(ArrayList<Trio<ILabel, CostList, CostList>> dst, IGuiIngredient<?> gi, IRecipeLayout context) {
-        List<ILabel> list = gi.getAllIngredients().stream().map(Converter::from).collect(Collectors.toList());
+        List<ILabel> list = gi.getAllIngredients().stream()
+                .map(Converter::from)
+                .filter(i -> i != ILabel.EMPTY)
+                .collect(Collectors.toList());
         if (list.isEmpty()) return;
         dst.stream().filter(p -> {
             CostList cl = new CostList(list);
