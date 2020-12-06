@@ -163,3 +163,8 @@ Changed tooltip show amount in stacks
 Added support for unknown ingredients in recipes  
 Improved unknown ingredient conversion  
 Fixed crash when recipe has no catalyst
+
+#### 3.6.3
+
+Ported to 1.16.4  
+Fixed recipe export not working
