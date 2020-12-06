@@ -1,6 +1,5 @@
 package me.towdium.jecalculation.gui.widgets;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
@@ -34,7 +33,7 @@ public class WPanel implements IWidget {
     }
 
     @Override
-    public boolean onDraw(MatrixStack matrixStack, JecaGui gui, int xMouse, int yMouse) {
+    public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
         gui.drawResourceContinuous(Resource.WGT_PANEL_F, xPos, yPos, xSize, ySize, 5, 5, 5, 5);
         return false;
     }

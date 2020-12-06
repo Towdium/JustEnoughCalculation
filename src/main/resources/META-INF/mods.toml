@@ -1,6 +1,7 @@
 modLoader="javafml"
-loaderVersion="[32,)"
-issueTrackerURL="https://github.com/Towdium/JustEnoughCalculation/issues" #optional
+loaderVersion="[34,)"
+issueTrackerURL="https://github.com/Towdium/JustEnoughCalculation/issues"
+license="The MIT License (MIT)"
 
 [[mods]]
 modId="jecalculation"

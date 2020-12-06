@@ -6,7 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ITag;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.TagCollection;
+import net.minecraft.tags.ITagCollection;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 public interface Context<T> {
     LStack<T> create(T t);
 
-    TagCollection<T> tags();
+    ITagCollection<T> tags();
 
     LTag<T> create(ResourceLocation rl);
 
@@ -34,6 +34,7 @@ public interface Context<T> {
 
     default boolean matches(ResourceLocation tag, LStack<?> t) {
         ITag<T> records = tags().get(tag);
+        //noinspection unchecked
         return records != null && t.getContext() == this && records.contains((T) t.get());
     }
 
@@ -44,7 +45,7 @@ public interface Context<T> {
         }
 
         @Override
-        public TagCollection<Item> tags() {
+        public ITagCollection<Item> tags() {
             return ItemTags.getCollection();
         }
 
@@ -66,7 +67,7 @@ public interface Context<T> {
         }
 
         @Override
-        public TagCollection<Fluid> tags() {
+        public ITagCollection<Fluid> tags() {
             return FluidTags.getCollection();
         }
 

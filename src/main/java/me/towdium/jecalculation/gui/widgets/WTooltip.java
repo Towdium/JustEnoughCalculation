@@ -1,6 +1,5 @@
 package me.towdium.jecalculation.gui.widgets;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.utils.Utilities;
@@ -33,7 +32,7 @@ public abstract class WTooltip implements IWidget {
     }
 
     @Override
-    public boolean onDraw(MatrixStack matrixStack, JecaGui gui, int xMouse, int yMouse) {
+    public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
         if (name != null) timer.setState(mouseIn(xMouse, yMouse));
         return false;
     }

@@ -1,6 +1,5 @@
 package me.towdium.jecalculation.gui.widgets;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
@@ -57,18 +56,18 @@ public class WLabel implements IWidget {  // TODO clean up tooltip and amount fo
     }
 
     @Override
-    public boolean onDraw(MatrixStack matrixStack, JecaGui gui, int xMouse, int yMouse) {
+    public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
         gui.drawResourceContinuous(WGT_SLOT, xPos, yPos, xSize, ySize, 3, 3, 3, 3);
-        label.drawLabel(matrixStack, gui, xPos + xSize / 2, yPos + ySize / 2, true);
+        label.drawLabel(gui, xPos + xSize / 2, yPos + ySize / 2, true);
         String s = fmtAmount.apply(label);
-        gui.drawText(matrixStack, xPos + xSize / 2.0f + 8 - HALF.getTextWidth(s),
+        gui.drawText(xPos + xSize / 2.0f + 8 - HALF.getTextWidth(s),
                 yPos + ySize / 2.0f + 8.5f - HALF.getTextHeight(), HALF, s);
         if (accept) {
             timer.setState(gui.hand != ILabel.EMPTY);
             int color = 0xFFFFFF + (int) ((-Math.cos(timer.getTime() * Math.PI / 1500) + 1) * 0x40) * 0x1000000;
-            gui.drawRectangle(matrixStack, xPos + 1, yPos + 1, xSize - 2, ySize - 2, color);
+            gui.drawRectangle(xPos + 1, yPos + 1, xSize - 2, ySize - 2, color);
         }
-        if (mouseIn(xMouse, yMouse)) gui.drawRectangle(matrixStack, xPos + 1, yPos + 1, xSize - 2, ySize - 2, 0x80FFFFFF);
+        if (mouseIn(xMouse, yMouse)) gui.drawRectangle(xPos + 1, yPos + 1, xSize - 2, ySize - 2, 0x80FFFFFF);
         return false;
     }
 

@@ -1,6 +1,5 @@
 package me.towdium.jecalculation.gui.widgets;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 import net.minecraftforge.api.distmarker.Dist;
@@ -40,11 +39,11 @@ public class WButtonText extends WButton {
     }
 
     @Override
-    public boolean onDraw(MatrixStack matrixStack, JecaGui gui, int xMouse, int yMouse) {
-        boolean ret = super.onDraw(matrixStack, gui, xMouse, yMouse);
+    public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
+        boolean ret = super.onDraw(gui, xMouse, yMouse);
         JecaGui.Font font = mouseIn(xMouse, yMouse) ? focused : normal;
         float x = xPos + Math.max(3, xSize / 2.0f - font.getTextWidth(text) / 2.0f);
-        gui.drawText(matrixStack, x, yPos + ySize / 2.0f - font.getTextHeight() / 2.0f, xSize - 6, font, text);
+        gui.drawText(x, yPos + ySize / 2.0f - font.getTextHeight() / 2.0f, xSize - 6, font, text);
         return ret;
     }
 }

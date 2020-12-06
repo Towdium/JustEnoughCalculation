@@ -1,6 +1,5 @@
 package me.towdium.jecalculation.gui.widgets;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
@@ -36,11 +35,11 @@ public class WButtonIcon extends WButton {
     }
 
     @Override
-    public boolean onDraw(MatrixStack matrixStack, JecaGui gui, int xMouse, int yMouse) {
-        boolean ret = super.onDraw(matrixStack, gui, xMouse, yMouse);
+    public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
+        boolean ret = super.onDraw(gui, xMouse, yMouse);
         Resource r = disabled ? rDisabled : rNormal;
         if (r != null)
-            gui.drawResource(matrixStack, r, xPos + (xSize - r.getXSize() + 1) / 2, yPos + (ySize - r.getYSize() + 1) / 2);
+            gui.drawResource(r, xPos + (xSize - r.getXSize() + 1) / 2, yPos + (ySize - r.getYSize() + 1) / 2);
         return ret;
     }
 }

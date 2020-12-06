@@ -1,6 +1,5 @@
 package me.towdium.jecalculation.gui.widgets;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
@@ -36,7 +35,7 @@ public class WScroll implements IWidget {
     }
 
     @Override
-    public boolean onDraw(MatrixStack matrixStack, JecaGui gui, int xMouse, int yMouse) {
+    public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
         int offset = (int) (current * (ySize - height));
         boolean in = mouseIn(xMouse, yMouse);
         Resource r = in ? WGT_SCROLL_F : WGT_SCROLL_N;

@@ -1,6 +1,5 @@
 package me.towdium.jecalculation.gui.widgets;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 import net.minecraft.client.Minecraft;
@@ -45,8 +44,8 @@ public abstract class WButton extends WTooltip {
     }
 
     @Override
-    public boolean onDraw(MatrixStack matrixStack, JecaGui gui, int xMouse, int yMouse) {
-        super.onDraw(matrixStack, gui, xMouse, yMouse);
+    public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
+        super.onDraw(gui, xMouse, yMouse);
         boolean hovered = JecaGui.mouseIn(xPos + 1, yPos + 1, xSize - 2, ySize - 2, xMouse, yMouse);
         hovered = hovered || keys.entrySet().stream().anyMatch(Map.Entry::getValue);
         gui.drawResourceContinuous(disabled ? WGT_BUTTON_D : (hovered ? WGT_BUTTON_F : WGT_BUTTON_N)

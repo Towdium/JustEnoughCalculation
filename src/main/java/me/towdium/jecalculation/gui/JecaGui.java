@@ -81,6 +81,7 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
     protected static Runnable scheduled;
     protected static int timeout;
     protected JecaGui parent;
+    protected MatrixStack matrix;
     public IGui root;
 
     public JecaGui(@Nullable JecaGui parent, IGui root) {
@@ -106,7 +107,6 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
         Minecraft mc = Objects.requireNonNull(gui.minecraft, "Internal error");
         return (int) mc.mouseHelper.getMouseY() * mc.getMainWindow().getScaledHeight() / mc.getMainWindow().getHeight() - gui.guiTop;
     }
-
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onMouse(GuiScreenEvent.MouseInputEvent event) {
@@ -168,6 +168,10 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
             ThreadTaskExecutor<?> executor = WORKQUEUE.get(LogicalSide.CLIENT);
             executor.deferTask(r);
         }
+    }
+
+    public MatrixStack getMatrix() {
+        return matrix;
     }
 
     /**
@@ -267,15 +271,16 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
     @SuppressWarnings("deprecation")
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         super.render(matrixStack, mouseX, mouseY, partialTicks);
+        matrix = matrixStack;
         mouseX -= guiLeft;
         mouseY -= guiTop;
         RenderSystem.pushMatrix();
         RenderSystem.translatef(guiLeft, guiTop, 0);
-        root.onDraw(matrixStack, this, mouseX, mouseY);
+        root.onDraw(this, mouseX, mouseY);
         RenderSystem.popMatrix();
         RenderSystem.pushMatrix();
         RenderSystem.translatef(0, 0, 80);
-        hand.drawLabel(matrixStack, this, mouseX + guiLeft, mouseY + guiTop, true);
+        hand.drawLabel(this, mouseX + guiLeft, mouseY + guiTop, true);
         RenderSystem.popMatrix();
         List<String> tooltip = new ArrayList<>();
         root.onTooltip(this, mouseX, mouseY, tooltip);
@@ -328,14 +333,14 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
         }
     }
 
-    public void drawResource(MatrixStack matrixStack, Resource r, int xPos, int yPos) {
-        drawResource(matrixStack, r, xPos, yPos, 0xFFFFFF);
+    public void drawResource(Resource r, int xPos, int yPos) {
+        drawResource(r, xPos, yPos, 0xFFFFFF);
     }
 
-    public void drawResource(MatrixStack matrixStack, Resource r, int xPos, int yPos, int color) {
+    public void drawResource(Resource r, int xPos, int yPos, int color) {
         setColor(color);
         Objects.requireNonNull(minecraft).getTextureManager().bindTexture(r.getResourceLocation());
-        blit(matrixStack, xPos, yPos, r.getXPos(), r.getYPos(), r.getXSize(), r.getYSize());
+        blit(matrix, xPos, yPos, r.getXPos(), r.getYPos(), r.getXSize(), r.getYSize());
     }
 
     public void drawResourceContinuous(Resource r, int xPos, int yPos, int xSize, int ySize, int border) {
@@ -345,8 +350,8 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
     public void drawResourceContinuous(
             Resource r, int xPos, int yPos, int xSize, int ySize,
             int borderTop, int borderBottom, int borderLeft, int borderRight) {
-        GuiUtils.drawContinuousTexturedBox(r.getResourceLocation(), xPos, yPos, r.getXPos(), r.getYPos(), xSize, ySize,
-                r.getXSize(), r.getYSize(), borderTop, borderBottom, borderLeft, borderRight, 0);
+        GuiUtils.drawContinuousTexturedBox(matrix, r.getResourceLocation(), xPos, yPos, r.getXPos(), r.getYPos(),
+                xSize, ySize, r.getXSize(), r.getYSize(), borderTop, borderBottom, borderLeft, borderRight, 0);
     }
 
     @SuppressWarnings("deprecation")
@@ -358,51 +363,51 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
         RenderSystem.color4f(red, green, blue, alpha);
     }
 
-    public void drawFluid(MatrixStack matrixStack, Fluid f, int xPos, int yPos, int xSize, int ySize) {
+    public void drawFluid(Fluid f, int xPos, int yPos, int xSize, int ySize) {
         TextureAtlasSprite fluidTexture = Objects.requireNonNull(minecraft)
                 .getModelManager().getAtlasTexture(PlayerContainer.LOCATION_BLOCKS_TEXTURE)
                 .getSprite(f.getFluid().getAttributes().getStillTexture());
         minecraft.textureManager.bindTexture(PlayerContainer.LOCATION_BLOCKS_TEXTURE);
         setColor(f.getAttributes().getColor() & 0x00FFFFFF);
-        blit(matrixStack, xPos, yPos, 0, xSize, ySize, fluidTexture);
+        blit(matrix, xPos, yPos, 0, xSize, ySize, fluidTexture);
     }
 
-    public void drawRectangle(MatrixStack matrixStack, int xPos, int yPos, int xSize, int ySize, int color) {
-        fill(matrixStack, xPos, yPos, xPos + xSize, yPos + ySize, color);
+    public void drawRectangle(int xPos, int yPos, int xSize, int ySize, int color) {
+        fill(matrix, xPos, yPos, xPos + xSize, yPos + ySize, color);
     }
 
     public int getStringWidth(String s) {
         return font.getStringWidth(s);
     }
 
-    public void drawSplitText(MatrixStack matrixStack, float xPos, float yPos, int width, Font f, String s) {
-        drawSplitText(matrixStack, xPos, yPos, f, Utilities.I18n.wrap(s, width));
+    public void drawSplitText(float xPos, float yPos, int width, Font f, String s) {
+        drawSplitText(xPos, yPos, f, Utilities.I18n.wrap(s, width));
     }
 
-    public void drawSplitText(MatrixStack matrixStack, float xPos, float yPos, Font f, List<String> ss) {
+    public void drawSplitText(float xPos, float yPos, Font f, List<String> ss) {
         drawText(xPos, yPos, f, () -> {
             int y = 0;
             for (String i : ss) {
-                if (f.shadow) font.drawStringWithShadow(matrixStack, i, 0, y, f.color);
-                else font.drawString(matrixStack, i, 0, y, f.color);
+                if (f.shadow) font.drawStringWithShadow(matrix, i, 0, y, f.color);
+                else font.drawString(matrix, i, 0, y, f.color);
                 y += font.FONT_HEIGHT + 1;
             }
         });
     }
 
-    public void drawText(MatrixStack matrixStack, float xPos, float yPos, Font f, String s) {
-        drawText(matrixStack, xPos, yPos, Integer.MAX_VALUE, f, s);
+    public void drawText(float xPos, float yPos, Font f, String s) {
+        drawText(xPos, yPos, Integer.MAX_VALUE, f, s);
     }
 
-    public void drawText(MatrixStack matrixStack, float xPos, float yPos, int width, Font f, String s) {
+    public void drawText(float xPos, float yPos, int width, Font f, String s) {
         drawText(xPos, yPos, f, () -> {
             String str = s;
             int strWidth = f.getTextWidth(str);
             int ellipsisWidth = f.getTextWidth("...");
             if (strWidth > width && strWidth > ellipsisWidth)
                 str = f.trimToWidth(str, width - ellipsisWidth).trim() + "...";
-            if (f.shadow) font.drawStringWithShadow(matrixStack, str, 0, 0, f.color);
-            else font.drawString(matrixStack, str, 0, 0, f.color);
+            if (f.shadow) font.drawStringWithShadow(matrix, str, 0, 0, f.color);
+            else font.drawString(matrix, str, 0, 0, f.color);
         });
     }
 

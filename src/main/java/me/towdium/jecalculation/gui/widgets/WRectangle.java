@@ -1,6 +1,5 @@
 package me.towdium.jecalculation.gui.widgets;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 import net.minecraftforge.api.distmarker.Dist;
@@ -27,8 +26,8 @@ public class WRectangle implements IWidget {
     }
 
     @Override
-    public boolean onDraw(MatrixStack matrixStack, JecaGui gui, int xMouse, int yMouse) {
-        gui.drawRectangle(matrixStack, xPos, yPos, xSize, ySize, color);
+    public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
+        gui.drawRectangle(xPos, yPos, xSize, ySize, color);
         return false;
     }
 }

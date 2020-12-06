@@ -1,6 +1,5 @@
 package me.towdium.jecalculation.data.label.labels;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.label.ILabel.Serializer.SerializationException;
@@ -204,8 +203,8 @@ public class LItemStack extends LStack<Item> {
     public boolean matches(Object l) {
         if (l instanceof LItemStack) {
             LItemStack lis = (LItemStack) l;
-            return (nbt == null ? lis.nbt == null : nbt.equals(lis.nbt))
-                    && (cap == null ? lis.cap == null : cap.equals(lis.cap))
+            return Objects.equals(nbt, lis.nbt)
+                    && Objects.equals(cap, lis.cap)
                     && item == lis.item
                     && fNbt == lis.fNbt && super.matches(l)
                     && fCap == lis.fCap && fMeta == lis.fMeta;
@@ -233,12 +232,12 @@ public class LItemStack extends LStack<Item> {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void drawLabel(MatrixStack matrixStack, JecaGui gui) {
+    public void drawLabel(JecaGui gui) {
         gui.drawItemStack(0, 0, rep, false);
-        if (fCap || fNbt || fMeta) gui.drawResource(matrixStack, Resource.LBL_FRAME, 0, 0);
-        if (fCap) gui.drawResource(matrixStack, Resource.LBL_FR_LL, 0, 0);
-        if (fNbt) gui.drawResource(matrixStack, Resource.LBL_FR_UL, 0, 0);
-        if (fMeta) gui.drawResource(matrixStack, Resource.LBL_FR_UR, 0, 0);
+        if (fCap || fNbt || fMeta) gui.drawResource(Resource.LBL_FRAME, 0, 0);
+        if (fCap) gui.drawResource(Resource.LBL_FR_LL, 0, 0);
+        if (fNbt) gui.drawResource(Resource.LBL_FR_UL, 0, 0);
+        if (fMeta) gui.drawResource(Resource.LBL_FR_UR, 0, 0);
     }
 
     @Override

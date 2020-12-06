@@ -1,6 +1,5 @@
 package me.towdium.jecalculation.gui.widgets;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 
@@ -15,7 +14,7 @@ import java.util.List;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public interface IWidget {
-    boolean onDraw(MatrixStack matrixStack, JecaGui gui, int xMouse, int yMouse);
+    boolean onDraw(JecaGui gui, int xMouse, int yMouse);
 
     default boolean onTooltip(JecaGui gui, int xMouse, int yMouse, List<String> tooltip) {
         return false;

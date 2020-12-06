@@ -1,6 +1,5 @@
 package me.towdium.jecalculation.gui.widgets;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 
@@ -89,8 +88,8 @@ public class WTick extends WContainer {
         }
 
         @Override
-        public boolean onDraw(MatrixStack matrixStack, JecaGui gui, int xMouse, int yMouse) {
-            boolean ret = super.onDraw(matrixStack, gui, xMouse, yMouse);
+        public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
+            boolean ret = super.onDraw(gui, xMouse, yMouse);
             gui.drawResourceContinuous(disabled ? WGT_BUTTON_S_D : (ret ? WGT_BUTTON_S_F : WGT_BUTTON_S_N)
                     , xPos, yPos, xSize, ySize, 5, 5, 5, 5);
             return ret;

@@ -1,6 +1,5 @@
 package me.towdium.jecalculation.gui.widgets;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 import net.minecraft.client.Minecraft;
@@ -43,8 +42,8 @@ public class WTextField implements IWidget {
     }
 
     @Override
-    public boolean onDraw(MatrixStack matrixStack, JecaGui gui, int xMouse, int yMouse) {
-        textField.renderButton(matrixStack, 0, 0, 0);
+    public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
+        textField.renderButton(gui.getMatrix(), 0, 0, 0);
         return false;
     }
 

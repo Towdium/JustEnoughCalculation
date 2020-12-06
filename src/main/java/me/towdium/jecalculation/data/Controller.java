@@ -95,6 +95,7 @@ public class Controller {
         if (player == null) return;
 
         File f = new File(FMLPaths.CONFIGDIR.get().toFile(), JustEnoughCalculation.MODID + "/data/" + s + ".json");
+        Utilities.Json.write(r.apply(getRecipes()), f);
         player.sendStatusMessage(new TranslationTextComponent(
                 "jecalculation.chat.export", f.getAbsolutePath()), false);
     }

@@ -55,11 +55,11 @@ public class PickerSimple extends IPicker.Impl implements IGui {
         }
 
         static List<ILabel> generate() {
-            Stream<LItemTag> items = ItemTags.getCollection().getTagMap().entrySet().stream()
+            Stream<LItemTag> items = ItemTags.getCollection().getIDTagMap().entrySet().stream()
                     .filter(i -> !i.getValue().getAllElements().isEmpty())
                     .map(i -> new LItemTag(i.getKey()))
                     .sorted(Comparator.comparing(LItemTag::getName));
-            Stream<LFluidTag> fluids = FluidTags.getCollection().getTagMap().entrySet().stream()
+            Stream<LFluidTag> fluids = FluidTags.getCollection().getIDTagMap().entrySet().stream()
                     .filter(i -> !i.getValue().getAllElements().isEmpty())
                     .map(i -> new LFluidTag(i.getKey()))
                     .sorted(Comparator.comparing(LFluidTag::getName));

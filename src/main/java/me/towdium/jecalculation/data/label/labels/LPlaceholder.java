@@ -1,6 +1,5 @@
 package me.towdium.jecalculation.data.label.labels;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.label.ILabel;
@@ -90,9 +89,9 @@ public class LPlaceholder extends ILabel.Impl {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void drawLabel(MatrixStack matrixStack, JecaGui gui) {
-        gui.drawResource(matrixStack, Resource.LBL_UNIV_B, 0, 0);
-        gui.drawResource(matrixStack, Resource.LBL_UNIV_F, 0, 0, (name.hashCode() * 0x131723) & 0xFFFFFF);
+    public void drawLabel(JecaGui gui) {
+        gui.drawResource(Resource.LBL_UNIV_B, 0, 0);
+        gui.drawResource(Resource.LBL_UNIV_F, 0, 0, (name.hashCode() * 0x131723) & 0xFFFFFF);
     }
 
     @Override
