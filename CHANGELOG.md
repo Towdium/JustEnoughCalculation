@@ -168,3 +168,7 @@ Fixed crash when recipe has no catalyst
 
 Ported to 1.16.4  
 Fixed recipe export not working
+
+#### 3.6.4
+
+Fixed 1 tick pause when transferring into calculator GUI
