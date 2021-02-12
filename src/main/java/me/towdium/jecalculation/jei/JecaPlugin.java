@@ -78,7 +78,7 @@ public class JecaPlugin implements IModPlugin {
                     ((GuiRecipe) gui.root).transfer(convertRecipe(layout, context), context);
                 } else {
                     GuiRecipe guiRecipe = new GuiRecipe();
-                    JecaGui.displayGui(true, true, guiRecipe);
+                    JecaGui.displayGui(guiRecipe, JecaGui.getLast());
                     guiRecipe.transfer(convertRecipe(layout, context), context);
                 }
             }

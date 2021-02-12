@@ -134,6 +134,11 @@ public class GuiRecipe extends WContainer implements IGui {
         return true;
     }
 
+    @Override
+    public boolean acceptsTransfer() {
+        return true;
+    }
+
     public void setNewGroup(boolean b) {
         if (b) {
             remove(neu, label, clear, copy, save);

@@ -11,8 +11,10 @@ import me.towdium.jecalculation.gui.guis.IGui;
 import me.towdium.jecalculation.gui.widgets.WLabel;
 import me.towdium.jecalculation.jei.JecaPlugin;
 import me.towdium.jecalculation.utils.Utilities;
+import mezz.jei.api.runtime.IRecipesGui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.renderer.RenderHelper;
@@ -31,6 +33,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.GuiScreenEvent.MouseClickedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent.MouseDragEvent;
@@ -38,7 +41,6 @@ import net.minecraftforge.client.event.GuiScreenEvent.MouseReleasedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent.MouseScrollEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderTooltipEvent;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
@@ -78,8 +80,7 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
     public static final String SEPARATOR = new String();
     public ILabel hand = ILabel.EMPTY;
     protected static JecaGui last;
-    protected static Runnable scheduled;
-    protected static int timeout;
+    protected static JecaGui override;
     protected JecaGui parent;
     protected MatrixStack matrix;
     public IGui root;
@@ -156,18 +157,34 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
     }
 
     public static void displayGui(IGui root) {
-        displayGui(true, false, root);
+        Screen s = Minecraft.getInstance().currentScreen;
+        if (s instanceof JecaGui) {
+            displayGui(root, true);
+        } else {
+            displayGui(root, null);
+        }
     }
 
-    public static void displayGui(boolean updateParent, boolean acceptsTransfer, IGui root) {
-        Runnable r = () -> displayGuiUnsafe(updateParent, acceptsTransfer, root);
-        if (Minecraft.getInstance().currentScreen != null) {
-            JecaGui.scheduled = r;
-            JecaGui.timeout = 1;
-        } else {
+    public static void displayGui(IGui root, @Nullable JecaGui parent) {
+        Minecraft mc = Minecraft.getInstance();
+        Screen s = mc.currentScreen;
+        JecaGui gui = new JecaGui(parent, root.acceptsTransfer(), root);
+        if (s instanceof IRecipesGui || s instanceof ChatScreen) {
+            JecaGui.override = gui;
+        } else  {
             ThreadTaskExecutor<?> executor = WORKQUEUE.get(LogicalSide.CLIENT);
-            executor.deferTask(r);
+            executor.deferTask(() -> {
+                root.onVisible(gui);
+                last = gui;
+                mc.displayGuiScreen(gui);
+            });
         }
+    }
+
+    public static void displayGui(IGui root, boolean updateParent) {
+        JecaGui current = JecaGui.getCurrent();
+        JecaGui parent = updateParent ? current : current.parent;
+        JecaGui.displayGui(root, parent);
     }
 
     public MatrixStack getMatrix() {
@@ -186,17 +203,8 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
         return ret;
     }
 
-    private static void displayGuiUnsafe(boolean updateParent, boolean acceptsTransfer, IGui root) {
-        Minecraft mc = Minecraft.getInstance();
-        JecaGui parent;
-        if (mc.currentScreen == null) parent = null;
-        else if (!(mc.currentScreen instanceof JecaGui)) parent = last;
-        else if (updateParent) parent = (JecaGui) mc.currentScreen;
-        else parent = ((JecaGui) mc.currentScreen).parent;
-        JecaGui toShow = new JecaGui(parent, acceptsTransfer, root);
-        root.onVisible(toShow);
-        last = toShow;
-        mc.displayGuiScreen(toShow);
+    public static JecaGui getLast() {
+        return last;
     }
 
     public static void displayParent() {
@@ -229,13 +237,12 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
     }
 
     @SubscribeEvent
-    public static void onGameTick(TickEvent.PlayerTickEvent e) {
-        if (e.player.world.isRemote && scheduled != null) {
-            if (timeout <= 0) {
-                Runnable r = scheduled;
-                scheduled = null;
-                r.run();
-            } else timeout--;
+    public static void onGuiOpen(GuiOpenEvent e) {
+        if (override != null) {
+            override.root.onVisible(override);
+            last = override;
+            e.setGui(override);
+            override = null;
         }
     }
 
@@ -244,7 +251,7 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
         boolean ret = is == null && Controller.isServerActive();
         String s = "jecalculation.chat.server_mode";
         if (ret) getPlayer().sendStatusMessage(new TranslationTextComponent(s), false);
-        else JecaGui.displayGui(true, true, new GuiMath(is));
+        else JecaGui.displayGui(new GuiMath(is));
         return ret ? 1 : 0;
     }
 
@@ -253,7 +260,7 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
         boolean ret = is == null && Controller.isServerActive();
         String s = "jecalculation.chat.server_mode";
         if (ret) getPlayer().sendStatusMessage(new TranslationTextComponent(s), false);
-        else JecaGui.displayGui(true, true, new GuiCraft(is));
+        else JecaGui.displayGui(new GuiCraft(is));
         return ret ? 1 : 0;
     }
 

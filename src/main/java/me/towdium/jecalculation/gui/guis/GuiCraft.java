@@ -77,7 +77,7 @@ public class GuiCraft extends WContainer implements IGui {
                     JecaGui.getCurrent().hand = l;
                 }))));
         add(new WButtonIcon(130, 7, 20, 20, Resource.BTN_NEW, "craft.recipe")
-                .setListener(i -> JecaGui.displayGui(true, true, new GuiRecipe())));
+                .setListener(i -> JecaGui.displayGui(new GuiRecipe())));
         add(new WButtonIcon(149, 7, 20, 20, Resource.BTN_SEARCH, "craft.search")
                 .setListener(i -> JecaGui.displayGui(new GuiSearch())));
         add(new WText(53, 13, JecaGui.Font.RAW, "x"));
@@ -105,6 +105,11 @@ public class GuiCraft extends WContainer implements IGui {
     @Override
     public void onVisible(JecaGui gui) {
         refreshCalculator();
+    }
+
+    @Override
+    public boolean acceptsTransfer() {
+        return true;
     }
 
     void setMode(RecordCraft.Mode mode) {

@@ -13,4 +13,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public interface IGui extends IContainer {
     default void onVisible(JecaGui gui) {
     }
+
+    default boolean acceptsTransfer() {
+        return false;
+    }
 }
