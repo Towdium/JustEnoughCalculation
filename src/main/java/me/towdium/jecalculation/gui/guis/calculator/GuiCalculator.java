@@ -3,6 +3,7 @@ package me.towdium.jecalculation.gui.guis.calculator;
 import codechicken.nei.recipe.GuiCraftingRecipe;
 import codechicken.nei.recipe.ICraftingHandler;
 import codechicken.nei.recipe.TemplateRecipeHandler;
+import me.towdium.jecalculation.JecaConfig;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.core.Calculator;
 import me.towdium.jecalculation.core.CostRecord;
@@ -82,7 +83,7 @@ public class GuiCalculator extends GuiTooltipScreen {
 
     public GuiCalculator(ContainerCalculator containerCalculator) {
         super(containerCalculator, null);
-        JustEnoughCalculation.networkWrapper.sendToServer(new PacketSyncRecord());
+        JustEnoughCalculation.network.sendToServer(new PacketSyncRecord());
         items = new HashMap<>(27);
     }
 
@@ -118,7 +119,7 @@ public class GuiCalculator extends GuiTooltipScreen {
         mode = EnumMode.fromInt(ItemStackWrapper.NBT.getInt(calculatorItem, "mode"));
         init = true;
         onOpen();
-        if (!JustEnoughCalculation.JECConfig.initialized) {
+        if (!JecaConfig.initialized) {
             ArrayList<String> idents = new ArrayList<>();
             LOOP:
             for (ICraftingHandler handler : GuiCraftingRecipe.craftinghandlers) {
@@ -138,9 +139,9 @@ public class GuiCalculator extends GuiTooltipScreen {
             for (int i = 0; i < idents.size(); i++) {
                 strings[i] = idents.get(i);
             }
-            JustEnoughCalculation.JECConfig.EnumItems.ListRecipeCategory.getProperty().set(strings);
-            JustEnoughCalculation.JECConfig.save();
-            JustEnoughCalculation.JECConfig.initialized = true;
+            JecaConfig.EnumItems.ListRecipeCategory.getProperty().set(strings);
+            JecaConfig.save();
+            JecaConfig.initialized = true;
         }
     }
 
@@ -366,7 +367,7 @@ public class GuiCalculator extends GuiTooltipScreen {
         }
         buttonLeft.enabled = page != 1;
         buttonRight.enabled = page < total;
-        if (JustEnoughCalculation.JECConfig.EnumItems.EnableInventoryCheck.getProperty().getBoolean()) {
+        if (JecaConfig.EnumItems.EnableInventoryCheck.getProperty().getBoolean()) {
             checkItem();
         }
     }

@@ -134,7 +134,7 @@ public class PlayerHandlerClient implements IPlayerHandler {
         ItemStack itemStack = Minecraft.getMinecraft().thePlayer.getHeldItem();
         ItemStackWrapper.NBT.setItem(itemStack, "dest", itemIn);
         ItemStackWrapper.NBT.setString(itemStack, "text", string);
-        JustEnoughCalculation.networkWrapper.sendToServer(new PacketCalculatorUpdate(itemStack));
+        JustEnoughCalculation.network.sendToServer(new PacketCalculatorUpdate(itemStack));
     }
 
     @Override
@@ -157,7 +157,7 @@ public class PlayerHandlerClient implements IPlayerHandler {
             FileOutputStream fileoutputstream = new FileOutputStream(file);
             CompressedStreamTools.writeCompressed(compound, fileoutputstream);
         } catch (Exception e) {
-            JustEnoughCalculation.log.warn("Fail to save records for" + event.entityPlayer.getDisplayName());
+            JustEnoughCalculation.logger.warn("Fail to save records for" + event.entityPlayer.getDisplayName());
         }
     }
 

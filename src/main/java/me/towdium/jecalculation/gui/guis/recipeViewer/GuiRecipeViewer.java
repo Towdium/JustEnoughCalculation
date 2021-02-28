@@ -97,7 +97,7 @@ public class GuiRecipeViewer extends GuiJustEnoughCalculation {
                 } else {
                     JustEnoughCalculation.proxy.getPlayerHandler()
                                                .removeRecipe(recipes.get((page - 1) * 6 + i / 2 - 1), null);
-                    JustEnoughCalculation.networkWrapper
+                    JustEnoughCalculation.network
                             .sendToServer(new PacketRecipeUpdate(null, recipes.get((page - 1) * 6 + i / 2 - 1)));
                     updateLayout();
                 }

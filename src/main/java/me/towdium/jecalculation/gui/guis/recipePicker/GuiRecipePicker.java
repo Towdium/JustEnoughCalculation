@@ -60,7 +60,7 @@ public class GuiRecipePicker extends GuiRecipe {
             }
         } else if (buttonId == 18) {
             JustEnoughCalculation.proxy.getPlayerHandler().removeRecipe(recipes.get(index), null);
-            JustEnoughCalculation.networkWrapper.sendToServer(new PacketRecipeUpdate(null, recipes.get(index)));
+            JustEnoughCalculation.network.sendToServer(new PacketRecipeUpdate(null, recipes.get(index)));
             mc.displayGuiScreen(parent);
         }
     }

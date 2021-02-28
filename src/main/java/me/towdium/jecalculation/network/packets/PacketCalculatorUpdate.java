@@ -5,7 +5,7 @@ import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
-import me.towdium.jecalculation.item.ItemCalculator;
+import me.towdium.jecalculation.JecaItem;
 import net.minecraft.item.ItemStack;
 
 /**
@@ -33,7 +33,7 @@ public class PacketCalculatorUpdate implements IMessage, IMessageHandler<PacketC
 
     @Override
     public IMessage onMessage(PacketCalculatorUpdate message, MessageContext ctx) {
-        if (ctx.getServerHandler().playerEntity.getHeldItem().getItem() instanceof ItemCalculator) {
+        if (ctx.getServerHandler().playerEntity.getHeldItem().getItem() instanceof JecaItem) {
             ctx.getServerHandler().playerEntity.inventory
                     .setInventorySlotContents(ctx.getServerHandler().playerEntity.inventory.currentItem,
                                               message.itemStack);

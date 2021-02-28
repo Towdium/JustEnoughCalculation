@@ -54,11 +54,11 @@ public class GuiRecipeEditor extends GuiRecipe {
             }
             if (index == -1) {
                 JustEnoughCalculation.proxy.getPlayerHandler().addRecipe(recipe, null);
-                JustEnoughCalculation.networkWrapper.sendToServer(new PacketRecipeUpdate(recipe, -1));
+                JustEnoughCalculation.network.sendToServer(new PacketRecipeUpdate(recipe, -1));
                 mc.displayGuiScreen(parent);
             } else {
                 JustEnoughCalculation.proxy.getPlayerHandler().setRecipe(recipe, index, null);
-                JustEnoughCalculation.networkWrapper.sendToServer(new PacketRecipeUpdate(recipe, index));
+                JustEnoughCalculation.network.sendToServer(new PacketRecipeUpdate(recipe, index));
                 mc.displayGuiScreen(parent);
             }
         } else if (buttonId == 17) {

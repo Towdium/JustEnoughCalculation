@@ -2,6 +2,7 @@ package me.towdium.jecalculation.plugin;
 
 import codechicken.nei.api.API;
 import codechicken.nei.api.IConfigureNEI;
+import me.towdium.jecalculation.JecaConfig;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.gui.guis.recipeEditor.GuiRecipeEditor;
 
@@ -10,9 +11,9 @@ public class NEICalculatorConfig implements IConfigureNEI {
     @Override
     public void loadConfig() {
         LOOP:
-        for (String s : JustEnoughCalculation.JECConfig.EnumItems.ListRecipeCategory.getProperty().getStringList()) {
-            for (String b : JustEnoughCalculation.JECConfig.EnumItems.ListRecipeBlackList.getProperty()
-                                                                                         .getStringList()) {
+        for (String s : JecaConfig.EnumItems.ListRecipeCategory.getProperty().getStringList()) {
+            for (String b : JecaConfig.EnumItems.ListRecipeBlackList.getProperty()
+                                                                    .getStringList()) {
                 if (s.equals(b)) {
                     continue LOOP;
                 }
