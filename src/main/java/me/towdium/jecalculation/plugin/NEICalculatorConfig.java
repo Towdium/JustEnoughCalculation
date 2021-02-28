@@ -10,9 +10,10 @@ public class NEICalculatorConfig implements IConfigureNEI {
     @Override
     public void loadConfig() {
         LOOP:
-        for(String s : JustEnoughCalculation.JECConfig.EnumItems.ListRecipeCategory.getProperty().getStringList()){
-            for(String b : JustEnoughCalculation.JECConfig.EnumItems.ListRecipeBlackList.getProperty().getStringList()){
-                if(s.equals(b)){
+        for (String s : JustEnoughCalculation.JECConfig.EnumItems.ListRecipeCategory.getProperty().getStringList()) {
+            for (String b : JustEnoughCalculation.JECConfig.EnumItems.ListRecipeBlackList.getProperty()
+                                                                                         .getStringList()) {
+                if (s.equals(b)) {
                     continue LOOP;
                 }
             }

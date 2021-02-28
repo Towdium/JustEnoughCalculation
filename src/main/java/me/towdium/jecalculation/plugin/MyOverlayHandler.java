@@ -22,17 +22,17 @@ public class MyOverlayHandler implements IOverlayHandler {
         guiContainer.inventorySlots.getSlot(0).putStack(buffer);
         List<ItemStack> itemStacks = new ArrayList<>();
         LOOP:
-        for(PositionedStack item : iRecipeHandler.getIngredientStacks(i)){
-            for(ItemStack current : itemStacks){
-                if(ItemStackWrapper.isTypeEqual(current, item.items[0])){
+        for (PositionedStack item : iRecipeHandler.getIngredientStacks(i)) {
+            for (ItemStack current : itemStacks) {
+                if (ItemStackWrapper.isTypeEqual(current, item.items[0])) {
                     current.stackSize++;
                     continue LOOP;
                 }
             }
             itemStacks.add(item.items[0].copy());
         }
-        int index=4;
-        for(ItemStack itemStack : itemStacks){
+        int index = 4;
+        for (ItemStack itemStack : itemStacks) {
             ItemStackWrapper.NBT.setBool(itemStack, JustEnoughCalculation.Reference.MODID, true);
             guiContainer.inventorySlots.getSlot(index++).putStack(itemStack);
         }

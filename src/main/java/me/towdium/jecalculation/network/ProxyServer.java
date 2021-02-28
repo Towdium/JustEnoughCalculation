@@ -1,7 +1,7 @@
 package me.towdium.jecalculation.network;
 
-import net.minecraftforge.common.MinecraftForge;
 import me.towdium.jecalculation.event.PlayerEventHandler;
+import net.minecraftforge.common.MinecraftForge;
 
 /**
  * @author Towdium

@@ -2,6 +2,9 @@ package me.towdium.jecalculation.gui.guis.recipeViewer;
 
 import cpw.mods.fml.client.config.GuiButtonExt;
 import me.towdium.jecalculation.JustEnoughCalculation;
+import me.towdium.jecalculation.core.ItemStackWrapper;
+import me.towdium.jecalculation.core.Recipe;
+import me.towdium.jecalculation.gui.commom.GuiJustEnoughCalculation;
 import me.towdium.jecalculation.gui.guis.recipeEditor.ContainerRecipeEditor;
 import me.towdium.jecalculation.gui.guis.recipeEditor.GuiRecipeEditor;
 import me.towdium.jecalculation.network.packets.PacketRecipeUpdate;
@@ -10,9 +13,6 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
-import me.towdium.jecalculation.core.ItemStackWrapper;
-import me.towdium.jecalculation.core.Recipe;
-import me.towdium.jecalculation.gui.commom.GuiJustEnoughCalculation;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,20 +28,22 @@ public class GuiRecipeViewer extends GuiJustEnoughCalculation {
     int page = 1;
     int total;
 
-    public GuiRecipeViewer (@Nonnull ContainerRecipeViewer container, @Nullable GuiScreen parent){
+    public GuiRecipeViewer(@Nonnull ContainerRecipeViewer container, @Nullable GuiScreen parent) {
         super(container, parent);
     }
 
     @Override
     public void initGui() {
         super.initGui();
-        buttonLeft = new GuiButton(0, guiLeft+7, guiTop+139, 20, 20, "<");
-        buttonRight = new GuiButton(1, guiLeft+149, guiTop+139, 20, 20, ">");
+        buttonLeft = new GuiButton(0, guiLeft + 7, guiTop + 139, 20, 20, "<");
+        buttonRight = new GuiButton(1, guiLeft + 149, guiTop + 139, 20, 20, ">");
         buttonList.add(buttonLeft);
         buttonList.add(buttonRight);
-        for(int i=0; i<6; i++){
-            buttonList.add(new GuiButtonExt(2+2*i, guiLeft+83, guiTop+7+22*i, 41, 18, StatCollector.translateToLocal("gui.recipeViewer.edit")));
-            buttonList.add(new GuiButtonExt(3+2*i, guiLeft+128, guiTop+7+22*i, 41, 18, StatCollector.translateToLocal("gui.recipeViewer.delete")));
+        for (int i = 0; i < 6; i++) {
+            buttonList.add(new GuiButtonExt(2 + 2 * i, guiLeft + 83, guiTop + 7 + 22 * i, 41, 18,
+                                            StatCollector.translateToLocal("gui.recipeViewer.edit")));
+            buttonList.add(new GuiButtonExt(3 + 2 * i, guiLeft + 128, guiTop + 7 + 22 * i, 41, 18,
+                                            StatCollector.translateToLocal("gui.recipeViewer.delete")));
         }
         updateLayout();
     }
@@ -49,7 +51,8 @@ public class GuiRecipeViewer extends GuiJustEnoughCalculation {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         //GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        mc.getTextureManager().bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID,"textures/gui/guiRecipeViewer.png"));
+        mc.getTextureManager()
+          .bindTexture(new ResourceLocation(JustEnoughCalculation.Reference.MODID, "textures/gui/guiRecipeViewer.png"));
         drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
     }
 
@@ -61,13 +64,13 @@ public class GuiRecipeViewer extends GuiJustEnoughCalculation {
     @Override
     public void updateLayout() {
         recipes = JustEnoughCalculation.proxy.getPlayerHandler().getAllRecipeIndex(null);
-        total = recipes == null ? 0 : (recipes.size()+5)/6;
-        if(page>total && page != 1){
+        total = recipes == null ? 0 : (recipes.size() + 5) / 6;
+        if (page > total && page != 1) {
             page = total;
         }
         displayRecipes();
-        for(int i=0; i<6; i++){
-            boolean flag = recipes.size() > (page-1)*6+i;
+        for (int i = 0; i < 6; i++) {
+            boolean flag = recipes.size() > (page - 1) * 6 + i;
             ((GuiButton) buttonList.get(2 + 2 * i)).enabled = flag;
             ((GuiButton) buttonList.get(3 + 2 * i)).enabled = flag;
         }
@@ -76,9 +79,9 @@ public class GuiRecipeViewer extends GuiJustEnoughCalculation {
     }
 
     @Override
-    protected void actionPerformed(GuiButton button){
+    protected void actionPerformed(GuiButton button) {
         int i = button.id;
-        switch (i){
+        switch (i) {
             case 0:
                 page--;
                 updateLayout();
@@ -88,11 +91,14 @@ public class GuiRecipeViewer extends GuiJustEnoughCalculation {
                 updateLayout();
                 break;
             default:
-                if(i%2 == 0){
-                    mc.displayGuiScreen(new GuiRecipeEditor(new ContainerRecipeEditor(), this, recipes.get((page-1)*6+i/2-1)));
-                }else{
-                    JustEnoughCalculation.proxy.getPlayerHandler().removeRecipe(recipes.get((page-1)*6+i/2-1), null);
-                    JustEnoughCalculation.networkWrapper.sendToServer(new PacketRecipeUpdate(null, recipes.get((page-1)*6+i/2-1)));
+                if (i % 2 == 0) {
+                    mc.displayGuiScreen(new GuiRecipeEditor(new ContainerRecipeEditor(), this,
+                                                            recipes.get((page - 1) * 6 + i / 2 - 1)));
+                } else {
+                    JustEnoughCalculation.proxy.getPlayerHandler()
+                                               .removeRecipe(recipes.get((page - 1) * 6 + i / 2 - 1), null);
+                    JustEnoughCalculation.networkWrapper
+                            .sendToServer(new PacketRecipeUpdate(null, recipes.get((page - 1) * 6 + i / 2 - 1)));
                     updateLayout();
                 }
         }
@@ -100,39 +106,41 @@ public class GuiRecipeViewer extends GuiJustEnoughCalculation {
 
     /**
      * display the recipe at the position
+     *
      * @param position range 1-6
      */
-    public void displayRecipe(@Nullable Recipe recipe, int position){
-        if(recipe != null){
+    public void displayRecipe(@Nullable Recipe recipe, int position) {
+        if (recipe != null) {
             List<ItemStack> items = recipe.getOutput();
-            for(int i=0; i<4; i++){
-                if(i<items.size()){
+            for (int i = 0; i < 4; i++) {
+                if (i < items.size()) {
                     ItemStack buffer = items.get(i);
                     ItemStackWrapper.NBT.setBool(buffer, JustEnoughCalculation.Reference.MODID, true);
-                    inventorySlots.getSlot((position-1)*4+i).putStack(buffer);
-                }else {
-                    inventorySlots.getSlot((position-1)*4+i).putStack(null);
+                    inventorySlots.getSlot((position - 1) * 4 + i).putStack(buffer);
+                } else {
+                    inventorySlots.getSlot((position - 1) * 4 + i).putStack(null);
                 }
             }
-        }else {
-            for(int i=0; i<4; i++){
-                inventorySlots.getSlot((position-1)*4+i).putStack(null);
+        } else {
+            for (int i = 0; i < 4; i++) {
+                inventorySlots.getSlot((position - 1) * 4 + i).putStack(null);
             }
         }
     }
 
-    public void displayRecipes(){
-        if(recipes != null){
-            for(int i=1; i<=6; i++){
-                int index = i-1+6*(page-1);
-                if(index<recipes.size()){
-                    displayRecipe(JustEnoughCalculation.proxy.getPlayerHandler().getRecipe(recipes.get(index), null), i);
-                }else {
+    public void displayRecipes() {
+        if (recipes != null) {
+            for (int i = 1; i <= 6; i++) {
+                int index = i - 1 + 6 * (page - 1);
+                if (index < recipes.size()) {
+                    displayRecipe(JustEnoughCalculation.proxy.getPlayerHandler().getRecipe(recipes.get(index), null),
+                                  i);
+                } else {
                     displayRecipe(null, i);
                 }
             }
-        }else {
-            for(int i=1; i<=6; i++){
+        } else {
+            for (int i = 1; i <= 6; i++) {
                 displayRecipe(null, i);
             }
         }

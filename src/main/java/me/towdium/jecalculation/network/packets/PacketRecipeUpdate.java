@@ -18,9 +18,10 @@ public class PacketRecipeUpdate implements IMessage, IMessageHandler<PacketRecip
     Recipe recipe;
     int index;
 
-    public PacketRecipeUpdate(){}
+    public PacketRecipeUpdate() {
+    }
 
-    public PacketRecipeUpdate(Recipe recipe, int index){
+    public PacketRecipeUpdate(Recipe recipe, int index) {
         this.recipe = recipe;
         this.index = index;
     }
@@ -40,13 +41,13 @@ public class PacketRecipeUpdate implements IMessage, IMessageHandler<PacketRecip
     @Override
     public IMessage onMessage(PacketRecipeUpdate message, MessageContext context) {
         IPlayerHandler playerHandler = JustEnoughCalculation.proxy.getPlayerHandler();
-        if(playerHandler instanceof PlayerHandlerServer){
+        if (playerHandler instanceof PlayerHandlerServer) {
             UUID uuid = context.getServerHandler().playerEntity.getUniqueID();
-            if(message.index == -1){
+            if (message.index == -1) {
                 playerHandler.addRecipe(message.recipe, uuid);
-            }else if (message.recipe != null){
+            } else if (message.recipe != null) {
                 playerHandler.setRecipe(message.recipe, message.index, uuid);
-            }else {
+            } else {
                 playerHandler.removeRecipe(index, uuid);
             }
         }

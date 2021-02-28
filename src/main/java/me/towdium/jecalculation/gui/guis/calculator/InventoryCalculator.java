@@ -6,7 +6,7 @@ import net.minecraft.item.ItemStack;
 /**
  * @author Towdium
  */
-public class InventoryCalculator extends InventoryBasic{
+public class InventoryCalculator extends InventoryBasic {
 
     public InventoryCalculator(ItemStack itemStack) {
         super("Calculator", false, 37);

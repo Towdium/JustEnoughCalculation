@@ -5,9 +5,8 @@ import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.item.ItemStack;
-
 import me.towdium.jecalculation.item.ItemCalculator;
+import net.minecraft.item.ItemStack;
 
 /**
  * @author Towdium
@@ -15,7 +14,8 @@ import me.towdium.jecalculation.item.ItemCalculator;
 public class PacketCalculatorUpdate implements IMessage, IMessageHandler<PacketCalculatorUpdate, IMessage> {
     ItemStack itemStack;
 
-    public PacketCalculatorUpdate(){}
+    public PacketCalculatorUpdate() {
+    }
 
     public PacketCalculatorUpdate(ItemStack itemStack) {
         this.itemStack = itemStack;
@@ -33,9 +33,10 @@ public class PacketCalculatorUpdate implements IMessage, IMessageHandler<PacketC
 
     @Override
     public IMessage onMessage(PacketCalculatorUpdate message, MessageContext ctx) {
-        if(ctx.getServerHandler().playerEntity.getHeldItem().getItem() instanceof ItemCalculator){
-            ctx.getServerHandler().playerEntity.inventory.setInventorySlotContents(
-                    ctx.getServerHandler().playerEntity.inventory.currentItem, message.itemStack);
+        if (ctx.getServerHandler().playerEntity.getHeldItem().getItem() instanceof ItemCalculator) {
+            ctx.getServerHandler().playerEntity.inventory
+                    .setInventorySlotContents(ctx.getServerHandler().playerEntity.inventory.currentItem,
+                                              message.itemStack);
         }
         return null;
     }

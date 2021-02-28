@@ -15,28 +15,30 @@ import java.util.List;
 
 public class Calculator {
     List<CostRecord> costRecords;
-    
-    public Calculator(ItemStack itemStack, long amount){
+
+    public Calculator(ItemStack itemStack, long amount) {
         int count = 0;
         costRecords = new ArrayList<>();
         costRecords.add(new CostRecord(new ItemRecord(itemStack, amount, false)));
         List<ItemRecord> cancellableItems = costRecords.get(0).getCancellableItems();
         LOOP2:
-        while(cancellableItems.size() != 0){
+        while (cancellableItems.size() != 0) {
             if (count > 100) {
                 return;
             }
             // all the items possible tp cancel
-            for(ItemRecord itemRecord : cancellableItems){
+            for (ItemRecord itemRecord : cancellableItems) {
                 // all the recipes for one item
                 LOOP1:
-                for(Recipe recipe : JustEnoughCalculation.proxy.getPlayerHandler().getAllRecipeOf(itemRecord.toItemStack(), null)){
+                for (Recipe recipe : JustEnoughCalculation.proxy.getPlayerHandler()
+                                                                .getAllRecipeOf(itemRecord.toItemStack(), null)) {
                     long times = getCount(itemRecord, recipe);
                     ItemRecord buffer = itemRecord.copy();
-                    buffer.amount = recipe.getOutputAmount(buffer.toItemStack())*times;
-                    CostRecord record = new CostRecord(costRecords.get(costRecords.size()-1), new CostRecord(recipe, times, itemRecord.approx, buffer));
-                    for(CostRecord costRecord : costRecords){
-                        if(costRecord.equals(record)){
+                    buffer.amount = recipe.getOutputAmount(buffer.toItemStack()) * times;
+                    CostRecord record = new CostRecord(costRecords.get(costRecords.size() - 1),
+                                                       new CostRecord(recipe, times, itemRecord.approx, buffer));
+                    for (CostRecord costRecord : costRecords) {
+                        if (costRecord.equals(record)) {
                             continue LOOP1;
                         }
                         costRecords.add(record);
@@ -50,12 +52,12 @@ public class Calculator {
         }
     }
 
-    public CostRecord getCost(){
-        return costRecords.get(costRecords.size()-1);
+    public CostRecord getCost() {
+        return costRecords.get(costRecords.size() - 1);
     }
 
-    protected long getCount(ItemRecord itemRecord, Recipe recipe){
+    protected long getCount(ItemRecord itemRecord, Recipe recipe) {
         long a = recipe.getOutputAmount(itemRecord.toItemStack());
-        return (long)Math.ceil(itemRecord.amount/(double)a);
+        return (long) Math.ceil(itemRecord.amount / (double) a);
     }
 }

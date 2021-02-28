@@ -16,7 +16,7 @@ public class GuiEventHandler {
     long time = new Date().getTime();
 
     @SubscribeEvent(priority = EventPriority.HIGH)
-    public void onMouseClick(InputEvent.MouseInputEvent event){
+    public void onMouseClick(InputEvent.MouseInputEvent event) {
         /*if(event.gui instanceof GuiRecipeEditor){
             if(new Date().getTime() - time < 200){
                 event.setCanceled(true);
@@ -89,8 +89,8 @@ public class GuiEventHandler {
     }
 
     @SubscribeEvent
-    public void onOpen(GuiOpenEvent event){
-        if(event.gui instanceof GuiCalculator){
+    public void onOpen(GuiOpenEvent event) {
+        if (event.gui instanceof GuiCalculator) {
             ((GuiCalculator) event.gui).onOpen();
         }
     }

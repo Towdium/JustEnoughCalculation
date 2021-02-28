@@ -5,12 +5,12 @@ import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.nbt.NBTTagCompound;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.network.PlayerHandlerClient;
 import me.towdium.jecalculation.network.PlayerHandlerServer;
 import me.towdium.jecalculation.network.ProxyClient;
 import me.towdium.jecalculation.network.ProxyServer;
+import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.UUID;
 
@@ -20,15 +20,16 @@ import java.util.UUID;
 public class PacketSyncRecord implements IMessage, IMessageHandler<PacketSyncRecord, IMessage> {
     PlayerHandlerClient client;
 
-    public PacketSyncRecord(){}
+    public PacketSyncRecord() {
+    }
 
-    public PacketSyncRecord(PlayerHandlerClient client){
+    public PacketSyncRecord(PlayerHandlerClient client) {
         this.client = client;
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        if (client == null){
+        if (client == null) {
             buf.writeShort(-1);
             return;
         }
@@ -41,7 +42,7 @@ public class PacketSyncRecord implements IMessage, IMessageHandler<PacketSyncRec
     @Override
     public void fromBytes(ByteBuf buf) {
         short s = buf.readShort();
-        if(s == -1){
+        if (s == -1) {
             return;
         }
         this.client = new PlayerHandlerClient();
@@ -51,12 +52,14 @@ public class PacketSyncRecord implements IMessage, IMessageHandler<PacketSyncRec
 
     @Override
     public IMessage onMessage(PacketSyncRecord message, MessageContext ctx) {
-        if(message.client == null && JustEnoughCalculation.proxy instanceof ProxyServer){
+        if (message.client == null && JustEnoughCalculation.proxy instanceof ProxyServer) {
             //JustEnoughCalculation.proxy.getPlayerHandler().handleLogin(ctx.getServerHandler().playerEntity.getDisplayNameString());
             UUID uuida = ctx.getServerHandler().playerEntity.getUniqueID();
             UUID uuidb = ctx.getServerHandler().playerEntity.getPersistentID();
-            return new PacketSyncRecord(((PlayerHandlerServer) JustEnoughCalculation.proxy.getPlayerHandler()).getClient(uuida));
-        }if(message.client == null && JustEnoughCalculation.proxy instanceof ProxyClient){
+            return new PacketSyncRecord(
+                    ((PlayerHandlerServer) JustEnoughCalculation.proxy.getPlayerHandler()).getClient(uuida));
+        }
+        if (message.client == null && JustEnoughCalculation.proxy instanceof ProxyClient) {
             return null;
         }
 

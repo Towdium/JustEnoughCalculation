@@ -13,28 +13,32 @@ public class ContainerCalculator extends Container {
     EntityPlayer player;
     InventoryCalculator inventoryCalculator;
 
-    public ContainerCalculator(EntityPlayer player, ItemStack itemCalculator){
+    public ContainerCalculator(EntityPlayer player, ItemStack itemCalculator) {
         this.player = player;
         this.inventoryCalculator = new InventoryCalculator(itemCalculator);
-        addSlotToContainer(new Slot(inventoryCalculator, 0,9,9));
+        addSlotToContainer(new Slot(inventoryCalculator, 0, 9, 9));
         int i, left, top;
-        i = 1; left = 8; top = 80;
-        for(int a = 0; a < 3; a++){
-            for(int b =0; b < 9; b++){
-                addSlotToContainer(new Slot(inventoryCalculator,i+9*a+b,left+b*18,top+a*18));
+        i = 1;
+        left = 8;
+        top = 80;
+        for (int a = 0; a < 3; a++) {
+            for (int b = 0; b < 9; b++) {
+                addSlotToContainer(new Slot(inventoryCalculator, i + 9 * a + b, left + b * 18, top + a * 18));
             }
         }
-        i = 28; left = 8; top = 32;
-        for(int a = 0; a < 1; a++){
-            for(int b =0; b < 6; b++){
-                addSlotToContainer(new Slot(inventoryCalculator,i+9*a+b,left+b*18,top+a*18));
+        i = 28;
+        left = 8;
+        top = 32;
+        for (int a = 0; a < 1; a++) {
+            for (int b = 0; b < 6; b++) {
+                addSlotToContainer(new Slot(inventoryCalculator, i + 9 * a + b, left + b * 18, top + a * 18));
             }
         }
     }
 
     @Override
     public Slot getSlot(int p_75139_1_) {
-        if(p_75139_1_ <= 33)
+        if (p_75139_1_ <= 33)
             return super.getSlot(p_75139_1_);
         else
             return null;

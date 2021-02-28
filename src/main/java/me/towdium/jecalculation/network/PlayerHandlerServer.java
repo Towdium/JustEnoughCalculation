@@ -1,9 +1,9 @@
 package me.towdium.jecalculation.network;
 
 import com.google.common.collect.ImmutableList;
+import me.towdium.jecalculation.core.Recipe;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import me.towdium.jecalculation.core.Recipe;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -12,7 +12,7 @@ import java.util.UUID;
  * @author Towdium
  */
 public class PlayerHandlerServer implements IPlayerHandler {
-    private HashMap<UUID,PlayerHandlerClient> players = new HashMap<>();
+    private HashMap<UUID, PlayerHandlerClient> players = new HashMap<>();
 
     @Override
     public boolean getHasRecipeOf(ItemStack itemStack, UUID uuid) {
@@ -102,7 +102,7 @@ public class PlayerHandlerServer implements IPlayerHandler {
         return false;
     }
 
-    public PlayerHandlerClient getClient(UUID uuid){
+    public PlayerHandlerClient getClient(UUID uuid) {
         return players.get(uuid);
     }
 }
