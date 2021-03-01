@@ -1,7 +1,5 @@
 package me.towdium.jecalculation;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.gui.GuiHandler;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,11 +14,14 @@ import net.minecraft.world.World;
 public class JecaItem extends Item {
     public static JecaItem INSTANCE = new JecaItem();
 
+    public static final String NAME = "item_calculator";
+
     public JecaItem() {
         setHasSubtypes(true);
         setMaxStackSize(1);
+        setUnlocalizedName(NAME);
+        setTextureName(JustEnoughCalculation.Reference.MODID + ":" + NAME);
         setCreativeTab(CreativeTabs.tabTools);
-        setUnlocalizedName("item_calculator");
     }
 
     @Override

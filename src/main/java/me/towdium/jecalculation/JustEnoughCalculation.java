@@ -7,6 +7,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkCheckHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import me.towdium.jecalculation.network.IProxy;
@@ -43,9 +44,6 @@ public class JustEnoughCalculation {
     public static SimpleNetworkWrapper network;
     public static Logger logger = LogManager.getLogger(Reference.MODID);
 
-    public static Item itemCalculator = new JecaItem().setUnlocalizedName("itemCalculator")
-                                                      .setTextureName(Reference.MODID + ":" + "itemCalculator");
-
     @NetworkCheckHandler
     public static boolean networkCheck(Map<String, String> mods, Side s) {
         return s == Side.SERVER || mods.containsKey(Reference.MODID);
@@ -54,7 +52,7 @@ public class JustEnoughCalculation {
     @Mod.EventHandler
     public static void initPre(FMLPreInitializationEvent event) {
         JecaConfig.preInit(event);
-        GameRegistry.registerItem(itemCalculator, itemCalculator.getUnlocalizedName().substring(5));
+        GameRegistry.registerItem(JecaItem.INSTANCE, JecaItem.NAME);
         network = NetworkRegistry.INSTANCE.newSimpleChannel(Reference.MODID);
         network.registerMessage(PacketCalculatorUpdate.class, PacketCalculatorUpdate.class, 1, Side.SERVER);
         network.registerMessage(PacketRecipeUpdate.class, PacketRecipeUpdate.class, 2, Side.SERVER);
@@ -68,8 +66,8 @@ public class JustEnoughCalculation {
             Minecraft.getMinecraft().getRenderItem().getItemModelMesher().
                     register(itemCalculator, 0, new ModelResourceLocation(Reference.MODID + ":" + itemCalculator.getUnlocalizedName().substring(5), "inventory"));
         }*/
-        ShapedOreRecipe recipe = new ShapedOreRecipe(new ItemStack(itemCalculator), "SIS", "SRS", "SOS", 'S', "stone",
-                                                     'I', "dyeBlack", 'R', "dustRedstone", 'O', "ingotIron") {
+        ShapedOreRecipe recipe = new ShapedOreRecipe(new ItemStack(JecaItem.INSTANCE), "SIS", "SRS", "SOS", 'S',
+                                                     "stone", 'I', "dyeBlack", 'R', "dustRedstone", 'O', "ingotIron") {
             {
                 try {
                     Field f = ShapedOreRecipe.class.getDeclaredField("input");

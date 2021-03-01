@@ -16,4 +16,4 @@ gui.recipeEditor.save=Save
 gui.recipeEditor.clear=Clear
 gui.recipeViewer.edit=Edit
 gui.recipeViewer.delete=Delete
-item.itemCalculator.name=Calculator
+item.item_calculator.name=Calculator

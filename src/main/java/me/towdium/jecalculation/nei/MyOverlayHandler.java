@@ -1,4 +1,4 @@
-package me.towdium.jecalculation.plugin;
+package me.towdium.jecalculation.nei;
 
 import codechicken.nei.PositionedStack;
 import codechicken.nei.api.IOverlayHandler;

@@ -16,4 +16,4 @@ gui.recipeEditor.save=储存
 gui.recipeEditor.clear=清除
 gui.recipeViewer.edit=编辑
 gui.recipeViewer.delete=删除
-item.itemCalculator.name=合成计算器
+item.item_calculator.name=合成计算器
