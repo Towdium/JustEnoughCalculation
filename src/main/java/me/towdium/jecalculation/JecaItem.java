@@ -14,7 +14,7 @@ import net.minecraft.world.World;
 public class JecaItem extends Item {
     public static JecaItem INSTANCE = new JecaItem();
 
-    public static final String NAME = "item_calculator";
+    public static final String NAME = "itemCalculator";
 
     public JecaItem() {
         setHasSubtypes(true);
@@ -26,9 +26,7 @@ public class JecaItem extends Item {
 
     @Override
     public ItemStack onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn) {
-        playerIn.openGui(JustEnoughCalculation.instance, GuiHandler.GuiId.CALCULATOR, worldIn, 0, 0, 0);
-        ItemStack stack = playerIn.inventory.getStackInSlot(0);
-        //JustEnoughCalculation.log.info(stack==null ? "" : stack.getItem().getUnlocalizedName() + "-" + stack.getItemDamage());
+        playerIn.openGui(JustEnoughCalculation.INSTANCE, GuiHandler.GuiId.EDITOR, worldIn, 0, 0, 0);
         return itemStackIn;
     }
 }

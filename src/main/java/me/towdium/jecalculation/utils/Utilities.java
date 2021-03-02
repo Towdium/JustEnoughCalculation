@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.BreakIterator;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -112,15 +113,8 @@ public class Utilities {
     }
 
     public static String translate(String unlocalized, Object... args) {
-        String localized = getLocalizedString(unlocalized);
-        return String.format(localized, args);
+        return net.minecraft.client.resources.I18n.format(unlocalized, args);
     }
-
-    private static String getLocalizedString(String unlocalized) {
-        // TODO Implement
-        return unlocalized;
-    }
-
 
     public static class Relation<K, V> {
         public HashMap<Pair<K, K>, V> data = new HashMap<>();
@@ -227,6 +221,7 @@ public class Utilities {
         }
     }
 
+    @Deprecated
     @SideOnly(Side.CLIENT)
     public static class I18n {
         public static boolean contains(String s1, String s2) {
@@ -392,7 +387,7 @@ public class Utilities {
             FileOutputStream fos = null;
             try {
                 fos = new FileOutputStream(f);
-                fos.write(write(nbt).getBytes(Charset.forName("UTF-8")));
+                fos.write(write(nbt).getBytes(StandardCharsets.UTF_8));
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
@@ -421,6 +416,7 @@ public class Utilities {
                 w.sb.append('{');
                 if (wrap)
                     w.indent++;
+                //noinspection unchecked
                 for (String i : (Set<String>) tags.func_150296_c()) {
                     if (first)
                         first = false;

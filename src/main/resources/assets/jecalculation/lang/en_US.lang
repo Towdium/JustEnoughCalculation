@@ -16,4 +16,12 @@ gui.recipeEditor.save=Save
 gui.recipeEditor.clear=Clear
 gui.recipeViewer.edit=Edit
 gui.recipeViewer.delete=Delete
-item.item_calculator.name=Calculator
+item.itemCalculator.name=Calculator
+
+gui.editor.output=Output
+gui.editor.catalyst=Cata-\nlyst
+gui.editor.input=Input
+gui.editor.newGroup=New Group
+gui.editor.save=Save
+gui.editor.clear=Clear
+gui.editor.help=Help

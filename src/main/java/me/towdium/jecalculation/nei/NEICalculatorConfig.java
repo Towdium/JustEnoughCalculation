@@ -2,27 +2,19 @@ package me.towdium.jecalculation.nei;
 
 import codechicken.nei.api.API;
 import codechicken.nei.api.IConfigureNEI;
-import me.towdium.jecalculation.JecaConfig;
 import me.towdium.jecalculation.JustEnoughCalculation;
-import me.towdium.jecalculation.gui.guis.recipeEditor.GuiRecipeEditor;
-
+import me.towdium.jecalculation.gui.guis.GuiEditor;
 
 public class NEICalculatorConfig implements IConfigureNEI {
+
     @Override
     public void loadConfig() {
-        LOOP:
-        for (String s : JecaConfig.EnumItems.ListRecipeCategory.getProperty().getStringList()) {
-            for (String b : JecaConfig.EnumItems.ListRecipeBlackList.getProperty()
-                                                                    .getStringList()) {
-                if (s.equals(b)) {
-                    continue LOOP;
-                }
-            }
-            API.registerGuiOverlay(GuiRecipeEditor.class, s);
-            API.registerGuiOverlayHandler(GuiRecipeEditor.class, new MyOverlayHandler(), s);
+        System.out.println("loaded nei config");
+        String [] recipeType = new String[]{ "crafting", "crafting2x2", "smelting", "fuel", "brewing"};
+        for (String ident : recipeType) {
+            API.registerGuiOverlay(GuiEditor.class, ident);
+            API.registerGuiOverlayHandler(GuiEditor.class, new JecaOverlayHandler(), ident);
         }
-        //API.registerGuiOverlay(GuiRecipeEditor.class, "crafting");
-        //API.registerGuiOverlayHandler(GuiRecipeEditor.class, new MyOverlayHandler(), "crafting");
     }
 
     @Override

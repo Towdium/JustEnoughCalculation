@@ -1,47 +1,35 @@
 package me.towdium.jecalculation.gui;
 
 import cpw.mods.fml.common.network.IGuiHandler;
-import me.towdium.jecalculation.JustEnoughCalculation;
-import me.towdium.jecalculation.gui.commom.recipe.ContainerRecipe;
-import me.towdium.jecalculation.gui.guis.calculator.ContainerCalculator;
-import me.towdium.jecalculation.gui.guis.calculator.GuiCalculator;
-import me.towdium.jecalculation.gui.guis.recipeEditor.ContainerRecipeEditor;
-import me.towdium.jecalculation.gui.guis.recipeEditor.GuiRecipeEditor;
-import me.towdium.jecalculation.gui.guis.recipePicker.GuiRecipePicker;
-import me.towdium.jecalculation.gui.guis.recipeViewer.ContainerRecipeViewer;
-import me.towdium.jecalculation.gui.guis.recipeViewer.GuiRecipeViewer;
+import me.towdium.jecalculation.gui.guis.GuiCalculator;
+import me.towdium.jecalculation.gui.guis.GuiEditor;
+import me.towdium.jecalculation.gui.guis.GuiRecipeSearch;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
-
-/**
- * @author Towdium
- */
 public class GuiHandler implements IGuiHandler {
     public static final class GuiId {
         public static final int CALCULATOR = 0;
-        public static final int RECIPE_VIEWER = 1;
-        public static final int RECIPE_EDITOR = 2;
-        public static final int RECIPE_PICKER = 3;
+        public static final int RECIPE_SEARCH = 1;
+        public static final int EDITOR = 2;
+
     }
 
     @Override
-    public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+    public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
         return null;
     }
 
     @Override
-    public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-        switch (ID) {
+    public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+        switch (id) {
             case GuiId.CALCULATOR:
-                return new GuiCalculator(new ContainerCalculator(player, player.getHeldItem()));
-            case GuiId.RECIPE_VIEWER:
-                return new GuiRecipeViewer(new ContainerRecipeViewer(), null);
-            case GuiId.RECIPE_EDITOR:
-                return new GuiRecipeEditor(new ContainerRecipeEditor(), null);
-            case GuiId.RECIPE_PICKER:
-                return new GuiRecipePicker(new ContainerRecipe(), null,
-                                           JustEnoughCalculation.proxy.getPlayerHandler().getAllRecipeIndex(null));
+                return new GuiCalculator(null);
+            case GuiId.RECIPE_SEARCH:
+                return new GuiRecipeSearch(Minecraft.getMinecraft().currentScreen);
+            case GuiId.EDITOR:
+                return new GuiEditor(null);
         }
         return null;
     }

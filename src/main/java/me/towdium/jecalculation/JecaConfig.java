@@ -66,7 +66,7 @@ public class JecaConfig {
                 case ListRecipeBlackList:
                     return new String[0];
                 case ListRecipeCategory:
-                    return new String[]{"crafting", "smelting"};
+                    return new String[]{"minecraft.crafting", "minecraft.smelting"};
             }
             return JecaConfig.empty;
         }
@@ -104,7 +104,9 @@ public class JecaConfig {
         }
     }
 
-    public enum EnumType {Boolean, ListString, Error}
+    public enum EnumType {
+        Boolean, ListString, Error
+    }
 
     public static Object empty;
 
