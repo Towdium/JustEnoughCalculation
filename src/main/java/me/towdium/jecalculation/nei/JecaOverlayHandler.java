@@ -3,7 +3,7 @@ package me.towdium.jecalculation.nei;
 import codechicken.nei.PositionedStack;
 import codechicken.nei.api.IOverlayHandler;
 import codechicken.nei.recipe.IRecipeHandler;
-import me.towdium.jecalculation.core.ItemStackHelper;
+import me.towdium.jecalculation.utils.ItemStackHelper;
 import me.towdium.jecalculation.gui.guis.GuiEditor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;

@@ -126,7 +126,7 @@ public class GuiCalculator extends JecaGuiContainer {
     }
 
     @Override
-    protected int getSizeSlotActive(int index) {
+    protected int getSizeSlot(int index) {
         return index == 0 ? 20: 0;
     }
 
@@ -145,6 +145,11 @@ public class GuiCalculator extends JecaGuiContainer {
                                    int clickTypeIn,
                                    EntityPlayer player) {
             return null;
+        }
+
+        @Override
+        public EnumSlotType getSlotType(int index) {
+            return index == 0 ? EnumSlotType.SELECT : EnumSlotType.DISABLED;
         }
     }
 }

@@ -36,10 +36,11 @@ public class JustEnoughCalculation {
     public static Logger logger = LogManager.getLogger(Reference.MODID);
 
     @Mod.EventHandler
-    public static void initPre(FMLPreInitializationEvent event) {
+    public static void preInit(FMLPreInitializationEvent event) {
         JecaConfig.preInit(event);
         GameRegistry.registerItem(JecaItem.INSTANCE, JecaItem.NAME);
         network = NetworkRegistry.INSTANCE.newSimpleChannel(Reference.MODID);
+        proxy.preInit();
     }
 
     @Mod.EventHandler

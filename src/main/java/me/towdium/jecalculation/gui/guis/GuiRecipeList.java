@@ -13,7 +13,7 @@ public abstract class GuiRecipeList extends JecaGuiContainer {
     }
 
     @Override
-    protected int getSizeSlotActive(int index) {
+    protected int getSizeSlot(int index) {
         return 0;
     }
 

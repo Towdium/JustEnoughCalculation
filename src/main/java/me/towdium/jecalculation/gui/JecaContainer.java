@@ -1,5 +1,7 @@
 package me.towdium.jecalculation.gui;
 
+import me.towdium.jecalculation.utils.ItemStackHelper;
+import me.towdium.jecalculation.utils.polyfill.ClickType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryBasic;
@@ -12,6 +14,8 @@ import java.util.List;
 public abstract class JecaContainer extends Container {
     InventoryBasic inventory;
     List<int[]> slotBuffer = new ArrayList<>();
+
+    public enum EnumSlotType {SELECT, AMOUNT, DISABLED}
 
     public JecaContainer() {
         addSlots();
@@ -40,6 +44,34 @@ public abstract class JecaContainer extends Container {
         return null;
     }
 
+    @Override
+    public ItemStack slotClick(int slotId, int dragType, int clickTypeIn, EntityPlayer player) {
+        // PICKUP = 0
+        // QUICK_MOVE = 1
+        // SWAP = 2
+        // CLONE = 3
+        // THROW = 4
+        // QUICK_CRAFT = 5
+        // PICKUP_ALL = 6
+        if(slotId >=0 && getSlotType(slotId)==EnumSlotType.AMOUNT){
+            ItemStack itemStack = getSlot(slotId).getStack();
+            if(itemStack != null){
+                itemStack = itemStack.copy();
+                if(dragType == 0 && clickTypeIn == ClickType.PICKUP){
+                    itemStack =  ItemStackHelper.Click.leftClick(itemStack);
+                }else if(dragType == 0 && clickTypeIn == ClickType.QUICK_MOVE){
+                    itemStack = ItemStackHelper.Click.leftShift(itemStack);
+                }else if(dragType == 1 && clickTypeIn == ClickType.PICKUP){
+                    itemStack = ItemStackHelper.Click.rightClick(itemStack);
+                }else if(dragType == 1 && clickTypeIn == ClickType.QUICK_MOVE){
+                    itemStack = ItemStackHelper.Click.rightShift(itemStack);
+                }
+                getSlot(slotId).putStack(itemStack);
+            }
+        }
+        return null;
+    }
+
     protected void addSlotSingle(int left, int top){
         slotBuffer.add(new int[]{left, top, 0, 0, 1, 1});
     }
@@ -50,4 +82,6 @@ public abstract class JecaContainer extends Container {
 
 
     protected abstract void addSlots();
+
+    public abstract EnumSlotType getSlotType(int index);
 }
