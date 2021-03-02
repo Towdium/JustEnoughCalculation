@@ -9,13 +9,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class ItemStackHelper {
     public static final String keyAmount = "amount";
     public static final String keyType = "type";
 
-    public enum EnumStackType {
+    public enum EnumStackAmountType {
         INVALID, NUMBER, PERCENTAGE, FLUID;
 
         public String getDisplayString(long l) {
@@ -125,18 +124,25 @@ public class ItemStackHelper {
     }
 
 
-    public static boolean isTypeEqual(ItemStack one, ItemStack two) {
+    public static boolean isTypeEqual(@Nullable ItemStack one, @Nullable ItemStack two) {
         return one != null && two != null && one.getItem() == two.getItem() && getMetadata(one) == getMetadata(two) &&
                NBT.equalsIgnoreJEC(one.getTagCompound(), two.getTagCompound());
     }
 
 
+    @Nullable
     public static ItemStack toItemStackJEC(ItemStack itemStack) {
-        NBT.setData(itemStack, EnumStackType.NUMBER, itemStack.stackSize);
+        if (itemStack == null)
+            return null;
+        NBT.setData(itemStack, EnumStackAmountType.NUMBER, itemStack.stackSize);
         itemStack.stackSize = 1;
         return itemStack;
     }
 
+    public static boolean isItemStackJEC(@Nullable ItemStack itemStack) {
+        return itemStack != null && itemStack.getTagCompound() != null &&
+               itemStack.getTagCompound().hasKey(JustEnoughCalculation.Reference.MODID);
+    }
 
     private static int getMetadata(ItemStack stack) {
         return stack.getItemDamage();
@@ -161,11 +167,11 @@ public class ItemStackHelper {
             return setLong(itemStack, true, keyAmount, amount);
         }
 
-        public static ItemStack setType(ItemStack itemStack, EnumStackType type) {
+        public static ItemStack setType(ItemStack itemStack, EnumStackAmountType type) {
             return setInteger(itemStack, true, keyType, type.ordinal());
         }
 
-        public static ItemStack setData(ItemStack itemStack, EnumStackType type, long amount) {
+        public static ItemStack setData(ItemStack itemStack, EnumStackAmountType type, long amount) {
             setInteger(itemStack, true, keyType, type.ordinal());
             return setLong(itemStack, true, keyAmount, amount);
         }
@@ -198,8 +204,8 @@ public class ItemStackHelper {
             return itemStack;
         }
 
-        public static EnumStackType getType(ItemStack itemStack) {
-            return EnumStackType.values()[getInteger(itemStack, true, keyType)];
+        public static EnumStackAmountType getType(ItemStack itemStack) {
+            return EnumStackAmountType.values()[getInteger(itemStack, true, keyType)];
         }
 
         public static long getAmount(ItemStack itemStack) {
@@ -242,14 +248,15 @@ public class ItemStackHelper {
             return getTag(itemStack, isolate).getLong(key);
         }
 
-        @SuppressWarnings("TrivialFunctionalExpressionUsage")
         static NBTTagCompound getTag(@Nonnull ItemStack itemStack, boolean isolate) {
-            return isolate ?
-                   Polyfill.getSubCompound(itemStack, JustEnoughCalculation.Reference.MODID, true) :
-                   itemStack.hasTagCompound() ? itemStack.getTagCompound() : ((Supplier<NBTTagCompound>) () -> {
-                       itemStack.setTagCompound(new NBTTagCompound());
-                       return itemStack.getTagCompound();
-                   }).get();
+            if (isolate) {
+                return Polyfill.getSubCompound(itemStack, JustEnoughCalculation.Reference.MODID, true);
+            } else {
+                if (!itemStack.hasTagCompound()) {
+                    itemStack.setTagCompound(new NBTTagCompound());
+                }
+                return itemStack.getTagCompound();
+            }
         }
     }
 
@@ -257,40 +264,47 @@ public class ItemStackHelper {
     public static class Click {
         @Nullable
         public static ItemStack leftClick(@Nullable ItemStack itemStack) {
-            return getClick(itemStack, (l -> l+1), (l -> l+1), (l -> 0L));
+            return getClick(itemStack, (l -> l + 1), (l -> l + 1), (l -> 0L));
         }
 
         @Nullable
         public static ItemStack leftShift(@Nullable ItemStack itemStack) {
-            return getClick(itemStack, (l -> l==1 ? 10 : l+10), (l -> l==1 ? 10 : l+10), (l -> 0L));
+            return getClick(itemStack, (l -> l == 1 ? 10 : l + 10), (l -> l == 1 ? 10 : l + 10), (l -> 0L));
         }
 
         @Nullable
         public static ItemStack rightClick(@Nullable ItemStack itemStack) {
-            return getClick(itemStack, (l -> l-1), (l -> l-1), (l -> 0L));
+            return getClick(itemStack, (l -> l - 1), (l -> l - 1), (l -> 0L));
         }
 
         @Nullable
         public static ItemStack rightShift(@Nullable ItemStack itemStack) {
-            return getClick(itemStack, (l -> l==1 ? 0 : l<=10 ? 1 : l-10), (l -> l==1 ? 0 : l<=10 ? 1 : l-10), (l -> 0L));
+            return getClick(itemStack, (l -> l == 1 ? 0 : l <= 10 ? 1 : l - 10),
+                            (l -> l == 1 ? 0 : l <= 10 ? 1 : l - 10), (l -> 0L));
         }
 
         @Nullable
-        static ItemStack getClick(@Nullable ItemStack itemStack, Function<Long, Long> funcNumber,
-                                  Function<Long, Long> funcPercentage, Function<Long, Long> funcFluid){
-            if(itemStack == null){
+        static ItemStack getClick(@Nullable ItemStack itemStack,
+                                  Function<Long, Long> funcNumber,
+                                  Function<Long, Long> funcPercentage,
+                                  Function<Long, Long> funcFluid) {
+            if (itemStack == null) {
                 return null;
             } else {
                 long amount = NBT.getAmount(itemStack);
-                switch (NBT.getType(itemStack)){
+                switch (NBT.getType(itemStack)) {
                     case INVALID:
-                        amount = 0; break;
+                        amount = 0;
+                        break;
                     case NUMBER:
-                        amount = funcNumber.apply(amount); break;
+                        amount = funcNumber.apply(amount);
+                        break;
                     case PERCENTAGE:
-                        amount = funcPercentage.apply(amount); break;
+                        amount = funcPercentage.apply(amount);
+                        break;
                     case FLUID:
-                        amount = funcFluid.apply(amount); break;
+                        amount = funcFluid.apply(amount);
+                        break;
                 }
                 return amount == 0 ? null : NBT.setAmount(itemStack, amount);
             }

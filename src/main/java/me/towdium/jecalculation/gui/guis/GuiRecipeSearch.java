@@ -71,7 +71,7 @@ public class GuiRecipeSearch extends GuiRecipeList {
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float v, int i, int i1) {
+    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         this.mc.getTextureManager().bindTexture(
                 new ResourceLocation(JustEnoughCalculation.Reference.MODID, "textures/gui/guiRecipeSearch.png"));
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
@@ -79,6 +79,6 @@ public class GuiRecipeSearch extends GuiRecipeList {
 
     @Override
     protected int getSizeSlot(int index) {
-        return index == 20 ? 20 : 0;
+        return index == 20 ? 20 : 18;
     }
 }

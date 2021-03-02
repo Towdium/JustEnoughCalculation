@@ -9,6 +9,7 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
 
@@ -27,6 +28,7 @@ public class GuiCalculator extends JecaGuiContainer {
     int activeSlot = -1;
     int page = 1;
     int total = 0;
+    EnumMode mode = EnumMode.INPUT;
 
     @SuppressWarnings("DuplicateBranchesInSwitch")
     public enum EnumMode {
@@ -90,16 +92,10 @@ public class GuiCalculator extends JecaGuiContainer {
         textFieldAmount = new GuiTextField(fontRendererObj, guiLeft + 39, guiTop + 8, 75, 18);
     }
 
-    @Override
-    protected void actionPerformed(GuiButton button) {
-        //noinspection SwitchStatementWithTooFewBranches
-        switch (button.id) {
-            case 1: mc.displayGuiScreen(new GuiRecipeSearch(this));
-        }
-    }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(
                 new ResourceLocation(JustEnoughCalculation.Reference.MODID, "textures/gui/guiCalculator.png"));
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
@@ -114,6 +110,13 @@ public class GuiCalculator extends JecaGuiContainer {
         drawCenteredString(fontRendererObj, page + "/" + total, 33, 145, 0xFFFFFF);
     }
 
+    @Override
+    protected void actionPerformed(GuiButton button) {
+        //noinspection SwitchStatementWithTooFewBranches
+        switch (button.id) {
+            case 1: mc.displayGuiScreen(new GuiRecipeSearch(this));
+        }
+    }
     @SuppressWarnings("SwitchStatementWithTooFewBranches")
     @Override
     protected String getButtonTooltip(int buttonId) {
@@ -136,15 +139,6 @@ public class GuiCalculator extends JecaGuiContainer {
             addSlotSingle(9, 9);
             addSlotGroup(8, 32, 18, 18, 1, 6);
             addSlotGroup(8, 82, 18, 18, 3, 9);
-        }
-
-        @Nullable
-        @Override
-        public ItemStack slotClick(int slotId,
-                                   int dragType,
-                                   int clickTypeIn,
-                                   EntityPlayer player) {
-            return null;
         }
 
         @Override

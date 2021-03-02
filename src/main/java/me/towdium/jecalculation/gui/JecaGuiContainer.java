@@ -9,6 +9,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -42,26 +43,16 @@ public abstract class JecaGuiContainer extends GuiContainer {
     public void setWorldAndResolution(Minecraft mc, int width, int height) {
         super.setWorldAndResolution(mc, width, height);
         //TODO check
-        //        ModelManager tempMM = ReflectionHelper.getField(mc, "modelManager", "field_175617_aL");
-        //        if(tempMM != null){
-        //            itemRender = new RenderItem(mc.getTextureManager(), tempMM, mc.getItemColors()){
-        //                @Override
-        //                public void renderItemOverlayIntoGUI(@SuppressWarnings("NullableProblems") FontRenderer fr, ItemStack stack, int xPosition, int yPosition, String text) {
-        //                    boolean b = fr.getUnicodeFlag();
-        //                    fr.setUnicodeFlag(true);
-        //                    super.renderItemOverlayIntoGUI(fr, stack, xPosition, yPosition, stack == null ? "" : ItemStackHelper.NBT.getType(stack).getDisplayString(ItemStackHelper.NBT.getAmount(stack)));
-        //                    fr.setUnicodeFlag(b);
-        //                }
-        //            };
-        //        }
+        itemRender = new JecaRenderItem();
     }
+
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
         RenderHelper.disableStandardItemLighting(); // ?
 
-        drawToolTipScreen(mouseX, mouseY);
+        drawTooltipScreen(mouseX, mouseY);
         RenderHelper.enableStandardItemLighting(); // >
     }
 
@@ -110,11 +101,9 @@ public abstract class JecaGuiContainer extends GuiContainer {
             super.mouseClicked(i1, i2, i3);
         } else {
             Slot active = inventorySlots.getSlot(activeSlot);
-            if(active.getHasStack()) {
-                active.putStack(ItemStackHelper.toItemStackJEC(active.getStack()));
-                activeSlot = -1;
-                mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
-            }
+            active.putStack(ItemStackHelper.toItemStackJEC(active.getStack()));
+            activeSlot = -1;
+            mc.thePlayer.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1f);
         }
     }
 
@@ -125,11 +114,12 @@ public abstract class JecaGuiContainer extends GuiContainer {
      */
     public void handleMouseOverNEIItemPanel(ItemStack stack) {
         if (activeSlot != -1) {
-            inventorySlots.getSlot(activeSlot).putStack(stack == null ? null : ItemStackHelper.toItemStackJEC(stack.copy()));
+            inventorySlots.getSlot(activeSlot)
+                          .putStack(stack == null ? null : ItemStackHelper.toItemStackJEC(stack.copy()));
         }
     }
 
-    protected void drawToolTipScreen(int mouseX, int mouseY) {
+    protected void drawTooltipScreen(int mouseX, int mouseY) {
         boolean flagUnicode = mc.fontRenderer.getUnicodeFlag();
         boolean flagOver = false;
         mc.fontRenderer.setUnicodeFlag(true);
