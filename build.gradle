@@ -1,30 +1,49 @@
 buildscript {
     repositories {
         mavenCentral()
+        jcenter()
+        maven {
+            name = "gt"
+            url = "https://gregtech.overminddl1.com/"
+        }
         maven {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
         }
         maven {
-            name = "sonatype"
-            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+            name = "jitpack"
+            url = "https://jitpack.io"
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath "com.github.GTNH2:ForgeGradle:FG_1.2-SNAPSHOT"
     }
 }
 
+plugins {
+    id("org.ajoberstar.grgit") version("3.1.1")
+}
+
+apply plugin: "java"
+apply plugin: "idea"
 apply plugin: 'forge'
+
+idea {
+    module {
+        inheritOutputDirs = true
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
 
 version = "${mc_version}-${proj_version}"
 group = "me.towdium.jecalculation"
 archivesBaseName = "jecalculation"
-
-sourceCompatibility = targetCompatibility = '1.8'
-compileJava {
-    sourceCompatibility = targetCompatibility = '1.8'
-}
 
 minecraft {
     version = '1.7.10-10.13.4.1614-1.7.10'
@@ -62,7 +81,7 @@ dependencies {
     // for more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
-    compile "codechicken:NotEnoughItems:${mc_version}-${nei_version}:dev"
+    compile "codechicken:NotEnoughItems:${mc_version}-${nei_version}:universal"
     compile 'codechicken:CodeChickenLib:1.7.10-1.1.3.138:dev'
     compile 'codechicken:CodeChickenCore:1.7.10-1.0.7.+:dev'
     compile 'org.reflections:reflections:0.9.12'
