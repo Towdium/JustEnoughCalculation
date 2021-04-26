@@ -1,4 +1,4 @@
-package me.towdium.jecalculation.utils.polyfill;
+package me.towdium.jecalculation.polyfill;
 
 public class ClickType {
     public static final int PICKUP = 0;

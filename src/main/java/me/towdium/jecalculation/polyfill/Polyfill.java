@@ -1,4 +1,4 @@
-package me.towdium.jecalculation.utils.polyfill;
+package me.towdium.jecalculation.polyfill;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

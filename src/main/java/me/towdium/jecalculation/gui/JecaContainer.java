@@ -1,7 +1,7 @@
 package me.towdium.jecalculation.gui;
 
 import me.towdium.jecalculation.utils.ItemStackHelper;
-import me.towdium.jecalculation.utils.polyfill.ClickType;
+import me.towdium.jecalculation.polyfill.ClickType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryBasic;

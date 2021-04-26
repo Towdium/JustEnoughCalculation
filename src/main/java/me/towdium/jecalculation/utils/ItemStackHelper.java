@@ -1,7 +1,7 @@
 package me.towdium.jecalculation.utils;
 
 import me.towdium.jecalculation.JustEnoughCalculation;
-import me.towdium.jecalculation.utils.polyfill.Polyfill;
+import me.towdium.jecalculation.polyfill.Polyfill;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 

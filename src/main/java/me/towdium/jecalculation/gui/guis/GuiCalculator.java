@@ -97,7 +97,7 @@ public class GuiCalculator extends JecaGuiContainer {
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(
-                new ResourceLocation(JustEnoughCalculation.Reference.MODID, "textures/gui/guiCalculator.png"));
+                new ResourceLocation(JustEnoughCalculation.Reference.MODID, "textures/gui/gui_calculator.png"));
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
         textFieldAmount.drawTextBox();
     }

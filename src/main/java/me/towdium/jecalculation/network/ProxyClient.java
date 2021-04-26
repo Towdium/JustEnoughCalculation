@@ -1,21 +1,28 @@
 package me.towdium.jecalculation.network;
 
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import cpw.mods.fml.client.registry.ClientRegistry;
 import me.towdium.jecalculation.JustEnoughCalculation;
-import me.towdium.jecalculation.gui.GuiHandler;
+import me.towdium.jecalculation.command.JecaCommand;
+import net.minecraft.client.settings.KeyBinding;
+import net.minecraftforge.client.ClientCommandHandler;
+import org.lwjgl.input.Keyboard;
 
-@SideOnly(Side.CLIENT)
-public class ProxyClient implements IProxy {
+public class ProxyClient extends ProxyCommon{
+    public static final KeyBinding keyOpenGui =
+            new KeyBinding("key.open_gui", Keyboard.KEY_F, "key.category");
+
+
     @Override
-    public void preInit() {
-
+    public void initPost() {
+        super.initPost();
+        JustEnoughCalculation.logger.info("client proxy init post");
+        ClientCommandHandler.instance.registerCommand(new JecaCommand());
     }
 
     @Override
     public void init() {
-        NetworkRegistry.INSTANCE.registerGuiHandler(JustEnoughCalculation.INSTANCE, new GuiHandler());
+        super.init();
+        JustEnoughCalculation.logger.info("client proxy init");
+        ClientRegistry.registerKeyBinding(keyOpenGui);
     }
-
 }
