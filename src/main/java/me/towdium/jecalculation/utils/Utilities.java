@@ -7,10 +7,10 @@ import me.towdium.jecalculation.JustEnoughCalculation;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiFunction;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Author: Towdium
@@ -89,5 +89,78 @@ public class Utilities {
         JustEnoughCalculation.logger.warn(String.format("fluid name: %s", stack.getFluid()));
         // TODO check
         return name;
+    }
+
+    public static class Timer {
+        long time = System.currentTimeMillis();
+        boolean running = false;
+
+        public void setState(boolean b) {
+            if (!b && running)
+                running = false;
+            if (b && !running) {
+                running = true;
+                time = System.currentTimeMillis();
+            }
+        }
+
+        public long getTime() {
+            return running ? System.currentTimeMillis() - time : 0;
+        }
+
+    }
+
+    public static class Circulator {
+        int total, current;
+
+        public Circulator(int total) {
+            this(total, 0);
+        }
+
+        public Circulator(int total, int current) {
+            this.total = total;
+            this.current = current;
+        }
+
+        public int next() {
+            current = current + 1 == total ? 0 : current + 1;
+            return current;
+        }
+
+        public int prev() {
+            current = current == 0 ? total - 1 : current - 1;
+            return current;
+        }
+
+        public int index() {
+            return current;
+        }
+    }
+
+    public static class ReversedIterator<T> implements Iterator<T> {
+        ListIterator<T> i;
+
+        public ReversedIterator(List<T> l) {
+            i = l.listIterator(l.size());
+        }
+
+        public ReversedIterator(ListIterator<T> i) {
+            while (i.hasNext()) i.next();
+            this.i = i;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return i.hasPrevious();
+        }
+
+        @Override
+        public T next() {
+            return i.previous();
+        }
+
+        public Stream<T> stream() {
+            return StreamSupport.stream(Spliterators.spliteratorUnknownSize(this, Spliterator.ORDERED), false);
+        }
     }
 }

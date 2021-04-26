@@ -1,6 +1,7 @@
 package me.towdium.jecalculation.nei;
 
 import codechicken.nei.guihook.IContainerTooltipHandler;
+import me.towdium.jecalculation.client.gui.JecGui;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.item.ItemStack;
 
@@ -14,8 +15,8 @@ public class JecaTooltipHandler implements IContainerTooltipHandler {
 
     @Override
     public List<String> handleItemDisplayName(GuiContainer gui, ItemStack itemstack, List<String> currenttip) {
-//        if (gui instanceof JecaGuiContainer) {
-//            ((JecaGuiContainer)gui).handleMouseOverNEIItemPanel(itemstack);
+//        if (gui instanceof JecGui) {
+//            ((JecGui)gui).handleMouseOverNEIItemPanel(itemstack);
 //        }
         return currenttip;
     }

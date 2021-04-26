@@ -29,7 +29,7 @@ public class CommandHelp implements SubCommand {
     @Override
     public void execute(ICommandSender sender, String[] args) throws CommandException {
         if (args.length != 0) {
-            sender.addChatMessage(new ChatComponentTranslation("command.unexpected_arg", String.join(" ", args)));
+            sender.addChatMessage(new ChatComponentTranslation("command.common.unexpected_arg", String.join(" ", args)));
             return;
         }
 

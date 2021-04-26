@@ -5,16 +5,24 @@ import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.resource.Resource;
 import net.minecraft.client.Minecraft;
 
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
+
 /**
  * Author: towdium
  * Date:   17-8-17.
  */
+@ParametersAreNonnullByDefault
 public class WButtonIcon extends WButton {
     protected int xPos, yPos, xSize, ySize;
     protected Resource normal, focused;
 
     public WButtonIcon(int xPos, int yPos, int xSize, int ySize, Resource normal, Resource focused) {
-        super(xPos, yPos, xSize, ySize, "");
+        this(xPos, yPos, xSize, ySize, normal, focused, null);
+    }
+
+    public WButtonIcon(int xPos, int yPos, int xSize, int ySize, Resource normal, Resource focused, @Nullable String tooltip) {
+        super(xPos, yPos, xSize, ySize, "", tooltip);
         this.xPos = xPos;
         this.yPos = yPos;
         this.xSize = xSize;
@@ -43,5 +51,13 @@ public class WButtonIcon extends WButton {
             }
         };
         gui.buttonList.add(button);
+    }
+
+    public WButtonIcon setListenerLeft(Runnable r) {
+        return ((WButtonIcon) super.setListenerLeft(r));
+    }
+
+    public WButtonIcon setListenerRight(Runnable r) {
+        return ((WButtonIcon) super.setListenerRight(r));
     }
 }

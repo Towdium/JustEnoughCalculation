@@ -1,13 +1,15 @@
 item.item_calculator_crafting.name=Crafting Calculator
 item.item_calculator_math.name=Math Calculator
 
-command.not_found=Invalid option: %s
-command.unexpected_arg=Unexpected arg: %s
+command.common.not_found=Invalid option: %s
+command.common.unexpected_arg=Unexpected arg: %s
 command.help.list=Here is the list of all commands available:
 command.state.desc=This mod is working on state: %s
 command.state.s_server=server
 command.state.s_client=client only
 command.state.s_both=client with server
 command.state.s_undefined=error state
+
+gui.gui_calculator.tooltip.new_recipe=New recipe
 
 config.force_client=Force Client

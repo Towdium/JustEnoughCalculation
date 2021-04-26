@@ -3,7 +3,9 @@ package me.towdium.jecalculation.core.entry;
 import me.towdium.jecalculation.core.entry.entries.EntryItemStack;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import me.towdium.jecalculation.utils.wrappers.Single;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -16,7 +18,7 @@ import java.util.function.Function;
  * Date:   8/11/17.
  */
 public interface Entry {
-    EntryMerger MERGER = EntryMerger.INSTANCE;
+    EntryMergerRegistry MERGER = EntryMergerRegistry.INSTANCE;
     EntryRegistry REGISTRY = EntryRegistry.INSTANCE;
     Entry EMPTY = new EntryItemStack(new ItemStack(new Item()), 0);
 
@@ -37,20 +39,20 @@ public interface Entry {
      * to operate the {@link Entry}.
      * For registering, see {@link EntryRegistry}.
      */
-    class EntryMerger {
-        private static final EntryMerger INSTANCE;
+    class EntryMergerRegistry {
+        public static final EntryMergerRegistry INSTANCE;
 
         static {
-            INSTANCE = new EntryMerger();
+            INSTANCE = new EntryMergerRegistry();
             // register functions here
         }
 
         private Relation<String, MergerFunction> functions = new Relation<>();
 
-        private EntryMerger() {
+        private EntryMergerRegistry() {
         }
 
-        public void addFunction(String a, String b, MergerFunction func) {
+        public void register(String a, String b, MergerFunction func) {
             functions.add(a, b, func);
         }
 
@@ -83,12 +85,12 @@ public interface Entry {
     /**
      * This class is used to register an {@link Entry} type.
      * Here you can find the identifier and deserializer of one type.
-     * For {@link Entry} operations, see {@link EntryMerger}
+     * For {@link Entry} operations, see {@link EntryMergerRegistry}
      */
     class EntryRegistry {
         public static final String KEY_IDENTIFIER = "identifier";
         public static final String KEY_CONTENT = "content";
-        private static final EntryRegistry INSTANCE;
+        public static final EntryRegistry INSTANCE;
 
         static {
             INSTANCE = new EntryRegistry();
@@ -108,6 +110,19 @@ public interface Entry {
             idToData.put(identifier, new Pair<>(clazz, deserializer));
         }
 
+        /**
+         * @param nbt NBT to deserialize
+         * @return the recovered entry
+         * A typical NBT structure of an {@link Entry} is as follows:
+         * <pre>{@code
+         * {
+         *     KEY_IDENTIFIER: entry_id
+         *     KEY_CONTENT: {
+         *         entry_content
+         *     }
+         * }
+         * }</pre>
+         */
         public Entry deserialization(NBTTagCompound nbt) {
             String s = nbt.getString(KEY_IDENTIFIER);
             Optional<Entry> e = idToData.get(s).two.apply(nbt.getCompoundTag(KEY_CONTENT));

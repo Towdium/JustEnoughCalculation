@@ -1,4 +1,4 @@
-package me.towdium.jecalculation.utils.polyfill;
+package me.towdium.jecalculation.polyfill;
 
 
 import cpw.mods.fml.common.eventhandler.EventBus;

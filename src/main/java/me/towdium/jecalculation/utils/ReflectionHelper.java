@@ -39,4 +39,28 @@ public class ReflectionHelper {
         }
 
     }
+
+    public static <T, C> T get(C o, String name) {
+        T res;
+        try {
+            Field field = o.getClass().getDeclaredField(name);
+            field.setAccessible(true);
+            res = (T) field.get(o);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+        return res;
+    }
+
+    public static <T, C> void set(C o, String name, T value) {
+        try {
+            Field field = o.getClass().getDeclaredField(name);
+            field.setAccessible(true);
+            field.set(o, value);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
 }
