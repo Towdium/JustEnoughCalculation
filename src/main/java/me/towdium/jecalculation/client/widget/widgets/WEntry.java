@@ -34,7 +34,7 @@ public class WEntry extends Widget.Advanced {
 
     @Override
     public void onDraw(JecGui gui, int xMouse, int yMouse) {
-        gui.drawResourceContinuous(Resource.WIDGET_SLOT, xPos + gui.getGuiLeft(), yPos + gui.getGuiTop(), xSize, ySize,
+        gui.drawResourceContinuous(Resource.WGT_SLOT, xPos + gui.getGuiLeft(), yPos + gui.getGuiTop(), xSize, ySize,
                                    3, 3, 3, 3);
         gui.drawItemStack(gl(gui) + xPos + xSize / 2, gt(gui) + yPos + ySize / 2, entry.getRepresentation(), true);
         if (mouseIn(gui, xMouse, yMouse))

@@ -36,9 +36,9 @@ public class WPager extends Widget.Advanced {
         this.xSize = xSize;
         this.yPos = yPos;
         this.keys = keys;
-        left = new WButtonIcon(xPos, yPos, SIZE, SIZE, Resource.WIDGET_ARR_L_N, Resource.WIDGET_ARR_L_F)
+        left = new WButtonIcon(xPos, yPos, SIZE, SIZE, Resource.WGT_ARR_L_N, Resource.WGT_ARR_L_F)
                 .setListenerLeft(() -> index.prev());
-        right = new WButtonIcon(xPos + xSize - SIZE, yPos, SIZE, SIZE, Resource.WIDGET_ARR_R_N, Resource.WIDGET_ARR_R_F)
+        right = new WButtonIcon(xPos + xSize - SIZE, yPos, SIZE, SIZE, Resource.WGT_ARR_R_N, Resource.WGT_ARR_R_F)
                 .setListenerLeft(() -> index.next());
         wRect = new WRectangle(xPos + SIZE, yPos, xSize - 2 * SIZE, SIZE, JecGui.COLOR_GREY);
         wText = new WText(xPos + SIZE, yPos, xSize - 2 * SIZE, SIZE, JecGui.Font.DEFAULT_SHADOW,

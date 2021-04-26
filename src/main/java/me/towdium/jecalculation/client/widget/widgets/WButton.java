@@ -16,7 +16,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
  */
 @ParametersAreNonnullByDefault
 public class WButton extends Widget.Advanced {
-    public int xPos, yPos, xSize, ySize;
+    protected int xPos, yPos, xSize, ySize;
     public Runnable lsnrLeft, lsnrRight;
     public String text, tooltip;
     protected GuiButtonExt button;
@@ -45,6 +45,15 @@ public class WButton extends Widget.Advanced {
         return this;
     }
 
+    public boolean isEnabled() {
+        return button.enabled;
+    }
+
+    public WButton setEnabled(boolean e) {
+        button.enabled = e;
+        return this;
+    }
+
     protected static boolean mouseIn(GuiButtonExt button, int x, int y) {
         return button.enabled && button.visible &&
                JecGui.mouseIn(button.xPosition, button.yPosition, button.width, button.height, x, y);
@@ -65,7 +74,7 @@ public class WButton extends Widget.Advanced {
 
     @Override
     public boolean onClicked(JecGui gui, int xMouse, int yMouse, int button) {
-        if (mouseIn(this.button, xMouse, yMouse)) {
+        if (mouseIn(this.button, xMouse, yMouse) && isEnabled()) {
             if (button == 0 && lsnrLeft != null) {
                 lsnrLeft.run();
                 ClientUtils.playClickSound(1.0F);

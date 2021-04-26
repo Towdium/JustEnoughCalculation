@@ -18,9 +18,11 @@ import java.util.function.Function;
  * Date:   8/11/17.
  */
 public interface Entry {
+    ItemStack EMPTY_ITEM_STACK = new ItemStack((Item)null);
+
     EntryMergerRegistry MERGER = EntryMergerRegistry.INSTANCE;
     EntryRegistry REGISTRY = EntryRegistry.INSTANCE;
-    Entry EMPTY = new EntryItemStack(new ItemStack(new Item()), 0);
+    Entry EMPTY = new EntryItemStack(Entry.EMPTY_ITEM_STACK, 0);
 
     int getAmount();
 

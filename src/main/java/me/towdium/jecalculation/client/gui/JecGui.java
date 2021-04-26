@@ -85,7 +85,7 @@ public class JecGui extends GuiContainer {
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        drawResourceContinuous(Resource.WIDGET_PANEL, guiLeft, guiTop, xSize, ySize, 5, 5, 5, 5);
+        drawResourceContinuous(Resource.WGT_PANEL, guiLeft, guiTop, xSize, ySize, 5, 5, 5, 5);
     }
 
     @Override
@@ -98,46 +98,49 @@ public class JecGui extends GuiContainer {
     protected void keyTyped(char typedChar, int keyCode) {
         if (!wgtMgr.onKey(typedChar, keyCode)) {
             if (keyCode == Keyboard.KEY_ESCAPE) {
-                if (hand != Entry.EMPTY) hand = Entry.EMPTY;
-                else if (parent != null) Minecraft.getMinecraft().displayGuiScreen(parent);
-                else super.keyTyped(typedChar, keyCode);
+                if (hand != Entry.EMPTY)
+                    hand = Entry.EMPTY;
+                else if (parent != null)
+                    Minecraft.getMinecraft().displayGuiScreen(parent);
+                else
+                    super.keyTyped(typedChar, keyCode);
             }
         }
     }
 
-//    /**
-//     * @return if the event is canceled
-//     * This function handles click outside the normal region,
-//     * especially the overlap with JEI overlay. It handles
-//     * mouse event before JEI.
-//     */
-//    public boolean handleMouseEvent() {
-//        int xMouse = Mouse.getEventX() * this.width / this.mc.displayWidth;
-//        int yMouse = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
-//        if (Mouse.getEventButtonState()) {
-//            if (Mouse.getEventButton() == 0) {
-//                if (hand == Entry.EMPTY) {
-//                    // TODO
-//                    Entry e = JecPlugin.getEntryUnderMouse();
-//                    if (e != Entry.EMPTY) {
-//                        hand = e;
-//                        return true;
-//                    }
-//                } else {
-//                    if (!mouseIn(guiLeft, guiTop, width, height, xMouse, yMouse)) {
-//                        hand = Entry.EMPTY;
-//                        return true;
-//                    }
-//                }
-//            } else if (Mouse.getEventButton() == 1) {
-//                if (hand != Entry.EMPTY) {
-//                    hand = Entry.EMPTY;
-//                    return true;
-//                }
-//            }
-//        }
-//        return false;
-//    }
+    //    /**
+    //     * @return if the event is canceled
+    //     * This function handles click outside the normal region,
+    //     * especially the overlap with JEI overlay. It handles
+    //     * mouse event before JEI.
+    //     */
+    //    public boolean handleMouseEvent() {
+    //        int xMouse = Mouse.getEventX() * this.width / this.mc.displayWidth;
+    //        int yMouse = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
+    //        if (Mouse.getEventButtonState()) {
+    //            if (Mouse.getEventButton() == 0) {
+    //                if (hand == Entry.EMPTY) {
+    //                    // TODO
+    //                    Entry e = JecPlugin.getEntryUnderMouse();
+    //                    if (e != Entry.EMPTY) {
+    //                        hand = e;
+    //                        return true;
+    //                    }
+    //                } else {
+    //                    if (!mouseIn(guiLeft, guiTop, width, height, xMouse, yMouse)) {
+    //                        hand = Entry.EMPTY;
+    //                        return true;
+    //                    }
+    //                }
+    //            } else if (Mouse.getEventButton() == 1) {
+    //                if (hand != Entry.EMPTY) {
+    //                    hand = Entry.EMPTY;
+    //                    return true;
+    //                }
+    //            }
+    //        }
+    //        return false;
+    //    }
 
     public FontRenderer getFontRenderer() {
         return fontRendererObj;
@@ -147,27 +150,47 @@ public class JecGui extends GuiContainer {
         drawTexture(r.getResourceLocation(), xPos, yPos, r.getXPos(), r.getYPos(), r.getXSize(), r.getYSize());
     }
 
-    public void drawResourceContinuous(
-            Resource r, int xPos, int yPos, int xSize, int ySize,
-            int borderTop, int borderBottom, int borderLeft, int borderRight) {
-        drawTextureContinuous(r.getResourceLocation(), xPos, yPos, xSize, ySize,
-                r.getXPos(), r.getYPos(), r.getXSize(), r.getYSize(),
-                borderTop, borderBottom, borderLeft, borderRight);
+    public void drawResourceContinuous(Resource r,
+                                       int xPos,
+                                       int yPos,
+                                       int xSize,
+                                       int ySize,
+                                       int borderTop,
+                                       int borderBottom,
+                                       int borderLeft,
+                                       int borderRight) {
+        drawTextureContinuous(r.getResourceLocation(), xPos, yPos, xSize, ySize, r.getXPos(), r.getYPos(), r.getXSize(),
+                              r.getYSize(), borderTop, borderBottom, borderLeft, borderRight);
     }
 
-    public void drawTexture(ResourceLocation l, int destXPos, int destYPos,
-                            int sourceXPos, int sourceYPos, int sourceXSize, int sourceYSize) {
+    public void drawTexture(ResourceLocation l,
+                            int destXPos,
+                            int destYPos,
+                            int sourceXPos,
+                            int sourceYPos,
+                            int sourceXSize,
+                            int sourceYSize) {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(l);
         this.drawTexturedModalRect(destXPos, destYPos, sourceXPos, sourceYPos, sourceXSize, sourceYSize);
     }
 
-    public void drawTextureContinuous(
-            ResourceLocation l, int destXPos, int destYPos, int destXSize, int destYSize,
-            int sourceXPos, int sourceYPos, int sourceXSize, int sourceYSize,
-            int borderTop, int borderBottom, int borderLeft, int borderRight) {
+    public void drawTextureContinuous(ResourceLocation l,
+                                      int destXPos,
+                                      int destYPos,
+                                      int destXSize,
+                                      int destYSize,
+                                      int sourceXPos,
+                                      int sourceYPos,
+                                      int sourceXSize,
+                                      int sourceYSize,
+                                      int borderTop,
+                                      int borderBottom,
+                                      int borderLeft,
+                                      int borderRight) {
         GuiUtils.drawContinuousTexturedBox(l, destXPos, destYPos, sourceXPos, sourceYPos, destXSize, destYSize,
-                                           sourceXSize, sourceYSize, borderTop, borderBottom, borderLeft, borderRight, zLevel);
+                                           sourceXSize, sourceYSize, borderTop, borderBottom, borderLeft, borderRight,
+                                           zLevel);
     }
 
     public void drawRectangle(int xPos, int yPos, int xSize, int ySize, int color) {
@@ -182,7 +205,8 @@ public class JecGui extends GuiContainer {
     public void drawText(int xPos, int yPos, Font f, Function<String, Integer> indenter, String... text) {
         Single<Integer> y = new Single<>(0);
         boolean unicode = fontRendererObj.getUnicodeFlag();
-        if (!f.unicode) fontRendererObj.setUnicodeFlag(false);
+        if (!f.unicode)
+            fontRendererObj.setUnicodeFlag(false);
         GlStateManager.pushMatrix();
         GlStateManager.translate(xPos, yPos, 0);
         GlStateManager.scale(f.size, f.size, 1);
@@ -199,9 +223,12 @@ public class JecGui extends GuiContainer {
         int l = fontRendererObj.getStringWidth("...");
         String[] ss = !f.cut ? text : Arrays.stream(text).map(s -> {
             int w = fontRendererObj.getStringWidth(s);
-            if (w <= sizeScaled) return s;
-            else if (l >= w) return "...";
-            else return fontRendererObj.trimStringToWidth(s, (int) sizeScaled - l) + "...";
+            if (w <= sizeScaled)
+                return s;
+            else if (l >= w)
+                return "...";
+            else
+                return fontRendererObj.trimStringToWidth(s, (int) sizeScaled - l) + "...";
         }).toArray(String[]::new);
         if (f.centred) {
             drawText(xPos, yPos, f, (s) -> (int) ((sizeScaled - fontRendererObj.getStringWidth(s)) / 2), ss);
@@ -235,6 +262,9 @@ public class JecGui extends GuiContainer {
     }
 
     public void drawItemStack(int xPos, int yPos, ItemStack is, boolean centred) {
+        if (is.getItem() == null) {
+            return;
+        }
         if (centred) {
             xPos -= 8;
             yPos -= 8;
@@ -300,19 +330,32 @@ public class JecGui extends GuiContainer {
 
     public class WidgetManager {
         protected List<Widget> widgets = new ArrayList<>();
+        protected boolean initialized = false;
 
         public void add(Widget w) {
             widgets.add(w);
+            if (initialized && w instanceof Widget.Advanced)
+                ((Widget.Advanced) w).onGuiInit(JecGui.this);
+        }
+
+        public void addAll(Widget... w) {
+            for (Widget aw : w)
+                add(aw);
         }
 
         public void remove(Widget w) {
-            widgets.remove(w);
-            if (w instanceof Widget.Advanced) ((Widget.Advanced) w).onRemoved(JecGui.this);
+            if (widgets.remove(w) && w instanceof Widget.Advanced) ((Widget.Advanced) w).onRemoved(JecGui.this);
+        }
+
+        public void removeAll(Widget... w) {
+            for (Widget aw : w)
+                remove(aw);
         }
 
         public void onInit() {
             widgets.stream().filter(w -> w instanceof Widget.Advanced)
                    .forEach(w -> ((Widget.Advanced) w).onGuiInit(JecGui.this));
+            initialized = true;
         }
 
         public void onDraw(int mouseX, int mouseY) {
@@ -321,8 +364,12 @@ public class JecGui extends GuiContainer {
 
         @SuppressWarnings("UnusedReturnValue")
         public boolean onClick(int xMouse, int yMouse, int button) {
-            return widgets.stream().filter(w -> w instanceof Widget.Advanced)
-                          .anyMatch(w -> ((Widget.Advanced) w).onClicked(JecGui.this, xMouse, yMouse, button));
+            for (Widget w : widgets) {
+                if (w instanceof Widget.Advanced &&
+                    ((Widget.Advanced) w).onClicked(JecGui.this, xMouse, yMouse, button))
+                    return true;
+            }
+            return false;
         }
 
         @SuppressWarnings("UnusedReturnValue")
@@ -333,16 +380,23 @@ public class JecGui extends GuiContainer {
 
         public Optional<WEntry> getEntryAt(int xMouse, int yMouse) {
             return widgets.stream().map(w -> {
-                if (w instanceof WEntryGroup) return ((WEntryGroup) w).getEntryAt(JecGui.this, xMouse, yMouse);
-                else if (w instanceof WEntry) return Optional.ofNullable(
-                        ((WEntry) w).mouseIn(JecGui.this, xMouse, yMouse) ? ((WEntry) w) : null);
-                else return Optional.<WEntry>empty();
+                if (w instanceof WEntryGroup)
+                    return ((WEntryGroup) w).getEntryAt(JecGui.this, xMouse, yMouse);
+                else if (w instanceof WEntry)
+                    return Optional.ofNullable(((WEntry) w).mouseIn(JecGui.this, xMouse, yMouse) ? ((WEntry) w) : null);
+                else
+                    return Optional.<WEntry>empty();
             }).filter(Optional::isPresent).findFirst().orElse(Optional.empty());
         }
     }
 
-    public int getGuiLeft() { return guiLeft; }
-    public int getGuiTop() { return guiTop; }
+    public int getGuiLeft() {
+        return guiLeft;
+    }
+
+    public int getGuiTop() {
+        return guiTop;
+    }
 
     public void drawHoveringText(String text, int x, int y) {
         super.drawHoveringText(Arrays.asList(text), x, y, fontRendererObj);

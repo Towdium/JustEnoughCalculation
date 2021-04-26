@@ -23,12 +23,14 @@ public class WTextField extends Widget.Advanced {
 
     @Override
     public void onGuiInit(JecGui gui) {
-        textField = new GuiTextField(gui.getFontRenderer(), xPos + gui.getGuiLeft(), yPos + gui.getGuiTop(), xSize, 20);
+        textField = new GuiTextField(gui.getFontRenderer(), xPos + gui.getGuiLeft() + 1, yPos + gui.getGuiTop() + 1,
+                                     xSize - 2, 18);
     }
 
     @Override
     public boolean onClicked(JecGui gui, int xMouse, int yMouse, int button) {
-        boolean flag = xMouse >= textField.xPosition && xMouse < textField.xPosition + textField.width && yMouse >= textField.yPosition && yMouse < textField.yPosition + textField.height;
+        boolean flag = xMouse >= textField.xPosition && xMouse < textField.xPosition + textField.width &&
+                       yMouse >= textField.yPosition && yMouse < textField.yPosition + textField.height;
         textField.mouseClicked(xMouse, yMouse, button);
         return textField.isFocused() && flag && button == 0;
     }
