@@ -10,37 +10,38 @@ import net.minecraft.client.Minecraft;
  * Date:   17-8-17.
  */
 public class WButtonIcon extends WButton {
-    protected int xPos, yPos;
+    protected int xPos, yPos, xSize, ySize;
     protected Resource normal, focused;
 
-    public WButtonIcon(int xPos, int yPos, Resource normal, Resource focused) {
-        super(xPos, yPos, 20, 20, "");
+    public WButtonIcon(int xPos, int yPos, int xSize, int ySize, Resource normal, Resource focused) {
+        super(xPos, yPos, xSize, ySize, "");
         this.xPos = xPos;
         this.yPos = yPos;
+        this.xSize = xSize;
+        this.ySize = ySize;
         this.normal = normal;
         this.focused = focused;
     }
 
     @Override
     public void onGuiInit(JecGui gui) {
-        super.onGuiInit(gui);
-        gui.buttonList.add(new GuiButtonExt(0, xPos + gui.getGuiLeft(), yPos + gui.getGuiTop(), 20, 20, "") {
+        button = new GuiButtonExt(0, xPos + gui.getGuiLeft(), yPos + gui.getGuiTop(), xSize, ySize, "") {
             @Override
             public void drawButton(Minecraft mc, int mouseX, int mouseY) {
                 final int x = this.xPosition;
                 final int y = this.yPosition;
                 this.field_146123_n = mouseX > x + 1 && mouseY > y + 1 && mouseX <= x + width - 1 && mouseY <= y + height - 1;
                 boolean hovered = this.field_146123_n;
-                gui.drawResource(hovered ? Resource.BUTTON_FOCUSED : Resource.BUTTON_NORMAL, x, y);
-                String text = displayString;
-                int strWidth = mc.fontRenderer.getStringWidth(text);
-                int ellipsisWidth = mc.fontRenderer.getStringWidth("...");
-                if (strWidth > width - 6 && strWidth > ellipsisWidth)
-                    text = mc.fontRenderer.trimStringToWidth(text, width - 6 - ellipsisWidth).trim() + "...";
-                this.drawCenteredString(mc.fontRenderer, text, x + this.width / 2, y + (this.height - 8) / 2,
-                        hovered ? 16777120 : 14737632);
-                gui.drawResource(hovered ? focused : normal, x + 3, y + 3);
+                gui.drawResourceContinuous(hovered ? Resource.WIDGET_BUTTON_F : Resource.WIDGET_BUTTON_N, x, y, width, height, 3, 3, 3, 3);
+                Resource r = hovered ? focused : normal;
+                gui.drawResource(r, x + (width - r.getXSize()) / 2, y + (height - r.getYSize()) / 2);
             }
-        });
+
+            @Override
+            public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
+                return false;
+            }
+        };
+        gui.buttonList.add(button);
     }
 }

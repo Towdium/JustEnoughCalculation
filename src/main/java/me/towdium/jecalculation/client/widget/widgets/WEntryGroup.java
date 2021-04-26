@@ -10,7 +10,7 @@ import java.util.stream.IntStream;
  * Author: towdium
  * Date:   17-8-17.
  */
-public class WEntryGroup extends Widget {
+public class WEntryGroup extends Widget.Advanced {
     ArrayList<WEntry> widgets = new ArrayList<>();
 
     public WEntryGroup(int xPos, int yPos, int column, int row) {
@@ -38,7 +38,7 @@ public class WEntryGroup extends Widget {
     }
 
     @Override
-    public void onClicked(JecGui gui, int xMouse, int yMouse, int button) {
-        widgets.forEach(w -> w.onClicked(gui, xMouse, yMouse, button));
+    public boolean onClicked(JecGui gui, int xMouse, int yMouse, int button) {
+        return widgets.stream().anyMatch(w -> w.onClicked(gui, xMouse, yMouse, button));
     }
 }

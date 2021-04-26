@@ -1,12 +1,9 @@
 package me.towdium.jecalculation.item;
 
 import me.towdium.jecalculation.JustEnoughCalculation;
-import me.towdium.jecalculation.gui.GuiHandler;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 
 
 /**

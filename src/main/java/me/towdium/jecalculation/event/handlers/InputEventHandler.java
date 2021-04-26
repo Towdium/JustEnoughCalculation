@@ -19,7 +19,6 @@ public class InputEventHandler {
     @SubscribeEvent(priority = EventPriority.NORMAL, receiveCanceled = true)
     public void onKey(InputEvent.KeyInputEvent event) {
         if (ProxyClient.keyOpenGui.isPressed() && JustEnoughCalculation.side != JustEnoughCalculation.enumSide.SERVER) {
-            JustEnoughCalculation.logger.info("key pressed");
             Minecraft.getMinecraft().displayGuiScreen(new GuiCalculator(null));
         }
     }
