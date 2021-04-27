@@ -7,6 +7,8 @@ import net.minecraft.client.gui.GuiScreen;
 
 import javax.annotation.Nullable;
 
+import static me.towdium.jecalculation.client.widget.widgets.WEntry.enumMode.EDITOR;
+
 /**
  * Author: towdium
  * Date:   17-9-8.
@@ -18,9 +20,9 @@ public class GuiEditor extends JecGui {
     WButtonIcon buttonLabel = new WButtonIcon(45, 33, 20, 20, Resource.BTN_LABEL_N, Resource.BTN_LABEL_F, "label");
     WButtonIcon buttonYes = new WButtonIcon(7, 33, 20, 20, Resource.BTN_YES_N, Resource.BTN_YES_F, "confirm");
     WButtonIcon buttonNo = new WButtonIcon(26, 33, 20, 20, Resource.BTN_NO_N, Resource.BTN_NO_F, "abort");
-    WEntryGroup groupInput = new WEntryGroup(28, 111, 7, 2, 20, 20);
-    WEntryGroup groupCatalyst = new WEntryGroup(28, 87, 7, 1, 20, 20);
-    WEntryGroup groupOutput = new WEntryGroup(28, 63, 7, 1, 20, 20);
+    WEntryGroup groupInput = new WEntryGroup(28, 111, 7, 2, 20, 20, EDITOR);
+    WEntryGroup groupCatalyst = new WEntryGroup(28, 87, 7, 1, 20, 20, EDITOR);
+    WEntryGroup groupOutput = new WEntryGroup(28, 63, 7, 1, 20, 20, EDITOR);
     WTextField textField = new WTextField(49, 33, 119);
     WButtonIcon buttonNew = new WButtonIcon(7, 33, 20, 20, Resource.BTN_NEW_N, Resource.BTN_NEW_F, "new")
             .setListenerLeft(() -> setModeNewGroup(true));

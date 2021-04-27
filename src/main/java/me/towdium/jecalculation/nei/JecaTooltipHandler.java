@@ -15,9 +15,6 @@ public class JecaTooltipHandler implements IContainerTooltipHandler {
 
     @Override
     public List<String> handleItemDisplayName(GuiContainer gui, ItemStack itemstack, List<String> currenttip) {
-//        if (gui instanceof JecGui) {
-//            ((JecGui)gui).handleMouseOverNEIItemPanel(itemstack);
-//        }
         return currenttip;
     }
 
@@ -27,9 +24,9 @@ public class JecaTooltipHandler implements IContainerTooltipHandler {
                                           int mousex,
                                           int mousey,
                                           List<String> currenttip) {
-//        if (gui instanceof JecaGuiContainer) {
-//            ((JecaGuiContainer)gui).handleMouseOverNEIItemPanel(itemstack);
-//        }
+        if (gui instanceof JecGui) {
+            NEIPlugin.setEntryUnderMouse(itemstack);
+        }
         return currenttip;
     }
 }

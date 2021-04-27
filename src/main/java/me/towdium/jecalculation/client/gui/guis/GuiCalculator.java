@@ -9,6 +9,8 @@ import net.minecraft.client.gui.GuiScreen;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import static me.towdium.jecalculation.client.widget.widgets.WEntry.enumMode.*;
+
 /**
  * Author: towdium
  * Date:   8/14/17.
@@ -21,9 +23,9 @@ public class GuiCalculator extends JecGui {
         wgtMgr.add(new WButtonIcon(130, 7, 20, 20, Resource.BTN_NEW_N, Resource.BTN_NEW_F, "recipe")
                            .setListenerLeft(() -> Minecraft.getMinecraft().displayGuiScreen(new GuiEditor(this))));
         wgtMgr.add(new WButtonIcon(149, 7, 20, 20, Resource.BTN_SEARCH_N, Resource.BTN_SEARCH_F, "search"));
-        wgtMgr.add(new WEntryGroup(7, 87, 9, 4));
-        wgtMgr.add(new WEntryGroup(7, 31, 8, 1));
-        wgtMgr.add(new WEntry(31, 7, 20, 20));
+        wgtMgr.add(new WEntryGroup(7, 87, 9, 4, RESULT));
+        wgtMgr.add(new WEntryGroup(7, 31, 8, 1, PICKER));
+        wgtMgr.add(new WEntry(31, 7, 20, 20, SELECTOR));
         wgtMgr.add(new WLine(52));
         wgtMgr.add(new WTextField(61, 7, 64));
         wgtMgr.add(new WIcon(151, 31, 18, 18, Resource.ICN_RECENT_N, Resource.ICN_RECENT_F, "history"));

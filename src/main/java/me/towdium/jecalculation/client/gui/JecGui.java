@@ -1,12 +1,15 @@
 package me.towdium.jecalculation.client.gui;
 
 import cpw.mods.fml.client.config.GuiUtils;
+import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.client.resource.Resource;
 import me.towdium.jecalculation.client.widget.Widget;
 import me.towdium.jecalculation.client.widget.widgets.WEntry;
 import me.towdium.jecalculation.client.widget.widgets.WEntryGroup;
 import me.towdium.jecalculation.core.entry.Entry;
+import me.towdium.jecalculation.nei.NEIPlugin;
 import me.towdium.jecalculation.polyfill.mc.client.renderer.GlStateManager;
+import me.towdium.jecalculation.utils.IllegalPositionException;
 import me.towdium.jecalculation.utils.helpers.LocalizationHelper;
 import me.towdium.jecalculation.utils.wrappers.Single;
 import me.towdium.jecalculation.utils.wrappers.Triple;
@@ -21,6 +24,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -91,7 +95,15 @@ public class JecGui extends GuiContainer {
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         super.mouseClicked(mouseX, mouseY, mouseButton);
-        wgtMgr.onClick(mouseX, mouseY, mouseButton);
+        boolean InGui = wgtMgr.onClick(mouseX, mouseY, mouseButton);
+        if(!InGui) {
+            this.handleMouseEvent();
+        }
+    }
+
+    @Override
+    public void handleMouseInput() {
+        super.handleMouseInput();
     }
 
     @Override
@@ -108,39 +120,40 @@ public class JecGui extends GuiContainer {
         }
     }
 
-    //    /**
-    //     * @return if the event is canceled
-    //     * This function handles click outside the normal region,
-    //     * especially the overlap with JEI overlay. It handles
-    //     * mouse event before JEI.
-    //     */
-    //    public boolean handleMouseEvent() {
-    //        int xMouse = Mouse.getEventX() * this.width / this.mc.displayWidth;
-    //        int yMouse = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
-    //        if (Mouse.getEventButtonState()) {
-    //            if (Mouse.getEventButton() == 0) {
-    //                if (hand == Entry.EMPTY) {
-    //                    // TODO
-    //                    Entry e = JecPlugin.getEntryUnderMouse();
-    //                    if (e != Entry.EMPTY) {
-    //                        hand = e;
-    //                        return true;
-    //                    }
-    //                } else {
-    //                    if (!mouseIn(guiLeft, guiTop, width, height, xMouse, yMouse)) {
-    //                        hand = Entry.EMPTY;
-    //                        return true;
-    //                    }
-    //                }
-    //            } else if (Mouse.getEventButton() == 1) {
-    //                if (hand != Entry.EMPTY) {
-    //                    hand = Entry.EMPTY;
-    //                    return true;
-    //                }
-    //            }
-    //        }
-    //        return false;
-    //    }
+    /**
+     * @return if the event is canceled
+     * This function handles click outside the normal region,
+     * especially the overlap with JEI overlay. It handles
+     * mouse event before JEI.
+     */
+    public boolean handleMouseEvent() {
+        JustEnoughCalculation.logger.info("handle mouse clicked");
+        int xMouse = Mouse.getEventX() * this.width / this.mc.displayWidth;
+        int yMouse = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
+        if (Mouse.getEventButtonState()) {
+            if (Mouse.getEventButton() == 0) {
+                if (hand == Entry.EMPTY) {
+                    // TODO
+                    Entry e = NEIPlugin.getEntryUnderMouse();
+                    if (e != Entry.EMPTY) {
+                        hand = e;
+                        return true;
+                    }
+                } else {
+                    if (!mouseIn(guiLeft, guiTop, width, height, xMouse, yMouse)) {
+                        hand = Entry.EMPTY;
+                        return true;
+                    }
+                }
+            } else if (Mouse.getEventButton() == 1) {
+                if (hand != Entry.EMPTY) {
+                    hand = Entry.EMPTY;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     public FontRenderer getFontRenderer() {
         return fontRendererObj;
@@ -198,11 +211,27 @@ public class JecGui extends GuiContainer {
         // TODO Different from origin
     }
 
-    public void drawText(int xPos, int yPos, Font f, String... text) {
-        drawText(xPos, yPos, f, (s) -> 0, text);
+
+    public void drawText(float xPos, float yPos, Font f, String... text) {
+        Function<String, Integer> indenter;
+        switch (f.align) {
+            case AUTO:
+            case LEFT:
+                indenter = s -> 0;
+                break;
+            case CENTRE:
+                indenter = s -> fontRendererObj.getStringWidth(s) / 2;
+                break;
+            case RIGHT:
+                indenter = s -> -fontRendererObj.getStringWidth(s);
+                break;
+            default:
+                throw new IllegalPositionException();
+        }
+        drawText(xPos, yPos, f, indenter, text);
     }
 
-    public void drawText(int xPos, int yPos, Font f, Function<String, Integer> indenter, String... text) {
+    private void drawText(float xPos, float yPos, Font f, Function<String, Integer> indenter, String... text) {
         Single<Integer> y = new Single<>(0);
         boolean unicode = fontRendererObj.getUnicodeFlag();
         if (!f.unicode)
@@ -218,28 +247,32 @@ public class JecGui extends GuiContainer {
         fontRendererObj.setUnicodeFlag(unicode);
     }
 
-    public void drawText(int xPos, int yPos, int xSize, Font f, String... text) {
+    public void drawText(float xPos, float yPos, float xSize, Font f, String... text) {
         float sizeScaled = xSize / f.size;
         int l = fontRendererObj.getStringWidth("...");
         String[] ss = !f.cut ? text : Arrays.stream(text).map(s -> {
             int w = fontRendererObj.getStringWidth(s);
-            if (w <= sizeScaled)
-                return s;
-            else if (l >= w)
-                return "...";
-            else
-                return fontRendererObj.trimStringToWidth(s, (int) sizeScaled - l) + "...";
+            if (w <= sizeScaled) return s;
+            else if (l >= w) return "...";
+            else return fontRendererObj.trimStringToWidth(s, (int) (sizeScaled - l)) + "...";
         }).toArray(String[]::new);
-        if (f.centred) {
-            drawText(xPos, yPos, f, (s) -> (int) ((sizeScaled - fontRendererObj.getStringWidth(s)) / 2), ss);
-        } else {
-            int maxLen = Arrays.stream(ss).mapToInt(s -> fontRendererObj.getStringWidth(s)).max().orElse(0);
-            int xOffset = (int) ((sizeScaled - maxLen) / 2);
-            drawText(xPos, yPos, f, (s) -> xOffset, ss);
+        switch (f.align) {
+            case LEFT:
+                drawText(xPos, yPos, f, s -> 0, ss);
+                break;
+            case AUTO:
+            case CENTRE:
+                drawText(xPos, yPos, f, s -> ((int) sizeScaled - fontRendererObj.getStringWidth(s)) / 2, ss);
+                break;
+            case RIGHT:
+                drawText(xPos, yPos, f, s -> (int) sizeScaled - fontRendererObj.getStringWidth(s), ss);
+                break;
+            default:
+                throw new IllegalPositionException();
         }
     }
 
-    public void drawText(int xPos, int yPos, int xSize, int ySize, Font f, String... text) {
+    public void drawText(float xPos, float yPos, int xSize, int ySize, Font f, String... text) {
         int yOffset = (ySize - (int) (text.length * fontRendererObj.FONT_HEIGHT * f.size)) / 2;
         drawText(xPos, yPos + yOffset, xSize, f, text);
     }
@@ -284,13 +317,14 @@ public class JecGui extends GuiContainer {
     }
 
     public static class Font {
-        public static final Font DEFAULT_SHADOW = new Font(0xFFFFFF, true, true, false, true, 1);
-        public static final Font DEFAULT_NO_SHADOW = new Font(0x404040, false, true, false, true, 1);
-        public static final Font DEFAULT_HALF = new Font(0xFFFFFF, true, true, true, true, 0.5f);
+        public static final Font DEFAULT_SHADOW = new Font(0xFFFFFF, true, true, false, 1, enumAlign.AUTO);
+        public static final Font DEFAULT_NO_SHADOW = new Font(0x404040, false, true, false, 1, enumAlign.AUTO);
+        public static final Font DEFAULT_HALF = new Font(0xFFFFFF, true, true, true, 0.5f, enumAlign.AUTO);
 
         public int color;
-        public boolean shadow, cut, unicode, centred;
+        public boolean shadow, cut, unicode;
         public float size;
+        public enumAlign align;
 
         /**
          * @param color   foreground color
@@ -299,18 +333,24 @@ public class JecGui extends GuiContainer {
          * @param unicode if false, FORCE NOT UNICODE
          * @param size    font size, 1 for default font size
          */
-        public Font(int color, boolean shadow, boolean cut, boolean unicode, boolean centred, float size) {
+        public Font(int color, boolean shadow, boolean cut, boolean unicode, float size, enumAlign align) {
             this.color = color;
             this.shadow = shadow;
             this.cut = cut;
             this.size = size;
+            this.align = align;
             this.unicode = unicode;
-            this.centred = centred;
         }
 
         public Font copy() {
-            return new Font(color, shadow, cut, unicode, centred, size);
+            return new Font(color, shadow, cut, unicode, size, align);
         }
+
+        public enum enumAlign {LEFT, CENTRE, RIGHT, AUTO}
+    }
+
+    public static boolean isShiftDown() {
+        return Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
     }
 
     public static class ContainerTransfer extends Container {

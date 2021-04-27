@@ -1,6 +1,7 @@
 package me.towdium.jecalculation.core.entry.entries;
 
 import me.towdium.jecalculation.core.entry.Entry;
+import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.item.ItemStack;
 
 /**
@@ -22,14 +23,39 @@ public class EntryItemStack implements Entry {
         this.amount = amount;
     }
 
-    @Override
-    public int getAmount() {
-        return amount;
+    private EntryItemStack(EntryItemStack eis) {
+        amount = eis.amount;
+        itemStack = eis.itemStack;
     }
 
     @Override
-    public void setAmount(int amount) {
-        this.amount = amount;
+    public Entry increaseAmount() {
+        amount++;
+        return this;
+    }
+
+    @Override
+    public Entry increaseAmountLarge() {
+        amount += 10;
+        return this;
+    }
+
+    @Override
+    public Entry decreaseAmount() {
+        if (amount <= 1) return Entry.EMPTY;
+        else {
+            amount--;
+            return this;
+        }
+    }
+
+    @Override
+    public Entry decreaseAmountLarge() {
+        if (amount <= 10) return Entry.EMPTY;
+        else {
+            amount -= 10;
+            return this;
+        }
     }
 
     @Override
@@ -39,6 +65,11 @@ public class EntryItemStack implements Entry {
 
     @Override
     public String getAmountString() {
-        return Integer.toString(amount);  // TODO format
+        return amount == 0 ? "" : Utilities.cutLong(amount, 5);
+    }
+
+    @Override
+    public Entry copy() {
+        return new EntryItemStack(this);
     }
 }

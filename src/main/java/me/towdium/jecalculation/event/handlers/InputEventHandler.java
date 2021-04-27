@@ -26,12 +26,12 @@ public class InputEventHandler {
         }
     }
 
-//    @SubscribeEvent(priority = EventPriority.HIGH)
-//    public void onMouseClick(GuiScreenEvent.MouseInputEvent.Pre event) {
-//        if (event.getGui() instanceof JecGui) {
-//            GuiScreen gui = event.getGui();
-//            event.setCanceled(((JecGui) gui).handleMouseEvent());
-//        }
-//    }
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public void onMouseClick(GuiScreenEvent.ActionPerformedEvent.Pre event) {
+        if (event.gui instanceof JecGui) {
+            JecGui gui = (JecGui) event.gui;
+            event.setCanceled(gui.handleMouseEvent());
+        }
+    }
 }
 
