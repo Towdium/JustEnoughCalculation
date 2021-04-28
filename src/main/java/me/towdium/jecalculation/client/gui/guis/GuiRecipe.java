@@ -1,7 +1,15 @@
 package me.towdium.jecalculation.client.gui.guis;
 
+import codechicken.nei.recipe.IRecipeHandler;
 import me.towdium.jecalculation.client.gui.Resource;
 import me.towdium.jecalculation.client.gui.drawables.*;
+import me.towdium.jecalculation.core.labels.ILabel;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static me.towdium.jecalculation.client.gui.drawables.DLabel.enumMode.EDITOR;
 
@@ -42,5 +50,28 @@ public class GuiRecipe extends DContainer {
             addAll(buttonNew, buttonLabel, buttonDel, buttonSave); // TODO buttonCopy
             removeAll(buttonYes, buttonNo, textField);
         }
+    }
+
+    public void transfer(IRecipeHandler recipe, int recipeIndex) {
+        List<List<ILabel>> buf = new ArrayList<>();
+        List<ILabel> input = new ArrayList<>();
+        List<ILabel> output = new ArrayList<>();
+
+        List<ILabel> raw = new ArrayList<>();
+        List<ItemStack> itemStacks = recipe.getIngredientStacks(recipeIndex).stream()
+                                           .map((positionedStack) -> positionedStack.item).collect(Collectors.toList());
+
+        itemStacks.forEach((itemStack) -> {
+            raw.add(ILabel.CONVERTER_ITEM.toLabel(itemStack));
+        });
+        List<ILabel> guessed = ILabel.CONVERTER_ITEM.toLabel(itemStacks);
+        input.add(guessed.isEmpty() ? ILabel.CONVERTER_ITEM.toLabel(itemStacks.get(0)) : guessed.get(0));
+        buf.add(raw);
+
+        ItemStack outputStack = recipe.getResultStack(recipeIndex).item;
+        output.add(ILabel.CONVERTER_ITEM.toLabel(outputStack));
+
+        groupInput.setLabel(input, 0);
+        groupOutput.setLabel(output, 0);
     }
 }

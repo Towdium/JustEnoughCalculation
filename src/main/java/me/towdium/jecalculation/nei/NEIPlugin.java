@@ -16,7 +16,7 @@ public class NEIPlugin {
 
     public static ILabel getEntryUnderMouse() {
         if (NEIPlugin.currentItemStack == null) return ILabel.EMPTY;
-        else return registryItem.toEntry(NEIPlugin.currentItemStack);
+        else return registryItem.toLabel(NEIPlugin.currentItemStack);
     }
 
     public static void setEntryUnderMouse(ItemStack itemStack) {

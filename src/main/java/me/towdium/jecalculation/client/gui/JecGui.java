@@ -40,7 +40,7 @@ public class JecGui extends GuiContainer {
     public static final int COLOR_GUI_GREY = 0xFFA1A1A1;
     public static final int COLOR_TEXT_RED = 0xFF0000;
     public static final int COLOR_TEXT_WHITE = 0xFFFFFF;
-    protected static JecGui last;
+    public static JecGui current;
     public static final boolean ALWAYS_TOOLTIP = false;
 
     protected JecGui parent;
@@ -56,6 +56,7 @@ public class JecGui extends GuiContainer {
         super(acceptsTransfer ? new ContainerTransfer() : new ContainerNonTransfer());
         this.parent = parent;
         this.root = root;
+        if (inventorySlots instanceof JecContainer) ((JecContainer) inventorySlots).setGui(this);
     }
 
     public static boolean mouseIn(int xPos, int yPos, int xSize, int ySize, int xMouse, int yMouse) {
@@ -73,25 +74,25 @@ public class JecGui extends GuiContainer {
     }
 
     public static JecGui getCurrent() {
-        return last;
+        return current;
     }
 
     private static void displayGuiUnsafe(boolean updateParent, boolean acceptsTransfer, IDrawable root) {
         Minecraft mc = Minecraft.getMinecraft();
         JecGui parent;
         if (mc.currentScreen == null) parent = null;
-        else if (!(mc.currentScreen instanceof JecGui)) parent = last;
+        else if (!(mc.currentScreen instanceof JecGui)) parent = current;
         else if (updateParent) parent = (JecGui) mc.currentScreen;
         else parent = ((JecGui) mc.currentScreen).parent;
         JecGui toShow = new JecGui(parent, acceptsTransfer, root);
         mc.displayGuiScreen(toShow);
-        last = toShow;
+        current = toShow;
     }
 
     @Override
     public void onGuiClosed() {
         super.onGuiClosed();
-        last = null;
+        current = null;
     }
 
     @Override
@@ -392,18 +393,27 @@ public class JecGui extends GuiContainer {
         return Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
     }
 
-    public static class ContainerTransfer extends Container {
+    public static class JecContainer extends Container {
+        JecGui gui;
+
+        public JecGui getGui() {
+            return gui;
+        }
+
+        public void setGui(JecGui gui) {
+            this.gui = gui;
+        }
+
         @Override
         public boolean canInteractWith(EntityPlayer playerIn) {
             return true;
         }
     }
 
-    public static class ContainerNonTransfer extends Container {
-        @Override
-        public boolean canInteractWith(EntityPlayer playerIn) {
-            return true;
-        }
+    public static class ContainerTransfer extends JecContainer {
+    }
+
+    public static class ContainerNonTransfer extends JecContainer {
     }
 
     public int getGuiLeft() {

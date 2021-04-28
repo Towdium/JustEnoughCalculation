@@ -51,7 +51,7 @@ public class DLabel implements IDrawable {
             gui.drawText(xPos + xSize / 2 + 7.5f,
                          yPos + ySize / 2 + 7 - (int) (font.size * gui.getFontRenderer().FONT_HEIGHT), font,
                          label.getAmountString());
-        if (mouseIn(xMouse, yMouse)) {
+        if (label != ILabel.EMPTY && mouseIn(xMouse, yMouse)) {
             gui.drawRectangle(xPos + 1, yPos + 1, xSize - 2, ySize - 2, 0x80FFFFFF);
             ArrayList<String> buf = new ArrayList<>();
             buf.add(label.getDisplayName());
