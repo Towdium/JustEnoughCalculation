@@ -7,6 +7,7 @@ import me.towdium.jecalculation.utils.Utilities.Circulator;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -25,6 +26,7 @@ public class WSwitcher implements IWidget {
     protected WText wText;
     protected List<String> keys;
     protected Circulator index;
+    public Consumer<Integer> listener;
 
     public WSwitcher(int xPos, int yPos, int xSize, int total) {
         this(xPos, yPos, xSize, IntStream.rangeClosed(1, total)
@@ -37,13 +39,20 @@ public class WSwitcher implements IWidget {
         this.yPos = yPos;
         this.keys = keys;
         left = new WButtonIcon(xPos, yPos, SIZE, SIZE, Resource.WGT_ARR_L_N, Resource.WGT_ARR_L_F)
-                .setListenerLeft(() -> index.prev());
+                .setListenerLeft(() -> move(true));
         right = new WButtonIcon(xPos + xSize - SIZE, yPos, SIZE, SIZE, Resource.WGT_ARR_R_N, Resource.WGT_ARR_R_F)
-                .setListenerLeft(() -> index.next());
+                .setListenerLeft(() -> move(false));
         wRect = new WRectangle(xPos + SIZE, yPos, xSize - 2 * SIZE, SIZE, JecGui.COLOR_GUI_GREY);
         wText = new WText(xPos + SIZE, yPos, xSize - 2 * SIZE, SIZE, JecGui.Font.DEFAULT_SHADOW,
                           () -> keys.get(index.index()));
         index = new Circulator(keys.size());
+    }
+
+    protected void move(boolean forward) {
+        if (forward) index.next();
+        else index.prev();
+
+        if (listener != null) listener.accept(index.index());
     }
 
     @Override
@@ -59,5 +68,10 @@ public class WSwitcher implements IWidget {
     @Override
     public boolean onKey(JecGui gui, char ch, int code) {
         return Stream.of(left, right).anyMatch(w -> w.onKey(gui, ch, code));
+    }
+
+    public WSwitcher setListener(Consumer<Integer> listener) {
+        this.listener = listener;
+        return this;
     }
 }

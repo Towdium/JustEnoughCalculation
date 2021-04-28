@@ -101,4 +101,8 @@ public class LabelOreDict extends LabelSimpleAmount {
         existing.add(FORMAT_BLUE + FORMAT_ITALIC + JustEnoughCalculation.Reference.MODNAME);
         return existing;
     }
+
+    public String getName() {
+        return name;
+    }
 }

@@ -1,14 +1,16 @@
 package me.towdium.jecalculation.client.gui.guis;
 
 import codechicken.nei.recipe.IRecipeHandler;
+import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
 import me.towdium.jecalculation.client.gui.drawables.*;
 import me.towdium.jecalculation.core.labels.ILabel;
 import net.minecraft.item.ItemStack;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static me.towdium.jecalculation.client.gui.drawables.WLabel.enumMode.EDITOR;
 
@@ -17,10 +19,19 @@ import static me.towdium.jecalculation.client.gui.drawables.WLabel.enumMode.EDIT
  * Date:   17-9-8.
  */
 public class GuiRecipe extends WContainer {
+    List<List<ItemStack>> disambiguation;
     WButton buttonSave = new WButtonIcon(26, 33, 20, 20, Resource.BTN_SAVE_N, Resource.BTN_SAVE_F, "recipe.save");
-    WButton buttonCopy = new WButtonIcon(83, 33, 20, 20, Resource.BTN_COPY_N, Resource.BTN_COPY_F, "recipe.copy");
+    WButton buttonCopy = new WButtonIcon(83, 33, 20, 20, Resource.BTN_COPY_N, Resource.BTN_COPY_F, Resource.BTN_COPY_D,
+                                         "recipe.copy").setDisabled(true);
     WButton buttonDel = new WButtonIcon(64, 33, 20, 20, Resource.BTN_DEL_N, Resource.BTN_DEL_F, "recipe.clear");
     WButton buttonLabel = new WButtonIcon(45, 33, 20, 20, Resource.BTN_LABEL_N, Resource.BTN_LABEL_F, "recipe.label");
+    WButton buttonDisamb = new WButtonIcon(102, 33, 20, 20, Resource.BTN_DISAMB_N,
+                                           Resource.BTN_DISAMB_F, Resource.BTN_DISAMB_D, "recipe.disamb").setDisabled(true).setListenerLeft(() -> {
+        if (disambiguation != null) JecGui.displayGui(new GuiDisambiguation(disambiguation).setCallback(l -> {
+            JecGui.displayParent();
+            JecGui.getCurrent().hand = l;
+        }));
+    });
     WButton buttonYes = new WButtonIcon(7, 33, 20, 20, Resource.BTN_YES_N, Resource.BTN_YES_F, "recipe.confirm");
     WButton buttonNo = new WButtonIcon(26, 33, 20, 20, Resource.BTN_NO_N, Resource.BTN_NO_F, "recipe.abort");
     WLabelGroup groupInput = new WLabelGroup(28, 111, 7, 2, 20, 20, EDITOR);
@@ -43,18 +54,29 @@ public class GuiRecipe extends WContainer {
 
     public void setModeNewGroup(boolean b) {
         if (b) {
-            removeAll(buttonNew, buttonLabel, buttonDel, buttonCopy, buttonSave);
+            removeAll(buttonNew, buttonLabel, buttonDel, buttonCopy, buttonSave, buttonDisamb);
             addAll(buttonYes, buttonNo, textField);
         } else {
-            addAll(buttonNew, buttonLabel, buttonDel, buttonSave); // TODO buttonCopy
+            addAll(buttonNew, buttonLabel, buttonDel, buttonCopy, buttonSave, buttonDisamb);
             removeAll(buttonYes, buttonNo, textField);
         }
     }
 
     public void transfer(IRecipeHandler recipe, int recipeIndex) {
-        List<List<ILabel>> buf = new ArrayList<>();
-        List<ILabel> input = new ArrayList<>();
-        List<ILabel> output = new ArrayList<>();
+        ArrayList<List<ItemStack>> buf = new ArrayList<>();
+        ArrayList<ILabel> input = new ArrayList<>();
+        ArrayList<ILabel> output = new ArrayList<>();
+
+        BiConsumer<ArrayList<ILabel>, ILabel> merge = (list, label) -> IntStream.range(0, list.size()).filter(i -> {
+            Optional<ILabel> l = ILabel.MERGER.merge(list.get(i), label, true);
+            boolean ret = l.isPresent();
+            if (ret) list.set(i, l.get());
+            return ret;
+        }).findAny().orElseGet(() -> {
+            list.add(label);
+            return -1;
+        });
+
 
         List<ILabel> raw = new ArrayList<>();
         List<ItemStack> itemStacks = recipe.getIngredientStacks(recipeIndex).stream()
@@ -64,13 +86,17 @@ public class GuiRecipe extends WContainer {
             raw.add(ILabel.CONVERTER_ITEM.toLabel(itemStack));
         });
         List<ILabel> guessed = ILabel.CONVERTER_ITEM.toLabel(itemStacks);
-        input.add(guessed.isEmpty() ? ILabel.CONVERTER_ITEM.toLabel(itemStacks.get(0)) : guessed.get(0));
-        buf.add(raw);
+        merge.accept(input, guessed.isEmpty() ? ILabel.CONVERTER_ITEM.toLabel(itemStacks.get(0)) : guessed.get(0));
+
+        buf.add(itemStacks);
 
         ItemStack outputStack = recipe.getResultStack(recipeIndex).item;
         output.add(ILabel.CONVERTER_ITEM.toLabel(outputStack));
+        buf.add(Collections.singletonList(outputStack));
 
         groupInput.setLabel(input, 0);
         groupOutput.setLabel(output, 0);
+        disambiguation = buf;
+        buttonDisamb.setDisabled(buf.isEmpty());
     }
 }

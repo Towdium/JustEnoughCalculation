@@ -128,7 +128,7 @@ public class JecGui extends GuiContainer {
         root.onDraw(this, mouseX - guiLeft, mouseY - guiTop);
         GlStateManager.popMatrix();
         GlStateManager.pushMatrix();
-        GlStateManager.translate(mouseX - 8, mouseY - 8, 0);
+        GlStateManager.translate(mouseX - 8, mouseY - 8, 80);
         hand.drawLabel(this);
         GlStateManager.popMatrix();
         drawBufferedTooltip();
@@ -153,7 +153,7 @@ public class JecGui extends GuiContainer {
 
     /**
      * @return if the event is canceled
-     * This function handles click outside the normal region,
+     * This function handles click outside the rNormal region,
      * especially the overlap with JEI overlay. It handles
      * mouse event before JEI.
      */
@@ -277,12 +277,14 @@ public class JecGui extends GuiContainer {
         Tessellator tessellator = Tessellator.instance;
         GlStateManager.disableTexture2D();
         GlStateManager.color(f, f1, f2, f3);
+        GlStateManager.disableAlpha();
         tessellator.startDrawingQuads();
         tessellator.addVertex((double) xPos, (double) bottom, 0.0D);
         tessellator.addVertex((double) right, (double) bottom, 0.0D);
         tessellator.addVertex((double) right, (double) yPos, 0.0D);
         tessellator.addVertex((double) xPos, (double) yPos, 0.0D);
         tessellator.draw();
+        GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();
     }
 
@@ -380,9 +382,11 @@ public class JecGui extends GuiContainer {
             xPos -= 8;
             yPos -= 8;
         }
+        GlStateManager.enableDepth();
         RenderHelper.enableGUIStandardItemLighting();
         itemRender.renderItemIntoGUI(fontRendererObj, mc.getTextureManager(), is, xPos, yPos);
         RenderHelper.disableStandardItemLighting();
+        GlStateManager.disableDepth();
     }
 
     public static class Font {

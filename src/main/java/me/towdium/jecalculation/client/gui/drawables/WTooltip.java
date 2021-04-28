@@ -7,6 +7,8 @@ import me.towdium.jecalculation.utils.wrappers.Pair;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Author: towdium
@@ -16,7 +18,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public abstract class WTooltip implements IWidget {
     @Nullable
     public String name;
-    Utilities.Timer timer = new Utilities.Timer();
+    protected Utilities.Timer timer = new Utilities.Timer();
 
     public WTooltip(@Nullable String name) {
         this.name = name;
@@ -27,11 +29,17 @@ public abstract class WTooltip implements IWidget {
         if (name != null) {
             timer.setState(mouseIn(xMouse, yMouse));
             if (timer.getTime() > 500) {
-                Pair<String, Boolean> str = Utilities.L18n.search(String.join(".", "gui", name, "tooltip"));
-                if (str.two || JecGui.ALWAYS_TOOLTIP) gui.drawTooltip(xMouse, yMouse, str.one);
+                String str = getSuffix().stream().map(s -> Utilities.L18n.search(String.join(".", "gui", name, s)))
+                                        .filter(p -> p.two).findFirst().map(p -> p.one)
+                                        .orElse(JecGui.ALWAYS_TOOLTIP ? String.join(".", "gui", name, getSuffix().get(0)) : null);
+                if (str != null) gui.drawTooltip(xMouse, yMouse, str);
             }
         }
     }
 
-    abstract boolean mouseIn(int xMouse, int yMouse);
+    protected List<String> getSuffix() {
+        return Collections.singletonList("tooltip");
+    }
+
+    public abstract boolean mouseIn(int xMouse, int yMouse);
 }

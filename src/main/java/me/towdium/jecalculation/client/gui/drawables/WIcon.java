@@ -40,7 +40,7 @@ public class WIcon extends WTooltip {
     }
 
     @Override
-    boolean mouseIn(int xMouse, int yMouse) {
+    public boolean mouseIn(int xMouse, int yMouse) {
         return JecGui.mouseIn(xPos + (xSize - normal.getXSize()) / 2,
                               yPos + (ySize - normal.getYSize()) / 2, normal.getXSize(), normal.getYSize(), xMouse, yMouse);
     }

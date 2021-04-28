@@ -77,4 +77,8 @@ public abstract class LabelSimpleAmount implements ILabel {
         nbt.setInteger(KEY_AMOUNT, amount);
         return nbt;
     }
+
+    public int getAmount() {
+        return amount;
+    }
 }
