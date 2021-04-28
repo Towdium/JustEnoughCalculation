@@ -28,7 +28,7 @@ public class GuiLabel extends DContainer {
                 @Override
                 public IDrawable load(Integer i) {
                     ILabel.RegistryEditor.Record record = ILabel.EDITOR.getRecords().get(i);
-                    return record.editor.setCallback(callback);
+                    return record.editor.get().setCallback(callback);
                 }
             });
 

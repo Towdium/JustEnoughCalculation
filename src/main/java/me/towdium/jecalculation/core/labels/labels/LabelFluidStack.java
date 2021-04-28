@@ -6,6 +6,7 @@ import me.towdium.jecalculation.client.gui.drawables.DText;
 import me.towdium.jecalculation.core.labels.ILabel;
 import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -29,13 +30,13 @@ public class LabelFluidStack implements ILabel {
         this.amount = amount;
     }
 
+    public LabelFluidStack(Fluid fluid, int amount) {
+        this(new FluidStack(fluid, 1000), amount);
+    }
+
     public LabelFluidStack(NBTTagCompound nbt) {
         fluid = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag(KEY_FLUID));
         amount = nbt.getInteger(KEY_AMOUNT);
-    }
-
-    public static RegistryEditor.Editor getEditor() {
-        return new Editor();
     }
 
     @Override
@@ -91,17 +92,5 @@ public class LabelFluidStack implements ILabel {
     public void drawEntry(JecGui gui) {
         gui.drawResource(Resource.LBL_FLUID, 0, 0);
         gui.drawFluid(fluid.getFluid(), 2, 2, 12, 12);
-    }
-
-    public static class Editor extends RegistryEditor.Editor {
-        public Editor() {
-            add(new DText(5, 5, JecGui.Font.DEFAULT_NO_SHADOW, "fluid"));
-        }
-
-        @Override
-        public boolean onClicked(JecGui gui, int xMouse, int yMouse, int button) {
-            callback.accept(new LabelFluidStack(new FluidStack(FluidRegistry.WATER, 1000), 1000));
-            return super.onClicked(gui, xMouse, yMouse, button);
-        }
     }
 }

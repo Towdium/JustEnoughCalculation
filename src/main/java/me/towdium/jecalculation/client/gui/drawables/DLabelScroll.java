@@ -60,7 +60,7 @@ public class DLabelScroll extends DContainer {
 
     public boolean setFilter(String str) {
         filter = str;
-        filtered = labels.stream().filter(l -> Utilities.contains(l.getDisplayName(), str))
+        filtered = labels.stream().filter(l -> Utilities.contains(l.getDisplayName().toLowerCase(), str.toLowerCase()))
                          .collect(Collectors.toList());
         scroll.setCurrent(0);
         return filtered.size() != 0;
@@ -68,6 +68,6 @@ public class DLabelScroll extends DContainer {
 
     private int getStepAmount() {
         int line = (labels.size() + column - 1) / column;
-        return line - row + 1;
+        return Math.max(line - row + 1, 1);
     }
 }
