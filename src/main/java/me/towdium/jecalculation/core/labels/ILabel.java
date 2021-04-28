@@ -28,7 +28,10 @@ public interface ILabel {
     RegistryDeserializer DESERIALIZER = RegistryDeserializer.INSTANCE;
     RegistryConverterItem CONVERTER_ITEM = RegistryConverterItem.INSTANCE;
     RegistryConverterFluid CONVERTER_FLUID = RegistryConverterFluid.INSTANCE;
+    RegistryEditor EDITOR = RegistryEditor.INSTANCE;
     ILabel EMPTY = new LabelItemStack(ItemStackHelper.EMPTY_ITEM_STACK, 0);
+    String LOCALIZE_PREFIX = "label";
+    String LOCALIZE_SUFFIX = "name";
 
     ILabel increaseAmount();
 
@@ -215,7 +218,7 @@ public interface ILabel {
         static {
             INSTANCE = new RegistryEditor();
 
-            INSTANCE.register(LabelOreDict.getEditor(), "ore_dict", new LabelOreDict("ingotIron"));
+            INSTANCE.register(LabelOreDict.getEditor(), "common.label.ore_dict", new LabelOreDict("ingotIron"));
         }
 
         private ArrayList<Record> records = new ArrayList<>();
@@ -227,22 +230,22 @@ public interface ILabel {
             records.add(new Record(editor, unlocalizedName, representation));
         }
 
-        public Collection<Record> getRecords() {
+        public List<Record> getRecords() {
             return records;
         }
 
         public interface IEditor extends IDrawable {
-            void setCallback(Consumer<ILabel> callback);
+            IEditor setCallback(Consumer<ILabel> callback);
         }
 
         public static class Record {
             public IEditor editor;
-            public String unlocalizedName;
+            public String localizeKey;
             public ILabel representation;
 
-            public Record(IEditor editor, String unlocalizedName, ILabel representation) {
+            public Record(IEditor editor, String localizeKey, ILabel representation) {
                 this.editor = editor;
-                this.unlocalizedName = unlocalizedName;
+                this.localizeKey = localizeKey;
                 this.representation = representation;
             }
         }

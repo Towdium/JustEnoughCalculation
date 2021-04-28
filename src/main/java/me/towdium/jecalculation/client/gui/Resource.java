@@ -36,8 +36,9 @@ public class Resource {
     public static final Resource WGT_ARR_L_N = new Resource(0, 242, 9, 9);
     public static final Resource WGT_ARR_R_F = new Resource(10, 232, 9, 9);
     public static final Resource WGT_ARR_R_N = new Resource(10, 242, 9, 9);
-    public static final Resource WGT_PAGER_F = new Resource(120, 232, 20, 20);
-    public static final Resource WGT_PAGER_B = new Resource(120, 232, 20, 16);
+    public static final Resource WGT_PAGER_FN = new Resource(120, 232, 20, 20);
+    public static final Resource WGT_PAGER_F0 = new Resource(140, 232, 20, 20);
+    public static final Resource WGT_PAGER_N = new Resource(160, 232, 20, 20);
     public static final Resource ICN_RECENT_N = new Resource(0, 42, 14, 14);
     public static final Resource ICN_RECENT_F = new Resource(0, 28, 14, 14);
     public static final Resource ICN_INPUT_N = new Resource(14, 42, 14, 14);
@@ -46,6 +47,7 @@ public class Resource {
     public static final Resource ICN_OUTPUT_F = new Resource(28, 28, 14, 14);
     public static final Resource ICN_CATALYST_N = new Resource(42, 42, 14, 14);
     public static final Resource ICN_CATALYST_F = new Resource(42, 28, 14, 14);
+    public static final Resource LBL_ORE_DICT = new Resource(0, 56, 16, 16);
 
     protected int xPos, yPos, xSize, ySize;
     protected ResourceLocation rl;

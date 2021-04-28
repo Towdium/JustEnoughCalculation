@@ -10,6 +10,6 @@ command.state.s_client=client only
 command.state.s_both=client with server
 command.state.s_undefined=error state
 
-gui.gui_calculator.tooltip.new_recipe=New recipe
+gui.gui_calculator.name.new_recipe=New recipe
 
 config.force_client=Force Client

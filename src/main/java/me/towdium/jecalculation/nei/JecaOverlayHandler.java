@@ -4,8 +4,7 @@ import codechicken.nei.PositionedStack;
 import codechicken.nei.api.IOverlayHandler;
 import codechicken.nei.recipe.IRecipeHandler;
 import me.towdium.jecalculation.client.gui.JecGui;
-import me.towdium.jecalculation.client.gui.guis.GuiCalculator;
-import me.towdium.jecalculation.client.gui.guis.GuiEditor;
+import me.towdium.jecalculation.client.gui.guis.GuiRecipe;
 import me.towdium.jecalculation.utils.ItemStackHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -33,7 +32,7 @@ public class JecaOverlayHandler implements IOverlayHandler {
             ItemStack outputStack = recipe.getResultStack(recipeIndex).items[0];
 
             Minecraft mc = Minecraft.getMinecraft();
-            JecGui.displayGui(new GuiEditor());
+            JecGui.displayGui(new GuiRecipe());
             GuiContainer myGuiContainer = (GuiContainer) mc.currentScreen;
             if (myGuiContainer != null) {
                 myGuiContainer.inventorySlots.getSlot(0).putStack(outputStack);

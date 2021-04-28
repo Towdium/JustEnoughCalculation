@@ -23,35 +23,7 @@ public class LocalizationHelper {
         return ret;
     }
 
-    /**
-     * @param c            the (super) class name will be used after prefix translation key
-     * @param prefix       the prefix of translation key
-     * @param translateKey the body of translation key
-     * @param parameters   format parameters
-     * @return the localized value
-     * The localized key is "prefix.className(superClassName).translateKey".
-     * It will search all the super classes.
-     */
-    public static Pair<String, Boolean> search(Class c, String prefix, String translateKey, Object... parameters) {
-        String clazz = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, c.getSimpleName());
-        String key = String.join(".", prefix, clazz, translateKey);
-        Pair<String, Boolean> ret = LocalizationHelper.search(key, parameters);
-        if (ret.two || c.equals(Object.class))
-            return ret;
-        else {
-            ret = search(c.getSuperclass(), prefix, translateKey, parameters);
-            if (ret.two)
-                return ret;
-            else
-                return ret.setOne(key);
-        }
-    }
-
     public static String format(String translateKey, Object... parameters) {
         return search(translateKey, parameters).one;
-    }
-
-    public static String format(Class c, String prefix, String translateKey, Object... parameters) {
-        return search(c, prefix, translateKey, parameters).one;
     }
 }

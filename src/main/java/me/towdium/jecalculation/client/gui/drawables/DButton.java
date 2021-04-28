@@ -14,31 +14,17 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * Date:   17-8-17.
  */
 @ParametersAreNonnullByDefault
-public class DButton implements IDrawable {
+public abstract class DButton extends  DTooltip {
     protected int xPos, yPos, xSize, ySize;
-    protected Resource normal, focused;
-    protected String tooltip, text;
     protected Runnable lsnrLeft, lsnrRight;
     protected Utilities.Timer timer = new Utilities.Timer();
 
-    public DButton(int xPos, int yPos, int xSize, int ySize, Resource normal, Resource focused) {
-        this(xPos, yPos, xSize, ySize, "", normal, focused, null);
-    }
-
-    public DButton(int xPos, int yPos, int xSize, int ySize, Resource normal, Resource focused, String tooltip) {
-        this(xPos, yPos, xSize, ySize, "", normal, focused, tooltip);
-    }
-
-    public DButton(int xPos, int yPos, int xSize, int ySize, String text,
-                   @Nullable Resource normal, @Nullable Resource focused, @Nullable String tooltip) {
+    public DButton(int xPos, int yPos, int xSize, int ySize, @Nullable String name) {
+        super(name);
         this.xPos = xPos;
         this.yPos = yPos;
         this.xSize = xSize;
         this.ySize = ySize;
-        this.normal = normal;
-        this.focused = focused;
-        this.tooltip = tooltip;
-        this.text = text;
     }
 
     public DButton setListenerLeft(Runnable r) {
@@ -56,22 +42,6 @@ public class DButton implements IDrawable {
         boolean hovered = JecGui.mouseIn(xPos + 1, yPos + 1, xSize - 2, ySize - 2, xMouse, yMouse);
         gui.drawResourceContinuous(hovered ? Resource.WGT_BUTTON_F : Resource.WGT_BUTTON_N, xPos, yPos,
                 xSize, ySize, 3, 3, 3, 3);
-        Resource r = hovered ? focused : normal;
-        if (r != null)
-            gui.drawResource(r, xPos + (xSize - r.getXSize()) / 2, yPos + (ySize - r.getYSize()) / 2);
-        if (tooltip != null) {
-            timer.setState(hovered);
-            if (timer.getTime() > 500) gui.drawTooltip(xMouse, yMouse, gui.localize("tooltip." + tooltip));
-        }
-        int textColor = hovered ? 16777120 : 0;
-        int strWidth = gui.getFontRenderer().getStringWidth(text);
-        int ellipsisWidth = gui.getFontRenderer().getStringWidth("...");
-        String str = text;
-        if (strWidth > xSize - 6 && strWidth > ellipsisWidth)
-            str = gui.getFontRenderer().trimStringToWidth(text, xSize - 6 - ellipsisWidth).trim() + "...";
-        JecGui.Font f = JecGui.Font.DEFAULT_SHADOW.copy();
-        f.color = textColor;
-        gui.drawText(xPos, yPos, xSize, ySize, f, str);
     }
 
     @Override
@@ -88,5 +58,10 @@ public class DButton implements IDrawable {
             }
         }
         return false;
+    }
+
+    @Override
+    boolean mouseIn(int xMouse, int yMouse) {
+        return JecGui.mouseIn(xPos + 1, yPos + 1, xSize - 2, ySize - 2, xMouse, yMouse);
     }
 }

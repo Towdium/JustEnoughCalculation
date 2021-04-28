@@ -36,9 +36,9 @@ public class DScroll implements IDrawable {
         this.xSize = xSize;
         this.yPos = yPos;
         this.keys = keys;
-        left = new DButton(xPos, yPos, SIZE, SIZE, Resource.WGT_ARR_L_N, Resource.WGT_ARR_L_F)
+        left = new DButtonIcon(xPos, yPos, SIZE, SIZE, Resource.WGT_ARR_L_N, Resource.WGT_ARR_L_F)
                 .setListenerLeft(() -> index.prev());
-        right = new DButton(xPos + xSize - SIZE, yPos, SIZE, SIZE,
+        right = new DButtonIcon(xPos + xSize - SIZE, yPos, SIZE, SIZE,
                 Resource.WGT_ARR_R_N, Resource.WGT_ARR_R_F)
                 .setListenerLeft(() -> index.next());
         wRect = new DRectangle(xPos + SIZE, yPos, xSize - 2 * SIZE, SIZE, JecGui.COLOR_GREY);
