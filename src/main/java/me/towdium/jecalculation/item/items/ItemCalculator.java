@@ -1,11 +1,15 @@
 package me.towdium.jecalculation.item.items;
 
 import me.towdium.jecalculation.JustEnoughCalculation;
+import me.towdium.jecalculation.client.gui.JecGui;
+import me.towdium.jecalculation.client.gui.guis.GuiCalculator;
 import me.towdium.jecalculation.item.JecaItem;
 import me.towdium.jecalculation.utils.IllegalPositionException;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 
 import java.util.List;
 
@@ -36,5 +40,13 @@ public class ItemCalculator extends JecaItem {
             items.add(new ItemStack(this, 1, 0));
             items.add(new ItemStack(this, 1, 1));
         }
+    }
+
+    @Override
+    public ItemStack onItemRightClick(ItemStack p_77659_1_, World p_77659_2_, EntityPlayer p_77659_3_) {
+        if (JustEnoughCalculation.side != JustEnoughCalculation.enumSide.SERVER) {
+            JecGui.displayGui(new GuiCalculator());
+        }
+        return super.onItemRightClick(p_77659_1_, p_77659_2_, p_77659_3_);
     }
 }

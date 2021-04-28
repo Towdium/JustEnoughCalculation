@@ -1,30 +1,30 @@
-package me.towdium.jecalculation.core.entry.entries;
+package me.towdium.jecalculation.core.labels.labels;
 
-import me.towdium.jecalculation.core.entry.Entry;
+import me.towdium.jecalculation.core.labels.ILabel;
 import me.towdium.jecalculation.utils.Utilities;
 
 /**
  * Author: towdium
  * Date:   17-9-11.
  */
-public abstract class EntrySimpleAmount implements Entry {
+public abstract class LabelSimpleAmount implements ILabel {
     protected int amount;
 
     @Override
-    public Entry increaseAmount() {
+    public ILabel increaseAmount() {
         amount++;
         return this;
     }
 
     @Override
-    public Entry increaseAmountLarge() {
+    public ILabel increaseAmountLarge() {
         amount += 10;
         return this;
     }
 
     @Override
-    public Entry decreaseAmount() {
-        if (amount <= 1) return Entry.EMPTY;
+    public ILabel decreaseAmount() {
+        if (amount <= 1) return ILabel.EMPTY;
         else {
             amount--;
             return this;
@@ -32,8 +32,8 @@ public abstract class EntrySimpleAmount implements Entry {
     }
 
     @Override
-    public Entry decreaseAmountLarge() {
-        if (amount <= 10) return Entry.EMPTY;
+    public ILabel decreaseAmountLarge() {
+        if (amount <= 10) return ILabel.EMPTY;
         else {
             amount -= 10;
             return this;

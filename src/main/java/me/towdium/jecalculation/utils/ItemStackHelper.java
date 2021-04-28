@@ -2,6 +2,7 @@ package me.towdium.jecalculation.utils;
 
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.polyfill.Polyfill;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -13,6 +14,8 @@ import java.util.function.Function;
 public class ItemStackHelper {
     public static final String keyAmount = "amount";
     public static final String keyType = "type";
+    public static final Item EMPTY_ITEM = null;
+    public static final ItemStack EMPTY_ITEM_STACK = new ItemStack((Item)null);
 
     public enum EnumStackAmountType {
         INVALID, NUMBER, PERCENTAGE, FLUID;

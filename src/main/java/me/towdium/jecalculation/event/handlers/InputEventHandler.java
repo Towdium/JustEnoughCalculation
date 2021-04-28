@@ -22,7 +22,7 @@ public class InputEventHandler {
     @SubscribeEvent
     public void onKey(InputEvent.KeyInputEvent event) {
         if (ProxyClient.keyOpenGui.isPressed() && JustEnoughCalculation.side != JustEnoughCalculation.enumSide.SERVER) {
-            Minecraft.getMinecraft().displayGuiScreen(new GuiCalculator(null));
+            JecGui.displayGui(new GuiCalculator());
         }
     }
 

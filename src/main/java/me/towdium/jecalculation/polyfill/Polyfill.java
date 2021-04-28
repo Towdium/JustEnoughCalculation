@@ -1,5 +1,7 @@
 package me.towdium.jecalculation.polyfill;
 
+import me.towdium.jecalculation.utils.ItemStackHelper;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -23,4 +25,5 @@ public class Polyfill {
             return null;
         }
     }
+
 }

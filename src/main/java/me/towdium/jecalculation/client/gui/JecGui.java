@@ -2,12 +2,8 @@ package me.towdium.jecalculation.client.gui;
 
 import cpw.mods.fml.client.config.GuiUtils;
 import me.towdium.jecalculation.JustEnoughCalculation;
-import me.towdium.jecalculation.client.gui.resource.Resource;
-import me.towdium.jecalculation.client.gui.widget.IDrawable;
-import me.towdium.jecalculation.client.gui.widget.Widget;
-import me.towdium.jecalculation.client.gui.widget.widgets.WEntry;
-import me.towdium.jecalculation.client.gui.widget.widgets.WEntryGroup;
-import me.towdium.jecalculation.core.entry.Entry;
+import me.towdium.jecalculation.client.gui.drawables.DContainer;
+import me.towdium.jecalculation.core.labels.ILabel;
 import me.towdium.jecalculation.nei.NEIPlugin;
 import me.towdium.jecalculation.polyfill.mc.client.renderer.GlStateManager;
 import me.towdium.jecalculation.utils.IllegalPositionException;
@@ -16,8 +12,6 @@ import me.towdium.jecalculation.utils.wrappers.Single;
 import me.towdium.jecalculation.utils.wrappers.Triple;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
@@ -36,7 +30,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -46,48 +39,45 @@ import java.util.function.Function;
 @ParametersAreNonnullByDefault
 public class JecGui extends GuiContainer {
     public static final int COLOR_GREY = 0xFFA1A1A1;
-    public static final int COLOR_BLUE = 0xFFb0b9e6;
 
-    public List<GuiButton> buttonList = super.buttonList;
-    public WidgetManager wgtMgr = new WidgetManager();
-    public Entry hand = Entry.EMPTY;
-    protected GuiScreen parent;
+    protected static JecGui last;
+    protected JecGui parent;
+    public ILabel hand = ILabel.EMPTY;
+    public DContainer container = new DContainer();
     protected List<Triple<Integer, Integer, List<String>>> tooltipBuffer = new ArrayList<>();
 
-    public JecGui(@Nullable GuiScreen parent) {
-        this(parent, false);
+    public JecGui(@Nullable JecGui parent, IDrawable... drawables) {
+        this(parent, false, drawables);
     }
 
-    public JecGui(@Nullable GuiScreen parent, boolean acceptsTransfer) {
+    public JecGui(@Nullable JecGui parent, boolean acceptsTransfer, IDrawable... drawables) {
         super(acceptsTransfer ? new ContainerTransfer() : new ContainerNonTransfer());
         this.parent = parent;
-    }
-
-    @Override
-    public void initGui() {
-        super.initGui();
-        wgtMgr.onInit();
+        container.addAll(drawables);
     }
 
     public static boolean mouseIn(int xPos, int yPos, int xSize, int ySize, int xMouse, int yMouse) {
         return xMouse > xPos && yMouse > yPos && xMouse <= xPos + xSize && yMouse <= yPos + ySize;
     }
 
-    @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        drawDefaultBackground();
-        super.drawScreen(mouseX, mouseY, partialTicks);
-        GlStateManager.disableLighting();
-        GlStateManager.disableDepth();
-        wgtMgr.onDraw(mouseX, mouseY);
-        drawExtra();
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(mouseX - 8, mouseY - 8, 0);
-        hand.drawEntry(this);
-        GlStateManager.popMatrix();
-        drawBufferedTooltip();
-        GlStateManager.enableLighting();
-        GlStateManager.enableDepth();
+    public static void displayGui(IDrawable... components) {
+        displayGui(true, false, components);
+    }
+
+    public static void displayGui(boolean updateParent, boolean acceptsTransfer, IDrawable... components) {
+        // isCallingFromMinecraftThread
+        if (Minecraft.getMinecraft().func_152345_ab())
+            displayGuiUnsafe(updateParent, acceptsTransfer, components);
+    }
+
+    public static void displayGuiUnsafe(boolean updateParent, boolean acceptsTransfer, IDrawable... components) {
+        Minecraft mc = Minecraft.getMinecraft();
+        JecGui parent;
+        if (mc.currentScreen == null) parent = null;
+        else if (!(mc.currentScreen instanceof JecGui)) parent = last;
+        else if (updateParent) parent = (JecGui) mc.currentScreen;
+        else parent = ((JecGui) mc.currentScreen).parent;
+        mc.displayGuiScreen(new JecGui(parent, acceptsTransfer, components));
     }
 
     @Override
@@ -97,35 +87,25 @@ public class JecGui extends GuiContainer {
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        drawResourceContinuous(Resource.WGT_PANEL, guiLeft, guiTop, xSize, ySize, 5, 5, 5, 5);
     }
 
     @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-        super.mouseClicked(mouseX, mouseY, mouseButton);
-        boolean InGui = wgtMgr.onClick(mouseX, mouseY, mouseButton);
-        if(!InGui) {
-            this.handleMouseEvent();
-        }
-    }
-
-    @Override
-    public void handleMouseInput() {
-        super.handleMouseInput();
-    }
-
-    @Override
-    protected void keyTyped(char typedChar, int keyCode) {
-        if (!wgtMgr.onKey(typedChar, keyCode)) {
-            if (keyCode == Keyboard.KEY_ESCAPE) {
-                if (hand != Entry.EMPTY)
-                    hand = Entry.EMPTY;
-                else if (parent != null)
-                    Minecraft.getMinecraft().displayGuiScreen(parent);
-                else
-                    super.keyTyped(typedChar, keyCode);
-            }
-        }
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        drawDefaultBackground();
+        super.drawScreen(mouseX, mouseY, partialTicks);
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(guiLeft, guiTop, 0);
+        GlStateManager.disableLighting();
+        GlStateManager.disableDepth();
+        container.onDraw(this, mouseX - guiLeft, mouseY - guiTop);
+        GlStateManager.popMatrix();
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(mouseX - 8, mouseY - 8, 0);
+        hand.drawEntry(this);
+        GlStateManager.popMatrix();
+        drawBufferedTooltip();
+        GlStateManager.enableLighting();
+        GlStateManager.enableDepth();
     }
 
     /**
@@ -140,22 +120,21 @@ public class JecGui extends GuiContainer {
         int yMouse = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
         if (Mouse.getEventButtonState()) {
             if (Mouse.getEventButton() == 0) {
-                if (hand == Entry.EMPTY) {
-                    // TODO
-                    Entry e = NEIPlugin.getEntryUnderMouse();
-                    if (e != Entry.EMPTY) {
+                if (hand == ILabel.EMPTY) {
+                    ILabel e = NEIPlugin.getEntryUnderMouse();
+                    if (e != ILabel.EMPTY) {
                         hand = e;
                         return true;
                     }
                 } else {
                     if (!mouseIn(guiLeft, guiTop, width, height, xMouse, yMouse)) {
-                        hand = Entry.EMPTY;
+                        hand = ILabel.EMPTY;
                         return true;
                     }
                 }
             } else if (Mouse.getEventButton() == 1) {
-                if (hand != Entry.EMPTY) {
-                    hand = Entry.EMPTY;
+                if (hand != ILabel.EMPTY) {
+                    hand = ILabel.EMPTY;
                     return true;
                 }
             }
@@ -199,7 +178,8 @@ public class JecGui extends GuiContainer {
     public void drawFluid(Fluid f, int xPos, int yPos, int xSize, int ySize) {
         IIcon fluidStillIcon = f.getStillIcon();
         mc.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
-        if (fluidStillIcon != null) drawTexturedModelRectFromIcon(xPos, yPos, fluidStillIcon, xSize, ySize);
+        if (fluidStillIcon != null)
+            drawTexturedModelRectFromIcon(xPos, yPos, fluidStillIcon, xSize, ySize);
     }
 
     public void drawTextureContinuous(ResourceLocation l,
@@ -221,7 +201,6 @@ public class JecGui extends GuiContainer {
     }
 
     public void drawRectangle(int xPos, int yPos, int xSize, int ySize, int color) {
-        drawRect(xPos, yPos, xPos + xSize, yPos + ySize, color);
         float f3 = (float) (color >> 24 & 255) / 255.0F;
         float f = (float) (color >> 16 & 255) / 255.0F;
         float f1 = (float) (color >> 8 & 255) / 255.0F;
@@ -281,9 +260,12 @@ public class JecGui extends GuiContainer {
         int l = fontRendererObj.getStringWidth("...");
         String[] ss = !f.cut ? text : Arrays.stream(text).map(s -> {
             int w = fontRendererObj.getStringWidth(s);
-            if (w <= sizeScaled) return s;
-            else if (l >= w) return "...";
-            else return fontRendererObj.trimStringToWidth(s, (int) (sizeScaled - l)) + "...";
+            if (w <= sizeScaled)
+                return s;
+            else if (l >= w)
+                return "...";
+            else
+                return fontRendererObj.trimStringToWidth(s, (int) (sizeScaled - l)) + "...";
         }).toArray(String[]::new);
         switch (f.align) {
             case LEFT:
@@ -307,7 +289,7 @@ public class JecGui extends GuiContainer {
     }
 
     public void drawTooltip(int xPos, int yPos, String... text) {
-        drawTooltip(xPos, yPos, Arrays.asList(text));
+        drawTooltip(xPos + guiLeft, yPos + guiTop, Arrays.asList(text));
     }
 
     public void drawTooltip(int xPos, int yPos, List<String> text) {
@@ -338,11 +320,6 @@ public class JecGui extends GuiContainer {
 
     public String localize(String key, Object... os) {
         return LocalizationHelper.format(this.getClass(), "gui", key, os);
-    }
-
-    // function to override
-
-    protected void drawExtra() {
     }
 
     public static class Font {
@@ -378,6 +355,29 @@ public class JecGui extends GuiContainer {
         public enum enumAlign {LEFT, CENTRE, RIGHT, AUTO}
     }
 
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+        super.mouseClicked(mouseX, mouseY, mouseButton);
+        boolean inGui = container.onClicked(this, mouseX - guiLeft, mouseY - guiTop, mouseButton);
+        if(!inGui) {
+            this.handleMouseEvent();
+        }
+    }
+
+    @Override
+    protected void keyTyped(char typedChar, int keyCode) {
+        if (!container.onKey(this, typedChar, keyCode)) {
+            if (keyCode == Keyboard.KEY_ESCAPE) {
+                if (hand != ILabel.EMPTY)
+                    hand = ILabel.EMPTY;
+                else if (parent != null)
+                    Minecraft.getMinecraft().displayGuiScreen(parent);
+                else
+                    super.keyTyped(typedChar, keyCode);
+            }
+        }
+    }
+
     public static boolean isShiftDown() {
         return Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
     }
@@ -396,69 +396,6 @@ public class JecGui extends GuiContainer {
         }
     }
 
-
-    public class WidgetManager {
-        protected List<Widget> widgets = new ArrayList<>();
-        protected boolean initialized = false;
-
-        public void add(Widget w) {
-            widgets.add(w);
-            if (initialized && w instanceof IDrawable)
-                ((IDrawable) w).onGuiInit(JecGui.this);
-        }
-
-        public void addAll(Widget... w) {
-            for (Widget aw : w)
-                add(aw);
-        }
-
-        public void remove(Widget w) {
-            if (widgets.remove(w) && w instanceof IDrawable) ((IDrawable) w).onRemoved(JecGui.this);
-        }
-
-        public void removeAll(Widget... w) {
-            for (Widget aw : w)
-                remove(aw);
-        }
-
-        public void onInit() {
-            widgets.stream().filter(w -> w instanceof IDrawable)
-                   .forEach(w -> ((IDrawable) w).onGuiInit(JecGui.this));
-            initialized = true;
-        }
-
-        public void onDraw(int mouseX, int mouseY) {
-            widgets.forEach(widget -> widget.onDraw(JecGui.this, mouseX, mouseY));
-        }
-
-        @SuppressWarnings("UnusedReturnValue")
-        public boolean onClick(int xMouse, int yMouse, int button) {
-            for (Widget w : widgets) {
-                if (w instanceof IDrawable &&
-                    ((IDrawable) w).onClicked(JecGui.this, xMouse, yMouse, button))
-                    return true;
-            }
-            return false;
-        }
-
-        @SuppressWarnings("UnusedReturnValue")
-        public boolean onKey(char ch, int code) {
-            return widgets.stream().filter(w -> w instanceof IDrawable)
-                          .anyMatch(w -> ((IDrawable) w).onKey(JecGui.this, ch, code));
-        }
-
-        public Optional<WEntry> getEntryAt(int xMouse, int yMouse) {
-            return widgets.stream().map(w -> {
-                if (w instanceof WEntryGroup)
-                    return ((WEntryGroup) w).getEntryAt(JecGui.this, xMouse, yMouse);
-                else if (w instanceof WEntry)
-                    return Optional.ofNullable(((WEntry) w).mouseIn(JecGui.this, xMouse, yMouse) ? ((WEntry) w) : null);
-                else
-                    return Optional.<WEntry>empty();
-            }).filter(Optional::isPresent).findFirst().orElse(Optional.empty());
-        }
-    }
-
     public int getGuiLeft() {
         return guiLeft;
     }
@@ -474,4 +411,7 @@ public class JecGui extends GuiContainer {
     public void drawHoveringText(List<String> textLines, int x, int y) {
         super.drawHoveringText(textLines, x, y, fontRendererObj);
     }
+
+    public int getXSize() { return xSize; }
+    public int getYSize() { return ySize; }
 }
