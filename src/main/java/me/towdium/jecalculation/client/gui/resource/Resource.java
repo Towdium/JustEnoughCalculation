@@ -1,4 +1,4 @@
-package me.towdium.jecalculation.client.resource;
+package me.towdium.jecalculation.client.gui.resource;
 
 import me.towdium.jecalculation.JustEnoughCalculation;
 import net.minecraft.util.ResourceLocation;

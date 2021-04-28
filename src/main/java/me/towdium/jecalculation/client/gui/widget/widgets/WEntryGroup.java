@@ -1,7 +1,7 @@
-package me.towdium.jecalculation.client.widget.widgets;
+package me.towdium.jecalculation.client.gui.widget.widgets;
 
 import me.towdium.jecalculation.client.gui.JecGui;
-import me.towdium.jecalculation.client.widget.Widget;
+import me.towdium.jecalculation.client.gui.widget.IDrawable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import java.util.stream.IntStream;
  * Date:   17-8-17.
  */
 @ParametersAreNonnullByDefault
-public class WEntryGroup extends Widget.Advanced {
+public class WEntryGroup extends IDrawable {
     ArrayList<WEntry> widgets = new ArrayList<>();
 
     public WEntryGroup(int xPos, int yPos, int column, int row, WEntry.enumMode mode) {

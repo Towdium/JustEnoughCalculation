@@ -4,6 +4,8 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.registry.GameData;
 import me.towdium.jecalculation.JustEnoughCalculation;
+import me.towdium.jecalculation.utils.wrappers.Pair;
+import me.towdium.jecalculation.utils.wrappers.Single;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -161,6 +163,25 @@ public class Utilities {
 
         public Stream<T> stream() {
             return StreamSupport.stream(Spliterators.spliteratorUnknownSize(this, Spliterator.ORDERED), false);
+        }
+    }
+
+    public static class Relation<T, R> {
+        HashMap<Pair<T, T>, R> data = new HashMap<>();
+
+        public void add(T a, T b, R relation) {
+            data.put(a.hashCode() < b.hashCode() ? new Pair<>(a, b) : new Pair<>(b, a), relation);
+        }
+
+        public Optional<R> get(T a, T b) {
+            int ah = a.hashCode();
+            int bh = b.hashCode();
+            Single<R> ret = new Single<>(null);
+            if (ah == bh)
+                ret.push(data.get(new Pair<>(a, b))).push(data.get(new Pair<>(b, a)));
+            else
+                ret.push(data.get(ah < bh ? new Pair<>(a, b) : new Pair<>(b, a)));
+            return Optional.ofNullable(ret.value);
         }
     }
 }

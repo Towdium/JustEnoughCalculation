@@ -2,10 +2,11 @@ package me.towdium.jecalculation.client.gui;
 
 import cpw.mods.fml.client.config.GuiUtils;
 import me.towdium.jecalculation.JustEnoughCalculation;
-import me.towdium.jecalculation.client.resource.Resource;
-import me.towdium.jecalculation.client.widget.Widget;
-import me.towdium.jecalculation.client.widget.widgets.WEntry;
-import me.towdium.jecalculation.client.widget.widgets.WEntryGroup;
+import me.towdium.jecalculation.client.gui.resource.Resource;
+import me.towdium.jecalculation.client.gui.widget.IDrawable;
+import me.towdium.jecalculation.client.gui.widget.Widget;
+import me.towdium.jecalculation.client.gui.widget.widgets.WEntry;
+import me.towdium.jecalculation.client.gui.widget.widgets.WEntryGroup;
 import me.towdium.jecalculation.core.entry.Entry;
 import me.towdium.jecalculation.nei.NEIPlugin;
 import me.towdium.jecalculation.polyfill.mc.client.renderer.GlStateManager;
@@ -19,10 +20,14 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fluids.Fluid;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -76,7 +81,10 @@ public class JecGui extends GuiContainer {
         GlStateManager.disableDepth();
         wgtMgr.onDraw(mouseX, mouseY);
         drawExtra();
-        drawItemStack(mouseX, mouseY, hand.getRepresentation(), true);
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(mouseX - 8, mouseY - 8, 0);
+        hand.drawEntry(this);
+        GlStateManager.popMatrix();
         drawBufferedTooltip();
         GlStateManager.enableLighting();
         GlStateManager.enableDepth();
@@ -184,8 +192,14 @@ public class JecGui extends GuiContainer {
                             int sourceXSize,
                             int sourceYSize) {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.getTextureManager().bindTexture(l);
-        this.drawTexturedModalRect(destXPos, destYPos, sourceXPos, sourceYPos, sourceXSize, sourceYSize);
+        mc.getTextureManager().bindTexture(l);
+        drawTexturedModalRect(destXPos, destYPos, sourceXPos, sourceYPos, sourceXSize, sourceYSize);
+    }
+
+    public void drawFluid(Fluid f, int xPos, int yPos, int xSize, int ySize) {
+        IIcon fluidStillIcon = f.getStillIcon();
+        mc.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+        if (fluidStillIcon != null) drawTexturedModelRectFromIcon(xPos, yPos, fluidStillIcon, xSize, ySize);
     }
 
     public void drawTextureContinuous(ResourceLocation l,
@@ -208,7 +222,22 @@ public class JecGui extends GuiContainer {
 
     public void drawRectangle(int xPos, int yPos, int xSize, int ySize, int color) {
         drawRect(xPos, yPos, xPos + xSize, yPos + ySize, color);
-        // TODO Different from origin
+        float f3 = (float) (color >> 24 & 255) / 255.0F;
+        float f = (float) (color >> 16 & 255) / 255.0F;
+        float f1 = (float) (color >> 8 & 255) / 255.0F;
+        float f2 = (float) (color & 255) / 255.0F;
+        int right = xPos + xSize;
+        int bottom = yPos + ySize;
+        Tessellator tessellator = Tessellator.instance;
+        GlStateManager.disableTexture2D();
+        GlStateManager.color(f, f1, f2, f3);
+        tessellator.startDrawingQuads();
+        tessellator.addVertex((double) xPos, (double) bottom, 0.0D);
+        tessellator.addVertex((double) right, (double) bottom, 0.0D);
+        tessellator.addVertex((double) right, (double) yPos, 0.0D);
+        tessellator.addVertex((double) xPos, (double) yPos, 0.0D);
+        tessellator.draw();
+        GlStateManager.enableTexture2D();
     }
 
 
@@ -374,8 +403,8 @@ public class JecGui extends GuiContainer {
 
         public void add(Widget w) {
             widgets.add(w);
-            if (initialized && w instanceof Widget.Advanced)
-                ((Widget.Advanced) w).onGuiInit(JecGui.this);
+            if (initialized && w instanceof IDrawable)
+                ((IDrawable) w).onGuiInit(JecGui.this);
         }
 
         public void addAll(Widget... w) {
@@ -384,7 +413,7 @@ public class JecGui extends GuiContainer {
         }
 
         public void remove(Widget w) {
-            if (widgets.remove(w) && w instanceof Widget.Advanced) ((Widget.Advanced) w).onRemoved(JecGui.this);
+            if (widgets.remove(w) && w instanceof IDrawable) ((IDrawable) w).onRemoved(JecGui.this);
         }
 
         public void removeAll(Widget... w) {
@@ -393,8 +422,8 @@ public class JecGui extends GuiContainer {
         }
 
         public void onInit() {
-            widgets.stream().filter(w -> w instanceof Widget.Advanced)
-                   .forEach(w -> ((Widget.Advanced) w).onGuiInit(JecGui.this));
+            widgets.stream().filter(w -> w instanceof IDrawable)
+                   .forEach(w -> ((IDrawable) w).onGuiInit(JecGui.this));
             initialized = true;
         }
 
@@ -405,8 +434,8 @@ public class JecGui extends GuiContainer {
         @SuppressWarnings("UnusedReturnValue")
         public boolean onClick(int xMouse, int yMouse, int button) {
             for (Widget w : widgets) {
-                if (w instanceof Widget.Advanced &&
-                    ((Widget.Advanced) w).onClicked(JecGui.this, xMouse, yMouse, button))
+                if (w instanceof IDrawable &&
+                    ((IDrawable) w).onClicked(JecGui.this, xMouse, yMouse, button))
                     return true;
             }
             return false;
@@ -414,8 +443,8 @@ public class JecGui extends GuiContainer {
 
         @SuppressWarnings("UnusedReturnValue")
         public boolean onKey(char ch, int code) {
-            return widgets.stream().filter(w -> w instanceof Widget.Advanced)
-                          .anyMatch(w -> ((Widget.Advanced) w).onKey(JecGui.this, ch, code));
+            return widgets.stream().filter(w -> w instanceof IDrawable)
+                          .anyMatch(w -> ((IDrawable) w).onKey(JecGui.this, ch, code));
         }
 
         public Optional<WEntry> getEntryAt(int xMouse, int yMouse) {

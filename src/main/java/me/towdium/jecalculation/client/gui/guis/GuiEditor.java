@@ -1,13 +1,13 @@
 package me.towdium.jecalculation.client.gui.guis;
 
 import me.towdium.jecalculation.client.gui.JecGui;
-import me.towdium.jecalculation.client.resource.Resource;
-import me.towdium.jecalculation.client.widget.widgets.*;
+import me.towdium.jecalculation.client.gui.resource.Resource;
+import me.towdium.jecalculation.client.gui.widget.widgets.*;
 import net.minecraft.client.gui.GuiScreen;
 
 import javax.annotation.Nullable;
 
-import static me.towdium.jecalculation.client.widget.widgets.WEntry.enumMode.EDITOR;
+import static me.towdium.jecalculation.client.gui.widget.widgets.WEntry.enumMode.EDITOR;
 
 /**
  * Author: towdium

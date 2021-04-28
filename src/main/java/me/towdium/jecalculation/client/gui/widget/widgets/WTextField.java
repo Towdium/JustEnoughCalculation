@@ -1,7 +1,7 @@
-package me.towdium.jecalculation.client.widget.widgets;
+package me.towdium.jecalculation.client.gui.widget.widgets;
 
 import me.towdium.jecalculation.client.gui.JecGui;
-import me.towdium.jecalculation.client.widget.Widget;
+import me.towdium.jecalculation.client.gui.widget.IDrawable;
 import net.minecraft.client.gui.GuiTextField;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -11,7 +11,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * Date:   17-8-18.
  */
 @ParametersAreNonnullByDefault
-public class WTextField extends Widget.Advanced {
+public class WTextField extends IDrawable {
     protected int xPos, yPos, xSize;
     GuiTextField textField;
 

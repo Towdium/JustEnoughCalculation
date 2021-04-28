@@ -1,7 +1,7 @@
-package me.towdium.jecalculation.client.widget.widgets;
+package me.towdium.jecalculation.client.gui.widget.widgets;
 
 import me.towdium.jecalculation.client.gui.JecGui;
-import me.towdium.jecalculation.client.widget.Widget;
+import me.towdium.jecalculation.client.gui.widget.Widget;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.Supplier;

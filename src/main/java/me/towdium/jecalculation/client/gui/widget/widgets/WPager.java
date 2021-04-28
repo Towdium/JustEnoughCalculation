@@ -1,8 +1,8 @@
-package me.towdium.jecalculation.client.widget.widgets;
+package me.towdium.jecalculation.client.gui.widget.widgets;
 
 import me.towdium.jecalculation.client.gui.JecGui;
-import me.towdium.jecalculation.client.resource.Resource;
-import me.towdium.jecalculation.client.widget.Widget;
+import me.towdium.jecalculation.client.gui.resource.Resource;
+import me.towdium.jecalculation.client.gui.widget.IDrawable;
 import me.towdium.jecalculation.utils.Utilities;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -16,7 +16,7 @@ import java.util.stream.Stream;
  * Date:   17-8-19.
  */
 @ParametersAreNonnullByDefault
-public class WPager extends Widget.Advanced {
+public class WPager extends IDrawable {
     public static final int SIZE = 13;
 
     protected int xPos, xSize, yPos;

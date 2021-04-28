@@ -1,8 +1,8 @@
-package me.towdium.jecalculation.client.widget.widgets;
+package me.towdium.jecalculation.client.gui.widget.widgets;
 
 import cpw.mods.fml.client.config.GuiButtonExt;
 import me.towdium.jecalculation.client.gui.JecGui;
-import me.towdium.jecalculation.client.resource.Resource;
+import me.towdium.jecalculation.client.gui.resource.Resource;
 import net.minecraft.client.Minecraft;
 
 import javax.annotation.Nullable;

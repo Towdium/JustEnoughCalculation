@@ -1,8 +1,8 @@
-package me.towdium.jecalculation.client.widget.widgets;
+package me.towdium.jecalculation.client.gui.widget.widgets;
 
 import cpw.mods.fml.client.config.GuiButtonExt;
 import me.towdium.jecalculation.client.gui.JecGui;
-import me.towdium.jecalculation.client.widget.Widget;
+import me.towdium.jecalculation.client.gui.widget.IDrawable;
 import me.towdium.jecalculation.utils.ClientUtils;
 import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.client.Minecraft;
@@ -15,7 +15,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * Date:   8/14/17.
  */
 @ParametersAreNonnullByDefault
-public class WButton extends Widget.Advanced {
+public class WButton extends IDrawable {
     protected int xPos, yPos, xSize, ySize;
     public Runnable lsnrLeft, lsnrRight;
     public String text, tooltip;

@@ -1,4 +1,4 @@
-package me.towdium.jecalculation.client.widget;
+package me.towdium.jecalculation.client.gui.widget;
 
 import me.towdium.jecalculation.client.gui.JecGui;
 import net.minecraft.client.gui.Gui;
@@ -20,22 +20,6 @@ public class Widget extends Gui {
     }
 
     public void onDraw(JecGui gui, int xMouse, int yMouse) {
-    }
-
-    public static class Advanced extends Widget {
-        public void onRemoved(JecGui gui) {
-        }
-
-        public boolean onClicked(JecGui gui, int xMouse, int yMouse, int button) {
-            return false;
-        }
-
-        public boolean onKey(JecGui gui, char ch, int code) {
-            return false;
-        }
-
-        public void onGuiInit(JecGui gui) {
-        }
     }
 
 

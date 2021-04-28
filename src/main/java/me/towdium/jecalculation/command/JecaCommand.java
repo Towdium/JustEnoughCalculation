@@ -34,7 +34,7 @@ public class JecaCommand extends CommandBase {
         } else {
             SubCommand cmd = Commands.commands.get(args[0].toLowerCase());
             if (cmd != null) {
-                cmd.execute(sender, args);
+                cmd.execute(sender, cut(args));
             } else {
                 sender.addChatMessage(new ChatComponentTranslation("command.common.not_found", args[0]));
             }
