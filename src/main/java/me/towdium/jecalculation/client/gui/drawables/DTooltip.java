@@ -3,7 +3,6 @@ package me.towdium.jecalculation.client.gui.drawables;
 import me.towdium.jecalculation.client.gui.IDrawable;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.utils.Utilities;
-import me.towdium.jecalculation.utils.helpers.LocalizationHelper;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 
 import javax.annotation.Nullable;
@@ -28,7 +27,7 @@ public abstract class DTooltip implements IDrawable {
         if (name != null) {
             timer.setState(mouseIn(xMouse, yMouse));
             if (timer.getTime() > 500) {
-                Pair<String, Boolean> str = LocalizationHelper.search(String.join(".", "gui", name, "tooltip"));
+                Pair<String, Boolean> str = Utilities.L18n.search(String.join(".", "gui", name, "tooltip"));
                 if (str.two || JecGui.ALWAYS_TOOLTIP) gui.drawTooltip(xMouse, yMouse, str.one);
             }
         }

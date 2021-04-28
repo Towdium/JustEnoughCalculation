@@ -38,21 +38,26 @@ public class DContainer implements IDrawable {
         widgets.clear();
     }
 
+    @Override
     public void onDraw(JecGui gui, int mouseX, int mouseY) {
         widgets.forEach(widget -> widget.onDraw(gui, mouseX, mouseY));
     }
 
+    @Override
     public boolean onClicked(JecGui gui, int xMouse, int yMouse, int button) {
-        for (IDrawable w : widgets) {
-            if (w.onClicked(gui, xMouse, yMouse, button)) return true;
-        }
+        for (IDrawable w : widgets) if (w.onClicked(gui, xMouse, yMouse, button)) return true;
         return false;
     }
 
+    @Override
     public boolean onKey(JecGui gui, char ch, int code) {
-        for (IDrawable w : widgets) {
-            if (w.onKey(gui, ch, code)) return true;
-        }
+        for (IDrawable w : widgets) if (w.onKey(gui, ch, code)) return true;
+        return false;
+    }
+
+    @Override
+    public boolean onScroll(JecGui gui, int xMouse, int yMouse, int diff) {
+        for (IDrawable w : widgets) if (w.onScroll(gui, xMouse, yMouse, diff)) return true;
         return false;
     }
 

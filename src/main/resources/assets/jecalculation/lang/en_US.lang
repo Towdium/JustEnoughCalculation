@@ -10,6 +10,9 @@ command.state.s_client=client only
 command.state.s_both=client with server
 command.state.s_undefined=error state
 
-gui.gui_calculator.name.new_recipe=New recipe
+gui.gui_calculator.new_recipe.name=New recipe
+gui.common.label.ore_dict=OreDict
 
 config.force_client=Force Client
+
+label.ore_dict.name=Ore: %s

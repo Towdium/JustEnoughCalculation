@@ -1,7 +1,7 @@
 package me.towdium.jecalculation.client.gui.drawables;
 
 import me.towdium.jecalculation.client.gui.JecGui;
-import me.towdium.jecalculation.utils.helpers.LocalizationHelper;
+import me.towdium.jecalculation.utils.Utilities;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -19,7 +19,7 @@ public class DButtonText extends DButton {
     public void onDraw(JecGui gui, int xMouse, int yMouse) {
         super.onDraw(gui, xMouse, yMouse);
         int textColor = mouseIn(xMouse, yMouse) ? 16777120 : 0;
-        String text = LocalizationHelper.format(String.join(".", "gui", name, "text"));
+        String text = Utilities.L18n.format(String.join(".", "gui", name, "text"));
         int strWidth = gui.getFontRenderer().getStringWidth(text);
         int ellipsisWidth = gui.getFontRenderer().getStringWidth("...");
         String str = text;

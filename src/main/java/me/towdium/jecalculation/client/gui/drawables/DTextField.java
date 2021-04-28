@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiTextField;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.function.Consumer;
 
 /**
  * Author: towdium
@@ -15,6 +16,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class DTextField implements IDrawable {
     protected int xPos, yPos, xSize;
     GuiTextField textField;
+    public Consumer<String> lsnrText;
+
     public DTextField(int xPos, int yPos, int xSize) {
         this.xPos = xPos;
         this.yPos = yPos;
@@ -37,6 +40,19 @@ public class DTextField implements IDrawable {
 
     @Override
     public boolean onKey(JecGui gui, char ch, int code) {
-        return textField.textboxKeyTyped(ch, code);
+        boolean ret = textField.textboxKeyTyped(ch, code);
+        if (ret) lsnrText.accept(textField.getText());
+        return ret;
+    }
+
+    @SuppressWarnings("UnusedReturnValue")
+    public DTextField setLsnrText(Consumer<String> lsnrText) {
+        this.lsnrText = lsnrText;
+        return this;
+    }
+
+    public DTextField setColor(int color) {
+        textField.setTextColor(color);
+        return this;
     }
 }

@@ -25,7 +25,7 @@ public class GuiRecipe extends DContainer {
 
     public GuiRecipe() {
         add(new DPanel());
-        add(new DScroll(7, 7, 162, 2));
+        add(new DSwitcher(7, 7, 162, 2));
         add(new DIcon(7, 63, 21, 20, Resource.ICN_OUTPUT_N, Resource.ICN_OUTPUT_F, "recipe.output"));
         add(new DIcon(7, 87, 21, 20, Resource.ICN_CATALYST_N, Resource.ICN_CATALYST_F, "recipe.catalyst"));
         add(new DIcon(7, 111, 21, 40, Resource.ICN_INPUT_N, Resource.ICN_INPUT_F, "recipe.input"));

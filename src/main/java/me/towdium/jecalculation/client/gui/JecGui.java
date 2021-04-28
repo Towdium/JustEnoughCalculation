@@ -7,7 +7,6 @@ import me.towdium.jecalculation.core.labels.ILabel;
 import me.towdium.jecalculation.nei.NEIPlugin;
 import me.towdium.jecalculation.polyfill.mc.client.renderer.GlStateManager;
 import me.towdium.jecalculation.utils.IllegalPositionException;
-import me.towdium.jecalculation.utils.helpers.LocalizationHelper;
 import me.towdium.jecalculation.utils.wrappers.Single;
 import me.towdium.jecalculation.utils.wrappers.Triple;
 import net.minecraft.client.Minecraft;
@@ -38,7 +37,9 @@ import java.util.function.Function;
  */
 @ParametersAreNonnullByDefault
 public class JecGui extends GuiContainer {
-    public static final int COLOR_GREY = 0xFFA1A1A1;
+    public static final int COLOR_GUI_GREY = 0xFFA1A1A1;
+    public static final int COLOR_TEXT_RED = 0xFF0000;
+    public static final int COLOR_TEXT_WHITE = 0xFFFFFF;
     protected static JecGui last;
     public static final boolean ALWAYS_TOOLTIP = false;
 
@@ -302,11 +303,11 @@ public class JecGui extends GuiContainer {
     }
 
     public void drawTooltip(int xPos, int yPos, String... text) {
-        drawTooltip(xPos + guiLeft, yPos + guiTop, Arrays.asList(text));
+        drawTooltip(xPos, yPos, Arrays.asList(text));
     }
 
     public void drawTooltip(int xPos, int yPos, List<String> text) {
-        tooltipBuffer.add(new Triple<>(xPos, yPos, text));
+        tooltipBuffer.add(new Triple<>(xPos + guiLeft, yPos + guiTop, text));
     }
 
     protected void drawBufferedTooltip() {

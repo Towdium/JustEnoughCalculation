@@ -45,6 +45,10 @@ public interface ILabel {
 
     String getDisplayName();
 
+    default List<String> getToolTip(List<String> existing) {
+        return existing;
+    }
+
     default String getIdentifier() {
         String s = this.getClass().getSimpleName();
         if (s.startsWith("Label")) s = s.substring(5);
@@ -159,7 +163,7 @@ public interface ILabel {
             String s = nbt.getString(KEY_IDENTIFIER);
             ILabel e = idToData.get(s).apply(nbt.getCompoundTag(KEY_CONTENT));
             if (e != ILabel.EMPTY) return e;
-            else throw new RuntimeException("Fail to deserialize ILabel type: " + s);
+            else throw new RuntimeException("Fail to deserialize label type: " + s);
         }
     }
 

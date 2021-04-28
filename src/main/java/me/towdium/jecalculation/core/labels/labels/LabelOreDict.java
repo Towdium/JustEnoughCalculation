@@ -1,5 +1,6 @@
 package me.towdium.jecalculation.core.labels.labels;
 
+import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
 import me.towdium.jecalculation.client.gui.drawables.DContainer;
@@ -7,12 +8,14 @@ import me.towdium.jecalculation.client.gui.drawables.DText;
 import me.towdium.jecalculation.core.labels.ILabel;
 import me.towdium.jecalculation.polyfill.mc.client.renderer.GlStateManager;
 import me.towdium.jecalculation.polyfill.mc.util.NonNullList;
+import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -48,7 +51,13 @@ public class LabelOreDict extends LabelSimpleAmount {
 
     @Override
     public String getDisplayName() {
-        return "Ore: " + name; // localization
+        return Utilities.L18n.format("label.ore_dict.name", name);
+    }
+
+    @Override
+    public List<String> getToolTip(List<String> existing) {
+        existing.add("\u00A79\u00A7o" + JustEnoughCalculation.Reference.MODNAME);
+        return existing;
     }
 
     public static RegistryEditor.IEditor getEditor() {
