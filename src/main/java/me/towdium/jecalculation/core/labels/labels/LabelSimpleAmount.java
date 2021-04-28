@@ -3,10 +3,14 @@ package me.towdium.jecalculation.core.labels.labels;
 import me.towdium.jecalculation.core.labels.ILabel;
 import me.towdium.jecalculation.utils.Utilities;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.List;
+
 /**
  * Author: towdium
  * Date:   17-9-11.
  */
+@ParametersAreNonnullByDefault
 public abstract class LabelSimpleAmount implements ILabel {
     protected int amount;
 
@@ -41,8 +45,15 @@ public abstract class LabelSimpleAmount implements ILabel {
     }
 
     @Override
+    public List<String> getToolTip(List<String> existing, boolean detailed) {
+        if (detailed) existing.add(FORMAT_GREY +
+                                   Utilities.L18n.format("label.common.tooltip.amount", Integer.toString(amount)));
+        return existing;
+    }
+
+    @Override
     public String getAmountString() {
-        return amount == 0 ? "" : Utilities.cutLong(amount, 5);
+        return amount == 0 ? "" : Utilities.cutNumber(amount, 5);
     }
 
 }

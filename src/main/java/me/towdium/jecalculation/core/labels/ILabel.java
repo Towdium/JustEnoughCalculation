@@ -3,6 +3,8 @@ package me.towdium.jecalculation.core.labels;
 import com.google.common.base.CaseFormat;
 import me.towdium.jecalculation.client.gui.IDrawable;
 import me.towdium.jecalculation.client.gui.JecGui;
+import me.towdium.jecalculation.client.gui.drawables.DContainer;
+import me.towdium.jecalculation.core.labels.labels.LabelFluidStack;
 import me.towdium.jecalculation.core.labels.labels.LabelItemStack;
 import me.towdium.jecalculation.core.labels.labels.LabelOreDict;
 import me.towdium.jecalculation.polyfill.mc.client.renderer.GlStateManager;
@@ -12,6 +14,7 @@ import me.towdium.jecalculation.utils.Utilities.ReversedIterator;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.*;
@@ -24,7 +27,7 @@ import java.util.stream.Collectors;
  * Date:   8/11/17.
  */
 public interface ILabel {
-    RegistryEntryMerger MERGER = RegistryEntryMerger.INSTANCE;
+    RegistryMerger MERGER = RegistryMerger.INSTANCE;
     RegistryDeserializer DESERIALIZER = RegistryDeserializer.INSTANCE;
     RegistryConverterItem CONVERTER_ITEM = RegistryConverterItem.INSTANCE;
     RegistryConverterFluid CONVERTER_FLUID = RegistryConverterFluid.INSTANCE;
@@ -32,6 +35,7 @@ public interface ILabel {
     ILabel EMPTY = new LabelItemStack(ItemStackHelper.EMPTY_ITEM_STACK, 0);
 
     String FORMAT_BLUE = "\u00A79";
+    String FORMAT_GREY = "\u00A78";
     String FORMAT_ITALIC = "\u00A7o";
 
     ILabel increaseAmount();
@@ -46,15 +50,17 @@ public interface ILabel {
 
     String getDisplayName();
 
-    default List<String> getToolTip(List<String> existing) {
-        return existing;
+    static String getIdentifier(ILabel c) {
+        return getIdentifier(c.getClass());
     }
 
-    default String getIdentifier() {
-        String s = this.getClass().getSimpleName();
+    static String getIdentifier(Class<? extends ILabel> c) {
+        String s = c.getSimpleName();
         if (s.startsWith("Label")) s = s.substring(5);
         return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, s);
     }
+
+    List<String> getToolTip(List<String> existing, boolean detailed);
 
     ILabel copy();
 
@@ -78,18 +84,18 @@ public interface ILabel {
      * to operate the {@link ILabel}.
      * For registering, see {@link RegistryDeserializer}.
      */
-    class RegistryEntryMerger {
-        public static final RegistryEntryMerger INSTANCE;
+    class RegistryMerger {
+        public static final RegistryMerger INSTANCE;
 
         static {
-            INSTANCE = new RegistryEntryMerger();
+            INSTANCE = new RegistryMerger();
             // registerGuess functions here
         }
 
         private Relation<String, MergerFunction> functions = new Relation<>();
 
 
-        private RegistryEntryMerger() {
+        private RegistryMerger() {
         }
 
         public void register(String a, String b, MergerFunction func) {
@@ -97,12 +103,12 @@ public interface ILabel {
         }
 
         public Pair<ILabel, ILabel> merge(ILabel a, ILabel b, boolean add) {
-            return functions.get(a.getIdentifier(), b.getIdentifier())
-                    .orElse((x, y, f) -> new Pair<>(x, y)).merge(a, b, add);
+            return functions.get(ILabel.getIdentifier(a), ILabel.getIdentifier(b))
+                            .orElse((x, y, f) -> new Pair<>(x, y)).merge(a, b, add);
         }
 
         public boolean test(ILabel a, ILabel b) {
-            Optional<MergerFunction> f = functions.get(a.getIdentifier(), b.getIdentifier());
+            Optional<MergerFunction> f = functions.get(ILabel.getIdentifier(a), ILabel.getIdentifier(b));
             if (!f.isPresent()) return false;
             else {
                 Pair<ILabel, ILabel> p = f.get().merge(a, b, true);
@@ -125,7 +131,7 @@ public interface ILabel {
     /**
      * This class is used to registerGuess an {@link ILabel} type.
      * Here you can find the identifier and deserializer of one type.
-     * For {@link ILabel} operations, see {@link RegistryEntryMerger}
+     * For {@link ILabel} operations, see {@link RegistryMerger}
      */
     class RegistryDeserializer {
         public static final String KEY_IDENTIFIER = "identifier";
@@ -135,7 +141,9 @@ public interface ILabel {
         static {
             INSTANCE = new RegistryDeserializer();
 
-            INSTANCE.register("itemStack", LabelOreDict::new);
+            INSTANCE.register(ILabel.getIdentifier(LabelOreDict.class), LabelOreDict::new);
+            INSTANCE.register(ILabel.getIdentifier(LabelItemStack.class), LabelItemStack::new);
+            INSTANCE.register(ILabel.getIdentifier(LabelFluidStack.class), LabelFluidStack::new);
         }
 
         private HashMap<String, Function<NBTTagCompound, ILabel>> idToData = new HashMap<>();
@@ -168,9 +176,8 @@ public interface ILabel {
         }
     }
 
-    class RegistryConverter<T> {
-        List<Function<List<T>, List<ILabel>>> handlersGuess = new ArrayList<>();
-        List<Function<T, ILabel>> handlersRaw = new ArrayList<>();
+    abstract class RegistryConverter<T> {
+        List<Function<List<T>, List<ILabel>>> handlers = new ArrayList<>();
 
         private RegistryConverter() {
         }
@@ -179,26 +186,19 @@ public interface ILabel {
          * @param ingredient the ingredient, possibly itemStack or FluidStack
          * @return the identical representation
          */
-        public ILabel toLabel(T ingredient) {
-            return handlersRaw.stream().map(h -> h.apply(ingredient))
-                              .filter(Objects::nonNull).findFirst().orElse(ILabel.EMPTY);
-        }
+        public abstract ILabel toLabel(T ingredient);
 
         /**
          * @param ingredients the list of ingredient, possibly itemStack or FluidStack
          * @return list of guessed representation, sorted by possibility
          */
         public List<ILabel> toLabel(List<T> ingredients) {
-            return new ReversedIterator<>(handlersGuess).stream().flatMap(h -> h.apply(ingredients).stream())
-                                                        .collect(Collectors.toList());
+            return new ReversedIterator<>(handlers).stream().flatMap(h -> h.apply(ingredients).stream())
+                                                   .collect(Collectors.toList());
         }
 
-        void registerGuess(Function<List<T>, List<ILabel>> handler) {
-            handlersGuess.add(handler);
-        }
-
-        void registerRaw(Function<T, ILabel> handler) {
-            handlersRaw.add(handler);
+        void register(Function<List<T>, List<ILabel>> handler) {
+            handlers.add(handler);
         }
     }
 
@@ -208,14 +208,15 @@ public interface ILabel {
         static {
             INSTANCE = new RegistryConverterItem();
 
-            INSTANCE.registerRaw(RegistryConverterItem::convertRawItemStack);
+            INSTANCE.register(LabelOreDict::guess);
         }
 
         private RegistryConverterItem() {
         }
 
-        public static ILabel convertRawItemStack(ItemStack is) {
-            return new LabelItemStack(is);
+        @Override
+        public ILabel toLabel(ItemStack ingredient) {
+            return new LabelItemStack(ingredient);
         }
     }
 
@@ -228,6 +229,11 @@ public interface ILabel {
 
         private RegistryConverterFluid() {
         }
+
+        @Override
+        public ILabel toLabel(FluidStack ingredient) {
+            return new LabelFluidStack(new FluidStack(ingredient.getFluid(), 1000), ingredient.amount);
+        }
     }
 
     class RegistryEditor {
@@ -237,7 +243,10 @@ public interface ILabel {
             INSTANCE = new RegistryEditor();
 
             INSTANCE.register(LabelOreDict.getEditor(), "common.label.ore_dict", new LabelOreDict("ingotIron"));
+            INSTANCE.register(LabelFluidStack.getEditor(), "common.label.fluid_stack",
+                              new LabelFluidStack(new FluidStack(FluidRegistry.WATER, 1000), 1000));
         }
+
 
         private ArrayList<Record> records = new ArrayList<>();
 
@@ -254,6 +263,16 @@ public interface ILabel {
 
         public interface IEditor extends IDrawable {
             IEditor setCallback(Consumer<ILabel> callback);
+        }
+
+        public static class Editor extends DContainer implements RegistryEditor.IEditor {
+            protected Consumer<ILabel> callback;
+
+            @Override
+            public RegistryEditor.IEditor setCallback(Consumer<ILabel> callback) {
+                this.callback = callback;
+                return this;
+            }
         }
 
         public static class Record {

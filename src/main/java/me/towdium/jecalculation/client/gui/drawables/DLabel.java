@@ -48,14 +48,16 @@ public class DLabel implements IDrawable {
         gui.drawResourceContinuous(Resource.WGT_SLOT, xPos, yPos, xSize, ySize, 3, 3, 3, 3);
         label.drawEntry(gui, xPos + xSize / 2, yPos + ySize / 2, true);
         if (mode == enumMode.RESULT || mode == enumMode.EDITOR)
-            gui.drawText(xPos + xSize / 2 + 7.5f,
-                         yPos + ySize / 2 + 7 - (int) (font.size * gui.getFontRenderer().FONT_HEIGHT), font,
-                         label.getAmountString());
-        if (label != ILabel.EMPTY && mouseIn(xMouse, yMouse)) {
+            gui.drawText(xPos + xSize / 2 + 7.5f, yPos + ySize / 2 + 7 -
+                                                  (int) (font.size * gui.getFontRenderer().FONT_HEIGHT), font, label.getAmountString());
+        if (mouseIn(xMouse, yMouse)) {
             gui.drawRectangle(xPos + 1, yPos + 1, xSize - 2, ySize - 2, 0x80FFFFFF);
-            ArrayList<String> buf = new ArrayList<>();
-            buf.add(label.getDisplayName());
-            gui.drawTooltip(xMouse, yMouse, label.getToolTip(buf));
+            if (label != ILabel.EMPTY) {
+                ArrayList<String> buf = new ArrayList<>();
+                buf.add(label.getDisplayName());
+                gui.drawTooltip(xMouse, yMouse,
+                                label.getToolTip(buf, mode == enumMode.EDITOR || mode == enumMode.RESULT));
+            }
         }
     }
 

@@ -37,7 +37,7 @@ public class GuiLabel extends DContainer {
         Single<Integer> index = new Single<>(0);
         ILabel.EDITOR.getRecords().forEach(r -> {
             int i = index.value;
-            add(new DPage(0, r, false).setListener(() -> refresh(i)));
+            add(new DPage(i, r, false).setListener(() -> refresh(i)));
             index.value += 1;
         });
         add(new DPanel());

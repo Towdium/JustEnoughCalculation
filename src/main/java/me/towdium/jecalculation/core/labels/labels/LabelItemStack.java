@@ -7,12 +7,14 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
 /**
  * Author: towdium
  * Date:   8/11/17.
  */
+@ParametersAreNonnullByDefault
 public class LabelItemStack extends LabelSimpleAmount {
     public static final String IDENTIFIER = "oreDict";
     public static final String KEY_STACK = "stack";
@@ -39,9 +41,9 @@ public class LabelItemStack extends LabelSimpleAmount {
         amount = eis.amount;
         itemStack = eis.itemStack;
     }
-
     @Override
-    public List<String> getToolTip(List<String> existing) {
+    public List<String> getToolTip(List<String> existing, boolean detailed) {
+        super.getToolTip(existing, detailed);
         existing.add(FORMAT_BLUE + FORMAT_ITALIC + Utilities.getModName(itemStack));
         return existing;
     }

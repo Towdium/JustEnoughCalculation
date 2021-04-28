@@ -57,6 +57,7 @@ public class Resource {
     public static final Resource ICN_HELP_N = new Resource(84, 42, 14, 14);
     public static final Resource ICN_HELP_F = new Resource(84, 28, 14, 14);
     public static final Resource LBL_ORE_DICT = new Resource(0, 56, 16, 16);
+    public static final Resource LBL_FLUID = new Resource(16, 56, 16, 16);
 
     protected int xPos, yPos, xSize, ySize;
     protected ResourceLocation rl;
