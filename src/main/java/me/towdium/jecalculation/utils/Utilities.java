@@ -70,7 +70,7 @@ public class Utilities {
 
     public static String getModName(FluidStack stack) {
         String name = GameData.getItemRegistry().getNameForObject(stack.getFluid());
-        JustEnoughCalculation.logger.warn(String.format("fluid name: %s", stack.getFluid()));
+        JustEnoughCalculation.logger.warn(String.format("fluid name: %s", name));
         // TODO check
         return name;
     }

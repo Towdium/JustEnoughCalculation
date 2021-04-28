@@ -41,8 +41,12 @@ public class WTextField implements IWidget {
     @Override
     public boolean onKey(JecGui gui, char ch, int code) {
         boolean ret = textField.textboxKeyTyped(ch, code);
-        if (ret) lsnrText.accept(textField.getText());
+        if (ret && lsnrText != null) lsnrText.accept(textField.getText());
         return ret;
+    }
+
+    public String getText() {
+        return textField.getText();
     }
 
     @SuppressWarnings("UnusedReturnValue")

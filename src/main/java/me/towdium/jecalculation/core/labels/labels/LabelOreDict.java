@@ -35,18 +35,18 @@ public class LabelOreDict extends LabelSimpleAmount {
     }
 
     public LabelOreDict(String name, int amount) {
+        super(amount);
         this.name = name;
-        this.amount = amount;
     }
 
-    public LabelOreDict(LabelOreDict eod) {
-        this.name = eod.name;
-        this.amount = eod.amount;
+    public LabelOreDict(LabelOreDict lod) {
+        super(lod);
+        this.name = lod.name;
     }
 
     public LabelOreDict(NBTTagCompound nbt) {
+        super(nbt);
         name = nbt.getString(KEY_NAME);
-        amount = nbt.getInteger(KEY_AMOUNT);
     }
 
     @Override
@@ -95,26 +95,10 @@ public class LabelOreDict extends LabelSimpleAmount {
         return ret;
     }
 
-    public static RegistryEditor.IEditor getEditor() {
-        return new Editor();
-    }
-
     @Override
     public List<String> getToolTip(List<String> existing, boolean detailed) {
         super.getToolTip(existing, detailed);
         existing.add(FORMAT_BLUE + FORMAT_ITALIC + JustEnoughCalculation.Reference.MODNAME);
         return existing;
-    }
-
-    public static class Editor extends RegistryEditor.Editor {
-        public Editor() {
-            add(new WText(5, 5, JecGui.Font.DEFAULT_NO_SHADOW, "hello"));
-        }
-
-        @Override
-        public boolean onClicked(JecGui gui, int xMouse, int yMouse, int button) {
-            callback.value.accept(new LabelOreDict("plankWood"));
-            return super.onClicked(gui, xMouse, yMouse, button);
-        }
     }
 }

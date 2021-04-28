@@ -1,26 +1,24 @@
 package me.towdium.jecalculation.core.labels;
 
 import com.google.common.base.CaseFormat;
-import me.towdium.jecalculation.client.gui.IWidget;
+import me.towdium.jecalculation.client.gui.IWPicker;
 import me.towdium.jecalculation.client.gui.JecGui;
-import me.towdium.jecalculation.client.gui.drawables.WContainer;
-import me.towdium.jecalculation.client.gui.guis.GuiEditorFluidStack;
+import me.towdium.jecalculation.client.gui.guis.pickers.PickerSimple;
+import me.towdium.jecalculation.client.gui.guis.pickers.PickerUniversal;
 import me.towdium.jecalculation.core.labels.labels.LabelFluidStack;
 import me.towdium.jecalculation.core.labels.labels.LabelItemStack;
 import me.towdium.jecalculation.core.labels.labels.LabelOreDict;
+import me.towdium.jecalculation.core.labels.labels.LabelUniversal;
 import me.towdium.jecalculation.polyfill.mc.client.renderer.GlStateManager;
 import me.towdium.jecalculation.utils.ItemStackHelper;
 import me.towdium.jecalculation.utils.Utilities.Relation;
 import me.towdium.jecalculation.utils.Utilities.ReversedIterator;
 import me.towdium.jecalculation.utils.wrappers.Pair;
-import me.towdium.jecalculation.utils.wrappers.Single;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
 
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -223,7 +221,7 @@ public interface ILabel {
         }
     }
 
-    class RegistryConverterFluid extends RegistryConverter<FluidStack> {
+    class RegistryConverterFluid extends RegistryConverter<net.minecraftforge.fluids.FluidStack> {
         public static final RegistryConverterFluid INSTANCE;
 
         static {
@@ -234,8 +232,8 @@ public interface ILabel {
         }
 
         @Override
-        public ILabel toLabel(FluidStack ingredient) {
-            return new LabelFluidStack(new FluidStack(ingredient.getFluid(), 1000), ingredient.amount);
+        public ILabel toLabel(net.minecraftforge.fluids.FluidStack ingredient) {
+            return new LabelFluidStack(new net.minecraftforge.fluids.FluidStack(ingredient.getFluid(), 1000), ingredient.amount);
         }
     }
 
@@ -245,45 +243,35 @@ public interface ILabel {
         static {
             INSTANCE = new RegistryEditor();
 
-            INSTANCE.register(LabelOreDict::getEditor, "common.label.ore_dict",
+            INSTANCE.register(PickerSimple.OreDict::new, "common.label.ore_dict",
                               new LabelOreDict("ingotIron"));
-            INSTANCE.register(GuiEditorFluidStack::new, "common.label.fluid_stack",
-                              new LabelFluidStack(new FluidStack(FluidRegistry.WATER, 1000), 1000));
+            INSTANCE.register(PickerSimple.FluidStack::new, "common.label.fluid_stack",
+                              new LabelFluidStack(FluidRegistry.WATER, 1000));
+            INSTANCE.register(PickerUniversal::new, "common.label.universal",
+                              new LabelUniversal("example", 1));
         }
+
 
         private ArrayList<Record> records = new ArrayList<>();
 
         private RegistryEditor() {
         }
 
-        public void register(Supplier<IEditor> editor, String unlocalizedName, ILabel representation) {
+        public void register(Supplier<IWPicker> editor, String unlocalizedName, ILabel representation) {
             records.add(new Record(editor, unlocalizedName, representation));
         }
+
 
         public List<Record> getRecords() {
             return records;
         }
 
-        public interface IEditor extends IWidget {
-            IEditor setCallback(Consumer<ILabel> callback);
-        }
-
-        public static class Editor extends WContainer implements RegistryEditor.IEditor {
-            protected Single<Consumer<ILabel>> callback = new Single<>(null);
-
-            @Override
-            public RegistryEditor.IEditor setCallback(Consumer<ILabel> callback) {
-                this.callback.value = callback;
-                return this;
-            }
-        }
-
         public static class Record {
-            public Supplier<IEditor> editor;
+            public Supplier<IWPicker> editor;
             public String localizeKey;
             public ILabel representation;
 
-            public Record(Supplier<IEditor> editor, String localizeKey, ILabel representation) {
+            public Record(Supplier<IWPicker> editor, String localizeKey, ILabel representation) {
                 this.editor = editor;
                 this.localizeKey = localizeKey;
                 this.representation = representation;

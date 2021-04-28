@@ -18,7 +18,6 @@ import java.util.List;
 public class LabelItemStack extends LabelSimpleAmount {
     public static final String IDENTIFIER = "oreDict";
     public static final String KEY_STACK = "stack";
-    public static final String KEY_AMOUNT = "amount";
 
     ItemStack itemStack;
 
@@ -28,19 +27,20 @@ public class LabelItemStack extends LabelSimpleAmount {
 
     // I will copy it!
     public LabelItemStack(ItemStack is, int amount) {
+        super(amount);
         itemStack = is.copy();
-        this.amount = amount;
     }
 
     public LabelItemStack(NBTTagCompound nbt) {
+        super(nbt);
         itemStack = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag(KEY_STACK));
-        amount = nbt.getInteger(KEY_AMOUNT);
     }
 
-    private LabelItemStack(LabelItemStack eis) {
-        amount = eis.amount;
-        itemStack = eis.itemStack;
+    private LabelItemStack(LabelItemStack lis) {
+        super(lis);
+        itemStack = lis.itemStack;
     }
+
     @Override
     public List<String> getToolTip(List<String> existing, boolean detailed) {
         super.getToolTip(existing, detailed);

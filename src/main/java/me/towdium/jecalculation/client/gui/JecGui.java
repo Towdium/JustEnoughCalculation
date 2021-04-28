@@ -56,7 +56,8 @@ public class JecGui extends GuiContainer {
         super(acceptsTransfer ? new ContainerTransfer() : new ContainerNonTransfer());
         this.parent = parent;
         this.root = root;
-        if (inventorySlots instanceof JecContainer) ((JecContainer) inventorySlots).setGui(this);
+        if (inventorySlots instanceof JecContainer)
+            ((JecContainer) inventorySlots).setGui(this);
     }
 
     public static boolean mouseIn(int xPos, int yPos, int xSize, int ySize, int xMouse, int yMouse) {
@@ -88,10 +89,14 @@ public class JecGui extends GuiContainer {
     private static void displayGuiUnsafe(boolean updateParent, boolean acceptsTransfer, IWidget root) {
         Minecraft mc = Minecraft.getMinecraft();
         JecGui parent;
-        if (mc.currentScreen == null) parent = null;
-        else if (!(mc.currentScreen instanceof JecGui)) parent = getCurrent();
-        else if (updateParent) parent = (JecGui) mc.currentScreen;
-        else parent = ((JecGui) mc.currentScreen).parent;
+        if (mc.currentScreen == null)
+            parent = null;
+        else if (!(mc.currentScreen instanceof JecGui))
+            parent = getCurrent();
+        else if (updateParent)
+            parent = (JecGui) mc.currentScreen;
+        else
+            parent = ((JecGui) mc.currentScreen).parent;
         JecGui toShow = new JecGui(parent, acceptsTransfer, root);
         mc.displayGuiScreen(toShow);
     }
@@ -129,6 +134,21 @@ public class JecGui extends GuiContainer {
         drawBufferedTooltip();
         GlStateManager.enableLighting();
         GlStateManager.enableDepth();
+    }
+
+    /**
+     * This function handles events within the interface.
+     * Specifically, handles mouse wheel within interface.
+     * Different from {@link #handleMouseEvent()}, which is
+     * used to handle mouse event outside.
+     */
+    @Override
+    public void handleMouseInput() {
+        super.handleMouseInput();
+        int diff = Mouse.getEventDWheel() / 120;
+        if (diff != 0)
+            root.onScroll(this, Mouse.getEventX() * width / mc.displayWidth - guiLeft,
+                          height - Mouse.getEventY() * height / mc.displayHeight - 1 - guiTop, diff);
     }
 
     /**
@@ -170,7 +190,11 @@ public class JecGui extends GuiContainer {
     }
 
     public void drawResource(Resource r, int xPos, int yPos) {
-        drawTexture(r.getResourceLocation(), xPos, yPos, r.getXPos(), r.getYPos(), r.getXSize(), r.getYSize());
+        drawResource(r, xPos, yPos, 0xFFFFFF);
+    }
+
+    public void drawResource(Resource r, int xPos, int yPos, int color) {
+        drawTexture(r.getResourceLocation(), xPos, yPos, r.getXPos(), r.getYPos(), r.getXSize(), r.getYSize(), color);
     }
 
     public void drawResourceContinuous(Resource r,
@@ -193,7 +217,22 @@ public class JecGui extends GuiContainer {
                             int sourceYPos,
                             int sourceXSize,
                             int sourceYSize) {
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        drawTexture(l, destXPos, destYPos, sourceXPos, sourceYPos, sourceXSize, sourceYSize, 0xFFFFFF);
+    }
+
+    public void drawTexture(ResourceLocation l,
+                            int destXPos,
+                            int destYPos,
+                            int sourceXPos,
+                            int sourceYPos,
+                            int sourceXSize,
+                            int sourceYSize,
+                            int color) {
+        float red = (color >> 16 & 0xFF) / 255.0F;
+        float green = (color >> 8 & 0xFF) / 255.0F;
+        float blue = (color & 0xFF) / 255.0F;
+        float alpha = (~(color >> 24) & 0xFF) / 255.0F;
+        GlStateManager.color(red, green, blue, alpha);
         mc.getTextureManager().bindTexture(l);
         drawTexturedModalRect(destXPos, destYPos, sourceXPos, sourceYPos, sourceXSize, sourceYSize);
     }
@@ -383,7 +422,7 @@ public class JecGui extends GuiContainer {
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         boolean inGui = root.onClicked(this, mouseX - guiLeft, mouseY - guiTop, mouseButton);
-        if(!inGui) {
+        if (!inGui) {
             this.handleMouseEvent();
         }
     }
@@ -445,6 +484,11 @@ public class JecGui extends GuiContainer {
         super.drawHoveringText(textLines, x, y, fontRendererObj);
     }
 
-    public int getXSize() { return xSize; }
-    public int getYSize() { return ySize; }
+    public int getXSize() {
+        return xSize;
+    }
+
+    public int getYSize() {
+        return ySize;
+    }
 }

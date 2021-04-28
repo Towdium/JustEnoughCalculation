@@ -17,4 +17,5 @@ gui.common.label.fluid_stack=Fluid
 config.force_client=Force Client
 
 label.ore_dict.name=Ore: %s
+label.universal.name=Label: %s
 label.common.tooltip.amount=Amount: %s
