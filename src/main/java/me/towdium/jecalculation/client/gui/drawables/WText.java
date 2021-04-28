@@ -1,6 +1,6 @@
 package me.towdium.jecalculation.client.gui.drawables;
 
-import me.towdium.jecalculation.client.gui.IDrawable;
+import me.towdium.jecalculation.client.gui.IWidget;
 import me.towdium.jecalculation.client.gui.JecGui;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -11,35 +11,35 @@ import java.util.function.Supplier;
  * Date:   17-8-21.
  */
 @ParametersAreNonnullByDefault
-public class DText implements IDrawable {
+public class WText implements IWidget {
     public static final int UNDEFINED = Integer.MAX_VALUE;
 
     public int xPos, yPos, xSize, ySize;
     public JecGui.Font font;
     public Supplier<String> key;
 
-    public DText(int xPos, int yPos, JecGui.Font font, String key) {
+    public WText(int xPos, int yPos, JecGui.Font font, String key) {
         this(xPos, yPos, UNDEFINED, UNDEFINED, font, key);
     }
 
-    public DText(int xPos, int yPos, JecGui.Font font, Supplier<String> key) {
+    public WText(int xPos, int yPos, JecGui.Font font, Supplier<String> key) {
         this(xPos, yPos, UNDEFINED, UNDEFINED, font, key);
     }
 
-    public DText(int xPos, int yPos, int xSize, JecGui.Font font, String key) {
+    public WText(int xPos, int yPos, int xSize, JecGui.Font font, String key) {
         this(xPos, yPos, xSize, UNDEFINED, font, key);
     }
 
-    public DText(int xPos, int yPos, int xSize, JecGui.Font font, Supplier<String> key) {
+    public WText(int xPos, int yPos, int xSize, JecGui.Font font, Supplier<String> key) {
         this(xPos, yPos, xSize, UNDEFINED, font, key);
     }
 
 
-    public DText(int xPos, int yPos, int xSize, int ySize, JecGui.Font font, String key) {
+    public WText(int xPos, int yPos, int xSize, int ySize, JecGui.Font font, String key) {
         this(xPos, yPos, xSize, UNDEFINED, font, () -> key);
     }
 
-    public DText(int xPos, int yPos, int xSize, int ySize, JecGui.Font font, Supplier<String> key) {
+    public WText(int xPos, int yPos, int xSize, int ySize, JecGui.Font font, Supplier<String> key) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.xSize = xSize;

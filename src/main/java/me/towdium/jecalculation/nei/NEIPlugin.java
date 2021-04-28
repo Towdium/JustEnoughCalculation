@@ -14,12 +14,12 @@ public class NEIPlugin {
 
     private static ItemStack currentItemStack;
 
-    public static ILabel getEntryUnderMouse() {
+    public static ILabel getLabelUnderMouse() {
         if (NEIPlugin.currentItemStack == null) return ILabel.EMPTY;
         else return registryItem.toLabel(NEIPlugin.currentItemStack);
     }
 
-    public static void setEntryUnderMouse(ItemStack itemStack) {
+    public static void setLabelUnderMouse(ItemStack itemStack) {
         NEIPlugin.currentItemStack = itemStack;
     }
 }

@@ -1,8 +1,6 @@
 package me.towdium.jecalculation.client.gui;
 
-import me.towdium.jecalculation.client.gui.JecGui;
-
-public interface IDrawable {
+public interface IWidget {
     void onDraw(JecGui gui, int xMouse, int yMouse);
 
     default boolean onClicked(JecGui gui, int xMouse, int yMouse, int button) {

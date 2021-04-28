@@ -1,6 +1,6 @@
 package me.towdium.jecalculation.client.gui.drawables;
 
-import me.towdium.jecalculation.client.gui.IDrawable;
+import me.towdium.jecalculation.client.gui.IWidget;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
@@ -13,12 +13,12 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * Date:   17-9-16.
  */
 @ParametersAreNonnullByDefault
-public abstract class DTooltip implements IDrawable {
+public abstract class WTooltip implements IWidget {
     @Nullable
     public String name;
     Utilities.Timer timer = new Utilities.Timer();
 
-    public DTooltip(@Nullable String name) {
+    public WTooltip(@Nullable String name) {
         this.name = name;
     }
 

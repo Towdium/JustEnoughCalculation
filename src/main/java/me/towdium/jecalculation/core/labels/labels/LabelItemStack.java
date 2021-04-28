@@ -67,7 +67,7 @@ public class LabelItemStack extends LabelSimpleAmount {
     }
 
     @Override
-    public void drawEntry(JecGui gui) {
+    public void drawLabel(JecGui gui) {
         gui.drawItemStack(0, 0, itemStack, false);
     }
 

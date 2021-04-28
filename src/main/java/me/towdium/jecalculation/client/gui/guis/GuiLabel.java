@@ -4,10 +4,10 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.cache.Weigher;
-import me.towdium.jecalculation.client.gui.IDrawable;
-import me.towdium.jecalculation.client.gui.drawables.DContainer;
-import me.towdium.jecalculation.client.gui.drawables.DPage;
-import me.towdium.jecalculation.client.gui.drawables.DPanel;
+import me.towdium.jecalculation.client.gui.IWidget;
+import me.towdium.jecalculation.client.gui.drawables.WContainer;
+import me.towdium.jecalculation.client.gui.drawables.WPage;
+import me.towdium.jecalculation.client.gui.drawables.WPanel;
 import me.towdium.jecalculation.core.labels.ILabel;
 import me.towdium.jecalculation.utils.wrappers.Single;
 
@@ -19,14 +19,14 @@ import java.util.function.Consumer;
  * Date:   17-9-14.
  */
 @ParametersAreNonnullByDefault
-public class GuiLabel extends DContainer {
-    DContainer container = new DContainer();
+public class GuiLabel extends WContainer {
+    WContainer container = new WContainer();
     Consumer<ILabel> callback;
-    LoadingCache<Integer, IDrawable> cache = CacheBuilder.newBuilder().concurrencyLevel(1)
-            .maximumWeight(16).weigher((Weigher<Integer, IDrawable>) (key, value) -> 1)
-            .build(new CacheLoader<Integer, IDrawable>() {
+    LoadingCache<Integer, IWidget> cache = CacheBuilder.newBuilder().concurrencyLevel(1)
+                                                       .maximumWeight(16).weigher((Weigher<Integer, IWidget>) (key, value) -> 1)
+                                                       .build(new CacheLoader<Integer, IWidget>() {
                 @Override
-                public IDrawable load(Integer i) {
+                public IWidget load(Integer i) {
                     ILabel.RegistryEditor.Record record = ILabel.EDITOR.getRecords().get(i);
                     return record.editor.get().setCallback(callback);
                 }
@@ -37,10 +37,10 @@ public class GuiLabel extends DContainer {
         Single<Integer> index = new Single<>(0);
         ILabel.EDITOR.getRecords().forEach(r -> {
             int i = index.value;
-            add(new DPage(i, r, false).setListener(() -> refresh(i)));
+            add(new WPage(i, r, false).setListener(() -> refresh(i)));
             index.value += 1;
         });
-        add(new DPanel());
+        add(new WPanel());
         add(container);
         refresh(0);
     }
@@ -48,6 +48,6 @@ public class GuiLabel extends DContainer {
     protected void refresh(int index) {
         container.clear();
         container.add(cache.getUnchecked(index));
-        container.add(new DPage(index, ILabel.EDITOR.getRecords().get(index), true));
+        container.add(new WPage(index, ILabel.EDITOR.getRecords().get(index), true));
     }
 }

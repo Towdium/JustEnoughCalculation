@@ -2,7 +2,6 @@ package me.towdium.jecalculation.client.gui.drawables;
 
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
-import me.towdium.jecalculation.client.gui.IDrawable;
 import me.towdium.jecalculation.utils.ClientUtils;
 import me.towdium.jecalculation.utils.Utilities;
 
@@ -14,12 +13,12 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * Date:   17-8-17.
  */
 @ParametersAreNonnullByDefault
-public abstract class DButton extends  DTooltip {
+public abstract class WButton extends WTooltip {
     protected int xPos, yPos, xSize, ySize;
     protected Runnable lsnrLeft, lsnrRight;
     protected Utilities.Timer timer = new Utilities.Timer();
 
-    public DButton(int xPos, int yPos, int xSize, int ySize, @Nullable String name) {
+    public WButton(int xPos, int yPos, int xSize, int ySize, @Nullable String name) {
         super(name);
         this.xPos = xPos;
         this.yPos = yPos;
@@ -27,12 +26,12 @@ public abstract class DButton extends  DTooltip {
         this.ySize = ySize;
     }
 
-    public DButton setListenerLeft(Runnable r) {
+    public WButton setListenerLeft(Runnable r) {
         lsnrLeft = r;
         return this;
     }
 
-    public DButton setListenerRight(Runnable r) {
+    public WButton setListenerRight(Runnable r) {
         lsnrRight = r;
         return this;
     }

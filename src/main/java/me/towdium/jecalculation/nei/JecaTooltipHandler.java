@@ -25,7 +25,7 @@ public class JecaTooltipHandler implements IContainerTooltipHandler {
                                           int mousey,
                                           List<String> currenttip) {
         if (gui instanceof JecGui) {
-            NEIPlugin.setEntryUnderMouse(itemstack);
+            NEIPlugin.setLabelUnderMouse(itemstack);
         }
         return currenttip;
     }

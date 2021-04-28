@@ -3,8 +3,7 @@ package me.towdium.jecalculation.core.labels.labels;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
-import me.towdium.jecalculation.client.gui.drawables.DContainer;
-import me.towdium.jecalculation.client.gui.drawables.DText;
+import me.towdium.jecalculation.client.gui.drawables.WText;
 import me.towdium.jecalculation.core.labels.ILabel;
 import me.towdium.jecalculation.polyfill.mc.client.renderer.GlStateManager;
 import me.towdium.jecalculation.polyfill.mc.util.NonNullList;
@@ -17,7 +16,6 @@ import net.minecraftforge.oredict.OreDictionary;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.HashSet;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -72,7 +70,7 @@ public class LabelOreDict extends LabelSimpleAmount {
     }
 
     @Override
-    public void drawEntry(JecGui gui) {
+    public void drawLabel(JecGui gui) {
         NonNullList<ItemStack> list = NonNullList.create();
         OreDictionary.getOres(name).forEach(is -> {
             if (is.getItemDamage() == OreDictionary.WILDCARD_VALUE) {
@@ -110,7 +108,7 @@ public class LabelOreDict extends LabelSimpleAmount {
 
     public static class Editor extends RegistryEditor.Editor {
         public Editor() {
-            add(new DText(5, 5, JecGui.Font.DEFAULT_NO_SHADOW, "hello"));
+            add(new WText(5, 5, JecGui.Font.DEFAULT_NO_SHADOW, "hello"));
         }
 
         @Override

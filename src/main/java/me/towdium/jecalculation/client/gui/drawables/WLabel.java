@@ -1,6 +1,6 @@
 package me.towdium.jecalculation.client.gui.drawables;
 
-import me.towdium.jecalculation.client.gui.IDrawable;
+import me.towdium.jecalculation.client.gui.IWidget;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
 import me.towdium.jecalculation.core.labels.ILabel;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * Date:   17-8-17.
  */
 @ParametersAreNonnullByDefault
-public class DLabel implements IDrawable {
+public class WLabel implements IWidget {
     static JecGui.Font font;
 
     static {
@@ -26,7 +26,7 @@ public class DLabel implements IDrawable {
     public ILabel label;
     public enumMode mode;
 
-    public DLabel(int xPos, int yPos, int xSize, int ySize, enumMode mode) {
+    public WLabel(int xPos, int yPos, int xSize, int ySize, enumMode mode) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.xSize = xSize;
@@ -46,7 +46,7 @@ public class DLabel implements IDrawable {
     @Override
     public void onDraw(JecGui gui, int xMouse, int yMouse) {
         gui.drawResourceContinuous(Resource.WGT_SLOT, xPos, yPos, xSize, ySize, 3, 3, 3, 3);
-        label.drawEntry(gui, xPos + xSize / 2, yPos + ySize / 2, true);
+        label.drawLabel(gui, xPos + xSize / 2, yPos + ySize / 2, true);
         if (mode == enumMode.RESULT || mode == enumMode.EDITOR)
             gui.drawText(xPos + xSize / 2 + 7.5f, yPos + ySize / 2 + 7 -
                                                   (int) (font.size * gui.getFontRenderer().FONT_HEIGHT), font, label.getAmountString());

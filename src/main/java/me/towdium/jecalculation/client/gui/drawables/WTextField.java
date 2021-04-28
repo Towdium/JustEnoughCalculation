@@ -1,7 +1,7 @@
 package me.towdium.jecalculation.client.gui.drawables;
 
 import me.towdium.jecalculation.client.gui.JecGui;
-import me.towdium.jecalculation.client.gui.IDrawable;
+import me.towdium.jecalculation.client.gui.IWidget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiTextField;
 
@@ -13,12 +13,12 @@ import java.util.function.Consumer;
  * Date:   17-8-18.
  */
 @ParametersAreNonnullByDefault
-public class DTextField implements IDrawable {
+public class WTextField implements IWidget {
     protected int xPos, yPos, xSize;
     GuiTextField textField;
     public Consumer<String> lsnrText;
 
-    public DTextField(int xPos, int yPos, int xSize) {
+    public WTextField(int xPos, int yPos, int xSize) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.xSize = xSize;
@@ -46,12 +46,12 @@ public class DTextField implements IDrawable {
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    public DTextField setLsnrText(Consumer<String> lsnrText) {
+    public WTextField setLsnrText(Consumer<String> lsnrText) {
         this.lsnrText = lsnrText;
         return this;
     }
 
-    public DTextField setColor(int color) {
+    public WTextField setColor(int color) {
         textField.setTextColor(color);
         return this;
     }

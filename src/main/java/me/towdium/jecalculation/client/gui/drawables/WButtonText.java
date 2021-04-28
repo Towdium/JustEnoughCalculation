@@ -10,8 +10,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * Date:   17-9-16.
  */
 @ParametersAreNonnullByDefault
-public class DButtonText extends DButton {
-    public DButtonText(int xPos, int yPos, int xSize, int ySize, String name) {
+public class WButtonText extends WButton {
+    public WButtonText(int xPos, int yPos, int xSize, int ySize, String name) {
         super(xPos, yPos, xSize, ySize, name);
     }
 

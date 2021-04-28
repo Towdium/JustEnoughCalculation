@@ -1,9 +1,7 @@
 package me.towdium.jecalculation.client.gui.drawables;
 
-import me.towdium.jecalculation.client.gui.IDrawable;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
-import me.towdium.jecalculation.utils.Utilities.Timer;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -14,15 +12,15 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * Date:   17-8-18.
  */
 @ParametersAreNonnullByDefault
-public class DIcon extends DTooltip {
+public class WIcon extends WTooltip {
     public int xPos, yPos, xSize, ySize;
     public Resource normal, focused;
 
-    public DIcon(int xPos, int yPos, int xSize, int ySize, Resource normal, Resource focused) {
+    public WIcon(int xPos, int yPos, int xSize, int ySize, Resource normal, Resource focused) {
         this(xPos, yPos, xSize, ySize, normal, focused, null);
     }
 
-    public DIcon(int xPos, int yPos, int xSize, int ySize,
+    public WIcon(int xPos, int yPos, int xSize, int ySize,
                  Resource normal, Resource focused, @Nullable String name) {
         super(name);
         this.xPos = xPos;

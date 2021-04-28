@@ -1,29 +1,24 @@
 package me.towdium.jecalculation.client.gui.drawables;
 
-import me.towdium.jecalculation.client.gui.IDrawable;
+import me.towdium.jecalculation.client.gui.IWidget;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
-import me.towdium.jecalculation.utils.Utilities.Circulator;
 import org.lwjgl.input.Mouse;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 /**
  * Author: towdium
  * Date:   17-8-19.
  */
 @ParametersAreNonnullByDefault
-public class DScroll implements IDrawable {
+public class WScroll implements IWidget {
     public int xPos, yPos, ySize, current;
     public Consumer<Float> lsnrScroll;
     protected boolean drag;
 
-    public DScroll(int xPos, int yPos, int ySize) {
+    public WScroll(int xPos, int yPos, int ySize) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.ySize = ySize;
@@ -60,7 +55,7 @@ public class DScroll implements IDrawable {
         return JecGui.mouseIn(xPos + 1, yPos + 1, 12, ySize - 2, xMouse, yMouse);
     }
 
-    public DScroll setLsnrScroll(Consumer<Float> lsnrScroll) {
+    public WScroll setLsnrScroll(Consumer<Float> lsnrScroll) {
         this.lsnrScroll = lsnrScroll;
         return this;
     }

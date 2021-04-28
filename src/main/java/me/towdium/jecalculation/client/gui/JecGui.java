@@ -2,7 +2,6 @@ package me.towdium.jecalculation.client.gui;
 
 import cpw.mods.fml.client.config.GuiUtils;
 import me.towdium.jecalculation.JustEnoughCalculation;
-import me.towdium.jecalculation.client.gui.drawables.DContainer;
 import me.towdium.jecalculation.core.labels.ILabel;
 import me.towdium.jecalculation.nei.NEIPlugin;
 import me.towdium.jecalculation.polyfill.mc.client.renderer.GlStateManager;
@@ -46,14 +45,14 @@ public class JecGui extends GuiContainer {
 
     protected JecGui parent;
     public ILabel hand = ILabel.EMPTY;
-    public IDrawable root;
+    public IWidget root;
     protected List<Triple<Integer, Integer, List<String>>> tooltipBuffer = new ArrayList<>();
 
-    public JecGui(@Nullable JecGui parent, IDrawable root) {
+    public JecGui(@Nullable JecGui parent, IWidget root) {
         this(parent, false, root);
     }
 
-    public JecGui(@Nullable JecGui parent, boolean acceptsTransfer, IDrawable root) {
+    public JecGui(@Nullable JecGui parent, boolean acceptsTransfer, IWidget root) {
         super(acceptsTransfer ? new ContainerTransfer() : new ContainerNonTransfer());
         this.parent = parent;
         this.root = root;
@@ -64,11 +63,11 @@ public class JecGui extends GuiContainer {
         return xMouse > xPos && yMouse > yPos && xMouse <= xPos + xSize && yMouse <= yPos + ySize;
     }
 
-    public static void displayGui(IDrawable root) {
+    public static void displayGui(IWidget root) {
         displayGui(true, false, root);
     }
 
-    public static void displayGui(boolean updateParent, boolean acceptsTransfer, IDrawable root) {
+    public static void displayGui(boolean updateParent, boolean acceptsTransfer, IWidget root) {
         // isCallingFromMinecraftThread
         if (Minecraft.getMinecraft().func_152345_ab())
             displayGuiUnsafe(updateParent, acceptsTransfer, root);
@@ -86,7 +85,7 @@ public class JecGui extends GuiContainer {
         return ret;
     }
 
-    private static void displayGuiUnsafe(boolean updateParent, boolean acceptsTransfer, IDrawable root) {
+    private static void displayGuiUnsafe(boolean updateParent, boolean acceptsTransfer, IWidget root) {
         Minecraft mc = Minecraft.getMinecraft();
         JecGui parent;
         if (mc.currentScreen == null) parent = null;
@@ -125,7 +124,7 @@ public class JecGui extends GuiContainer {
         GlStateManager.popMatrix();
         GlStateManager.pushMatrix();
         GlStateManager.translate(mouseX - 8, mouseY - 8, 0);
-        hand.drawEntry(this);
+        hand.drawLabel(this);
         GlStateManager.popMatrix();
         drawBufferedTooltip();
         GlStateManager.enableLighting();
@@ -145,7 +144,7 @@ public class JecGui extends GuiContainer {
         if (Mouse.getEventButtonState()) {
             if (Mouse.getEventButton() == 0) {
                 if (hand == ILabel.EMPTY) {
-                    ILabel e = NEIPlugin.getEntryUnderMouse();
+                    ILabel e = NEIPlugin.getLabelUnderMouse();
                     if (e != ILabel.EMPTY) {
                         hand = e;
                         return true;

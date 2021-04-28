@@ -1,7 +1,7 @@
 package me.towdium.jecalculation.client.gui.drawables;
 
 import me.towdium.jecalculation.client.gui.JecGui;
-import me.towdium.jecalculation.client.gui.IDrawable;
+import me.towdium.jecalculation.client.gui.IWidget;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
@@ -12,25 +12,25 @@ import java.util.List;
  * Date:   17-9-14.
  */
 @ParametersAreNonnullByDefault
-public class DContainer implements IDrawable {
-    protected List<IDrawable> widgets = new ArrayList<>();
+public class WContainer implements IWidget {
+    protected List<IWidget> widgets = new ArrayList<>();
     protected JecGui gui;
 
-    public void add(IDrawable w) {
+    public void add(IWidget w) {
         widgets.add(w);
     }
 
-    public void addAll(IDrawable... w) {
-        for (IDrawable aw : w)
+    public void addAll(IWidget... w) {
+        for (IWidget aw : w)
             add(aw);
     }
 
-    public void remove(IDrawable w) {
+    public void remove(IWidget w) {
         widgets.remove(w);
     }
 
-    public void removeAll(IDrawable... w) {
-        for (IDrawable aw : w)
+    public void removeAll(IWidget... w) {
+        for (IWidget aw : w)
             remove(aw);
     }
 
@@ -45,19 +45,19 @@ public class DContainer implements IDrawable {
 
     @Override
     public boolean onClicked(JecGui gui, int xMouse, int yMouse, int button) {
-        for (IDrawable w : widgets) if (w.onClicked(gui, xMouse, yMouse, button)) return true;
+        for (IWidget w : widgets) if (w.onClicked(gui, xMouse, yMouse, button)) return true;
         return false;
     }
 
     @Override
     public boolean onKey(JecGui gui, char ch, int code) {
-        for (IDrawable w : widgets) if (w.onKey(gui, ch, code)) return true;
+        for (IWidget w : widgets) if (w.onKey(gui, ch, code)) return true;
         return false;
     }
 
     @Override
     public boolean onScroll(JecGui gui, int xMouse, int yMouse, int diff) {
-        for (IDrawable w : widgets) if (w.onScroll(gui, xMouse, yMouse, diff)) return true;
+        for (IWidget w : widgets) if (w.onScroll(gui, xMouse, yMouse, diff)) return true;
         return false;
     }
 
