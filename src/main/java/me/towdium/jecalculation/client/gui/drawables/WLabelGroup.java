@@ -1,5 +1,7 @@
 package me.towdium.jecalculation.client.gui.drawables;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.client.gui.IWidget;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.core.labels.ILabel;
@@ -16,6 +18,7 @@ import java.util.stream.IntStream;
  * Date:   17-8-17.
  */
 @ParametersAreNonnullByDefault
+@SideOnly(Side.CLIENT)
 public class WLabelGroup extends WContainer {
     ArrayList<WLabel> labels = new ArrayList<>();
 

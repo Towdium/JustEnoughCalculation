@@ -1,5 +1,7 @@
 package me.towdium.jecalculation.client.gui.drawables;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.client.gui.IWidget;
 import me.towdium.jecalculation.client.gui.JecGui;
 
@@ -11,6 +13,7 @@ import java.util.function.Supplier;
  * Date:   17-8-21.
  */
 @ParametersAreNonnullByDefault
+@SideOnly(Side.CLIENT)
 public class WText implements IWidget {
     public static final int UNDEFINED = Integer.MAX_VALUE;
 

@@ -1,6 +1,8 @@
 package me.towdium.jecalculation.client.gui;
 
 import cpw.mods.fml.client.config.GuiUtils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.core.labels.ILabel;
 import me.towdium.jecalculation.nei.NEIPlugin;
@@ -37,6 +39,7 @@ import java.util.function.Function;
  * Date:   8/12/17.
  */
 @ParametersAreNonnullByDefault
+@SideOnly(Side.CLIENT)
 public class JecGui extends GuiContainer {
     public static final int COLOR_GUI_GREY = 0xFFA1A1A1;
     public static final int COLOR_TEXT_RED = 0xFF0000;

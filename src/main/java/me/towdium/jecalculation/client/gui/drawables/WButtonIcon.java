@@ -1,5 +1,7 @@
 package me.towdium.jecalculation.client.gui.drawables;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
 
@@ -14,6 +16,7 @@ import java.util.List;
  * Date:   17-9-16.
  */
 @ParametersAreNonnullByDefault
+@SideOnly(Side.CLIENT)
 public class WButtonIcon extends WButton {
     protected Resource rNormal, rFocused, rDisabled;
 
@@ -23,6 +26,10 @@ public class WButtonIcon extends WButton {
 
     public WButtonIcon(int xPos, int yPos, int xSize, int ySize, Resource normal, Resource focused, String name) {
         this(xPos, yPos, xSize, ySize, normal, focused, null, name);
+    }
+
+    public WButtonIcon(int xPos, int yPos, int xSize, int ySize, Resource normal, Resource focused, Resource disabled) {
+        this(xPos, yPos, xSize, ySize, normal, focused, disabled, null);
     }
 
     public WButtonIcon(int xPos, int yPos, int xSize, int ySize, Resource normal, Resource focused,

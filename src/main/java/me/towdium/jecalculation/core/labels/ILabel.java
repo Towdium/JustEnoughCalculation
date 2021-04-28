@@ -1,6 +1,8 @@
 package me.towdium.jecalculation.core.labels;
 
 import com.google.common.base.CaseFormat;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.client.gui.IWPicker;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.guis.pickers.PickerSimple;
@@ -67,6 +69,7 @@ public interface ILabel {
 
     NBTTagCompound toNBTTagCompound();
 
+    @SideOnly(Side.CLIENT)
     default void drawLabel(JecGui gui, int xPos, int yPos, boolean center) {
         GlStateManager.pushMatrix();
         GlStateManager.translate(center ? xPos - 8 : xPos, center ? yPos - 8 : yPos, 0);
@@ -81,8 +84,7 @@ public interface ILabel {
      * implement on both side. So this class is created for merging
      * {@link ILabel label(s)}.
      * It uses singleton mode. First registerGuess merge functions, then use
-     * {@link #test(ILabel, ILabel)} and {@link #merge(ILabel, ILabel, boolean)}
-     * to operate the {@link ILabel}.
+     * {@link #merge(ILabel, ILabel, boolean)} to operate the {@link ILabel}.
      * For registering, see {@link RegistryDeserializer}.
      */
     class RegistryMerger {

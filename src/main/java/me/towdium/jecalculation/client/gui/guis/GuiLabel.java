@@ -4,6 +4,8 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.cache.Weigher;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.client.gui.IWidget;
 import me.towdium.jecalculation.client.gui.drawables.WContainer;
 import me.towdium.jecalculation.client.gui.drawables.WPage;
@@ -19,6 +21,7 @@ import java.util.function.Consumer;
  * Date:   17-9-14.
  */
 @ParametersAreNonnullByDefault
+@SideOnly(Side.CLIENT)
 public class GuiLabel extends WContainer {
     WContainer container = new WContainer();
     Consumer<ILabel> callback;

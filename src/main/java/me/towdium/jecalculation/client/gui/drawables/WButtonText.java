@@ -1,5 +1,7 @@
 package me.towdium.jecalculation.client.gui.drawables;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.utils.Utilities;
 
@@ -10,6 +12,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * Date:   17-9-16.
  */
 @ParametersAreNonnullByDefault
+@SideOnly(Side.CLIENT)
 public class WButtonText extends WButton {
     public WButtonText(int xPos, int yPos, int xSize, int ySize, String name) {
         super(xPos, yPos, xSize, ySize, name);

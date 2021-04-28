@@ -24,7 +24,11 @@ public class GuiRecipe extends WContainer {
     WButton buttonCopy = new WButtonIcon(83, 33, 20, 20, Resource.BTN_COPY_N, Resource.BTN_COPY_F, Resource.BTN_COPY_D,
                                          "recipe.copy").setDisabled(true);
     WButton buttonDel = new WButtonIcon(64, 33, 20, 20, Resource.BTN_DEL_N, Resource.BTN_DEL_F, "recipe.clear");
-    WButton buttonLabel = new WButtonIcon(45, 33, 20, 20, Resource.BTN_LABEL_N, Resource.BTN_LABEL_F, "recipe.label");
+    WButton buttonLabel = new WButtonIcon(45, 33, 20, 20, Resource.BTN_LABEL_N, Resource.BTN_LABEL_F, "recipe.label")
+            .setListenerLeft(() -> JecGui.displayGui(new GuiLabel((l) -> {
+                JecGui.displayParent();
+                JecGui.getCurrent().hand = l;
+            })));
     WButton buttonDisamb = new WButtonIcon(102, 33, 20, 20, Resource.BTN_DISAMB_N,
                                            Resource.BTN_DISAMB_F, Resource.BTN_DISAMB_D, "recipe.disamb").setDisabled(true).setListenerLeft(() -> {
         if (disambiguation != null) JecGui.displayGui(new GuiDisambiguation(disambiguation).setCallback(l -> {
@@ -43,7 +47,7 @@ public class GuiRecipe extends WContainer {
 
     public GuiRecipe() {
         add(new WPanel());
-        add(new WSwitcher(7, 7, 162, 2));
+        add(new WSwitcher(7, 7, 162, 1));
         add(new WIcon(7, 63, 21, 20, Resource.ICN_OUTPUT_N, Resource.ICN_OUTPUT_F, "recipe.output"));
         add(new WIcon(7, 87, 21, 20, Resource.ICN_CATALYST_N, Resource.ICN_CATALYST_F, "recipe.catalyst"));
         add(new WIcon(7, 111, 21, 40, Resource.ICN_INPUT_N, Resource.ICN_INPUT_F, "recipe.input"));

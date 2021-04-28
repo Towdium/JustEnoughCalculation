@@ -1,5 +1,7 @@
 package me.towdium.jecalculation.client.gui.guis;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
 import me.towdium.jecalculation.client.gui.drawables.*;
@@ -13,6 +15,7 @@ import static me.towdium.jecalculation.client.gui.drawables.WLabel.enumMode.*;
  * Date:   8/14/17.
  */
 @ParametersAreNonnullByDefault
+@SideOnly(Side.CLIENT)
 public class GuiCalculator extends WContainer {
     public GuiCalculator() {
         add(new WPanel());

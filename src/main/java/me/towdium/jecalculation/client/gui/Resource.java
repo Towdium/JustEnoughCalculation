@@ -1,12 +1,18 @@
 package me.towdium.jecalculation.client.gui;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import net.minecraft.util.ResourceLocation;
+
+import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
  * Author: towdium
  * Date:   17-8-17.
  */
+@ParametersAreNonnullByDefault
+@SideOnly(Side.CLIENT)
 public class Resource {
     public static final ResourceLocation location = new ResourceLocation(
             JustEnoughCalculation.Reference.MODID, "textures/gui/resources.png");
@@ -20,16 +26,16 @@ public class Resource {
     public static final Resource BTN_SAVE_F = new Resource(42, 0, 14, 14);
     public static final Resource BTN_COPY_N = new Resource(56, 14, 14, 14);
     public static final Resource BTN_COPY_F = new Resource(56, 0, 14, 14);
+    public static final Resource BTN_COPY_D = new Resource(242, 14, 14, 14);
     public static final Resource BTN_DEL_N = new Resource(70, 14, 14, 14);
     public static final Resource BTN_DEL_F = new Resource(70, 0, 14, 14);
     public static final Resource BTN_YES_N = new Resource(84, 14, 14, 14);
     public static final Resource BTN_YES_F = new Resource(84, 0, 14, 14);
     public static final Resource BTN_NO_N = new Resource(98, 14, 14, 14);
     public static final Resource BTN_NO_F = new Resource(98, 0, 14, 14);
-    public static final Resource BTN_DISAMB_D = new Resource(242, 0, 14, 14);
-    public static final Resource BTN_COPY_D = new Resource(242, 14, 14, 14);
     public static final Resource BTN_DISAMB_N = new Resource(112, 14, 14, 14);
     public static final Resource BTN_DISAMB_F = new Resource(112, 0, 14, 14);
+    public static final Resource BTN_DISAMB_D = new Resource(242, 0, 14, 14);
     public static final Resource WGT_BUTTON_N = new Resource(40, 232, 20, 20);
     public static final Resource WGT_BUTTON_F = new Resource(60, 232, 20, 20);
     public static final Resource WGT_BUTTON_D = new Resource(80, 232, 20, 20);
@@ -60,11 +66,14 @@ public class Resource {
     public static final Resource ICN_LABEL_F = new Resource(70, 28, 14, 14);
     public static final Resource ICN_HELP_N = new Resource(84, 42, 14, 14);
     public static final Resource ICN_HELP_F = new Resource(84, 28, 14, 14);
+    public static final Resource ICN_STACK_N = new Resource(98, 42, 14, 14);
+    public static final Resource ICN_STACK_F = new Resource(98, 28, 14, 14);
+    public static final Resource ICN_TEXT_N = new Resource(112, 42, 14, 14);
+    public static final Resource ICN_TEXT_F = new Resource(112, 28, 14, 14);
     public static final Resource LBL_ORE_DICT = new Resource(0, 56, 16, 16);
     public static final Resource LBL_FLUID = new Resource(16, 56, 16, 16);
     public static final Resource LBL_UNIV_B = new Resource(32, 56, 16, 16);
     public static final Resource LBL_UNIV_F = new Resource(48, 56, 16, 16);
-
     protected int xPos, yPos, xSize, ySize;
     protected ResourceLocation rl;
 

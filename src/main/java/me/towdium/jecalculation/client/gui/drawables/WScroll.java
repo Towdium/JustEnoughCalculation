@@ -1,5 +1,7 @@
 package me.towdium.jecalculation.client.gui.drawables;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.client.gui.IWidget;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
@@ -13,6 +15,7 @@ import java.util.function.Consumer;
  * Date:   17-8-19.
  */
 @ParametersAreNonnullByDefault
+@SideOnly(Side.CLIENT)
 public class WScroll implements IWidget {
     public int xPos, yPos, ySize, current;
     public Consumer<Float> lsnrScroll;

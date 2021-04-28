@@ -1,5 +1,7 @@
 package me.towdium.jecalculation.core.labels.labels;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
@@ -70,6 +72,7 @@ public class LabelOreDict extends LabelSimpleAmount {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void drawLabel(JecGui gui) {
         NonNullList<ItemStack> list = NonNullList.create();
         OreDictionary.getOres(name).forEach(is -> {

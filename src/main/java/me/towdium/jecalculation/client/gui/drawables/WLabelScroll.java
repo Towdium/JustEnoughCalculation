@@ -1,5 +1,7 @@
 package me.towdium.jecalculation.client.gui.drawables;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.core.labels.ILabel;
 import me.towdium.jecalculation.utils.Utilities;
@@ -14,6 +16,7 @@ import java.util.stream.Collectors;
  * Date:   17-9-17.
  */
 @ParametersAreNonnullByDefault
+@SideOnly(Side.CLIENT)
 public class WLabelScroll extends WContainer {
     protected List<ILabel> labels = new ArrayList<>();
     protected List<ILabel> filtered = new ArrayList<>();

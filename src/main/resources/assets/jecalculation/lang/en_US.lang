@@ -13,6 +13,7 @@ command.state.s_undefined=error state
 gui.gui_calculator.new_recipe.name=New recipe
 gui.common.label.ore_dict=OreDict
 gui.common.label.fluid_stack=Fluid
+gui.common.label.universal=Universal
 
 config.force_client=Force Client
 

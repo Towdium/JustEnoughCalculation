@@ -1,5 +1,7 @@
 package me.towdium.jecalculation.client.gui.drawables;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
 import me.towdium.jecalculation.utils.ClientUtils;
@@ -13,6 +15,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * Date:   17-8-17.
  */
 @ParametersAreNonnullByDefault
+@SideOnly(Side.CLIENT)
 public abstract class WButton extends WTooltip {
     protected int xPos, yPos, xSize, ySize;
     protected Runnable lsnrLeft, lsnrRight;
@@ -47,7 +50,7 @@ public abstract class WButton extends WTooltip {
 
     @Override
     public boolean onClicked(JecGui gui, int xMouse, int yMouse, int button) {
-        if (JecGui.mouseIn(xPos + 1, yPos + 1, xSize - 2, ySize - 2, xMouse, yMouse)) {
+        if (!disabled && JecGui.mouseIn(xPos + 1, yPos + 1, xSize - 2, ySize - 2, xMouse, yMouse)) {
             if (button == 0 && lsnrLeft != null) {
                 lsnrLeft.run();
                 ClientUtils.playClickSound(1.0F);

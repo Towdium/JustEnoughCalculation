@@ -1,5 +1,7 @@
 package me.towdium.jecalculation.client.gui.drawables;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.client.gui.IWidget;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.utils.Utilities;
@@ -15,6 +17,7 @@ import java.util.List;
  * Date:   17-9-16.
  */
 @ParametersAreNonnullByDefault
+@SideOnly(Side.CLIENT)
 public abstract class WTooltip implements IWidget {
     @Nullable
     public String name;

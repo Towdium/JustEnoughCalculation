@@ -1,5 +1,7 @@
 package me.towdium.jecalculation.core.labels.labels;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
 import me.towdium.jecalculation.core.labels.ILabel;
@@ -46,6 +48,7 @@ public class LabelUniversal extends LabelSimpleAmount {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void drawLabel(JecGui gui) {
         gui.drawResource(Resource.LBL_UNIV_B, 0, 0);
         gui.drawResource(Resource.LBL_UNIV_F, 0, 0, (name.hashCode() * 0x131723) & 0xFFFFFF);

@@ -1,5 +1,7 @@
 package me.towdium.jecalculation.client.gui.drawables;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.IWidget;
 
@@ -12,6 +14,7 @@ import java.util.List;
  * Date:   17-9-14.
  */
 @ParametersAreNonnullByDefault
+@SideOnly(Side.CLIENT)
 public class WContainer implements IWidget {
     protected List<IWidget> widgets = new ArrayList<>();
     protected JecGui gui;
