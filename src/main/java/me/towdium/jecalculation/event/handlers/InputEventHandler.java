@@ -10,7 +10,7 @@ import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.guis.GuiCalculator;
 import me.towdium.jecalculation.network.ProxyClient;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraftforge.client.event.GuiScreenEvent;
 
 /**
@@ -21,8 +21,9 @@ public class InputEventHandler {
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void onKey(InputEvent.KeyInputEvent event) {
-        if (ProxyClient.keyOpenGui.isPressed() && JustEnoughCalculation.side != JustEnoughCalculation.enumSide.SERVER) {
-            JecGui.displayGui(new GuiCalculator());
+        if (ProxyClient.keyOpenGui.isPressed()) {
+            if (JustEnoughCalculation.side == JustEnoughCalculation.enumSide.CLIENT) JecGui.displayGui(new GuiCalculator());
+            else Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentTranslation("chat.server_mode"));
         }
     }
 
@@ -34,5 +35,6 @@ public class InputEventHandler {
             event.setCanceled(gui.handleMouseEvent());
         }
     }
+
 }
 

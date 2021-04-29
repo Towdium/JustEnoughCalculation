@@ -106,6 +106,17 @@ public class LabelOreDict extends LabelSimpleAmount {
         return existing;
     }
 
+    @Override
+    public int hashCode() {
+        return name.hashCode() ^ amount;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof LabelOreDict
+               && amount == ((LabelOreDict) obj).amount && name.equals(((LabelOreDict) obj).name);
+    }
+
     public String getName() {
         return name;
     }

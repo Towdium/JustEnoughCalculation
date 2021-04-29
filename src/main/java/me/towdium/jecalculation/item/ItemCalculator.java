@@ -95,7 +95,7 @@ public class ItemCalculator extends Item {
 
     @Override
     public ItemStack onItemRightClick(ItemStack itemStack, World worldIn, EntityPlayer playerIn) {
-        if (JustEnoughCalculation.side != JustEnoughCalculation.enumSide.SERVER)
+        if (JustEnoughCalculation.side != JustEnoughCalculation.enumSide.CLIENT)
             JustEnoughCalculation.proxy.displayCalculator();
         return super.onItemRightClick(itemStack, worldIn, playerIn);
     }

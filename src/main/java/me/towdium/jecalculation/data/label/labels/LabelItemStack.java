@@ -78,8 +78,13 @@ public class LabelItemStack extends LabelSimpleAmount {
     @Override
     public boolean equals(Object obj) {
         return obj instanceof LabelItemStack
-               && itemStack.equals(((LabelItemStack) obj).itemStack)
-                && amount == ((LabelItemStack) obj).amount;
+               && itemStack.equals(((LabelItemStack) obj).itemStack) && amount == ((LabelItemStack) obj).amount;
+    }
+
+    @Override
+    public int hashCode() {
+        return itemStack.getItemDamage() ^ itemStack.getItem().getUnlocalizedName().hashCode() ^ amount
+               ^ (itemStack.getTagCompound() == null ? 0 : itemStack.getTagCompound().hashCode());
     }
 
     public ItemStack getItemStack() {

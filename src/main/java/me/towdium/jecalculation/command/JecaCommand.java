@@ -41,6 +41,11 @@ public class JecaCommand extends CommandBase {
         }
     }
 
+    @Override
+    public int getRequiredPermissionLevel() {
+        return 0;
+    }
+
     private String[] cut(String[] args) {
         if (args.length == 0)
             return new String[0];

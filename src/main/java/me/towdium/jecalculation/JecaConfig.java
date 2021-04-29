@@ -10,16 +10,16 @@ public class JecaConfig {
     public static boolean initialized = false;
     public static Configuration config;
 
-    public static boolean isForceClient() {
-        return EnumItems.ForceClient.getProperty().getBoolean();
+    public static boolean isClintMode() {
+        return EnumItems.ClientMode.getProperty().getBoolean();
     }
 
     public enum EnumItems {
-        ForceClient, EnableInventoryCheck, ListRecipeBlackList, ListRecipeCategory;
+        ClientMode, EnableInventoryCheck, ListRecipeBlackList, ListRecipeCategory;
 
         public String getComment() {
             switch (this) {
-                case ForceClient:
+                case ClientMode:
                     return "Set to true to force client mode: no item and recipe allowed, use key bindings instead.";
                 case EnableInventoryCheck:
                     return "Set to false to disable auto inventory check";
@@ -34,8 +34,8 @@ public class JecaConfig {
 
         public String getName() {
             switch (this) {
-                case ForceClient:
-                    return "ForceClient";
+                case ClientMode:
+                    return "ClientMode";
                 case EnableInventoryCheck:
                     return "EnableInventoryCheck";
                 case ListRecipeBlackList:
@@ -48,7 +48,7 @@ public class JecaConfig {
 
         public String getCategory() {
             switch (this) {
-                case ForceClient:
+                case ClientMode:
                 case EnableInventoryCheck:
                 case ListRecipeBlackList:
                 case ListRecipeCategory:
@@ -59,7 +59,7 @@ public class JecaConfig {
 
         public EnumType getType() {
             switch (this) {
-                case ForceClient:
+                case ClientMode:
                 case EnableInventoryCheck:
                     return EnumType.Boolean;
                 case ListRecipeBlackList:
@@ -71,7 +71,7 @@ public class JecaConfig {
 
         public Object getDefault() {
             switch (this) {
-                case ForceClient:
+                case ClientMode:
                     return false;
                 case EnableInventoryCheck:
                     return true;

@@ -10,10 +10,9 @@ import cpw.mods.fml.common.network.NetworkCheckHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.command.JecaCommand;
 import me.towdium.jecalculation.nei.NEIPlugin;
-import me.towdium.jecalculation.network.ProxyCommon;
+import me.towdium.jecalculation.network.IProxy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,7 +25,6 @@ import java.util.Map;
 
 @ParametersAreNonnullByDefault
 @SuppressWarnings("unused")
-@SideOnly(Side.CLIENT)
 @Mod(modid = JustEnoughCalculation.Reference.MODID,
      name = JustEnoughCalculation.Reference.MODNAME,
      version = JustEnoughCalculation.Reference.VERSION,
@@ -37,8 +35,8 @@ public class JustEnoughCalculation {
 
     @SidedProxy(modId = Reference.MODID,
                 clientSide = "me.towdium.jecalculation.network.ProxyClient",
-                serverSide = "me.towdium.jecalculation.network.ProxyCommon")
-    public static ProxyCommon proxy;
+                serverSide = "me.towdium.jecalculation.network.ProxyServer")
+    public static IProxy proxy;
 
     public static SimpleNetworkWrapper network;
     public static Logger logger = LogManager.getLogger(Reference.MODID);
@@ -47,19 +45,13 @@ public class JustEnoughCalculation {
     @NetworkCheckHandler
     public static boolean networkCheck(Map<String, String> mods, Side s) {
         if (s == Side.SERVER) {
-            if (mods.containsKey(Reference.MODID) && !JecaConfig.isForceClient()) {
+            if (mods.containsKey(Reference.MODID) && !JecaConfig.isClintMode()) {
                 side = enumSide.BOTH;
             } else {
                 side = enumSide.CLIENT;
             }
-        } else {
-            if (mods.containsKey(Reference.MODID)) {
-                side = enumSide.SERVER;
-            } else {
-                return false;
-            }
-        }
-        return true;
+            return true;
+        } else return mods.containsKey(Reference.MODID);
     }
 
     @Mod.EventHandler
@@ -80,14 +72,6 @@ public class JustEnoughCalculation {
         NEIPlugin.init();
     }
 
-    @Mod.EventHandler
-    public static void onServerStart(FMLServerStartingEvent event) {
-        if (side == enumSide.SERVER) {
-            event.registerServerCommand(new JecaCommand());
-        }
-    }
-
-
     public static class Reference {
         public static final String MODID = "jecalculation";
         public static final String MODNAME = "Just Enough Calculation";
@@ -99,10 +83,6 @@ public class JustEnoughCalculation {
          * Running at client side and server not installed.
          */
         CLIENT,
-        /**
-         * Running at server side whether client is installed.
-         */
-        SERVER,
         /**
          * Running at client side and both installed.
          */

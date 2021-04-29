@@ -100,7 +100,11 @@ public class LabelFluidStack implements ILabel {
     @Override
     public boolean equals(Object obj) {
         return obj instanceof LabelFluidStack
-               && fluid.equals(((LabelFluidStack) obj).fluid)
-               && amount == ((LabelFluidStack) obj).amount;
+               && fluid.equals(((LabelFluidStack) obj).fluid) && amount == ((LabelFluidStack) obj).amount;
+    }
+
+    @Override
+    public int hashCode() {
+        return fluid.hashCode() ^ amount;
     }
 }
