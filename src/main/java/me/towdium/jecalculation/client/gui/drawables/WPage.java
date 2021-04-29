@@ -5,7 +5,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.client.gui.IWidget;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
-import me.towdium.jecalculation.core.label.ILabel;
+import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.utils.Utilities;
 
 import javax.annotation.ParametersAreNonnullByDefault;

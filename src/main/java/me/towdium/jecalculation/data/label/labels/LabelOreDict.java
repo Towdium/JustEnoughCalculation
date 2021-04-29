@@ -1,11 +1,11 @@
-package me.towdium.jecalculation.core.label.labels;
+package me.towdium.jecalculation.data.label.labels;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
-import me.towdium.jecalculation.core.label.ILabel;
+import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.polyfill.mc.client.renderer.GlStateManager;
 import me.towdium.jecalculation.polyfill.mc.util.NonNullList;
 import me.towdium.jecalculation.utils.Utilities;
@@ -51,6 +51,7 @@ public class LabelOreDict extends LabelSimpleAmount {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public String getDisplayName() {
         return Utilities.L18n.format("label.ore_dict.name", name);
     }
@@ -98,6 +99,7 @@ public class LabelOreDict extends LabelSimpleAmount {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public List<String> getToolTip(List<String> existing, boolean detailed) {
         super.getToolTip(existing, detailed);
         existing.add(FORMAT_BLUE + FORMAT_ITALIC + JustEnoughCalculation.Reference.MODNAME);

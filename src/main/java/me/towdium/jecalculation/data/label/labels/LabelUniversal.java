@@ -1,10 +1,10 @@
-package me.towdium.jecalculation.core.label.labels;
+package me.towdium.jecalculation.data.label.labels;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
-import me.towdium.jecalculation.core.label.ILabel;
+import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -31,6 +31,7 @@ public class LabelUniversal extends LabelSimpleAmount {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public String getDisplayName() {
         return Utilities.L18n.format("label.universal.name", name);
     }
@@ -52,5 +53,10 @@ public class LabelUniversal extends LabelSimpleAmount {
     public void drawLabel(JecGui gui) {
         gui.drawResource(Resource.LBL_UNIV_B, 0, 0);
         gui.drawResource(Resource.LBL_UNIV_F, 0, 0, (name.hashCode() * 0x131723) & 0xFFFFFF);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof LabelUniversal && name.equals(((LabelUniversal) obj).name);
     }
 }

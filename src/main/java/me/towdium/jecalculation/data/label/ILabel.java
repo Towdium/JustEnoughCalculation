@@ -1,4 +1,4 @@
-package me.towdium.jecalculation.core.label;
+package me.towdium.jecalculation.data.label;
 
 import com.google.common.base.CaseFormat;
 import cpw.mods.fml.relauncher.Side;
@@ -7,10 +7,10 @@ import me.towdium.jecalculation.client.gui.IWPicker;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.guis.pickers.PickerSimple;
 import me.towdium.jecalculation.client.gui.guis.pickers.PickerUniversal;
-import me.towdium.jecalculation.core.label.labels.LabelFluidStack;
-import me.towdium.jecalculation.core.label.labels.LabelItemStack;
-import me.towdium.jecalculation.core.label.labels.LabelOreDict;
-import me.towdium.jecalculation.core.label.labels.LabelUniversal;
+import me.towdium.jecalculation.data.label.labels.LabelFluidStack;
+import me.towdium.jecalculation.data.label.labels.LabelItemStack;
+import me.towdium.jecalculation.data.label.labels.LabelOreDict;
+import me.towdium.jecalculation.data.label.labels.LabelUniversal;
 import me.towdium.jecalculation.polyfill.mc.client.renderer.GlStateManager;
 import me.towdium.jecalculation.utils.ItemStackHelper;
 import me.towdium.jecalculation.utils.Utilities.Relation;
@@ -52,6 +52,7 @@ public interface ILabel {
 
     String getAmountString();
 
+    @SideOnly(Side.CLIENT)
     String getDisplayName();
 
     static String getIdentifier(ILabel c) {

@@ -5,7 +5,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.client.gui.IWPicker;
 import me.towdium.jecalculation.client.gui.Resource;
 import me.towdium.jecalculation.client.gui.drawables.*;
-import me.towdium.jecalculation.core.label.ILabel;
+import me.towdium.jecalculation.data.label.ILabel;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.ParametersAreNonnullByDefault;

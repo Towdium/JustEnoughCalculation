@@ -5,9 +5,9 @@ import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.client.gui.IWPicker;
 import me.towdium.jecalculation.client.gui.Resource;
 import me.towdium.jecalculation.client.gui.drawables.*;
-import me.towdium.jecalculation.core.label.ILabel;
-import me.towdium.jecalculation.core.label.labels.LabelFluidStack;
-import me.towdium.jecalculation.core.label.labels.LabelOreDict;
+import me.towdium.jecalculation.data.label.ILabel;
+import me.towdium.jecalculation.data.label.labels.LabelFluidStack;
+import me.towdium.jecalculation.data.label.labels.LabelOreDict;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
