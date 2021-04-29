@@ -3,7 +3,7 @@ package me.towdium.jecalculation.client.gui.drawables;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.client.gui.JecGui;
-import me.towdium.jecalculation.core.labels.ILabel;
+import me.towdium.jecalculation.core.label.ILabel;
 import me.towdium.jecalculation.utils.Utilities;
 
 import javax.annotation.ParametersAreNonnullByDefault;

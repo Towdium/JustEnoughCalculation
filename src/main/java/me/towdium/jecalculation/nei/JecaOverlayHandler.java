@@ -2,11 +2,14 @@ package me.towdium.jecalculation.nei;
 
 import codechicken.nei.api.IOverlayHandler;
 import codechicken.nei.recipe.IRecipeHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.guis.GuiRecipe;
 import net.minecraft.client.gui.inventory.GuiContainer;
 
+@SideOnly(Side.CLIENT)
 public class JecaOverlayHandler implements IOverlayHandler {
     @Override
     public void overlayRecipe(GuiContainer firstGui, IRecipeHandler recipe, int recipeIndex, boolean shift) {

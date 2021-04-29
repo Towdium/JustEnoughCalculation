@@ -1,10 +1,10 @@
-package me.towdium.jecalculation.core.labels.labels;
+package me.towdium.jecalculation.core.label.labels;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
-import me.towdium.jecalculation.core.labels.ILabel;
+import me.towdium.jecalculation.core.label.ILabel;
 import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.Fluid;

@@ -1,4 +1,4 @@
-package me.towdium.jecalculation.core.labels;
+package me.towdium.jecalculation.core.label;
 
 import com.google.common.base.CaseFormat;
 import cpw.mods.fml.relauncher.Side;
@@ -7,19 +7,19 @@ import me.towdium.jecalculation.client.gui.IWPicker;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.guis.pickers.PickerSimple;
 import me.towdium.jecalculation.client.gui.guis.pickers.PickerUniversal;
-import me.towdium.jecalculation.core.labels.labels.LabelFluidStack;
-import me.towdium.jecalculation.core.labels.labels.LabelItemStack;
-import me.towdium.jecalculation.core.labels.labels.LabelOreDict;
-import me.towdium.jecalculation.core.labels.labels.LabelUniversal;
+import me.towdium.jecalculation.core.label.labels.LabelFluidStack;
+import me.towdium.jecalculation.core.label.labels.LabelItemStack;
+import me.towdium.jecalculation.core.label.labels.LabelOreDict;
+import me.towdium.jecalculation.core.label.labels.LabelUniversal;
 import me.towdium.jecalculation.polyfill.mc.client.renderer.GlStateManager;
 import me.towdium.jecalculation.utils.ItemStackHelper;
 import me.towdium.jecalculation.utils.Utilities.Relation;
 import me.towdium.jecalculation.utils.Utilities.ReversedIterator;
-import me.towdium.jecalculation.utils.wrappers.Pair;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidRegistry;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
  * Author: towdium
  * Date:   8/11/17.
  */
+@ParametersAreNonnullByDefault
 public interface ILabel {
     RegistryMerger MERGER = RegistryMerger.INSTANCE;
     RegistryDeserializer DESERIALIZER = RegistryDeserializer.INSTANCE;
@@ -140,7 +141,7 @@ public interface ILabel {
             Optional<ILabel> ret = functions.get(ILabel.getIdentifier(a), ILabel.getIdentifier(b))
                                             .orElse((x, y, f) -> Optional.empty()).merge(a, b, add);
             if (ret.isPresent() && (ret.get() == a || ret.get() == b))
-                throw new RuntimeException("Merger should not modify the given labels.");
+                throw new RuntimeException("Merger should not modify the given label.");
             return ret;
         }
 
@@ -197,11 +198,18 @@ public interface ILabel {
          * }
          * }</pre>
          */
-        public ILabel deserialization(NBTTagCompound nbt) {
+        public ILabel deserialize(NBTTagCompound nbt) {
             String s = nbt.getString(KEY_IDENTIFIER);
             ILabel e = idToData.get(s).apply(nbt.getCompoundTag(KEY_CONTENT));
             if (e != ILabel.EMPTY) return e;
             else throw new RuntimeException("Fail to deserialize label type: " + s);
+        }
+
+        public NBTTagCompound serialize(ILabel label) {
+            NBTTagCompound ret = new NBTTagCompound();
+            ret.setString(KEY_CONTENT, ILabel.getIdentifier(label));
+            ret.setTag(KEY_CONTENT, label.toNBTTagCompound());
+            return ret;
         }
     }
 

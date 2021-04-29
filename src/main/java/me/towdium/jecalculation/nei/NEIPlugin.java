@@ -1,7 +1,7 @@
 package me.towdium.jecalculation.nei;
 
 import codechicken.nei.guihook.GuiContainerManager;
-import me.towdium.jecalculation.core.labels.ILabel;
+import me.towdium.jecalculation.core.label.ILabel;
 import net.minecraft.item.ItemStack;
 
 public class NEIPlugin {

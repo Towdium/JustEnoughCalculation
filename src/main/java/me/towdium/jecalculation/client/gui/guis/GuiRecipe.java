@@ -4,7 +4,7 @@ import codechicken.nei.recipe.IRecipeHandler;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
 import me.towdium.jecalculation.client.gui.drawables.*;
-import me.towdium.jecalculation.core.labels.ILabel;
+import me.towdium.jecalculation.core.label.ILabel;
 import net.minecraft.item.ItemStack;
 
 import java.util.*;
@@ -83,6 +83,8 @@ public class GuiRecipe extends WContainer {
 
 
         List<ILabel> raw = new ArrayList<>();
+
+        // input
         List<ItemStack> itemStacks = recipe.getIngredientStacks(recipeIndex).stream()
                                            .map((positionedStack) -> positionedStack.item).collect(Collectors.toList());
 
@@ -94,8 +96,9 @@ public class GuiRecipe extends WContainer {
 
         buf.add(itemStacks);
 
+        // output
         ItemStack outputStack = recipe.getResultStack(recipeIndex).item;
-        output.add(ILabel.CONVERTER_ITEM.toLabel(outputStack));
+        merge.accept(output, ILabel.CONVERTER_ITEM.toLabel(outputStack));
         buf.add(Collections.singletonList(outputStack));
 
         groupInput.setLabel(input, 0);

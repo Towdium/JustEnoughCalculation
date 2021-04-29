@@ -5,9 +5,9 @@ import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.client.gui.IWPicker;
 import me.towdium.jecalculation.client.gui.Resource;
 import me.towdium.jecalculation.client.gui.drawables.*;
-import me.towdium.jecalculation.core.labels.ILabel;
-import me.towdium.jecalculation.core.labels.labels.LabelFluidStack;
-import me.towdium.jecalculation.core.labels.labels.LabelOreDict;
+import me.towdium.jecalculation.core.label.ILabel;
+import me.towdium.jecalculation.core.label.labels.LabelFluidStack;
+import me.towdium.jecalculation.core.label.labels.LabelOreDict;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @SideOnly(Side.CLIENT)
 public class PickerSimple extends IWPicker.Simple {
     /**
-     * @param labels  labels to be displayed for selection
+     * @param labels  label to be displayed for selection
      * @param l18nKey localization key for help string,
      *                entire key should be "gui.l18nKey.help.tooltip"
      */

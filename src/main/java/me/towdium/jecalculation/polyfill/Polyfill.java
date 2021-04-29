@@ -1,9 +1,16 @@
 package me.towdium.jecalculation.polyfill;
 
 import me.towdium.jecalculation.utils.ItemStackHelper;
+import me.towdium.jecalculation.utils.ReflectionHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+
+import java.util.List;
+import java.util.Spliterator;
+import java.util.Spliterators;
 
 public class Polyfill {
     /**
@@ -24,6 +31,11 @@ public class Polyfill {
         } else {
             return null;
         }
+    }
+
+    public static Spliterator<NBTBase> spliterator(NBTTagList list) {
+        List tagList = (List) ReflectionHelper.get(list, "tagList");
+        return Spliterators.spliteratorUnknownSize(((List<NBTBase>)tagList).iterator(), 0);
     }
 
 }
