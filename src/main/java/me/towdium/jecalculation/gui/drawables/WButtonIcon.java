@@ -7,9 +7,6 @@ import me.towdium.jecalculation.gui.Resource;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Author: towdium
@@ -28,8 +25,14 @@ public class WButtonIcon extends WButton {
         this(xPos, yPos, xSize, ySize, res.normal, res.focused, res.disabled, null);
     }
 
-    private WButtonIcon(int xPos, int yPos, int xSize, int ySize, Resource normal, Resource focused,
-                        @Nullable Resource disabled, @Nullable String name) {
+    private WButtonIcon(int xPos,
+                        int yPos,
+                        int xSize,
+                        int ySize,
+                        Resource normal,
+                        Resource focused,
+                        @Nullable Resource disabled,
+                        @Nullable String name) {
         super(xPos, yPos, xSize, ySize, name);
         this.rNormal = normal;
         this.rFocused = focused;
@@ -40,11 +43,7 @@ public class WButtonIcon extends WButton {
     public void onDraw(JecaGui gui, int xMouse, int yMouse) {
         super.onDraw(gui, xMouse, yMouse);
         Resource r = disabled ? rDisabled : (mouseIn(xMouse, yMouse) ? rFocused : rNormal);
-        if (r != null) gui.drawResource(r, xPos + (xSize - r.getXSize()) / 2, yPos + (ySize - r.getYSize()) / 2);
-    }
-
-    @Override
-    protected List<String> getSuffix() {
-        return disabled ? Arrays.asList("disabled", "active") : Collections.singletonList("active");
+        if (r != null)
+            gui.drawResource(r, xPos + (xSize - r.getXSize()) / 2, yPos + (ySize - r.getYSize()) / 2);
     }
 }

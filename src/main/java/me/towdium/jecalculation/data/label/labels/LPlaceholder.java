@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @ParametersAreNonnullByDefault
 public class LPlaceholder extends ILabel.Impl {
     public static final String KEY_NAME = "name";
-    public static final String IDENTIFIER = "string";
+    public static final String IDENTIFIER = "placeholder";
     static Utilities.Recent<LPlaceholder> recentClient = new Utilities.Recent<>(100);
     static Utilities.Recent<LPlaceholder> recentServer = new Utilities.Recent<>(100);
 
@@ -51,7 +51,7 @@ public class LPlaceholder extends ILabel.Impl {
 
     @Override
     public String getIdentifier() {
-        return "string";
+        return IDENTIFIER;
     }
 
     public static List<ILabel> getRecent() {

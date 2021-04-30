@@ -14,6 +14,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import static me.towdium.jecalculation.gui.JecaGui.Font.HALF;
+
 /**
  * Author: towdium
  * Date:   17-8-17.
@@ -21,13 +23,6 @@ import java.util.stream.IntStream;
 @ParametersAreNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class WLabel implements IWidget {
-    static JecaGui.Font font;
-
-    static {
-        font = JecaGui.Font.DEFAULT_HALF.copy();
-        font.align = JecaGui.Font.enumAlign.RIGHT;
-    }
-
     public int xPos, yPos, xSize, ySize;
     public ILabel label;
     public enumMode mode;
@@ -55,27 +50,25 @@ public class WLabel implements IWidget {
     public void onDraw(JecaGui gui, int xMouse, int yMouse) {
         gui.drawResourceContinuous(Resource.WGT_SLOT, xPos, yPos, xSize, ySize, 3, 3, 3, 3);
         label.drawLabel(gui, xPos + xSize / 2, yPos + ySize / 2, true);
-        if (mode == enumMode.RESULT || mode == enumMode.EDITOR)
-            gui.drawText(xPos + xSize / 2.0f + 7.5f,
-                         yPos + ySize / 2 + 7 - (int) (font.size * gui.getFontRenderer().FONT_HEIGHT), font,
-                         label.getAmountString());
-        if (mouseIn(xMouse, yMouse)) {
-            gui.drawRectangle(xPos + 1, yPos + 1, xSize - 2, ySize - 2, 0x80FFFFFF);
+        if (mode == enumMode.RESULT || mode == enumMode.EDITOR) {
+            String s = label.getAmountString();
+            gui.drawText(xPos + xSize / 2.0f + 8 - HALF.getTextWidth(s),
+                         yPos + ySize / 2.0f + 8.5f - HALF.getTextHeight(), HALF, s);
         }
         if (mode == enumMode.EDITOR || mode == enumMode.SELECTOR) {
             timer.setState(gui.hand != ILabel.EMPTY);
             int color = 0xFFFFFF + (int) ((-Math.cos(timer.getTime() * Math.PI / 1500) + 1) * 0x40) * 0x1000000;
             gui.drawRectangle(xPos + 1, yPos + 1, xSize - 2, ySize - 2, color);
         }
+        if (mouseIn(xMouse, yMouse)) gui.drawRectangle(xPos + 1, yPos + 1, xSize - 2, ySize - 2, 0x80FFFFFF);
     }
 
     @Override
     public boolean onTooltip(JecaGui gui, int xMouse, int yMouse, List<String> tooltip) {
-        if (mouseIn(xMouse, yMouse)) {
-            if (label != ILabel.EMPTY) {
-                tooltip.add(label.getDisplayName());
-                label.getToolTip(tooltip, mode == enumMode.EDITOR || mode == enumMode.RESULT);
-            }
+        if (!mouseIn(xMouse, yMouse)) return false;
+        if (label != ILabel.EMPTY) {
+            tooltip.add(label.getDisplayName());
+            label.getToolTip(tooltip, mode == enumMode.EDITOR || mode == enumMode.RESULT);
         }
         return false;
     }
@@ -94,50 +87,33 @@ public class WLabel implements IWidget {
 
     @Override
     public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
-        if (mouseIn(xMouse, yMouse)) {
-            switch (mode) {
-                case EDITOR:
-                    if (gui.hand != label.EMPTY) {
-                        label = gui.hand;
-                        gui.hand = label.EMPTY;
-                        notifyLsnr();
-                        return true;
-                    } else if (label != label.EMPTY) {
-                        if (button == 0) {
-                            if (JecaGui.isShiftDown()) gui.root.add(new WAmount());
-                            else {
-                                label = label.increaseAmount();
-                                notifyLsnr();
-                            }
-                            return true;
-                        } else if (button == 1) {
-                            if (JecaGui.isShiftDown()) gui.root.add(new WAmount());
-                            else {
-                                label = label.decreaseAmount();
-                                notifyLsnr();
-                            }
-                            return true;
-                        }
-                    } else
-                        return false;
-                case RESULT:
-                    return false;
-                case PICKER:
-                    if (label != label.EMPTY) {
-                        notifyLsnr();
-                        return true;
-                    } else
-                        return false;
-                case SELECTOR:
+        if (!mouseIn(xMouse, yMouse)) return false;
+        switch (mode) {
+            case EDITOR:
+                if (gui.hand != label.EMPTY) {
                     label = gui.hand;
                     gui.hand = label.EMPTY;
                     notifyLsnr();
                     return true;
-                default:
-                    throw new IllegalPositionException();
-            }
-        } else
-            return false;
+                } else if (label != label.EMPTY) {
+                    gui.root.add(new WAmount());
+                    return true;
+                } else return false;
+            case RESULT:
+                return false;
+            case PICKER:
+                if (label != label.EMPTY) {
+                    notifyLsnr();
+                    return true;
+                } else return false;
+            case SELECTOR:
+                label = gui.hand;
+                gui.hand = label.EMPTY;
+                notifyLsnr();
+                return true;
+            default:
+                throw new IllegalPositionException();
+        }
     }
 
     public WLabel setLsnrUpdate(Runnable lsnr) {
@@ -177,36 +153,56 @@ public class WLabel implements IWidget {
     }
 
     class WAmount extends WContainer {
+        WLabel wl = new WLabel(xPos, yPos, xSize, ySize, enumMode.SELECTOR).setLsnrUpdate(this::update);
+        WTextField wtf = new WTextField(xPos + xSize + 10, yPos + ySize / 2 - WTextField.HEIGHT / 2, 50);
+        WButton bPercent = new WButtonText(xPos + xSize + 60, yPos, 20, 20, "general.to_percent", "%")
+                .setLsnrLeft(() -> setPercent(false));
+        WButton bAmount = new WButtonText(xPos + xSize + 60, yPos, 20, 20, "general.to_percent", "#")
+                .setLsnrLeft(() -> setPercent(true));
+        WButton bYes = new WButtonIcon(xPos + xSize + 83, yPos, 20, 20, Resource.BTN_YES).setLsnrLeft(() -> {
+            setLabel(wl.getLabel().setAmount(
+                    wtf.getText().isEmpty() ? 0 : Integer.parseInt(wtf.getText())));
+            JecaGui.getCurrent().root.remove(this);
+        });
+        WButton bNo = new WButtonIcon(xPos + xSize + 102, yPos, 20, 20, Resource.BTN_NO).setLsnrLeft(() -> {
+            setLabel(ILabel.EMPTY);
+            JecaGui.getCurrent().root.remove(this);
+        });
+
         public WAmount() {
-            WLabel w = WLabel.this;
-            int xAlign = w.xPos + w.xSize;
-            WLabel wl = new WLabel(w.xPos, w.yPos, w.xSize, w.ySize, enumMode.SELECTOR);
-            wl.setLabel(w.getLabel());
-            WTextField wtf = new WTextField(xAlign + 10, w.yPos + w.ySize / 2 - WTextField.HEIGHT / 2, 50);
-            WButton wby = new WButtonIcon(xAlign + 60, w.yPos, 20, 20, Resource.BTN_YES).setLsnrLeft(() -> {
-                w.setLabel(wl.getLabel().setAmount(
-                        wtf.getText().isEmpty() ? 0 : Integer.parseInt(wtf.getText())));
-                JecaGui.getCurrent().root.remove(this);
-            });
-            WButton wbn = new WButtonIcon(xAlign + 79, w.yPos, 20, 20, Resource.BTN_NO).setLsnrLeft(() -> {
-                w.setLabel(ILabel.EMPTY);
-                JecaGui.getCurrent().root.remove(this);
-            });
-            wtf.setText(Integer.toString(w.getLabel().getAmount()));
+            wl.setLabel(getLabel());
+            wtf.setText(Integer.toString(getLabel().getAmount()));
             wtf.setLsnrText(i -> {
                 try {
                     Integer.parseInt(wtf.getText());
                     wtf.setColor(JecaGui.COLOR_TEXT_WHITE);
-                    wby.setDisabled(false);
+                    bYes.setDisabled(false);
                 } catch (NumberFormatException e) {
                     boolean acceptable = wtf.getText().isEmpty();
                     wtf.setColor(acceptable ? JecaGui.COLOR_TEXT_WHITE : JecaGui.COLOR_TEXT_RED);
-                    wby.setDisabled(!acceptable);
+                    bYes.setDisabled(!acceptable);
                 }
             });
-            add(new WPanel(w.xPos - 5, w.yPos - 5, w.xSize + 110, w.ySize + 10));
-            add(new WText(xAlign + 3, w.yPos + 5, JecaGui.Font.DEFAULT_NO_SHADOW, "x"));
-            addAll(wl, wtf, wby, wbn);
+            add(new WPanel(xPos - 5, yPos - 5, xSize + 133, ySize + 10));
+            add(new WText(xPos + xSize + 3, yPos + 5, JecaGui.Font.PLAIN, "x"));
+            addAll(wl, wtf, bYes, bNo);
+            update();
+        }
+
+        private void update() {
+            bYes.setDisabled(!wl.getLabel().acceptPercent());
+            setPercent(false);
+        }
+
+        private void setPercent(boolean b) {
+            if (b) {
+                remove(bAmount);
+                add(bPercent);
+            } else {
+                remove(bPercent);
+                add(bAmount);
+            }
+            wl.getLabel().setPercent(b);
         }
 
         @Override

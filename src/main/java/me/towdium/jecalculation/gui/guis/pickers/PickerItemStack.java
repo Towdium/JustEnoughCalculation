@@ -66,7 +66,7 @@ public class PickerItemStack extends IWPicker.Impl {
             remove(bd);
             add(be);
         }
-        ILabel l = this.label.getLabel();
+        ILabel l = label.getLabel();
         if (l instanceof LItemStack) c.accept((LItemStack) l);
     }
 }

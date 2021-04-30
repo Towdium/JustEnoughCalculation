@@ -92,7 +92,7 @@ public class LItemStack extends ILabel.Impl {
             if (lisA.item == lisB.item && checkedMeta && checkedNbt) {
                 LItemStack is = lisA.copy();
                 is.meta = resultMeta;
-                return Impl.merge(is, lisB, add);
+                return Impl.mergeUnchecked(is, lisB, add);
             }
         }
         return Optional.empty();

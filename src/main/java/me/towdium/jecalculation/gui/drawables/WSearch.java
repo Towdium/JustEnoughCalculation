@@ -21,7 +21,6 @@ public class WSearch extends WContainer {
 
     public WSearch(Consumer<ILabel> callback, WTextField tf, WLabelScroll... lss) {
         clbk = callback;
-        List<WLabelScroll> lst = Arrays.asList(lss);
         tf.setLsnrText(s -> {
             boolean b = false;
             for (WLabelScroll i : lss) if (i.setFilter(s)) b = true;
@@ -31,7 +30,7 @@ public class WSearch extends WContainer {
         addAll(lss);
         for (WLabelScroll i : lss)
             i.setLsnrUpdate(j -> {
-                if (clbk != null) clbk.accept(i.getLabelAt(j).copy());
+                if (clbk != null) clbk.accept(i.getLabelAt(j));
             });
     }
 }

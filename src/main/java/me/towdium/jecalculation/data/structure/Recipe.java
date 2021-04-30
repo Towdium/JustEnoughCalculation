@@ -64,7 +64,7 @@ public class Recipe {
     static private List<ILabel> readNbtList(NBTTagList list) {
         return StreamSupport.stream(NBTHelper.spliterator(list), false)
                             .filter(n -> n instanceof NBTTagCompound)
-                            .map(n -> ILabel.DESERIALIZER.deserialize((NBTTagCompound) n))
+                            .map(n -> ILabel.SERIALIZER.deserialize((NBTTagCompound) n))
                             .collect(Collectors.toList());
     }
 
@@ -96,7 +96,7 @@ public class Recipe {
         NBTTagCompound ret = new NBTTagCompound();
         Function<ILabel[], NBTTagList> convert = (ls) -> {
             NBTTagList r = new NBTTagList();
-            Arrays.stream(ls).forEach(l -> r.appendTag(ILabel.DESERIALIZER.serialize(l)));
+            Arrays.stream(ls).forEach(l -> r.appendTag(ILabel.SERIALIZER.serialize(l)));
             return r;
         };
         ret.setTag(KEY_INPUT, convert.apply(input));

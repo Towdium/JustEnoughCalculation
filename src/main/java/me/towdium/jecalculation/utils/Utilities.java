@@ -8,6 +8,8 @@ import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.polyfill.NBTHelper;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import me.towdium.jecalculation.utils.wrappers.Wrapper;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,9 +18,11 @@ import org.apache.commons.lang3.StringEscapeUtils;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.text.BreakIterator;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -29,14 +33,6 @@ import java.util.stream.StreamSupport;
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 @ParametersAreNonnullByDefault
 public class Utilities {
-    final static int[] scaleTable = {9, 99, 999, 9999, 99999, 999999, 9999999, 99999999, 999999999, Integer.MAX_VALUE};
-
-    public static boolean stackEqual(ItemStack a, ItemStack b) {
-        return a.getItem() == b.getItem() && a.getItemDamage() == b.getItemDamage() &&
-               ((a.getTagCompound() == null && b.getTagCompound() == null) ||
-                (a.getTagCompound() != null && a.getTagCompound().equals(b.getTagCompound())));
-    }
-
     // FLOAT FORMATTING
     public static String cutNumber(float f, int size) {
         BiFunction<Float, Integer, String> form = (fl, len) -> {
@@ -110,10 +106,6 @@ public class Utilities {
     //            return Optional.of(is);
     //        return Optional.empty();
     //    }
-
-    public static void setStack(ItemStack is) {
-
-    }
 
     public static class Timer {
         long time = System.currentTimeMillis();
@@ -244,6 +236,68 @@ public class Utilities {
         public static String format(String translateKey, Object... parameters) {
             return search(translateKey, parameters).one;
         }
+
+        public static List<String> wrap(String s, int width) {
+            return new TextWrapper().wrap(s, Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode(),
+                                          i -> TextWrapper.renderer.getCharWidth(i), width);
+        }
+
+        static class TextWrapper {
+            static FontRenderer renderer = Minecraft.getMinecraft().fontRenderer;
+
+            String str;
+            BreakIterator it;
+            List<String> temp = new ArrayList<>();
+            Function<Character, Integer> func;
+            int start, end, section, space, cursor, width;
+
+            private void cut() {
+                char c = str.charAt(cursor);
+                if (c == '\f') cursor++;
+                temp.add(str.substring(start, cursor));
+                if (c == ' ' || c == '　' || c == '\n') cursor++;
+                start = cursor;
+                end = cursor;
+                space = width;
+                section = func.apply(str.charAt(cursor));
+            }
+
+            private void move() {
+                temp.add(str.substring(start, end));
+                start = end;
+                space = width;
+            }
+
+            private List<String> wrap(String s, String languageCode, Function<Character, Integer> func, int width) {
+                Locale l = getLocaleFromString(languageCode);
+                temp.clear();
+                start = 0;
+                end = 0;
+                cursor = 0;
+                space = width;
+                str = s;
+                it = BreakIterator.getLineInstance(l);
+                it.setText(s);
+                this.width = width;
+                this.func = func;
+                for (int i = it.next(); i != BreakIterator.DONE; i = it.next()) {
+                    for (cursor = end; cursor < i; cursor++) {
+                        char ch = str.charAt(cursor);
+                        section += func.apply(str.charAt(cursor));
+                        if (ch == '\n' || ch == '\f') cut();
+                        else if (section > space) {
+                            if (start == end) cut();
+                            else move();
+                        }
+                    }
+                    space -= section;
+                    section = 0;
+                    end = cursor;
+                }
+                move();
+                return temp;
+            }
+        }
     }
 
     public static class Recent<T> {
@@ -275,5 +329,14 @@ public class Utilities {
         public void clear() {
             data.clear();
         }
+    }
+
+    public static Locale getLocaleFromString(String languageCode) {
+        String parts[] = languageCode.split("_", -1);
+        if (parts.length == 1) return new Locale(parts[0]);
+        else if (parts.length == 2
+                 || (parts.length == 3 && parts[2].startsWith("#")))
+            return new Locale(parts[0], parts[1]);
+        else return new Locale(parts[0], parts[1], parts[2]);
     }
 }

@@ -33,11 +33,16 @@ public class WPanel implements IWidget {
 
     @Override
     public void onDraw(JecaGui gui, int xMouse, int yMouse) {
-        gui.drawResourceContinuous(Resource.WGT_PANEL, xPos, yPos, xSize, ySize, 5, 5, 5, 5);
+        gui.drawResourceContinuous(Resource.WGT_PANEL_F, xPos, yPos, xSize, ySize, 5, 5, 5, 5);
     }
 
     @Override
     public boolean onTooltip(JecaGui gui, int xMouse, int yMouse, List<String> tooltip) {
+        return mouseIn(xMouse, yMouse);
+    }
+
+    @Override
+    public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
         return mouseIn(xMouse, yMouse);
     }
 

@@ -2,6 +2,7 @@ package me.towdium.jecalculation.data.label;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.label.labels.LFluidStack;
 import me.towdium.jecalculation.data.label.labels.LItemStack;
 import me.towdium.jecalculation.data.label.labels.LOreDict;
@@ -39,7 +40,7 @@ import java.util.stream.Collectors;
 @ParametersAreNonnullByDefault
 public interface ILabel {
     Merger MERGER = new Merger();
-    Serializer DESERIALIZER = new Serializer();
+    Serializer SERIALIZER = new Serializer();
     Converter CONVERTER = new Converter();
     RegistryEditor EDITOR = new RegistryEditor();
     ILabel EMPTY = new LEmpty();
@@ -62,22 +63,26 @@ public interface ILabel {
         MERGER.register("itemStack", "itemStack", LItemStack::merge);
         MERGER.register("oreDict", "oreDict", LOreDict::merge);
         MERGER.register("itemStack", "oreDict", LOreDict::merge);
+        MERGER.register("fluidStack", "fluidStack", Impl::merge);
+        MERGER.register("fluidStack", "fluidStack", Impl::merge);
     }
 
     int getAmount();
 
     ILabel multiply(int i);
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     boolean acceptPercent();
 
+    @SuppressWarnings("UnusedReturnValue")
     ILabel setPercent(boolean p);
 
     static void initServer() {
-        DESERIALIZER.register(LFluidStack.IDENTIFIER, LFluidStack::new);
-        DESERIALIZER.register(LItemStack.IDENTIFIER, LItemStack::new);
-        DESERIALIZER.register(LOreDict.IDENTIFIER, LOreDict::new);
-        DESERIALIZER.register(LPlaceholder.IDENTIFIER, LPlaceholder::new);
-        DESERIALIZER.register(LEmpty.IDENTIFIER, i -> EMPTY);
+        SERIALIZER.register(LFluidStack.IDENTIFIER, LFluidStack::new);
+        SERIALIZER.register(LItemStack.IDENTIFIER, LItemStack::new);
+        SERIALIZER.register(LOreDict.IDENTIFIER, LOreDict::new);
+        SERIALIZER.register(LPlaceholder.IDENTIFIER, LPlaceholder::new);
+        SERIALIZER.register(LEmpty.IDENTIFIER, i -> EMPTY);
     }
 
     String getAmountString();
@@ -175,7 +180,12 @@ public interface ILabel {
          */
         public ILabel deserialize(NBTTagCompound nbt) {
             String s = nbt.getString(KEY_IDENTIFIER);
-            return idToData.get(s).apply(nbt.getCompoundTag(KEY_CONTENT));
+            Function<NBTTagCompound, ILabel> func = idToData.get(s);
+            if (func != null) return func.apply(nbt.getCompoundTag(KEY_CONTENT));
+            else {
+                JustEnoughCalculation.logger.warn("Unrecognized type identifier \"" + s + "\", use empty instead.");
+                return ILabel.EMPTY;
+            }
         }
 
         public NBTTagCompound serialize(ILabel label) {
@@ -396,7 +406,12 @@ public interface ILabel {
                 existing.add(FORMAT_GREY + Utilities.I18n.format("label.common.tooltip.amount", getAmountString()));
         }
 
-        protected static Optional<ILabel> merge(Impl a, Impl b, boolean add) {
+        public static Optional<ILabel> merge(ILabel a, ILabel b, boolean add) {
+            if (a instanceof Impl && b instanceof Impl && a.matches(b)) return mergeUnchecked((Impl) a, (Impl) b, add);
+            else return Optional.empty();
+        }
+
+        protected static Optional<ILabel> mergeUnchecked(Impl a, Impl b, boolean add) {
             Impl ret = a.copy();
             boolean p = a.percent || b.percent;
             int amountA = a.amount;

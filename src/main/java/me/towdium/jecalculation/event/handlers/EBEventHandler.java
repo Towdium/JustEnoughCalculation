@@ -22,4 +22,5 @@ public class EBEventHandler {
             event.setCanceled(gui.handleMouseEvent());
         }
     }
+
 }

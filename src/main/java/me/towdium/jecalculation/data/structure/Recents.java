@@ -17,7 +17,7 @@ public class Recents {
     public Recents(NBTTagList nbt) {
         List<ILabel> ls = StreamSupport.stream(NBTHelper.spliterator(nbt), false)
                                        .filter(n -> n instanceof NBTTagCompound)
-                                       .map(n -> ILabel.DESERIALIZER.deserialize((NBTTagCompound) n))
+                                       .map(n -> ILabel.SERIALIZER.deserialize((NBTTagCompound) n))
                                        .collect(Collectors.toList());
         new Utilities.ReversedIterator<>(ls).forEachRemaining(l -> record.push(l));
     }
@@ -39,7 +39,7 @@ public class Recents {
 
     public NBTTagList serialize() {
         NBTTagList ret = new NBTTagList();
-        record.toList().forEach(l -> ret.appendTag(ILabel.DESERIALIZER.serialize(l)));
+        record.toList().forEach(l -> ret.appendTag(ILabel.SERIALIZER.serialize(l)));
         return ret;
     }
 }

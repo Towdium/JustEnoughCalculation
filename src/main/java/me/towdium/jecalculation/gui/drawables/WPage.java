@@ -35,7 +35,7 @@ public class WPage implements IWidget {
     public void onDraw(JecaGui gui, int xMouse, int yMouse) {
         Resource resource = focused ?
                             (index == 0 ? Resource.WGT_PAGER_F0 : Resource.WGT_PAGER_FN) :
-                            Resource.WGT_PAGER_N;
+                            Resource.WGT_PANEL_N;
         gui.drawResourceContinuous(resource, index * 24, -21, 24, 25, 4, 4, 4, 4);
         record.representation.drawLabel(gui, index * 24 + 4, -17, false);
         timer.setState(JecaGui.mouseIn(index * 24, -21, 24, 21, xMouse, yMouse));

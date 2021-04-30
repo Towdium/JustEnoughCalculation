@@ -72,10 +72,10 @@ public class Resource {
     public static final Resource WGT_BUTTON_D = new Resource(80, 232, 20, 20);
     public static final Resource WGT_SLOT = new Resource(20, 232, 20, 20);
     public static final Resource WGT_LINE = new Resource(0, 252, 163, 4);
-    public static final Resource WGT_PANEL = new Resource(0, 232, 20, 20);
+    public static final Resource WGT_PANEL_F = new Resource(0, 232, 20, 20);
     public static final Resource WGT_PAGER_FN = new Resource(100, 232, 20, 20);
     public static final Resource WGT_PAGER_F0 = new Resource(120, 232, 20, 20);
-    public static final Resource WGT_PAGER_N = new Resource(140, 232, 20, 20);
+    public static final Resource WGT_PANEL_N = new Resource(140, 232, 20, 20);
     public static final Resource WGT_ARR_L_F = new Resource(160, 232, 7, 9);
     public static final Resource WGT_ARR_L_N = new Resource(167, 232, 7, 9);
     public static final Resource WGT_ARR_L_D = new Resource(174, 232, 7, 9);
@@ -83,6 +83,9 @@ public class Resource {
     public static final Resource WGT_ARR_R_N = new Resource(167, 242, 7, 9);
     public static final Resource WGT_ARR_R_D = new Resource(174, 242, 7, 9);
     public static final Resource WGT_SCROLL = new Resource(181, 232, 12, 15);
+    public static final Resource WGT_HELP_F = new Resource(193, 232, 20, 20);
+    public static final Resource WGT_HELP_N = new Resource(213, 232, 20, 20);
+    public static final Resource WGT_HELP_B = new Resource(233, 232, 20, 20);
     public static final Resource ICN_RECENT_N = getIcon(0, 4);
     public static final Resource ICN_RECENT_F = getIcon(0, 3);
     public static final Resource ICN_INPUT_N = getIcon(1, 4);
