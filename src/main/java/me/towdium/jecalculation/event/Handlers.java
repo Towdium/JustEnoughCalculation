@@ -1,15 +1,26 @@
 package me.towdium.jecalculation.event;
 
-import me.towdium.jecalculation.event.handlers.InputEventHandler;
+import cpw.mods.fml.common.FMLCommonHandler;
+import me.towdium.jecalculation.event.handlers.EBEventHandler;
+import me.towdium.jecalculation.event.handlers.FMLBusEventHandler;
+import net.minecraftforge.common.MinecraftForge;
 
 import java.util.ArrayList;
 
 public class Handlers {
-    public static final ArrayList<Object> handlers;
+    public static final ArrayList<Object> fmlHandlers;
+    public static final ArrayList<Object> ebHandlers;
 
     static {
-        handlers = new ArrayList<>();
+        fmlHandlers = new ArrayList<>();
+        fmlHandlers.add(new FMLBusEventHandler());
 
-        handlers.add(new InputEventHandler());
+        ebHandlers = new ArrayList<>();
+        ebHandlers.add(new EBEventHandler());
+    }
+
+    public static void register() {
+        Handlers.fmlHandlers.forEach(FMLCommonHandler.instance().bus()::register);
+        Handlers.ebHandlers.forEach(MinecraftForge.EVENT_BUS::register);
     }
 }

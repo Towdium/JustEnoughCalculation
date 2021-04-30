@@ -2,16 +2,12 @@ package me.towdium.jecalculation.data.label;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import me.towdium.jecalculation.data.label.labels.*;
 import me.towdium.jecalculation.gui.IWPicker;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.guis.pickers.PickerSimple;
-import me.towdium.jecalculation.gui.guis.pickers.PickerUniversal;
-import me.towdium.jecalculation.data.label.labels.LFluidStack;
-import me.towdium.jecalculation.data.label.labels.LItemStack;
-import me.towdium.jecalculation.data.label.labels.LOreDict;
-import me.towdium.jecalculation.data.label.labels.LString;
+import me.towdium.jecalculation.gui.guis.pickers.PickerPlaceholder;
 import me.towdium.jecalculation.polyfill.mc.client.renderer.GlStateManager;
-import me.towdium.jecalculation.utils.ItemStackHelper;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.Utilities.Relation;
 import me.towdium.jecalculation.utils.Utilities.ReversedIterator;
@@ -60,7 +56,7 @@ public interface ILabel {
         CONVERTER.register(LOreDict::guess);
         EDITOR.register(PickerSimple.FluidStack::new, "fluid_stack", new LFluidStack(1000, FluidRegistry.WATER));
         EDITOR.register(PickerSimple.OreDict::new, "ore_dict", new LOreDict("ingotIron"));
-        EDITOR.register(PickerUniversal::new, "string", new LString("example", 1));
+        EDITOR.register(PickerPlaceholder::new, "placeholder", new LPlaceholder("example", 1, true));
         MERGER.register("itemStack", "itemStack", LItemStack::merge);
         MERGER.register("oreDict", "oreDict", LOreDict::mergeOreDict);
     }
@@ -69,7 +65,7 @@ public interface ILabel {
         DESERIALIZER.register(LFluidStack.IDENTIFIER, LFluidStack::new);
         DESERIALIZER.register(LItemStack.IDENTIFIER, LItemStack::new);
         DESERIALIZER.register(LOreDict.IDENTIFIER, LOreDict::new);
-        DESERIALIZER.register(LString.IDENTIFIER, LString::new);
+        DESERIALIZER.register(LPlaceholder.IDENTIFIER, LPlaceholder::new);
         DESERIALIZER.register(LEmpty.IDENTIFIER, i -> EMPTY);
     }
 

@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+@Deprecated
 public class Loader {
 
     public static void subscribeToEventBus() {

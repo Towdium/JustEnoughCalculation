@@ -1,11 +1,10 @@
 package me.towdium.jecalculation.network;
 
 import cpw.mods.fml.client.registry.ClientRegistry;
-import cpw.mods.fml.common.FMLCommonHandler;
-import me.towdium.jecalculation.data.Controller;
-import me.towdium.jecalculation.event.Handlers;
 import me.towdium.jecalculation.command.JecaCommand;
+import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
+import me.towdium.jecalculation.event.Handlers;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,11 +12,10 @@ import net.minecraftforge.client.ClientCommandHandler;
 import org.lwjgl.input.Keyboard;
 
 public class ClientHandler {
-    public static final KeyBinding keyOpenGui =
-            new KeyBinding("key.open_gui", Keyboard.KEY_NONE, "key.category");
+    public static final KeyBinding keyOpenGui = new KeyBinding("key.open_gui", Keyboard.KEY_NONE, "key.category");
 
     public void initPre() {
-        Handlers.handlers.forEach(FMLCommonHandler.instance().bus()::register);
+        Handlers.register();
     }
 
     public void initPost() {

@@ -16,7 +16,7 @@ import java.util.List;
  */
 @ParametersAreNonnullByDefault
 @SideOnly(Side.CLIENT)
-public class GuiDisambiguation extends IWPicker.Simple {
+public class GuiDisambiguation extends IWPicker.Impl {
     protected WLabelScroll lsUp;
     protected WLabelScroll lsDown;
     protected WSwitcher switcher;

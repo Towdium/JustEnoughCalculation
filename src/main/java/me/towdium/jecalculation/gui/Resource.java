@@ -71,6 +71,8 @@ public class Resource {
     public static final Resource ICN_STACK_F = new Resource(98, 28, 14, 14);
     public static final Resource ICN_TEXT_N = new Resource(112, 42, 14, 14);
     public static final Resource ICN_TEXT_F = new Resource(112, 28, 14, 14);
+    public static final Resource ICN_MULTI_N = new Resource(126, 42, 14, 14);
+    public static final Resource ICN_MULTI_F = new Resource(126, 28, 14, 14);
     public static final Resource LBL_ORE_DICT = new Resource(0, 56, 16, 16);
     public static final Resource LBL_FLUID = new Resource(16, 56, 16, 16);
     public static final Resource LBL_UNIV_B = new Resource(32, 56, 16, 16);

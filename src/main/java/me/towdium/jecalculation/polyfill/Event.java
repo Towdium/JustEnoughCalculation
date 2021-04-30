@@ -9,6 +9,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
+@Deprecated
 public @interface Event {
 
     /**
@@ -16,6 +17,7 @@ public @interface Event {
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
+    @Deprecated
     @interface EventBusSubscriber {
         Side[] value() default {Side.CLIENT, Side.SERVER};
 
