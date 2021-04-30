@@ -23,6 +23,8 @@ import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -35,6 +37,7 @@ import java.util.stream.StreamSupport;
 public class Utilities {
     final static int[] scaleTable = {9, 99, 999, 9999, 99999, 999999, 9999999, 99999999, 999999999, Integer.MAX_VALUE};
     static Map<String, String> dictionary = new HashMap<>();
+    public static Collector toArrayList = Collectors.toCollection(ArrayList::new);
 
     static {
         Map<String, ModContainer> modMap = Loader.instance().getIndexedModList();
@@ -106,6 +109,7 @@ public class Utilities {
         return s1.contains(s2);
     }
 
+    // get calculator item in player inventory
     public static Optional<ItemStack> getStack() {
         InventoryPlayer inv = Minecraft.getMinecraft().thePlayer.inventory;
         ItemStack is = inv.getCurrentItem();

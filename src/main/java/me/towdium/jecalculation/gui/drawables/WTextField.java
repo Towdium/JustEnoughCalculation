@@ -2,7 +2,7 @@ package me.towdium.jecalculation.gui.drawables;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import me.towdium.jecalculation.gui.JecGui;
+import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.IWidget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiTextField;
@@ -29,7 +29,7 @@ public class WTextField implements IWidget {
     }
 
     @Override
-    public boolean onClicked(JecGui gui, int xMouse, int yMouse, int button) {
+    public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
         boolean flag = xMouse >= textField.xPosition && xMouse < textField.xPosition + textField.width &&
                        yMouse >= textField.yPosition && yMouse < textField.yPosition + textField.height;
         textField.mouseClicked(xMouse, yMouse, button);
@@ -37,12 +37,12 @@ public class WTextField implements IWidget {
     }
 
     @Override
-    public void onDraw(JecGui gui, int xMouse, int yMouse) {
+    public void onDraw(JecaGui gui, int xMouse, int yMouse) {
         textField.drawTextBox();
     }
 
     @Override
-    public boolean onKey(JecGui gui, char ch, int code) {
+    public boolean onKey(JecaGui gui, char ch, int code) {
         boolean ret = textField.textboxKeyTyped(ch, code);
         if (ret) notifyLsnr();
         return ret;

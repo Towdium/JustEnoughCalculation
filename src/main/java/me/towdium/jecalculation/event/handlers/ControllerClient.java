@@ -74,6 +74,18 @@ public class ControllerClient {
         return getRecord().recipes.search(group, label, type);
     }
 
+    public static List<Recipe> search(String group, String label, Recipe.enumIoType type) {
+        return getRecord().recipes.search(group, label, type);
+    }
+
+    public static List<Recipe> search(ILabel label, Recipe.enumIoType type) {
+        return getRecord().recipes.search(label, type);
+    }
+
+    public static List<Recipe> search(String label, Recipe.enumIoType type) {
+        return getRecord().recipes.search(label, type);
+    }
+
     public static List<ILabel> getRecent() {
         if (recordWorld == null) return recordClient.recent.getRecords();
         else {

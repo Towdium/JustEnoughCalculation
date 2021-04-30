@@ -19,11 +19,11 @@ public interface IWPicker extends IWidget {
     IWPicker setCallback(Consumer<ILabel> callback);
 
     class Simple extends WContainer implements IWPicker {
-        protected Wrapper<Consumer<ILabel>> callback = new Wrapper<>(null);
+        protected Consumer<ILabel> callback;
 
         @Override
         public IWPicker setCallback(Consumer<ILabel> callback) {
-            this.callback.value = callback;
+            this.callback = callback;
             return this;
         }
     }

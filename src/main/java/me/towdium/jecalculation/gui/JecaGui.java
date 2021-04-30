@@ -40,21 +40,21 @@ import java.util.function.Function;
  */
 @ParametersAreNonnullByDefault
 @SideOnly(Side.CLIENT)
-public class JecGui extends GuiContainer {
+public class JecaGui extends GuiContainer {
     public static final int COLOR_GUI_GREY = 0xFFA1A1A1;
     public static final int COLOR_TEXT_RED = 0xFF0000;
     public static final int COLOR_TEXT_WHITE = 0xFFFFFF;
     public static final boolean ALWAYS_TOOLTIP = false;
     public ILabel hand = ILabel.EMPTY;
     public IWidget root;
-    protected JecGui parent;
+    protected JecaGui parent;
     protected List<Triple<Integer, Integer, List<String>>> tooltipBuffer = new ArrayList<>();
 
-    public JecGui(@Nullable JecGui parent, IWidget root) {
+    public JecaGui(@Nullable JecaGui parent, IWidget root) {
         this(parent, false, root);
     }
 
-    public JecGui(@Nullable JecGui parent, boolean acceptsTransfer, IWidget root) {
+    public JecaGui(@Nullable JecaGui parent, boolean acceptsTransfer, IWidget root) {
         super(acceptsTransfer ? new ContainerTransfer() : new ContainerNonTransfer());
         this.parent = parent;
         this.root = root;
@@ -77,29 +77,29 @@ public class JecGui extends GuiContainer {
     }
 
     /**
-     * @return The currently displayed {@link JecGui}
-     * Make sure the method is called when a {@link JecGui} is displayed!
+     * @return The currently displayed {@link JecaGui}
+     * Make sure the method is called when a {@link JecaGui} is displayed!
      * Otherwise it will throw a {@link NullPointerException}
      */
-    public static JecGui getCurrent() {
+    public static JecaGui getCurrent() {
         GuiScreen gui = Minecraft.getMinecraft().currentScreen;
-        JecGui ret = gui instanceof JecGui ? (JecGui) gui : null;
+        JecaGui ret = gui instanceof JecaGui ? (JecaGui) gui : null;
         Objects.requireNonNull(ret);
         return ret;
     }
 
     private static void displayGuiUnsafe(boolean updateParent, boolean acceptsTransfer, IWidget root) {
         Minecraft mc = Minecraft.getMinecraft();
-        JecGui parent;
+        JecaGui parent;
         if (mc.currentScreen == null)
             parent = null;
-        else if (!(mc.currentScreen instanceof JecGui))
+        else if (!(mc.currentScreen instanceof JecaGui))
             parent = getCurrent();
         else if (updateParent)
-            parent = (JecGui) mc.currentScreen;
+            parent = (JecaGui) mc.currentScreen;
         else
-            parent = ((JecGui) mc.currentScreen).parent;
-        JecGui toShow = new JecGui(parent, acceptsTransfer, root);
+            parent = ((JecaGui) mc.currentScreen).parent;
+        JecaGui toShow = new JecaGui(parent, acceptsTransfer, root);
         mc.displayGuiScreen(toShow);
     }
 
@@ -453,13 +453,13 @@ public class JecGui extends GuiContainer {
 
 
     public static class JecContainer extends Container {
-        JecGui gui;
+        JecaGui gui;
 
-        public JecGui getGui() {
+        public JecaGui getGui() {
             return gui;
         }
 
-        public void setGui(JecGui gui) {
+        public void setGui(JecaGui gui) {
             this.gui = gui;
         }
 

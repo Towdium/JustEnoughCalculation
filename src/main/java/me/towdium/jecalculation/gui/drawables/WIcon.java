@@ -2,7 +2,7 @@ package me.towdium.jecalculation.gui.drawables;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import me.towdium.jecalculation.gui.JecGui;
+import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 
 import javax.annotation.Nullable;
@@ -35,16 +35,16 @@ public class WIcon extends WTooltip {
     }
 
     @Override
-    public void onDraw(JecGui gui, int xMouse, int yMouse) {
+    public void onDraw(JecaGui gui, int xMouse, int yMouse) {
         super.onDraw(gui, xMouse, yMouse);
-        gui.drawRectangle(xPos, yPos, xSize, ySize, JecGui.COLOR_GUI_GREY);
+        gui.drawRectangle(xPos, yPos, xSize, ySize, JecaGui.COLOR_GUI_GREY);
         Resource r = mouseIn(xMouse, yMouse) ? focused : normal;
         gui.drawResource(r, (xSize - r.getXSize()) / 2 + xPos, (ySize - r.getYSize()) / 2 + yPos);
     }
 
     @Override
     public boolean mouseIn(int xMouse, int yMouse) {
-        return JecGui.mouseIn(xPos + (xSize - normal.getXSize()) / 2,
+        return JecaGui.mouseIn(xPos + (xSize - normal.getXSize()) / 2,
                               yPos + (ySize - normal.getYSize()) / 2, normal.getXSize(), normal.getYSize(), xMouse, yMouse);
     }
 }

@@ -3,7 +3,7 @@ package me.towdium.jecalculation.gui.drawables;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.gui.IWidget;
-import me.towdium.jecalculation.gui.JecGui;
+import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import org.lwjgl.input.Mouse;
 
@@ -29,7 +29,7 @@ public class WScroll implements IWidget {
     }
 
     @Override
-    public void onDraw(JecGui gui, int xMouse, int yMouse) {
+    public void onDraw(JecaGui gui, int xMouse, int yMouse) {
         if (Mouse.isButtonDown(0) && drag) setCurrent(yMouse - yPos - 9);
         else drag = false;
 
@@ -38,7 +38,7 @@ public class WScroll implements IWidget {
     }
 
     @Override
-    public boolean onClicked(JecGui gui, int xMouse, int yMouse, int button) {
+    public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
         drag = mouseIn(xMouse, yMouse);
         if (drag) setCurrent(yMouse - yPos - 9);
         return drag;
@@ -56,7 +56,7 @@ public class WScroll implements IWidget {
     }
 
     public boolean mouseIn(int xMouse, int yMouse) {
-        return JecGui.mouseIn(xPos + 1, yPos + 1, 12, ySize - 2, xMouse, yMouse);
+        return JecaGui.mouseIn(xPos + 1, yPos + 1, 12, ySize - 2, xMouse, yMouse);
     }
 
     public WScroll setLsnrScroll(Consumer<Float> lsnrScroll) {

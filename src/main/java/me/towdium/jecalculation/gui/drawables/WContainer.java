@@ -2,7 +2,7 @@ package me.towdium.jecalculation.gui.drawables;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import me.towdium.jecalculation.gui.JecGui;
+import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.IWidget;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -41,24 +41,24 @@ public class WContainer implements IWidget {
     }
 
     @Override
-    public void onDraw(JecGui gui, int mouseX, int mouseY) {
+    public void onDraw(JecaGui gui, int mouseX, int mouseY) {
         widgets.forEach(widget -> widget.onDraw(gui, mouseX, mouseY));
     }
 
     @Override
-    public boolean onClicked(JecGui gui, int xMouse, int yMouse, int button) {
+    public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
         for (IWidget w : widgets) if (w.onClicked(gui, xMouse, yMouse, button)) return true;
         return false;
     }
 
     @Override
-    public boolean onKey(JecGui gui, char ch, int code) {
+    public boolean onKey(JecaGui gui, char ch, int code) {
         for (IWidget w : widgets) if (w.onKey(gui, ch, code)) return true;
         return false;
     }
 
     @Override
-    public boolean onScroll(JecGui gui, int xMouse, int yMouse, int diff) {
+    public boolean onScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
         for (IWidget w : widgets) if (w.onScroll(gui, xMouse, yMouse, diff)) return true;
         return false;
     }

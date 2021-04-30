@@ -18,6 +18,7 @@ gui.recipe.disamb.disabled=Disambiguate settings not available\nbecause of no am
 gui.recipe.new.active=New group
 gui.recipe.cancel.active=Cancel
 gui.recipe.confirm.active=Confirm
+gui.search.all=All
 gui.common.label.ore_dict=OreDict
 gui.common.label.fluid_stack=Fluid
 gui.common.label.string=String

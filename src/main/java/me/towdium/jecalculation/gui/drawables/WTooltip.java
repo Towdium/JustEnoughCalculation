@@ -3,7 +3,7 @@ package me.towdium.jecalculation.gui.drawables;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.gui.IWidget;
-import me.towdium.jecalculation.gui.JecGui;
+import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.utils.Utilities;
 
 import javax.annotation.Nullable;
@@ -27,13 +27,13 @@ public abstract class WTooltip implements IWidget {
     }
 
     @Override
-    public void onDraw(JecGui gui, int xMouse, int yMouse) {
+    public void onDraw(JecaGui gui, int xMouse, int yMouse) {
         if (name != null) {
             timer.setState(mouseIn(xMouse, yMouse));
             if (timer.getTime() > 500) {
                 String str = getSuffix().stream().map(s -> Utilities.I18n.search(String.join(".", "gui", name, s)))
                                         .filter(p -> p.two).findFirst().map(p -> p.one)
-                                        .orElse(JecGui.ALWAYS_TOOLTIP ? String.join(".", "gui", name, getSuffix().get(0)) : null);
+                                        .orElse(JecaGui.ALWAYS_TOOLTIP ? String.join(".", "gui", name, getSuffix().get(0)) : null);
                 if (str != null) gui.drawTooltip(xMouse, yMouse, str);
             }
         }

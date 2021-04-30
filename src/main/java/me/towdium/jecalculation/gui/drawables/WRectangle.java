@@ -3,7 +3,7 @@ package me.towdium.jecalculation.gui.drawables;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.gui.IWidget;
-import me.towdium.jecalculation.gui.JecGui;
+import me.towdium.jecalculation.gui.JecaGui;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -25,7 +25,7 @@ public class WRectangle implements IWidget {
     }
 
     @Override
-    public void onDraw(JecGui gui, int xMouse, int yMouse) {
+    public void onDraw(JecaGui gui, int xMouse, int yMouse) {
         gui.drawRectangle(xPos, yPos, xSize, ySize, color);
     }
 }

@@ -1,7 +1,7 @@
 package me.towdium.jecalculation.network;
 
 import cpw.mods.fml.client.registry.ClientRegistry;
-import me.towdium.jecalculation.gui.JecGui;
+import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.guis.GuiCalculator;
 import me.towdium.jecalculation.command.JecaCommand;
 import me.towdium.jecalculation.data.label.ILabel;
@@ -35,6 +35,6 @@ public class ProxyClient extends ProxyServer {
     @Override
     public void displayCalculator() {
         super.displayCalculator();
-        JecGui.displayGui(new GuiCalculator());
+        JecaGui.displayGui(new GuiCalculator());
     }
 }

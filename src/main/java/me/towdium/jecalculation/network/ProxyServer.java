@@ -2,7 +2,7 @@ package me.towdium.jecalculation.network;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
-import me.towdium.jecalculation.gui.JecGui;
+import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.event.Handlers;
 import me.towdium.jecalculation.item.ItemCalculator;
@@ -13,7 +13,7 @@ public class ProxyServer implements IProxy {
     public void initPre() {
         GameRegistry.registerItem(ItemCalculator.INSTANCE, ItemCalculator.INSTANCE.getUnlocalizedName());
         Handlers.handlers.forEach(FMLCommonHandler.instance().bus()::register);
-        MinecraftForge.EVENT_BUS.register(JecGui.class);
+        MinecraftForge.EVENT_BUS.register(JecaGui.class);
     }
 
     @Override
