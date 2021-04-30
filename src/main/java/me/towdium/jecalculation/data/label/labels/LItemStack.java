@@ -83,10 +83,9 @@ public class LItemStack extends ILabel.Impl {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public List<String> getToolTip(List<String> existing, boolean detailed) {
+    public void getToolTip(List<String> existing, boolean detailed) {
         super.getToolTip(existing, detailed);
         existing.add(FORMAT_BLUE + FORMAT_ITALIC + Utilities.getModName(item));
-        return existing;
     }
 
     @Override

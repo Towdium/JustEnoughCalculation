@@ -20,6 +20,7 @@ public class WTextField implements IWidget {
     public Consumer<String> lsnrText;
     protected int xPos, yPos, xSize;
     GuiTextField textField;
+    public static final int HEIGHT = 20;
 
     public WTextField(int xPos, int yPos, int xSize) {
         this.xPos = xPos;

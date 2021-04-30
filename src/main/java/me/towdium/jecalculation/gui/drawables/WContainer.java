@@ -4,6 +4,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.IWidget;
+import me.towdium.jecalculation.utils.Utilities;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
@@ -16,7 +17,6 @@ import java.util.List;
 @ParametersAreNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class WContainer implements IWidget {
-    boolean modified = false;
     protected List<IWidget> widgets = new ArrayList<>();
 
     public void add(IWidget w) {
@@ -61,6 +61,13 @@ public class WContainer implements IWidget {
     @Override
     public boolean onScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
         for (IWidget w : widgets) if (w.onScroll(gui, xMouse, yMouse, diff)) return true;
+        return false;
+    }
+
+    @Override
+    public boolean onTooltip(JecaGui gui, int xMouse, int yMouse, List<String> tooltip) {
+        Utilities.ReversedIterator<IWidget> i = new Utilities.ReversedIterator<>(widgets);
+        while (i.hasNext()) if (i.next().onTooltip(gui, xMouse, yMouse, tooltip)) return true;
         return false;
     }
 }

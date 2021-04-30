@@ -5,6 +5,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.label.ILabel;
+import me.towdium.jecalculation.gui.drawables.WContainer;
 import me.towdium.jecalculation.nei.NEIPlugin;
 import me.towdium.jecalculation.polyfill.mc.client.renderer.GlStateManager;
 import me.towdium.jecalculation.utils.IllegalPositionException;
@@ -46,15 +47,14 @@ public class JecaGui extends GuiContainer {
     public static final int COLOR_TEXT_WHITE = 0xFFFFFF;
     public static final boolean ALWAYS_TOOLTIP = false;
     public ILabel hand = ILabel.EMPTY;
-    public IWidget root;
+    public WContainer root;
     protected JecaGui parent;
-    protected List<Triple<Integer, Integer, List<String>>> tooltipBuffer = new ArrayList<>();
 
-    public JecaGui(@Nullable JecaGui parent, IWidget root) {
+    public JecaGui(@Nullable JecaGui parent, WContainer root) {
         this(parent, false, root);
     }
 
-    public JecaGui(@Nullable JecaGui parent, boolean acceptsTransfer, IWidget root) {
+    public JecaGui(@Nullable JecaGui parent, boolean acceptsTransfer, WContainer root) {
         super(acceptsTransfer ? new ContainerTransfer() : new ContainerNonTransfer());
         this.parent = parent;
         this.root = root;
@@ -66,11 +66,11 @@ public class JecaGui extends GuiContainer {
         return xMouse > xPos && yMouse > yPos && xMouse <= xPos + xSize && yMouse <= yPos + ySize;
     }
 
-    public static void displayGui(IWidget root) {
+    public static void displayGui(WContainer root) {
         displayGui(true, false, root);
     }
 
-    public static void displayGui(boolean updateParent, boolean acceptsTransfer, IWidget root) {
+    public static void displayGui(boolean updateParent, boolean acceptsTransfer, WContainer root) {
         // isCallingFromMinecraftThread
         if (Minecraft.getMinecraft().func_152345_ab())
             displayGuiUnsafe(updateParent, acceptsTransfer, root);
@@ -88,7 +88,7 @@ public class JecaGui extends GuiContainer {
         return ret;
     }
 
-    private static void displayGuiUnsafe(boolean updateParent, boolean acceptsTransfer, IWidget root) {
+    private static void displayGuiUnsafe(boolean updateParent, boolean acceptsTransfer, WContainer root) {
         Minecraft mc = Minecraft.getMinecraft();
         JecaGui parent;
         if (mc.currentScreen == null)
@@ -137,7 +137,9 @@ public class JecaGui extends GuiContainer {
         GlStateManager.translate(0, 0, 80);
         hand.drawLabel(this, mouseX, mouseY, true);
         GlStateManager.popMatrix();
-        drawBufferedTooltip();
+        List<String> tooltip = new ArrayList<>();
+        root.onTooltip(this, mouseX - guiLeft, mouseY - guiTop, tooltip);
+        drawHoveringText(tooltip, mouseX, mouseY);
         GlStateManager.enableLighting();
         GlStateManager.enableDepth();
     }
@@ -361,23 +363,6 @@ public class JecaGui extends GuiContainer {
     public void drawText(float xPos, float yPos, int xSize, int ySize, Font f, String... text) {
         int yOffset = (ySize - (int) (text.length * fontRendererObj.FONT_HEIGHT * f.size)) / 2;
         drawText(xPos, yPos + yOffset, xSize, f, text);
-    }
-
-    public void drawTooltip(int xPos, int yPos, String... text) {
-        drawTooltip(xPos, yPos, Arrays.asList(text));
-    }
-
-    public void drawTooltip(int xPos, int yPos, List<String> text) {
-        tooltipBuffer.add(new Triple<>(xPos + guiLeft, yPos + guiTop, text));
-    }
-
-    protected void drawBufferedTooltip() {
-        tooltipBuffer.forEach(i -> {
-            drawHoveringText(i.three, i.one, i.two);
-            GlStateManager.disableLighting();
-            GlStateManager.disableDepth();
-        });
-        tooltipBuffer.clear();
     }
 
     public void drawItemStack(int xPos, int yPos, ItemStack is, boolean centred) {

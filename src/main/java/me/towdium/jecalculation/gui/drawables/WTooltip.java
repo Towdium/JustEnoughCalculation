@@ -28,15 +28,18 @@ public abstract class WTooltip implements IWidget {
 
     @Override
     public void onDraw(JecaGui gui, int xMouse, int yMouse) {
-        if (name != null) {
-            timer.setState(mouseIn(xMouse, yMouse));
-            if (timer.getTime() > 500) {
-                String str = getSuffix().stream().map(s -> Utilities.I18n.search(String.join(".", "gui", name, s)))
-                                        .filter(p -> p.two).findFirst().map(p -> p.one)
-                                        .orElse(JecaGui.ALWAYS_TOOLTIP ? String.join(".", "gui", name, getSuffix().get(0)) : null);
-                if (str != null) gui.drawTooltip(xMouse, yMouse, str);
-            }
+        if (name != null) timer.setState(mouseIn(xMouse, yMouse));
+    }
+
+    @Override
+    public boolean onTooltip(JecaGui gui, int xMouse, int yMouse, List<String> tooltip) {
+        if (timer.getTime() > 500) {
+            String str = getSuffix().stream().map(s -> Utilities.I18n.search(String.join(".", "gui", name, s)))
+                                    .filter(p -> p.two).findFirst().map(p -> p.one)
+                                    .orElse(JecaGui.ALWAYS_TOOLTIP ? String.join(".", "gui", name, getSuffix().get(0)) : null);
+            if (str != null) tooltip.add(str);
         }
+        return false;
     }
 
     protected List<String> getSuffix() {

@@ -1,7 +1,13 @@
 package me.towdium.jecalculation.gui;
 
+import java.util.List;
+
 public interface IWidget {
     void onDraw(JecaGui gui, int xMouse, int yMouse);
+
+    default boolean onTooltip(JecaGui gui, int xMouse, int yMouse, List<String> tooltip) {
+        return false;
+    }
 
     default boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
         return false;
