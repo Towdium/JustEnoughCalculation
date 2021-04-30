@@ -1,7 +1,7 @@
 package me.towdium.jecalculation.data.structure;
 
 import me.towdium.jecalculation.data.label.ILabel;
-import me.towdium.jecalculation.polyfill.Polyfill;
+import me.towdium.jecalculation.polyfill.NBTHelper;
 import me.towdium.jecalculation.utils.IllegalPositionException;
 import me.towdium.jecalculation.utils.wrappers.Single;
 import net.minecraft.nbt.NBTTagCompound;
@@ -61,7 +61,7 @@ public class Recipe {
     }
 
     static private List<ILabel> readNbtList(NBTTagList list) {
-        return StreamSupport.stream(Polyfill.spliterator(list), false)
+        return StreamSupport.stream(NBTHelper.spliterator(list), false)
                             .filter(n -> n instanceof NBTTagCompound)
                             .map(n -> ILabel.DESERIALIZER.deserialize((NBTTagCompound) n))
                             .collect(Collectors.toList());

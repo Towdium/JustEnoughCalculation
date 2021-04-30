@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Spliterator;
 import java.util.Spliterators;
 
-public class Polyfill {
+public class NBTHelper {
     /**
      * Get an NBTTagCompound from this stack's NBT data.
      *
@@ -36,6 +36,16 @@ public class Polyfill {
     public static Spliterator<NBTBase> spliterator(NBTTagList list) {
         List tagList = (List) ReflectionHelper.get(list, "tagList");
         return Spliterators.spliteratorUnknownSize(((List<NBTBase>)tagList).iterator(), 0);
+    }
+
+    public static NBTTagCompound getOrCreateSubCompound(ItemStack itemStack, String key) {
+        if (itemStack.stackTagCompound != null && itemStack.stackTagCompound.hasKey(key, 10)) {
+            return itemStack.stackTagCompound.getCompoundTag(key);
+        } else {
+            NBTTagCompound nbtTagCompound = new NBTTagCompound();
+            itemStack.setTagInfo(key, nbtTagCompound);
+            return nbtTagCompound;
+        }
     }
 
 }

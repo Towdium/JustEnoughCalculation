@@ -1,7 +1,7 @@
 package me.towdium.jecalculation.utils;
 
 import me.towdium.jecalculation.JustEnoughCalculation;
-import me.towdium.jecalculation.polyfill.Polyfill;
+import me.towdium.jecalculation.polyfill.NBTHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -253,7 +253,7 @@ public class ItemStackHelper {
 
         static NBTTagCompound getTag(@Nonnull ItemStack itemStack, boolean isolate) {
             if (isolate) {
-                return Polyfill.getSubCompound(itemStack, JustEnoughCalculation.Reference.MODID, true);
+                return NBTHelper.getSubCompound(itemStack, JustEnoughCalculation.Reference.MODID, true);
             } else {
                 if (!itemStack.hasTagCompound()) {
                     itemStack.setTagCompound(new NBTTagCompound());

@@ -27,14 +27,17 @@ public class ControllerClient {
 
     public static void addRecipe(String group, Recipe recipe) {
         getRecord().recipes.add(group, recipe);
+        // TODO sync
     }
 
     public static void setRecipe(String group, int index, Recipe recipe) {
         getRecord().recipes.set(group, index, recipe);
+        // TODO sync
     }
 
     public static void removeRecipe(String group, int index) {
         getRecord().recipes.remove(group, index);
+        // TODO sync
     }
 
     /**
@@ -48,11 +51,19 @@ public class ControllerClient {
     }
 
     @SubscribeEvent
-    public static void onLogOut(FMLNetworkEvent.ClientDisconnectionFromServerEvent event) {
+    public void onLogOut(FMLNetworkEvent.ClientDisconnectionFromServerEvent event) {
         recordWorld = null;
     }
 
-    public List<Recipe> search(String group, ILabel label, Recipe.enumIoType type) {
-        return getRecord().search(group, label, type);
+    public static List<Recipe> search(String group, ILabel label, Recipe.enumIoType type) {
+        return getRecord().recipes.search(group, label, type);
+    }
+
+    public static User.Recent getRecent() {
+        return getRecord().recent;
+    }
+
+    public static void setRecent(ILabel label) {
+        getRecord().recent.push(label);  // no need to sync because client only
     }
 }

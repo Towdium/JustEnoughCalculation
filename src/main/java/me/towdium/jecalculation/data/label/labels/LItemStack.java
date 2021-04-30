@@ -16,28 +16,28 @@ import java.util.List;
  * Date:   8/11/17.
  */
 @ParametersAreNonnullByDefault
-public class LabelItemStack extends LabelSimpleAmount {
-    public static final String IDENTIFIER = "oreDict";
+public class LItemStack extends LabelSimpleAmount {
+    public static final String IDENTIFIER = "itemStack";
     public static final String KEY_STACK = "stack";
 
     ItemStack itemStack;
 
-    public LabelItemStack(ItemStack is) {
+    public LItemStack(ItemStack is) {
         this(is, is.stackSize);
     }
 
     // I will copy it!
-    public LabelItemStack(ItemStack is, int amount) {
+    public LItemStack(ItemStack is, int amount) {
         super(amount);
         itemStack = is.copy();
     }
 
-    public LabelItemStack(NBTTagCompound nbt) {
+    public LItemStack(NBTTagCompound nbt) {
         super(nbt);
         itemStack = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag(KEY_STACK));
     }
 
-    private LabelItemStack(LabelItemStack lis) {
+    private LItemStack(LItemStack lis) {
         super(lis);
         itemStack = lis.itemStack;
     }
@@ -57,8 +57,13 @@ public class LabelItemStack extends LabelSimpleAmount {
     }
 
     @Override
+    public String getIdentifier() {
+        return IDENTIFIER;
+    }
+
+    @Override
     public ILabel copy() {
-        return new LabelItemStack(this);
+        return new LItemStack(this);
     }
 
     @Override
@@ -77,9 +82,11 @@ public class LabelItemStack extends LabelSimpleAmount {
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof LabelItemStack
-               && itemStack.equals(((LabelItemStack) obj).itemStack) && amount == ((LabelItemStack) obj).amount;
+        return obj instanceof LItemStack
+               && ItemStack.areItemStacksEqual(itemStack, ((LItemStack) obj).itemStack)
+               && amount == ((LItemStack) obj).amount;
     }
+
 
     @Override
     public int hashCode() {

@@ -1,14 +1,15 @@
 package me.towdium.jecalculation.data.structure;
 
 import me.towdium.jecalculation.data.label.ILabel;
-import me.towdium.jecalculation.data.structure.Recipe;
-import me.towdium.jecalculation.polyfill.Polyfill;
+import me.towdium.jecalculation.polyfill.NBTHelper;
 import me.towdium.jecalculation.utils.Utilities;
-import me.towdium.jecalculation.utils.wrappers.Pair;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -23,31 +24,23 @@ public class User {
     public static final String KEY_RECENT = "recent";
 
     public Recipes recipes;
-    public Recent recents;
+    public Recent recent; // client mode only
 
     public User() {
         recipes = new Recipes();
-        recents = new Recent();
+        recent = new Recent();
     }
 
     public User(NBTTagCompound nbt) {
         recipes = new Recipes(nbt.getTagList(KEY_RECIPE, 10));
-        recents = new Recent(nbt.getTagList(KEY_RECENT, 10));
+        recent = new Recent(nbt.getTagList(KEY_RECENT, 10));
     }
 
     public NBTTagCompound serialize() {
         NBTTagCompound ret = new NBTTagCompound();
         ret.setTag(KEY_RECIPE, recipes.serialize());
-        ret.setTag(KEY_RECENT, recents.serialize());
+        ret.setTag(KEY_RECENT, recent.serialize());
         return ret;
-    }
-
-    public List<Recipe> search(String group, ILabel label, Recipe.enumIoType type) {
-        Utilities.INDListBuilder<Recipe> builder = new Utilities.INDListBuilder<>();
-        IntStream.range(0, type.getSize()).forEach(i -> recipes.get(group).ifPresent(rs -> rs.forEach(r -> {
-            ILabel.MERGER.merge(label, r.getLabel(type)[i], true).ifPresent(l -> builder.add(r));
-        })));
-        return builder.build();
     }
 
     public static class Recipes {
@@ -60,13 +53,15 @@ public class User {
         }
 
         public Recipes(NBTTagList nbt) {
-            StreamSupport.stream(Polyfill.spliterator(nbt), false).filter(g -> g instanceof NBTTagCompound).forEach(g -> {
-                NBTTagCompound group = (NBTTagCompound) g;
-                String name = group.getString(KEY_NAME);
-                NBTTagList recipes = group.getTagList(KEY_CONTENT, 10);
-                StreamSupport.stream(Polyfill.spliterator(recipes), false).filter(r -> r instanceof NBTTagCompound)
-                             .map(r -> (NBTTagCompound) r).forEach(r -> add(name, new Recipe(r)));
-            });
+            StreamSupport.stream(NBTHelper.spliterator(nbt), false).filter(g -> g instanceof NBTTagCompound)
+                         .forEach(g -> {
+                             NBTTagCompound group = (NBTTagCompound) g;
+                             String name = group.getString(KEY_NAME);
+                             NBTTagList recipes = group.getTagList(KEY_CONTENT, 10);
+                             StreamSupport.stream(NBTHelper.spliterator(recipes), false)
+                                          .filter(r -> r instanceof NBTTagCompound).map(r -> (NBTTagCompound) r)
+                                          .forEach(r -> add(name, new Recipe(r)));
+                         });
         }
 
         public void add(String group, Recipe recipe) {
@@ -80,15 +75,21 @@ public class User {
         public void set(String group, int index, Recipe recipe) {
             records.get(group).orElseGet(() -> {
                 throw new RuntimeException("Group not found: " + group + ".");
-            })
-                   .set(index, recipe);
+            }).set(index, recipe);
         }
 
         public void remove(String group, int index) {
             records.get(group).orElseGet(() -> {
                 throw new RuntimeException("Group not found: " + group + ".");
-            })
-                   .remove(index);
+            }).remove(index);
+        }
+
+        public List<Recipe> search(String group, ILabel label, Recipe.enumIoType type) {
+            HashSet<Recipe> set = new HashSet<>();
+            IntStream.range(0, type.getSize()).forEach(i -> get(group).ifPresent(rs -> rs.forEach(r -> {
+                ILabel.MERGER.merge(label, r.getLabel(type)[i], true).ifPresent(l -> set.add(r));
+            })));
+            return new ArrayList<>(set);
         }
 
         public void forEach(BiConsumer<String, List<Recipe>> consumer) {
@@ -115,9 +116,10 @@ public class User {
 
     public static class Recent {
         Utilities.Recent<ILabel> record = new Utilities.Recent<>(9);
+        public static final String IDENTIFIER = "recent";
 
         public Recent(NBTTagList nbt) {
-            List<ILabel> ls = StreamSupport.stream(Polyfill.spliterator(nbt), false)
+            List<ILabel> ls = StreamSupport.stream(NBTHelper.spliterator(nbt), false)
                                            .filter(n -> n instanceof NBTTagCompound)
                                            .map(n -> ILabel.DESERIALIZER.deserialize((NBTTagCompound) n))
                                            .collect(Collectors.toList());
@@ -136,8 +138,7 @@ public class User {
         }
 
         public List<ILabel> getRecords() {
-            List<ILabel> labels = record.toList();
-            return labels.subList(1, labels.size());
+            return record.toList();
         }
 
         public NBTTagList serialize() {

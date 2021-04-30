@@ -12,7 +12,7 @@ import java.util.List;
  * Date:   8/10/17.
  */
 @ParametersAreNonnullByDefault
-public interface SubCommand {
+public interface ISubCommand {
     String getName();
 
     String getUsage(ICommandSender sender);

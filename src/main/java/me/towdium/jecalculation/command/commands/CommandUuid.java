@@ -1,10 +1,8 @@
 package me.towdium.jecalculation.command.commands;
 
-import me.towdium.jecalculation.command.SubCommand;
+import me.towdium.jecalculation.command.ISubCommand;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.Entity;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -14,7 +12,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * Date:   17-10-15.
  */
 @ParametersAreNonnullByDefault
-public class CommandUuid implements SubCommand {
+public class CommandUuid implements ISubCommand {
     @Override
     public String getName() {
         return "uuid";
@@ -27,7 +25,7 @@ public class CommandUuid implements SubCommand {
 
 
     @Override
-    public void execute(ICommandSender sender, String[] args) throws CommandException {
+    public void execute(ICommandSender sender, String[] args) {
         sender.addChatMessage(new ChatComponentText(sender.getCommandSenderName()));
     }
 }

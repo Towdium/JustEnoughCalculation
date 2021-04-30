@@ -10,6 +10,7 @@ import cpw.mods.fml.common.network.NetworkCheckHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
+import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.command.JecaCommand;
 import me.towdium.jecalculation.nei.NEIPlugin;
 import me.towdium.jecalculation.network.IProxy;

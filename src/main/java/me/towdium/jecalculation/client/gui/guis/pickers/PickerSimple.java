@@ -6,8 +6,8 @@ import me.towdium.jecalculation.client.gui.IWPicker;
 import me.towdium.jecalculation.client.gui.Resource;
 import me.towdium.jecalculation.client.gui.drawables.*;
 import me.towdium.jecalculation.data.label.ILabel;
-import me.towdium.jecalculation.data.label.labels.LabelFluidStack;
-import me.towdium.jecalculation.data.label.labels.LabelOreDict;
+import me.towdium.jecalculation.data.label.labels.LFluidStack;
+import me.towdium.jecalculation.data.label.labels.LOreDict;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -39,14 +39,14 @@ public class PickerSimple extends IWPicker.Simple {
     public static class FluidStack extends PickerSimple {
         public FluidStack() {
             super(FluidRegistry.getRegisteredFluids().entrySet().stream()
-                            .map(e -> new LabelFluidStack(e.getValue(), 1000)).collect(Collectors.toList()),
+                               .map(e -> new LFluidStack(e.getValue(), 1000)).collect(Collectors.toList()),
                   "picker_fluid_stack");
         }
     }
 
     public static class OreDict extends PickerSimple {
         public OreDict() {
-            super(Arrays.stream(OreDictionary.getOreNames()).map(LabelOreDict::new).collect(Collectors.toList()),
+            super(Arrays.stream(OreDictionary.getOreNames()).map(LOreDict::new).collect(Collectors.toList()),
                   "picker_ore_dict");
         }
     }

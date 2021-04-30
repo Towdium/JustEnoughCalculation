@@ -15,17 +15,23 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * Date:   17-9-28.
  */
 @ParametersAreNonnullByDefault
-public class LabelUniversal extends LabelSimpleAmount {
+public class LString extends LabelSimpleAmount {
     public static final String KEY_NAME = "name";
+    public static final String IDENTIFIER = "string";
 
     String name;
 
-    public LabelUniversal(String name, int amount) {
+    public LString(NBTTagCompound tag) {
+        super(tag);
+        this.name = tag.getString(KEY_NAME);
+    }
+
+    public LString(String name, int amount) {
         super(amount);
         this.name = name;
     }
 
-    public LabelUniversal(LabelUniversal lu) {
+    public LString(LString lu) {
         super(lu);
         name = lu.name;
     }
@@ -37,8 +43,13 @@ public class LabelUniversal extends LabelSimpleAmount {
     }
 
     @Override
+    public String getIdentifier() {
+        return "string";
+    }
+
+    @Override
     public ILabel copy() {
-        return new LabelUniversal(this);
+        return new LString(this);
     }
 
     @Override
@@ -57,8 +68,8 @@ public class LabelUniversal extends LabelSimpleAmount {
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof LabelUniversal
-               && name.equals(((LabelUniversal) obj).name) && amount == ((LabelUniversal) obj).amount;
+        return obj instanceof LString
+               && name.equals(((LString) obj).name) && amount == ((LString) obj).amount;
     }
 
     @Override

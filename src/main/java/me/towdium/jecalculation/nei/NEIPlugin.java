@@ -5,8 +5,6 @@ import me.towdium.jecalculation.data.label.ILabel;
 import net.minecraft.item.ItemStack;
 
 public class NEIPlugin {
-    public static final ILabel.RegistryConverterItem registryItem = ILabel.RegistryConverterItem.INSTANCE;
-    public static final ILabel.RegistryConverterFluid registryFluid = ILabel.RegistryConverterFluid.INSTANCE;
 
     public static void init() {
         GuiContainerManager.addTooltipHandler(new JecaTooltipHandler());
@@ -16,7 +14,8 @@ public class NEIPlugin {
 
     public static ILabel getLabelUnderMouse() {
         if (NEIPlugin.currentItemStack == null) return ILabel.EMPTY;
-        else return registryItem.toLabel(NEIPlugin.currentItemStack);
+        else return ILabel.CONVERTER_ITEM.toLabel(NEIPlugin.currentItemStack);
+        // else if (o instanceof FluidStack) return ILabel.CONVERTER_FLUID.toLabel(((FluidStack) o));
     }
 
     public static void setLabelUnderMouse(ItemStack itemStack) {

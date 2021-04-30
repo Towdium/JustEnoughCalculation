@@ -19,7 +19,7 @@ import net.minecraftforge.client.event.GuiScreenEvent;
  */
 public class InputEventHandler {
     @SideOnly(Side.CLIENT)
-    @SubscribeEvent
+    @SubscribeEvent(receiveCanceled = true)
     public void onKey(InputEvent.KeyInputEvent event) {
         if (ProxyClient.keyOpenGui.isPressed()) {
             if (JustEnoughCalculation.side == JustEnoughCalculation.enumSide.CLIENT) JecGui.displayGui(new GuiCalculator());
@@ -27,7 +27,7 @@ public class InputEventHandler {
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.HIGH)
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onMouseClick(GuiScreenEvent.ActionPerformedEvent.Pre event) {
         if (event.gui instanceof JecGui) {
             JustEnoughCalculation.logger.info("on mouse click in gui screen event");

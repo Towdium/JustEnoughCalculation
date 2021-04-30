@@ -5,8 +5,17 @@ import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.client.gui.JecGui;
 import me.towdium.jecalculation.client.gui.Resource;
 import me.towdium.jecalculation.client.gui.drawables.*;
+import me.towdium.jecalculation.data.label.ILabel;
+import me.towdium.jecalculation.data.structure.User;
+import me.towdium.jecalculation.event.handlers.ControllerClient;
+import me.towdium.jecalculation.item.ItemCalculator;
+import me.towdium.jecalculation.utils.Utilities;
+import net.minecraft.client.Minecraft;
+import net.minecraft.item.ItemStack;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+
+import java.util.Optional;
 
 import static me.towdium.jecalculation.client.gui.drawables.WLabel.enumMode.*;
 
@@ -17,6 +26,10 @@ import static me.towdium.jecalculation.client.gui.drawables.WLabel.enumMode.*;
 @ParametersAreNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class GuiCalculator extends WContainer {
+    WLabelGroup wRecent = new WLabelGroup(7, 31, 8, 1, PICKER);
+    User.Recent recent;
+
+
     public GuiCalculator() {
         add(new WPanel());
         add(new WTextField(61, 7, 64));
@@ -29,10 +42,25 @@ public class GuiCalculator extends WContainer {
                     .setListenerLeft(() -> JecGui.displayGui(true, true, new GuiRecipe())));
         add(new WButtonIcon(149, 7, 20, 20, Resource.BTN_SEARCH_N, Resource.BTN_SEARCH_F, "calculator.search"));
         add(new WLabelGroup(7, 87, 9, 4, RESULT));
-        add(new WLabelGroup(7, 31, 8, 1, PICKER));
-        add(new WLabel(31, 7, 20, 20, SELECTOR));
+        add(wRecent);
+        add(new WLabel(31, 7, 20, 20, SELECTOR).setLsnrUpdate(this::setRecent));
         add(new WLine(52));
         add(new WIcon(151, 31, 18, 18, Resource.ICN_RECENT_N, Resource.ICN_RECENT_F, "calculator.history"));
         add(new WSwitcher(7, 56, 162, 5));
+        Optional<ItemStack> ois = getStack();
+        recent = ois.map(is -> new User.Recent(Utilities.getTag(is).getTagList(User.Recent.IDENTIFIER, 9)))
+                    .orElseGet(ControllerClient::getRecent);
+    }
+
+    void setRecent(ILabel label) {
+        recent.push(label);
+        Optional<ItemStack> ois = getStack();
+        ois.ifPresent(is -> Utilities.getTag(is).setTag(User.Recent.IDENTIFIER, recent.serialize()));
+        wRecent.setLabel(recent.getRecords().subList(1, recent.getRecords().size()), 0);
+    }
+
+    Optional<ItemStack> getStack() {
+        ItemStack is = Minecraft.getMinecraft().thePlayer.inventory.getCurrentItem();
+        return Optional.ofNullable(is.getItem() instanceof ItemCalculator ? is : null);
     }
 }

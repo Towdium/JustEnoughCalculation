@@ -9,7 +9,6 @@ import me.towdium.jecalculation.data.label.ILabel;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,8 +26,8 @@ public class GuiDisambiguation extends IWPicker.Simple {
     public GuiDisambiguation(List<List<ItemStack>> record) {
         lsUp = new WLabelScroll(25, 48, 7, 3, WLabel.enumMode.PICKER, true);
         lsDown = new WLabelScroll(25, 105, 7, 3, WLabel.enumMode.PICKER, true);
-        this.record = new ArrayList<>(record.stream().filter(iss -> !ILabel.CONVERTER_ITEM.toLabel(iss).isEmpty())
-                                            .collect(Collectors.toSet()));
+        this.record = record.stream().filter(iss -> !ILabel.CONVERTER_ITEM.toLabel(iss).isEmpty()).distinct()
+                            .collect(Collectors.toList());
         WTextField tf = new WTextField(25, 24, 90);
 
         add(new WPanel());

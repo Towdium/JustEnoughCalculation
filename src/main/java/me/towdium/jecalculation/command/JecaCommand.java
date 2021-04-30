@@ -32,7 +32,7 @@ public class JecaCommand extends CommandBase {
         if (args.length == 0 || args[0].toLowerCase().equals("help")) {
             Commands.commandHelp.execute(sender, cut(args));
         } else {
-            SubCommand cmd = Commands.commands.get(args[0].toLowerCase());
+            ISubCommand cmd = Commands.commands.get(args[0].toLowerCase());
             if (cmd != null) {
                 cmd.execute(sender, cut(args));
             } else {
@@ -64,10 +64,10 @@ public class JecaCommand extends CommandBase {
         if (args.length == 1) {
             return getListOfStringsFromIterableMatchingLastWord(args, Commands.commands.keySet());
         } else {
-            Single<SubCommand> sub = new Single<>(null);
+            Single<ISubCommand> sub = new Single<>(null);
             Commands.commands.values().stream().filter(c -> c.getName().equals(cmd))
                     .findFirst().ifPresent(sub::push);
-            return sub.value == null ? sub.value.getTabCompletions(sender, cut(args))
+            return sub.value != null ? sub.value.getTabCompletions(sender, cut(args))
                     : Collections.emptyList();
         }
     }
