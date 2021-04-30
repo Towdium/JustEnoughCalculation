@@ -1,6 +1,5 @@
 package me.towdium.jecalculation.event;
 
-import me.towdium.jecalculation.data.ControllerClient;
 import me.towdium.jecalculation.event.handlers.InputEventHandler;
 
 import java.util.ArrayList;

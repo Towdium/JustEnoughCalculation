@@ -2,17 +2,14 @@ package me.towdium.jecalculation.network;
 
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
-import me.towdium.jecalculation.data.ControllerClient;
+import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.event.Handlers;
-import me.towdium.jecalculation.gui.JecaGui;
-import me.towdium.jecalculation.gui.guis.GuiCalculator;
 import me.towdium.jecalculation.command.JecaCommand;
 import me.towdium.jecalculation.data.label.ILabel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.ClientCommandHandler;
-import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
 
 public class ClientHandler {
@@ -27,7 +24,7 @@ public class ClientHandler {
         ILabel.initServer();
         ClientCommandHandler.instance.registerCommand(new JecaCommand());
         ILabel.initClient();
-        ControllerClient.loadFromLocal();
+        Controller.loadFromLocal();
     }
 
     public void init() {

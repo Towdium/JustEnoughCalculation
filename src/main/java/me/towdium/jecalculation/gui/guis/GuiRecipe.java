@@ -2,9 +2,9 @@ package me.towdium.jecalculation.gui.guis;
 
 import codechicken.nei.recipe.IRecipeHandler;
 import me.towdium.jecalculation.algorithm.CostList;
+import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.structure.Recipe;
-import me.towdium.jecalculation.data.ControllerClient;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.gui.drawables.*;
@@ -26,11 +26,11 @@ import java.util.stream.Stream;
 public class GuiRecipe extends WContainer {
     Pair<String, Integer> dest;
     HashMap<Integer, List<ILabel>> disambiguation = new HashMap<>();
-    WSwitcher switcherGroup = new WSwitcher(7, 7, 162, ControllerClient.getGroups());
+    WSwitcher switcherGroup = new WSwitcher(7, 7, 162, Controller.getGroups());
     WTextField textField = new WTextField(49, 33, 119);
     WButton buttonCopy = new WButtonIcon(83, 33, 20, 20, Resource.BTN_COPY_N, Resource.BTN_COPY_F,
                                          Resource.BTN_COPY_D, "recipe.copy").setDisabled(true).setListenerLeft(() -> {
-        ControllerClient.addRecipe(switcherGroup.getText(), toRecipe());
+        Controller.addRecipe(switcherGroup.getText(), toRecipe());
         JecaGui.displayParent();
     });
 
@@ -61,13 +61,13 @@ public class GuiRecipe extends WContainer {
     WButton buttonSave = new WButtonIcon(26, 33, 20, 20, Resource.BTN_SAVE_N, Resource.BTN_SAVE_F, "recipe.save")
             .setListenerLeft(() -> {
                 if (dest == null)
-                    ControllerClient.addRecipe(switcherGroup.getText(), toRecipe());
+                    Controller.addRecipe(switcherGroup.getText(), toRecipe());
                 else {
                     if (textField.getText().equals(dest.one))
-                        ControllerClient.setRecipe(dest.one, dest.two, toRecipe());
+                        Controller.setRecipe(dest.one, dest.two, toRecipe());
                     else {
-                        ControllerClient.removeRecipe(dest.one, dest.two);
-                        ControllerClient.addRecipe(switcherGroup.getText(), toRecipe());
+                        Controller.removeRecipe(dest.one, dest.two);
+                        Controller.addRecipe(switcherGroup.getText(), toRecipe());
                     }
                 }
                 JecaGui.displayParent();
@@ -77,7 +77,7 @@ public class GuiRecipe extends WContainer {
             .setListenerLeft(() -> setModeNewGroup(true));
     WButton buttonDel = new WButtonIcon(102, 33, 20, 20, Resource.BTN_NO_N, Resource.BTN_NO_F, Resource.BTN_NO_D,
                                         "recipe.delete").setDisabled(true).setListenerLeft(() -> {
-        ControllerClient.removeRecipe(dest.one, dest.two);
+        Controller.removeRecipe(dest.one, dest.two);
         JecaGui.displayParent();
     });
     WButton buttonYes = new WButtonIcon(7, 33, 20, 20, Resource.BTN_YES_N, Resource.BTN_YES_F, "recipe.confirm")
@@ -93,9 +93,9 @@ public class GuiRecipe extends WContainer {
     public GuiRecipe(String group, int index) {
         this();
         dest = new Pair<>(group, index);
-        Recipe r = ControllerClient.getRecipe(group, index);
+        Recipe r = Controller.getRecipe(group, index);
         fromRecipe(r);
-        switcherGroup.setIndex(ControllerClient.getGroups().indexOf(group));
+        switcherGroup.setIndex(Controller.getGroups().indexOf(group));
         buttonCopy.setDisabled(false);
         buttonDel.setDisabled(false);
     }
@@ -131,56 +131,51 @@ public class GuiRecipe extends WContainer {
         // item disamb raw
         ArrayList<Triple<ILabel, CostList, CostList>> input = new ArrayList<>();
         ArrayList<Triple<ILabel, CostList, CostList>> output = new ArrayList<>();
-        HashMap<Integer, List<ILabel>> disamb = new HashMap<>();
-
-        BiConsumer<ArrayList<Triple<ILabel, CostList, CostList>>, List<ILabel>> merge = (dst, list) -> {
-            if (list.isEmpty())
-                return;
-            dst.stream().filter(p -> {
-                CostList cl = new CostList(list);
-                if (p.three.equals(cl)) {
-                    ILabel.MERGER.merge(p.one, ILabel.CONVERTER.first(list), true).ifPresent(i -> p.one = i.one);
-                    p.two.merge(cl, true);
-                    return true;
-                } else
-                    return false;
-            }).findAny().orElseGet(() -> {
-                Triple<ILabel, CostList, CostList> ret = new Triple<>(ILabel.CONVERTER.first(list), new CostList(list),
-                                                                      new CostList(list));
-                dst.add(ret);
-                return ret;
-            });
-        };
-
-        BiFunction<ArrayList<Triple<ILabel, CostList, CostList>>, Integer, ArrayList<ILabel>> sort = (src, offset) -> {
-            ArrayList<ILabel> ret = new ArrayList<>();
-            for (int i = 0; i < src.size(); i++) {
-                Triple<ILabel, CostList, CostList> p = src.get(i);
-                ret.add(p.one);
-                if (!ILabel.CONVERTER.guess(p.three.getLabels()).isEmpty())
-                    disamb.put(i + offset, p.two.getLabels());
-            }
-            return ret;
-        };
+        disambiguation = new HashMap<>();
 
         // input
         List<ItemStack> itemStacks = recipe.getIngredientStacks(recipeIndex).stream()
                                            .map((positionedStack) -> positionedStack.item).collect(Collectors.toList());
-
-
-        merge.accept(input, itemStacks.stream().map(ILabel.Converter::from).collect(Collectors.toList()));
+        merge(input, itemStacks.stream().map(ILabel.Converter::from).collect(Collectors.toList()));
 
         // output
         ItemStack outputStack = recipe.getResultStack(recipeIndex).item;
-        merge.accept(output, Stream.of(outputStack).map(ILabel.Converter::from).collect(Collectors.toList()));
+        merge(output, Stream.of(outputStack).map(ILabel.Converter::from).collect(Collectors.toList()));
 
-        groupInput.setLabel(sort.apply(input, 0), 0);
-        groupOutput.setLabel(sort.apply(output, 14), 0);
-        disambiguation = disamb;
+        groupInput.setLabel(sort(input, 0, true), 0);
+        groupOutput.setLabel(sort(output, 14, false), 0);
         refresh();
     }
 
-    Recipe toRecipe() {
+    private void merge(ArrayList<Triple<ILabel, CostList, CostList>> dst, List<ILabel> list) {
+        if (list.isEmpty()) return;
+        dst.stream().filter(p -> {
+            CostList cl = new CostList(list);
+            if (p.three.equals(cl)) {
+                ILabel.MERGER.merge(p.one, ILabel.CONVERTER.first(list), true).ifPresent(i -> p.one = i);
+                p.two = p.two.merge(cl, true, true);
+                return true;
+            } else return false;
+        }).findAny().orElseGet(() -> {
+            Triple<ILabel, CostList, CostList> ret = new Triple<>(
+                    ILabel.CONVERTER.first(list), new CostList(list), new CostList(list));
+            dst.add(ret);
+            return ret;
+        });
+    }
+
+    private ArrayList<ILabel> sort(ArrayList<Triple<ILabel, CostList, CostList>> src, int offset, boolean guess) {
+        ArrayList<ILabel> ret = new ArrayList<>();
+        for (int i = 0; i < src.size(); i++) {
+            Triple<ILabel, CostList, CostList> p = src.get(i);
+            ret.add(p.one);
+            if (guess && !ILabel.CONVERTER.guess(p.three.getLabels()).isEmpty())
+                disambiguation.put(i + offset, p.two.getLabels());
+        }
+        return ret;
+    }
+
+    private Recipe toRecipe() {
         return new Recipe(groupInput.getLabels(), groupCatalyst.getLabels(), groupOutput.getLabels());
     }
 

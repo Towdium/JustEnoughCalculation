@@ -30,10 +30,8 @@ public class WTextField implements IWidget {
 
     @Override
     public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
-        boolean flag = xMouse >= textField.xPosition && xMouse < textField.xPosition + textField.width &&
-                       yMouse >= textField.yPosition && yMouse < textField.yPosition + textField.height;
         textField.mouseClicked(xMouse, yMouse, button);
-        return textField.isFocused() && flag && button == 0;
+        return false;
     }
 
     @Override

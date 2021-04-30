@@ -16,6 +16,7 @@ import java.util.List;
 @ParametersAreNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class WContainer implements IWidget {
+    boolean modified = false;
     protected List<IWidget> widgets = new ArrayList<>();
 
     public void add(IWidget w) {
@@ -62,13 +63,4 @@ public class WContainer implements IWidget {
         for (IWidget w : widgets) if (w.onScroll(gui, xMouse, yMouse, diff)) return true;
         return false;
     }
-
-    /*public Optional<WLabel> getLabelAt(int xMouse, int yMouse) {
-        return drawables.stream().map(w -> {
-            if (w instanceof WLabelGroup) return ((WLabelGroup) w).getLabelAt(xMouse, yMouse);
-            else if (w instanceof WLabel) return Optional.ofNullable(
-                    ((WLabel) w).mouseIn(xMouse, yMouse) ? ((WLabel) w) : null);
-            else return Optional.<WLabel>empty();
-        }).filter(Optional::isPresent).findFirst().orElse(Optional.empty());
-    }*/
 }

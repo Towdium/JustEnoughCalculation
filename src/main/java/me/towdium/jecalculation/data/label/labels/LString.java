@@ -48,6 +48,11 @@ public class LString extends ILabel.Impl {
     }
 
     @Override
+    public boolean matches(Object l) {
+        return l instanceof LString && name.equals(((LString) l).name);
+    }
+
+    @Override
     public ILabel copy() {
         return new LString(this);
     }
@@ -64,12 +69,6 @@ public class LString extends ILabel.Impl {
     public void drawLabel(JecaGui gui) {
         gui.drawResource(Resource.LBL_UNIV_B, 0, 0);
         gui.drawResource(Resource.LBL_UNIV_F, 0, 0, (name.hashCode() * 0x131723) & 0xFFFFFF);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof LString
-               && name.equals(((LString) obj).name) && amount == ((LString) obj).amount;
     }
 
     @Override

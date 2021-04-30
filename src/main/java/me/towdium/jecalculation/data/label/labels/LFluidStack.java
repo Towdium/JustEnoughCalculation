@@ -80,6 +80,14 @@ public class LFluidStack extends ILabel.Impl {
     }
 
     @Override
+    public boolean matches(Object l) {
+        if (l instanceof LFluidStack) {
+            LFluidStack lfs = (LFluidStack) l;
+            return (nbt == null ? lfs.nbt == null : nbt.equals(lfs.nbt)) && fluid == lfs.fluid;
+        } else return false;
+    }
+
+    @Override
     public ILabel copy() {
         return new LFluidStack(this);
     }
@@ -88,7 +96,7 @@ public class LFluidStack extends ILabel.Impl {
     public NBTTagCompound toNBTTagCompound() {
         NBTTagCompound ret = super.toNBTTagCompound();
         ret.setString(KEY_FLUID, FluidRegistry.getFluidName(fluid));
-        ret.setTag(KEY_NBT, nbt);
+        if (nbt != null) ret.setTag(KEY_NBT, nbt);
         return ret;
     }
 
@@ -110,12 +118,7 @@ public class LFluidStack extends ILabel.Impl {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return obj instanceof LFluidStack && fluid.equals(((LFluidStack) obj).fluid);
-    }
-
-    @Override
     public int hashCode() {
-        return fluid.hashCode();
+        return fluid.getUnlocalizedName().hashCode() ^ amount ^ (nbt == null ? 0 : nbt.hashCode());
     }
 }

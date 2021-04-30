@@ -55,11 +55,9 @@ public class WLabelScroll extends WContainer {
     public boolean onScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
         boolean in = JecaGui.mouseIn(xPos, yPos, column * 18, row * 18, xMouse, yMouse);
         if (in) {
-            scroll.setLsnrScroll(null);
             float pos = getPos(current - diff);
             scroll.setCurrent(pos);
             update(pos);
-            scroll.setLsnrScroll(this::update);
         }
         return in;
     }
@@ -79,6 +77,7 @@ public class WLabelScroll extends WContainer {
         filtered = labels.stream().filter(l -> Utilities.contains(l.getDisplayName().toLowerCase(), str.toLowerCase()))
                          .collect(Collectors.toList());
         scroll.setCurrent(0);
+        update(0);
         return filtered.size() != 0;
     }
 

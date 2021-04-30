@@ -105,6 +105,10 @@ public class Recipe {
         return ret;
     }
 
+    public boolean matches(ILabel label, enumIoType type) {
+        return Arrays.stream(getLabel(type)).anyMatch(i -> ILabel.MERGER.merge(label, i, true).isPresent());
+    }
+
     public enum enumIoType {
         INPUT, OUTPUT, CATALYST;
 

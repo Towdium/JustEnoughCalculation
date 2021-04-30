@@ -1,11 +1,9 @@
-package me.towdium.jecalculation.data.capacity;
+package me.towdium.jecalculation.data.capability;
 
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.structure.Recipes;
 import net.minecraft.entity.Entity;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
 

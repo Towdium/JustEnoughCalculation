@@ -7,14 +7,13 @@ import cpw.mods.fml.common.gameevent.PlayerEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.JustEnoughCalculation;
-import me.towdium.jecalculation.data.ControllerClient;
+import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.guis.GuiCalculator;
 import me.towdium.jecalculation.network.ClientHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.event.entity.EntityEvent;
 
 /**
  * Author: towdium
@@ -45,7 +44,7 @@ public class InputEventHandler {
     @SubscribeEvent
     public void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {
         JustEnoughCalculation.logger.info("on log out event");
-        ControllerClient.writeToLocal();;
+        Controller.writeToLocal();;
     }
 
 }

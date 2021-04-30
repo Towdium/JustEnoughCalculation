@@ -66,8 +66,7 @@ public class LItemStack extends ILabel.Impl {
             LItemStack lisA = (LItemStack) a;
             LItemStack lisB = (LItemStack) b;
             boolean wildcard = lisA.meta == OreDictionary.WILDCARD_VALUE || lisB.meta == OreDictionary.WILDCARD_VALUE;
-            if ((Objects.equals(lisA.nbt, lisB.nbt)) &&
-                (lisA.meta == lisB.meta || wildcard)) {
+            if ((Objects.equals(lisA.nbt, lisB.nbt)) && (lisA.meta == lisB.meta || wildcard)) {
                 LItemStack ret = new LItemStack(lisA);
                 if (wildcard)
                     ret.meta = OreDictionary.WILDCARD_VALUE;
@@ -102,6 +101,15 @@ public class LItemStack extends ILabel.Impl {
     }
 
     @Override
+    public boolean matches(Object l) {
+        if (l instanceof LItemStack) {
+            LItemStack lis = (LItemStack) l;
+            return (Objects.equals(nbt, lis.nbt)) && meta == lis.meta && item == lis.item;
+        } else
+            return false;
+    }
+
+    @Override
     public ILabel copy() {
         return new LItemStack(this);
     }
@@ -126,16 +134,7 @@ public class LItemStack extends ILabel.Impl {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof LItemStack) {
-            LItemStack lis = (LItemStack) obj;
-            return super.equals(obj) && lis.item == item && lis.meta == meta && Objects.equals(nbt, lis.nbt);
-        } else
-            return false;
-    }
-
-    @Override
     public int hashCode() {
-        return meta ^ item.getUnlocalizedName().hashCode() ^ (nbt == null ? 0 : nbt.hashCode());
+        return (nbt == null ? 0 : nbt.hashCode()) ^ meta ^ item.getUnlocalizedName().hashCode() ^ amount;
     }
 }

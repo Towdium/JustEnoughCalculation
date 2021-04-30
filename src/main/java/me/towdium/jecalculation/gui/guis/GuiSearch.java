@@ -1,7 +1,7 @@
 package me.towdium.jecalculation.gui.guis;
 
 import me.towdium.jecalculation.data.structure.Recipe;
-import me.towdium.jecalculation.data.ControllerClient;
+import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.gui.drawables.*;
@@ -20,7 +20,7 @@ public class GuiSearch extends WContainer {
     public GuiSearch() {
         ArrayList<String> groups = new ArrayList<>();
         groups.add(Utilities.I18n.format("gui.search.all"));
-        groups.addAll(ControllerClient.getGroups());
+        groups.addAll(Controller.getGroups());
         switcherGroup = new WSwitcher(7, 7, 162, groups).setListener(this::refresh);
         labelScroll = new WLabelScroll(7, 51, 8, 6, WLabel.enumMode.PICKER, true);
         add(new WPanel());
@@ -34,7 +34,7 @@ public class GuiSearch extends WContainer {
 
     public void refresh() {
         int iGroup = switcherGroup.getIndex();
-        content = iGroup == 0 ? ControllerClient.getRecipes() : ControllerClient.getRecipes(switcherGroup.getText());
+        content = iGroup == 0 ? Controller.getRecipes() : Controller.getRecipes(switcherGroup.getText());
         labelScroll.setLabels(content.stream().map(i -> i.one.getRep()).collect(Collectors.toCollection(ArrayList::new)));
     }
 }

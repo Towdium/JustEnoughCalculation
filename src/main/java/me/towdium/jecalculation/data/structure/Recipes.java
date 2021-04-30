@@ -7,10 +7,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -98,13 +95,8 @@ public class Recipes {
         return flatStream(group).collect(Collectors.toCollection(ArrayList::new));
     }
 
-    public List<Triple<Recipe, String, Integer>> getRecipes(ILabel label, Recipe.enumIoType type) {
-        return getRecipes(flatStream(), r -> IntStream.range(0, type.getSize()).anyMatch(i ->
-                ILabel.MERGER.merge(label, r.getLabel(type)[i], true).isPresent()));
-    }
-
-    private List<Triple<Recipe, String, Integer>> getRecipes(Stream<Triple<Recipe, String, Integer>> list, Predicate<Recipe> pre) {
-        return list.filter(i -> pre.test(i.one)).collect(Collectors.toCollection(ArrayList::new));
+    public Optional<Recipe> getRecipe(ILabel label, Recipe.enumIoType type) {
+        return flatStream().map(i -> i.one).filter(i -> i.matches(label, type)).findFirst();
     }
 
     public void forEach(BiConsumer<String, List<Recipe>> consumer) {

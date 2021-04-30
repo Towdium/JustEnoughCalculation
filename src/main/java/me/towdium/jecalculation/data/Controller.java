@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -26,7 +27,7 @@ import java.util.stream.Collectors;
  * Date:   17-10-15.
  */
 @SideOnly(Side.CLIENT)
-public class ControllerClient {
+public class Controller {
     public static final String KEY_RECIPES = "recipes";
     public static final String KEY_RECENTS = "recents";
     static Recipes recipesClient;
@@ -71,11 +72,11 @@ public class ControllerClient {
         return getRecord().getRecipes(group);
     }
 
-    public static List<Triple<Recipe, String, Integer>> getRecipes(ILabel label, Recipe.enumIoType type) {
-        return getRecord().getRecipes(label, type);
+    public static Optional<Recipe> getRecipe(ILabel label, Recipe.enumIoType type) {
+        return getRecord().getRecipe(label, type);
     }
 
-    public static List<ILabel> getRecent() {
+    public static List<ILabel> getRecent() { // TODO reduce usage of it since it reads nbt again
         return recentsClient.getRecords();
     }
 

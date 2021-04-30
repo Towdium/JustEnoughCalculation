@@ -54,6 +54,8 @@ public interface ILabel {
 
     ILabel invertAmount();
 
+    int getAmount();
+
     static void initClient() {
         CONVERTER.register(LOreDict::guess);
         EDITOR.register(PickerSimple.FluidStack::new, "fluid_stack", new LFluidStack(1000, FluidRegistry.WATER));
@@ -63,14 +65,6 @@ public interface ILabel {
         MERGER.register("oreDict", "oreDict", LOreDict::mergeOreDict);
     }
 
-    int getAmount();
-
-
-    String getAmountString();
-
-    @SideOnly(Side.CLIENT)
-    String getDisplayName();
-
     static void initServer() {
         DESERIALIZER.register(LFluidStack.IDENTIFIER, LFluidStack::new);
         DESERIALIZER.register(LItemStack.IDENTIFIER, LItemStack::new);
@@ -79,25 +73,25 @@ public interface ILabel {
         DESERIALIZER.register(LEmpty.IDENTIFIER, i -> EMPTY);
     }
 
+    String getAmountString();
+
+    String getDisplayName();
+
     List<String> getToolTip(List<String> existing, boolean detailed);
 
     ILabel copy();
 
     NBTTagCompound toNBTTagCompound();
 
-    void setAmount(int amount);
-
     String getIdentifier();
 
-    @SideOnly(Side.CLIENT)
-    default void drawLabel(JecaGui gui, int xPos, int yPos, boolean center) {
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(center ? xPos - 8 : xPos, center ? yPos - 8 : yPos, 0);
-        drawLabel(gui);
-        GlStateManager.popMatrix();
-    }
+    ILabel setAmount(int amount);
 
-    void drawLabel(JecaGui gui);
+    boolean matches(Object l);
+
+    @SideOnly(Side.CLIENT)
+    void drawLabel(JecaGui gui, int xPos, int yPos, boolean center);
+
 
     /**
      * Since {@link ILabel} merging is bidirectional, it is redundant to
@@ -118,13 +112,14 @@ public interface ILabel {
             functions.add(a, b, func);
         }
 
-        public Optional<Pair<ILabel, ILabel>> merge(ILabel a, ILabel b, boolean add) {
+        public Optional<ILabel> merge(ILabel a, ILabel b, boolean add) {
             Optional<ILabel> ret = functions.get(a.getIdentifier(), b.getIdentifier())
                                             .orElse((x, y, f) -> Optional.empty()).merge(a, b, add);
             if (ret.isPresent() && ret.get() != ILabel.EMPTY && (ret.get() == a || ret.get() == b))
                 throw new RuntimeException("Merger should not modify the given label.");
-            return ret.map(i -> new Pair<>(i, add ? b.copy().invertAmount() : b.copy()));
+            return ret;
         }
+
 
         @FunctionalInterface
         public interface MergerFunction {
@@ -240,6 +235,11 @@ public interface ILabel {
     class LEmpty implements ILabel {
         public static final String IDENTIFIER = "empty";
 
+        @Override
+        public boolean matches(Object l) {
+            return l == this;
+        }
+
         private LEmpty() {
         }
 
@@ -274,9 +274,9 @@ public interface ILabel {
         }
 
         @Override
-        public void setAmount(int amount) {
+        public ILabel setAmount(int amount) {
+            return this;
         }
-
 
         @Override
         public String getAmountString() {
@@ -309,13 +309,18 @@ public interface ILabel {
         }
 
         @Override
-        public void drawLabel(JecaGui gui) {
+        public void drawLabel(JecaGui gui, int xPos, int yPos, boolean center) {
         }
     }
 
     abstract class Impl implements ILabel {
         public static final String KEY_AMOUNT = "amount";
         protected int amount;
+
+        @Override
+        public String toString() {
+            return getDisplayName() + 'x' + getAmount();
+        }
 
         public Impl(int amount) {
             this.amount = amount;
@@ -331,6 +336,14 @@ public interface ILabel {
 
         protected int getMultiplier() {
             return 1;
+        }
+
+        @Override
+        public void drawLabel(JecaGui gui, int xPos, int yPos, boolean center) {
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(center ? xPos - 8 : xPos, center ? yPos - 8 : yPos, 0);
+            drawLabel(gui);
+            GlStateManager.popMatrix();
         }
 
         @Override
@@ -373,7 +386,7 @@ public interface ILabel {
         @SideOnly(Side.CLIENT)
         public List<String> getToolTip(List<String> existing, boolean detailed) {
             if (detailed) existing.add(FORMAT_GREY +
-                                       Utilities.I18n.format("label.common.tooltip.amount", Integer.toString(getAmount())));
+                                       Utilities.I18n.format("label.common.tooltip.amount", getAmountString()));
             return existing;
         }
 
@@ -390,8 +403,10 @@ public interface ILabel {
         }
 
         @Override
-        public void setAmount(int amount) {
+        public ILabel setAmount(int amount) {
+            if (amount == 0) return ILabel.EMPTY;
             this.amount = amount;
+            return this;
         }
 
         @Override
@@ -402,7 +417,9 @@ public interface ILabel {
 
         @Override
         public boolean equals(Object obj) {
-            return obj instanceof Impl && amount == ((Impl) obj).amount;
+            return obj instanceof Impl && amount == ((Impl) obj).amount && matches(obj);
         }
+
+        abstract protected void drawLabel(JecaGui gui);
     }
 }

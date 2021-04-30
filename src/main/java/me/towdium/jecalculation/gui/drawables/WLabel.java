@@ -49,8 +49,8 @@ public class WLabel implements IWidget {
 
     public void setLabel(ILabel label) {
         this.label = label;
-        if (mode == enumMode.EDITOR || mode == enumMode.SELECTOR)
-            notifyLsnr();
+//        if (mode == enumMode.EDITOR || mode == enumMode.SELECTOR)
+//            notifyLsnr();
     }
 
     @Override
@@ -58,7 +58,7 @@ public class WLabel implements IWidget {
         gui.drawResourceContinuous(Resource.WGT_SLOT, xPos, yPos, xSize, ySize, 3, 3, 3, 3);
         label.drawLabel(gui, xPos + xSize / 2, yPos + ySize / 2, true);
         if (mode == enumMode.RESULT || mode == enumMode.EDITOR)
-            gui.drawText(xPos + xSize / 2 + 7.5f, yPos + ySize / 2 + 7 -
+            gui.drawText(xPos + xSize / 2.0f + 7.5f, yPos + ySize / 2 + 7 -
                                                   (int) (font.size * gui.getFontRenderer().FONT_HEIGHT), font, label.getAmountString());
         if (mouseIn(xMouse, yMouse)) {
             gui.drawRectangle(xPos + 1, yPos + 1, xSize - 2, ySize - 2, 0x80FFFFFF);
