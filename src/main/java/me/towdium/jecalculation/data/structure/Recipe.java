@@ -3,7 +3,7 @@ package me.towdium.jecalculation.data.structure;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.polyfill.NBTHelper;
 import me.towdium.jecalculation.utils.IllegalPositionException;
-import me.towdium.jecalculation.utils.wrappers.Single;
+import me.towdium.jecalculation.utils.wrappers.Wrapper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
@@ -44,14 +44,15 @@ public class Recipe {
         BiFunction<ILabel[], Integer, ILabel[]> convert = (ls, i) -> {
             ILabel[] ret = new ILabel[i];
             if (ls.length > i) throw new RuntimeException("Too many labels");
-            System.arraycopy(ls, 0, this.input, 0, Math.min(i, ls.length));
+            System.arraycopy(ls, 0, ret, 0, ls.length);
+            for (int j = ls.length; j < i; j++) ret[j] = ILabel.EMPTY;
             return ret;
         };
-        this.input = convert.apply(input, 16);
-        this.catalyst = convert.apply(catalyst, 8);
-        this.output = convert.apply(output, 8);
+        this.input = convert.apply(input, 14);
+        this.catalyst = convert.apply(catalyst, 7);
+        this.output = convert.apply(output, 7);
 
-        Single<Integer> hash = new Single<>(0);
+        Wrapper<Integer> hash = new Wrapper<>(0);
         Consumer<ILabel[]> hasher = (ls) -> Arrays.stream(ls)
                                                   .filter(Objects::nonNull).forEach(i -> hash.value ^= i.hashCode());
         hasher.accept(input);

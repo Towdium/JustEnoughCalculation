@@ -3,8 +3,8 @@ package me.towdium.jecalculation.data.label.labels;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.JustEnoughCalculation;
-import me.towdium.jecalculation.client.gui.JecGui;
-import me.towdium.jecalculation.client.gui.Resource;
+import me.towdium.jecalculation.gui.JecGui;
+import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.polyfill.mc.client.renderer.GlStateManager;
 import me.towdium.jecalculation.polyfill.mc.util.NonNullList;
@@ -15,6 +15,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,6 +29,8 @@ public class LOreDict extends LabelSimpleAmount {
     public static final String IDENTIFIER = "oreDict";
     public static final String KEY_NAME = "name";
     public static final String KEY_AMOUNT = "amount";
+    public static final boolean MODE_FORCE = false;
+
 
     static {
 
@@ -57,17 +60,34 @@ public class LOreDict extends LabelSimpleAmount {
     @Override
     @SideOnly(Side.CLIENT)
     public String getDisplayName() {
-        return Utilities.L18n.format("label.ore_dict.name", name);
+        return Utilities.I18n.format("label.ore_dict.name", name);
     }
 
-    public static List<ILabel> guess(List<ItemStack> iss) {
-        HashSet<Integer> ids = new HashSet<>();
-        for (int i : OreDictionary.getOreIDs(iss.get(0))) ids.add(i);
-        iss.forEach(is -> {
-            for (int i : OreDictionary.getOreIDs(is))
-                if (!ids.contains(i)) ids.remove(i);
-        });
-        return ids.stream().map(i -> new LOreDict(OreDictionary.getOreName(i))).collect(Collectors.toList());
+    public static List<ILabel> guess(List<ILabel> iss) {
+        ILabel l = iss.get(0);
+        if ((MODE_FORCE || iss.size() > 1) && l instanceof LItemStack) {
+            HashSet<Integer> ids = new HashSet<>();
+            int amount = ((LItemStack) l).getAmount();
+            for (int i : OreDictionary.getOreIDs(((LItemStack) l).itemStack))
+                if (check(i, iss)) ids.add(i);
+            return ids.stream().map(i -> new LOreDict(OreDictionary.getOreName(i), amount))
+                      .collect(Collectors.toList());
+        } else return new ArrayList<>();
+    }
+
+    // check labels in the list suitable for the ore id
+    private static boolean check(int id, List<ILabel> labels) {
+        List<ItemStack> ores = OreDictionary.getOres(OreDictionary.getOreName(id));
+        for (ItemStack ore : ores) if (!check(ore, labels)) return false;
+        return true;
+    }
+
+    // check the recorded ore item is in the list
+    private static boolean check(ItemStack ore, List<ILabel> labels) {
+        for (ILabel label : labels)
+            if (label instanceof LItemStack && OreDictionary.itemMatches(ore, ((LItemStack) label).itemStack, false))
+                return true;
+        return false;
     }
 
     @Override

@@ -1,7 +1,7 @@
 package me.towdium.jecalculation.nei;
 
 import codechicken.nei.guihook.IContainerTooltipHandler;
-import me.towdium.jecalculation.client.gui.JecGui;
+import me.towdium.jecalculation.gui.JecGui;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.item.ItemStack;
 

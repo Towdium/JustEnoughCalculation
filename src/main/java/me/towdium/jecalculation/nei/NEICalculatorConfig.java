@@ -3,7 +3,7 @@ package me.towdium.jecalculation.nei;
 import codechicken.nei.api.API;
 import codechicken.nei.api.IConfigureNEI;
 import me.towdium.jecalculation.JustEnoughCalculation;
-import me.towdium.jecalculation.client.gui.JecGui;
+import me.towdium.jecalculation.gui.JecGui;
 
 public class NEICalculatorConfig implements IConfigureNEI {
 

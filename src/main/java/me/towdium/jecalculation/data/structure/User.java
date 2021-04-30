@@ -3,6 +3,7 @@ package me.towdium.jecalculation.data.structure;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.polyfill.NBTHelper;
 import me.towdium.jecalculation.utils.Utilities;
+import me.towdium.jecalculation.utils.wrappers.Pair;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
@@ -13,6 +14,7 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
@@ -76,6 +78,14 @@ public class User {
             records.get(group).orElseGet(() -> {
                 throw new RuntimeException("Group not found: " + group + ".");
             }).set(index, recipe);
+        }
+
+        public int size() {
+            return records.size();
+        }
+
+        public Stream<Pair<String, List<Recipe>>> stream() {
+            return records.stream();
         }
 
         public void remove(String group, int index) {

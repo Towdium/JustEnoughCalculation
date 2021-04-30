@@ -2,7 +2,7 @@ package me.towdium.jecalculation.data.label.labels;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import me.towdium.jecalculation.client.gui.JecGui;
+import me.towdium.jecalculation.gui.JecGui;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.item.ItemStack;

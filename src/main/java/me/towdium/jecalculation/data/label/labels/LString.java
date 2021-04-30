@@ -2,8 +2,8 @@ package me.towdium.jecalculation.data.label.labels;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import me.towdium.jecalculation.client.gui.JecGui;
-import me.towdium.jecalculation.client.gui.Resource;
+import me.towdium.jecalculation.gui.JecGui;
+import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.nbt.NBTTagCompound;
@@ -31,15 +31,15 @@ public class LString extends LabelSimpleAmount {
         this.name = name;
     }
 
-    public LString(LString lu) {
-        super(lu);
-        name = lu.name;
+    public LString(LString label) {
+        super(label);
+        name = label.name;
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public String getDisplayName() {
-        return Utilities.L18n.format("label.universal.name", name);
+        return Utilities.I18n.format("label.universal.name", name);
     }
 
     @Override

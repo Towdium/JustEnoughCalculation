@@ -14,8 +14,7 @@ public class NEIPlugin {
 
     public static ILabel getLabelUnderMouse() {
         if (NEIPlugin.currentItemStack == null) return ILabel.EMPTY;
-        else return ILabel.CONVERTER_ITEM.toLabel(NEIPlugin.currentItemStack);
-        // else if (o instanceof FluidStack) return ILabel.CONVERTER_FLUID.toLabel(((FluidStack) o));
+        return ILabel.Converter.from(NEIPlugin.currentItemStack);
     }
 
     public static void setLabelUnderMouse(ItemStack itemStack) {

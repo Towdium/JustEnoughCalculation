@@ -1,16 +1,17 @@
 package me.towdium.jecalculation.utils;
 
-import com.google.common.collect.ImmutableList;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.JustEnoughCalculation;
+import me.towdium.jecalculation.item.ItemCalculator;
 import me.towdium.jecalculation.polyfill.NBTHelper;
 import me.towdium.jecalculation.utils.wrappers.Pair;
-import me.towdium.jecalculation.utils.wrappers.Single;
-import net.minecraft.client.resources.I18n;
+import me.towdium.jecalculation.utils.wrappers.Wrapper;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
@@ -42,6 +43,12 @@ public class Utilities {
             String modName = modEntry.getValue().getName();
             dictionary.put(lowercaseId, modName);
         }
+    }
+
+    public static boolean stackEqual(ItemStack a, ItemStack b) {
+        return a.getItem() == b.getItem() && a.getItemDamage() == b.getItemDamage() &&
+               ((a.getTagCompound() == null && b.getTagCompound() == null) ||
+                (a.getTagCompound() != null && a.getTagCompound().equals(b.getTagCompound())));
     }
 
     // FLOAT FORMATTING
@@ -97,6 +104,17 @@ public class Utilities {
 
     public static boolean contains(String s1, String s2) {
         return s1.contains(s2);
+    }
+
+    public static Optional<ItemStack> getStack() {
+        InventoryPlayer inv = Minecraft.getMinecraft().thePlayer.inventory;
+        ItemStack is = inv.getCurrentItem();
+        if (is.getItem() instanceof ItemCalculator) return Optional.of(is);
+        return Optional.empty();
+    }
+
+    public static void setStack(ItemStack is) {
+
     }
 
     public static class Timer {
@@ -204,7 +222,7 @@ public class Utilities {
         public Optional<R> get(T a, T b) {
             int ah = a.hashCode();
             int bh = b.hashCode();
-            Single<R> ret = new Single<>(null);
+            Wrapper<R> ret = new Wrapper<>(null);
             if (ah == bh)
                 ret.push(data.get(new Pair<>(a, b))).push(data.get(new Pair<>(b, a)));
             else
@@ -214,10 +232,10 @@ public class Utilities {
     }
 
     @SideOnly(Side.CLIENT)
-    public static class L18n {
+    public static class I18n {
         public static Pair<String, Boolean> search(String translateKey, Object... parameters) {
             Pair<String, Boolean> ret = new Pair<>(null, null);
-            String buffer = I18n.format(translateKey, parameters);
+            String buffer = net.minecraft.client.resources.I18n.format(translateKey, parameters);
             ret.two = !buffer.equals(translateKey);
             buffer = StringEscapeUtils.unescapeJava(buffer);
             ret.one = buffer.replace("\t", "    ");
@@ -255,7 +273,7 @@ public class Utilities {
             return (List<T>) data.clone();
         }
     }
-    
+
     public static class OrderedHashMap<K, V> {
         public HashMap<K, Integer> index = new HashMap<>();
         public List<Pair<K, V>> value = new ArrayList<>();
@@ -290,6 +308,14 @@ public class Utilities {
 
         public void forEach(BiConsumer<K, V> func) {
             value.forEach(p -> func.accept(p.one, p.two));
+        }
+
+        public Stream<Pair<K, V>> stream() {
+            return value.stream();
+        }
+
+        public int size() {
+            return value.size();
         }
     }
 }

@@ -5,8 +5,8 @@ import codechicken.nei.recipe.IRecipeHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.JustEnoughCalculation;
-import me.towdium.jecalculation.client.gui.JecGui;
-import me.towdium.jecalculation.client.gui.guis.GuiRecipe;
+import me.towdium.jecalculation.gui.JecGui;
+import me.towdium.jecalculation.gui.guis.GuiRecipe;
 import net.minecraft.client.gui.inventory.GuiContainer;
 
 @SideOnly(Side.CLIENT)

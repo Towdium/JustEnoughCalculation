@@ -1,15 +1,10 @@
 package me.towdium.jecalculation.network;
 
 import cpw.mods.fml.client.registry.ClientRegistry;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.registry.GameRegistry;
-import me.towdium.jecalculation.JustEnoughCalculation;
-import me.towdium.jecalculation.client.gui.JecGui;
-import me.towdium.jecalculation.client.gui.guis.GuiCalculator;
+import me.towdium.jecalculation.gui.JecGui;
+import me.towdium.jecalculation.gui.guis.GuiCalculator;
 import me.towdium.jecalculation.command.JecaCommand;
 import me.towdium.jecalculation.data.label.ILabel;
-import me.towdium.jecalculation.event.Handlers;
-import me.towdium.jecalculation.item.ItemCalculator;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.client.ClientCommandHandler;
 import org.lwjgl.input.Keyboard;
