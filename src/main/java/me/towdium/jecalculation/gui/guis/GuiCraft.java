@@ -201,6 +201,7 @@ public class GuiCraft extends WContainer implements IGui {
                 .map(i -> i.matches(l))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
+                .map(ILabel::copy)
                 .collect(Collectors.toList());
     }
 
