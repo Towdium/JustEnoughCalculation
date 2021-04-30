@@ -2,58 +2,98 @@ package me.towdium.jecalculation.data.label.labels;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.data.label.ILabel;
+import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.utils.Utilities;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.oredict.OreDictionary;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Author: towdium
  * Date:   8/11/17.
  */
 @ParametersAreNonnullByDefault
-public class LItemStack extends LabelSimpleAmount {
+public class LItemStack extends ILabel.Impl {
     public static final String IDENTIFIER = "itemStack";
-    public static final String KEY_STACK = "stack";
+    public static final String KEY_ITEM = "item";
+    public static final String KEY_META = "meta";
+    public static final String KEY_NBT = "nbt";
 
-    ItemStack itemStack;
+    Item item;
+    int meta;
+    NBTTagCompound nbt;
+    transient ItemStack temp;
 
-    public LItemStack(ItemStack is) {
-        this(is, is.stackSize);
+    public LItemStack(int amount, Item item, int meta, @Nullable NBTTagCompound nbt) {
+        super(amount);
+        this.item = item;
+        this.meta = meta;
+        this.nbt = nbt == null ? null : (NBTTagCompound) nbt.copy();
+        temp = new ItemStack(item, 1, meta);
+        temp.setTagCompound(nbt);
     }
 
-    // I will copy it!
-    public LItemStack(ItemStack is, int amount) {
-        super(amount);
-        itemStack = is.copy();
+    // Convert from itemStack
+    public LItemStack(ItemStack is) {
+        this(is.stackSize, is.getItem(), is.getItemDamage(), is.getTagCompound());
     }
 
     public LItemStack(NBTTagCompound nbt) {
-        super(nbt);
-        itemStack = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag(KEY_STACK));
+        this(nbt.getInteger(KEY_AMOUNT), Objects.requireNonNull(Item.getItemById(nbt.getInteger(KEY_ITEM))),
+             nbt.getInteger(KEY_META), nbt.hasKey(KEY_NBT) ? nbt.getCompoundTag(KEY_NBT) : null);
     }
 
     private LItemStack(LItemStack lis) {
         super(lis);
-        itemStack = lis.itemStack;
+        item = lis.item;
+        meta = lis.meta;
+        nbt = lis.nbt;
+        temp = new ItemStack(item, 1, meta);
+        temp.setTagCompound(nbt);
+    }
+
+
+    public static Optional<ILabel> merge(ILabel a, ILabel b, boolean add) {
+        if (a instanceof LItemStack && b instanceof LItemStack) {
+            LItemStack lisA = (LItemStack) a;
+            LItemStack lisB = (LItemStack) b;
+            boolean wildcard = lisA.meta == OreDictionary.WILDCARD_VALUE || lisB.meta == OreDictionary.WILDCARD_VALUE;
+            if ((Objects.equals(lisA.nbt, lisB.nbt)) &&
+                (lisA.meta == lisB.meta || wildcard)) {
+                LItemStack ret = new LItemStack(lisA);
+                if (wildcard)
+                    ret.meta = OreDictionary.WILDCARD_VALUE;
+                ret.amount = add ? lisA.amount + lisB.amount : lisA.amount - lisB.amount;
+                return Optional.of(ret.amount == 0 ? ILabel.EMPTY : ret);
+            }
+        }
+        return Optional.empty();
+    }
+
+    public ItemStack getRep() {
+        return temp;
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public List<String> getToolTip(List<String> existing, boolean detailed) {
         super.getToolTip(existing, detailed);
-        existing.add(FORMAT_BLUE + FORMAT_ITALIC + Utilities.getModName(itemStack));
+        existing.add(FORMAT_BLUE + FORMAT_ITALIC + Utilities.getModName(item));
         return existing;
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public String getDisplayName() {
-        return itemStack.getItem() == null ? "" : itemStack.getDisplayName();
+        return temp.getItem() == null ? "" : temp.getDisplayName();
     }
 
     @Override
@@ -68,33 +108,34 @@ public class LItemStack extends LabelSimpleAmount {
 
     @Override
     public NBTTagCompound toNBTTagCompound() {
-        NBTTagCompound ret = new NBTTagCompound();
-        ret.setTag(KEY_STACK, itemStack.writeToNBT(new NBTTagCompound()));
-        ret.setInteger(KEY_AMOUNT, amount);
+        if (item == null)
+            return ILabel.EMPTY.toNBTTagCompound();
+        int id = Item.getIdFromItem(item);
+        NBTTagCompound ret = super.toNBTTagCompound();
+        ret.setInteger(KEY_META, meta);
+        ret.setInteger(KEY_ITEM, id);
+        if (nbt != null)
+            ret.setTag(KEY_NBT, nbt);
         return ret;
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void drawLabel(JecaGui gui) {
-        gui.drawItemStack(0, 0, itemStack, false);
+        gui.drawItemStack(0, 0, temp, false);
     }
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof LItemStack
-               && ItemStack.areItemStacksEqual(itemStack, ((LItemStack) obj).itemStack)
-               && amount == ((LItemStack) obj).amount;
+        if (obj instanceof LItemStack) {
+            LItemStack lis = (LItemStack) obj;
+            return super.equals(obj) && lis.item == item && lis.meta == meta && Objects.equals(nbt, lis.nbt);
+        } else
+            return false;
     }
-
 
     @Override
     public int hashCode() {
-        return itemStack.getItemDamage() ^ itemStack.getItem().getUnlocalizedName().hashCode() ^ amount
-               ^ (itemStack.getTagCompound() == null ? 0 : itemStack.getTagCompound().hashCode());
-    }
-
-    public ItemStack getItemStack() {
-        return itemStack;
+        return meta ^ item.getUnlocalizedName().hashCode() ^ (nbt == null ? 0 : nbt.hashCode());
     }
 }

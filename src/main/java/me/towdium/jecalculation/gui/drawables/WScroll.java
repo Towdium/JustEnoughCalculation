@@ -7,6 +7,7 @@ import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import org.lwjgl.input.Mouse;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.Consumer;
 
@@ -59,7 +60,7 @@ public class WScroll implements IWidget {
         return JecaGui.mouseIn(xPos + 1, yPos + 1, 12, ySize - 2, xMouse, yMouse);
     }
 
-    public WScroll setLsnrScroll(Consumer<Float> lsnrScroll) {
+    public WScroll setLsnrScroll(@Nullable Consumer<Float> lsnrScroll) {
         this.lsnrScroll = lsnrScroll;
         return this;
     }

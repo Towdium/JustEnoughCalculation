@@ -43,6 +43,8 @@ public class WLabelScroll extends WContainer {
     }
 
     public void update(float f) {
+        if (f < 0) f = 0;
+        if (f > 1) f = 1;
         int step = getStepAmount();
         current = (int) (step * f);
         if (current == step) current--;
@@ -52,7 +54,13 @@ public class WLabelScroll extends WContainer {
     @Override
     public boolean onScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
         boolean in = JecaGui.mouseIn(xPos, yPos, column * 18, row * 18, xMouse, yMouse);
-        if (in) scroll.setCurrent(getPos(current - diff));
+        if (in) {
+            scroll.setLsnrScroll(null);
+            float pos = getPos(current - diff);
+            scroll.setCurrent(pos);
+            update(pos);
+            scroll.setLsnrScroll(this::update);
+        }
         return in;
     }
 
@@ -74,8 +82,10 @@ public class WLabelScroll extends WContainer {
         return filtered.size() != 0;
     }
 
-    public void setLsnrUpdate(Consumer<Integer> lsnr) {
+    @SuppressWarnings("UnusedReturnValue")
+    public WLabelScroll setLsnrUpdate(Consumer<Integer> lsnr) {
         lsnrUpdate = lsnr;
+        return this;
     }
 
     public ILabel getLabelAt(int index) {

@@ -18,6 +18,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -25,11 +26,11 @@ import java.util.stream.Collectors;
  * Date:   17-9-10.
  */
 @ParametersAreNonnullByDefault
-public class LOreDict extends LabelSimpleAmount {
+public class LOreDict extends ILabel.Impl {
     public static final String IDENTIFIER = "oreDict";
     public static final String KEY_NAME = "name";
     public static final String KEY_AMOUNT = "amount";
-    public static final boolean MODE_FORCE = false;
+    public static final boolean MODE_FORCE = true;
 
     protected String name;
 
@@ -58,31 +59,64 @@ public class LOreDict extends LabelSimpleAmount {
         return Utilities.I18n.format("label.ore_dict.name", name);
     }
 
+    public static Optional<ILabel> mergeOreDict(ILabel a, ILabel b, boolean add) {
+        if (a instanceof LOreDict && b instanceof LOreDict) {
+            LOreDict lodA = (LOreDict) a;
+            LOreDict lodB = (LOreDict) b;
+            if (lodA.getName().equals(lodB.getName()))
+                return Optional.of(new LOreDict(lodA.getName(),
+                                                add ? lodA.getAmount() + lodB.getAmount() : lodA.getAmount() - lodB.getAmount()));
+        }
+        return Optional.empty();
+    }
+
     public static List<ILabel> guess(List<ILabel> iss) {
         ILabel l = iss.get(0);
-        if ((MODE_FORCE || iss.size() > 1) && l instanceof LItemStack) {
-            HashSet<Integer> ids = new HashSet<>();
-            int amount = ((LItemStack) l).getAmount();
-            for (int i : OreDictionary.getOreIDs(((LItemStack) l).itemStack))
-                if (check(i, iss)) ids.add(i);
-            return ids.stream().map(i -> new LOreDict(OreDictionary.getOreName(i), amount))
-                      .collect(Collectors.toList());
-        } else return new ArrayList<>();
+        HashSet<Integer> ids = new HashSet<>();
+        int amount = l.getAmount();
+        for (int i : OreDictionary.getOreIDs(((LItemStack) l).getRep()))
+            if (check(i, iss)) ids.add(i);
+        return ids.stream().map(i -> new LOreDict(OreDictionary.getOreName(i), amount))
+                  .collect(Collectors.toList());
     }
 
     // check labels in the list suitable for the ore id
     private static boolean check(int id, List<ILabel> labels) {
-        List<ItemStack> ores = OreDictionary.getOres(OreDictionary.getOreName(id));
-        for (ItemStack ore : ores) if (!check(ore, labels)) return false;
-        return true;
-    }
+        ArrayList<ItemStack> ores = OreDictionary.getOres(OreDictionary.getOreName(id));
+        if (labels.size() == 1 && ores.size() == 1
+            && (ores.get(0).getItemDamage() == OreDictionary.WILDCARD_VALUE || !MODE_FORCE))
+            return false;
 
-    // check the recorded ore item is in the list
-    private static boolean check(ItemStack ore, List<ILabel> labels) {
-        for (ILabel label : labels)
-            if (label instanceof LItemStack && OreDictionary.itemMatches(ore, ((LItemStack) label).itemStack, false))
-                return true;
-        return false;
+        boolean acceptable = true;
+        for (ItemStack ore : ores) {
+            boolean found = false;
+            for (ILabel label : labels) {
+                if (label instanceof LItemStack && OreDictionary.itemMatches(
+                        ore, ((LItemStack) label).getRep(), false)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                acceptable = false;
+                break;
+            }
+        }
+        for (ILabel label : labels) {
+            boolean found = false;
+            for (ItemStack ore : ores) {
+                if (label instanceof LItemStack && OreDictionary.itemMatches(
+                        ore, ((LItemStack) label).getRep(), false)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                acceptable = false;
+                break;
+            }
+        }
+        return acceptable;
     }
 
     @Override

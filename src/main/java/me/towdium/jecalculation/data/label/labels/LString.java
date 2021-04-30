@@ -15,7 +15,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * Date:   17-9-28.
  */
 @ParametersAreNonnullByDefault
-public class LString extends LabelSimpleAmount {
+public class LString extends ILabel.Impl {
     public static final String KEY_NAME = "name";
     public static final String IDENTIFIER = "string";
 

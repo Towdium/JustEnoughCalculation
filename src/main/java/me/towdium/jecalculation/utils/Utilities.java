@@ -1,30 +1,24 @@
 package me.towdium.jecalculation.utils;
 
 import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.JustEnoughCalculation;
-import me.towdium.jecalculation.item.ItemCalculator;
 import me.towdium.jecalculation.polyfill.NBTHelper;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import me.towdium.jecalculation.utils.wrappers.Wrapper;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.Fluid;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -36,17 +30,6 @@ import java.util.stream.StreamSupport;
 @ParametersAreNonnullByDefault
 public class Utilities {
     final static int[] scaleTable = {9, 99, 999, 9999, 99999, 999999, 9999999, 99999999, 999999999, Integer.MAX_VALUE};
-    static Map<String, String> dictionary = new HashMap<>();
-    public static Collector toArrayList = Collectors.toCollection(ArrayList::new);
-
-    static {
-        Map<String, ModContainer> modMap = Loader.instance().getIndexedModList();
-        for (Map.Entry<String, ModContainer> modEntry : modMap.entrySet()) {
-            String lowercaseId = modEntry.getKey().toLowerCase(Locale.ENGLISH);
-            String modName = modEntry.getValue().getName();
-            dictionary.put(lowercaseId, modName);
-        }
-    }
 
     public static boolean stackEqual(ItemStack a, ItemStack b) {
         return a.getItem() == b.getItem() && a.getItemDamage() == b.getItemDamage() &&
@@ -84,21 +67,19 @@ public class Utilities {
 
     // MOD NAME
     @Nullable
-    public static String getModName(ItemStack stack) {
-        String name = GameData.getItemRegistry().getNameForObject(stack.getItem());
-        name = name.substring(0, name.indexOf(":"));
-        if (name.equals("minecraft"))
-            return "Minecraft";
-        else
-            return dictionary.get(name);
+    public static String getModName(Item item) {
+        String name = GameData.getItemRegistry().getNameForObject(item);
+        String id = name.substring(0, name.indexOf(":"));
+        return id.equals("minecraft") ? "Minecraft" : Loader.instance().getIndexedModList().get(id).getName();
     }
 
-    public static String getModName(FluidStack stack) {
-        String name = stack.getFluid().getName();
+    public static String getModName(Fluid fluid) {
+        String name = fluid.getName();
         if (name.equals("lava") || name.equals("water"))
             return "Minecraft";
         else
-            return dictionary.get(stack.getFluid().getStillIcon().getIconName().split(":")[0]);
+            return Loader.instance().getIndexedModList().get(fluid.getStillIcon().getIconName().split(":")[0])
+                         .getName();
     }
 
     public static NBTTagCompound getTag(ItemStack is) {
@@ -109,13 +90,26 @@ public class Utilities {
         return s1.contains(s2);
     }
 
-    // get calculator item in player inventory
-    public static Optional<ItemStack> getStack() {
-        InventoryPlayer inv = Minecraft.getMinecraft().thePlayer.inventory;
-        ItemStack is = inv.getCurrentItem();
-        if (is.getItem() instanceof ItemCalculator) return Optional.of(is);
-        return Optional.empty();
-    }
+    //    public static Recipes getRecipes(EntityPlayer player) {
+    //        IExtendedEntityProperties properties = player
+    //                .getExtendedProperties(JecaCapabilityProvider.PROPERTIES_NAME);
+    //        if(properties instanceof JecaCapabilityProvider) {
+    //            return ((JecaCapabilityProvider) properties).record;
+    //        } else {
+    //            JustEnoughCalculation.logger.info("getExtendedProperties error: " + properties.toString());
+    //            return new Recipes();
+    //        }
+    //    }
+
+
+    //    // get calculator item in player inventory
+    //    public static Optional<ItemStack> getStack() {
+    //        InventoryPlayer inv = Minecraft.getMinecraft().thePlayer.inventory;
+    //        ItemStack is = inv.getCurrentItem();
+    //        if (is.getItem() instanceof ItemCalculator)
+    //            return Optional.of(is);
+    //        return Optional.empty();
+    //    }
 
     public static void setStack(ItemStack is) {
 
@@ -239,6 +233,7 @@ public class Utilities {
     public static class I18n {
         public static Pair<String, Boolean> search(String translateKey, Object... parameters) {
             Pair<String, Boolean> ret = new Pair<>(null, null);
+            translateKey = "jecharacters." + translateKey;
             String buffer = net.minecraft.client.resources.I18n.format(translateKey, parameters);
             ret.two = !buffer.equals(translateKey);
             buffer = StringEscapeUtils.unescapeJava(buffer);
@@ -275,51 +270,6 @@ public class Utilities {
         public List<T> toList() {
             //noinspection unchecked
             return (List<T>) data.clone();
-        }
-    }
-
-    public static class OrderedHashMap<K, V> {
-        public HashMap<K, Integer> index = new HashMap<>();
-        public List<Pair<K, V>> value = new ArrayList<>();
-
-        public void put(K key, V value) {
-            if (index.containsKey(key)) this.value.set(index.get(key), new Pair<>(key, value));
-            else {
-                index.put(key, this.value.size());
-                this.value.add(new Pair<>(key, value));
-            }
-        }
-
-        public Optional<V> get(int index) {
-            Pair<K, V> p = value.get(index);
-            return Optional.ofNullable(p == null ? null : p.two);
-        }
-
-        public Optional<V> get(K key) {
-            Integer i = index.get(key);
-            return Optional.ofNullable(i == null ? null : value.get(i).two);
-        }
-
-        public int getIndex(K key) {
-            Integer ret = index.get(key);
-            return ret == null ? -1 : ret;
-        }
-
-        public Optional<K> getKey(int index) {
-            Pair<K, V> ret = value.get(index);
-            return Optional.ofNullable(ret == null ? null : ret.one);
-        }
-
-        public void forEach(BiConsumer<K, V> func) {
-            value.forEach(p -> func.accept(p.one, p.two));
-        }
-
-        public Stream<Pair<K, V>> stream() {
-            return value.stream();
-        }
-
-        public int size() {
-            return value.size();
         }
     }
 }

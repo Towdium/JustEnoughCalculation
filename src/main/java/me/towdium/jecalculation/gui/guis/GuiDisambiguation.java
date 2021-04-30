@@ -19,16 +19,18 @@ import java.util.List;
 public class GuiDisambiguation extends IWPicker.Simple {
     protected WLabelScroll lsUp;
     protected WLabelScroll lsDown;
+    protected WSwitcher switcher;
     protected List<List<ILabel>> record;
 
     public GuiDisambiguation(List<List<ILabel>> record) {
+        this.record = record;
         lsUp = new WLabelScroll(25, 48, 7, 3, WLabel.enumMode.PICKER, true);
         lsDown = new WLabelScroll(25, 105, 7, 3, WLabel.enumMode.PICKER, true);
-        this.record = record;
+        switcher = new WSwitcher(7, 7, 162, this.record.size()).setListener(() -> setPage(switcher.getIndex()));
         WTextField tf = new WTextField(25, 24, 90);
 
         add(new WPanel());
-        add(new WSwitcher(7, 7, 162, this.record.size()).setListener(this::setPage));
+        add(switcher);
         add(new WIcon(149, 24, 20, 20, Resource.ICN_HELP_N, Resource.ICN_HELP_F, "disambiguation.help"));
         add(new WIcon(7, 48, 18, 54, Resource.ICN_LIST_N, Resource.ICN_LIST_F, "disambiguation.list"));
         add(new WIcon(7, 105, 18, 54, Resource.ICN_LABEL_N, Resource.ICN_LABEL_F, "disambiguation.label"));

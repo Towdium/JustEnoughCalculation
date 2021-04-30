@@ -48,9 +48,9 @@ public class Recipe {
             for (int j = ls.length; j < i; j++) ret[j] = ILabel.EMPTY;
             return ret;
         };
-        this.input = convert.apply(input, 14);
-        this.catalyst = convert.apply(catalyst, 7);
-        this.output = convert.apply(output, 7);
+        this.input = convert.apply(input, 16);
+        this.catalyst = convert.apply(catalyst, 8);
+        this.output = convert.apply(output, 8);
 
         Wrapper<Integer> hash = new Wrapper<>(0);
         Consumer<ILabel[]> hasher = (ls) -> Arrays.stream(ls)
@@ -84,6 +84,12 @@ public class Recipe {
             default:
                 throw new IllegalPositionException();
         }
+    }
+
+    public ILabel getRep() {
+        for (int i = 0; i < 8; i++)
+            if (output[i] != ILabel.EMPTY) return output[i];
+        return ILabel.EMPTY;
     }
 
     public NBTTagCompound serialize() {

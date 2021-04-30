@@ -6,7 +6,7 @@ import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.gui.drawables.*;
 import me.towdium.jecalculation.data.label.ILabel;
-import me.towdium.jecalculation.event.handlers.ControllerClient;
+import me.towdium.jecalculation.data.ControllerClient;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;

@@ -1,5 +1,7 @@
 package me.towdium.jecalculation;
 
+import codechicken.core.CommonUtils;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -7,6 +9,10 @@ import net.minecraftforge.common.config.Property;
 import java.io.File;
 
 public class JecaConfig {
+    public static File configDir = new File(Loader.instance().getConfigDir(), "JustEnoughCalculation/");
+    public static final File configFile = new File(configDir, "main.cfg");
+    public static final File recordFile = new File(configDir, "record.data");
+
     public static boolean initialized = false;
     public static Configuration config;
 
@@ -123,8 +129,7 @@ public class JecaConfig {
     public static Object empty;
 
     public static void preInit(FMLPreInitializationEvent event) {
-        config = new Configuration(new File(event.getModConfigurationDirectory(), "JustEnoughCalculation" + ".cfg"),
-                                   JustEnoughCalculation.Reference.VERSION);
+        config = new Configuration(configFile, JustEnoughCalculation.Reference.VERSION);
         config.load();
         handleInit();
         config.save();

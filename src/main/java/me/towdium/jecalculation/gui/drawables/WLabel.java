@@ -11,6 +11,7 @@ import me.towdium.jecalculation.utils.Utilities;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.stream.IntStream;
 
 /**
@@ -158,7 +159,7 @@ public class WLabel implements IWidget {
          */
         EDITOR,
         /**
-         * Slots to display calculate/search result. Rounded amount displayed.
+         * Slots to display calculate/getRecipes result. Rounded amount displayed.
          */
         RESULT,
         /**

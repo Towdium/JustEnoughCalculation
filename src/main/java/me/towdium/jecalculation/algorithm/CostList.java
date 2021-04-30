@@ -27,6 +27,7 @@ public class CostList {
         });
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public CostList merge(CostList costList, boolean add) {
         costList.labels.forEach(i -> labels.add(add ? i.copy() : i.copy().invertAmount()));
         return cancel();
