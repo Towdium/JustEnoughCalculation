@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  * Date:   17-10-15.
  */
 @SideOnly(Side.CLIENT)
-public class Controller {
+public class Controller { // TODO record calculate amount
     public static final String KEY_RECIPES = "recipes";
     public static final String KEY_RECENTS = "recents";
     static Recipes recipesClient;

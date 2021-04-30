@@ -19,12 +19,16 @@ public class WIcon extends WTooltip {
     public int xPos, yPos, xSize, ySize;
     public Resource normal, focused;
 
-    public WIcon(int xPos, int yPos, int xSize, int ySize, Resource normal, Resource focused) {
-        this(xPos, yPos, xSize, ySize, normal, focused, null);
+    public WIcon(int xPos, int yPos, int xSize, int ySize, Resource.ResourceGroup res) {
+        this(xPos, yPos, xSize, ySize, res.normal, res.focused, null);
     }
 
-    public WIcon(int xPos, int yPos, int xSize, int ySize,
-                 Resource normal, Resource focused, @Nullable String name) {
+    public WIcon(int xPos, int yPos, int xSize, int ySize, Resource.ResourceGroup res, String name) {
+        this(xPos, yPos, xSize, ySize, res.normal, res.focused, name);
+    }
+
+    private WIcon(int xPos, int yPos, int xSize, int ySize,
+                  Resource normal, Resource focused, @Nullable String name) {
         super(name);
         this.xPos = xPos;
         this.yPos = yPos;

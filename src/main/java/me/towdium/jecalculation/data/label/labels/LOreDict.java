@@ -59,13 +59,27 @@ public class LOreDict extends ILabel.Impl {
         return Utilities.I18n.format("label.ore_dict.name", name);
     }
 
-    public static Optional<ILabel> mergeOreDict(ILabel a, ILabel b, boolean add) {
+    public static Optional<ILabel> merge(ILabel a, ILabel b, boolean add) {
         if (a instanceof LOreDict && b instanceof LOreDict) {
             LOreDict lodA = (LOreDict) a;
             LOreDict lodB = (LOreDict) b;
-            if (lodA.getName().equals(lodB.getName()))
-                return Optional.of(new LOreDict(lodA.getName(),
-                                                add ? lodA.getAmount() + lodB.getAmount() : lodA.getAmount() - lodB.getAmount()));
+            if (lodA.getName().equals(lodB.getName())) {
+                return Impl.merge(lodA, lodB, add);
+            }
+        } else if ((a instanceof LOreDict && b instanceof LItemStack)
+                   || a instanceof LItemStack && b instanceof LOreDict) {
+            LItemStack lis;
+            LOreDict lor;
+            if (a instanceof LOreDict) {
+                lis = (LItemStack) b;
+                lor = (LOreDict) a;
+            } else {
+                lis = (LItemStack) a;
+                lor = (LOreDict) b;
+            }
+            return OreDictionary.getOres(lor.name).stream().map(o -> Converter.from(o).multiply(lor.amount))
+                                .map(i -> LItemStack.merge(i, lis, add)).filter(Optional::isPresent)
+                                .findAny().flatMap(i -> i);
         }
         return Optional.empty();
     }
@@ -126,7 +140,7 @@ public class LOreDict extends ILabel.Impl {
 
     @Override
     public boolean matches(Object l) {
-        return l instanceof LOreDict && name.equals(((LOreDict) l).name);
+        return l instanceof LOreDict && name.equals(((LOreDict) l).name) && super.matches(l);
     }
 
     @Override
@@ -145,7 +159,7 @@ public class LOreDict extends ILabel.Impl {
         });
         if(list.isEmpty()) return;
         long index = System.currentTimeMillis() / 1500;
-        gui.drawResource(Resource.LBL_ORE_DICT, 0, 0);
+        gui.drawResource(Resource.LBL_FRAME, 0, 0);
         GlStateManager.pushMatrix();
         GlStateManager.translate(1, 1, 0);
         GlStateManager.scale(14f / 16, 14f / 16, 1);

@@ -20,20 +20,16 @@ import java.util.List;
 public class WButtonIcon extends WButton {
     protected Resource rNormal, rFocused, rDisabled;
 
-    public WButtonIcon(int xPos, int yPos, int xSize, int ySize, Resource normal, Resource focused) {
-        this(xPos, yPos, xSize, ySize, normal, focused, null, null);
+    public WButtonIcon(int xPos, int yPos, int xSize, int ySize, Resource.ResourceGroup res, String name) {
+        this(xPos, yPos, xSize, ySize, res.normal, res.focused, res.disabled, name);
     }
 
-    public WButtonIcon(int xPos, int yPos, int xSize, int ySize, Resource normal, Resource focused, String name) {
-        this(xPos, yPos, xSize, ySize, normal, focused, null, name);
+    public WButtonIcon(int xPos, int yPos, int xSize, int ySize, Resource.ResourceGroup res) {
+        this(xPos, yPos, xSize, ySize, res.normal, res.focused, res.disabled, null);
     }
 
-    public WButtonIcon(int xPos, int yPos, int xSize, int ySize, Resource normal, Resource focused, Resource disabled) {
-        this(xPos, yPos, xSize, ySize, normal, focused, disabled, null);
-    }
-
-    public WButtonIcon(int xPos, int yPos, int xSize, int ySize, Resource normal, Resource focused,
-                       @Nullable Resource disabled, @Nullable String name) {
+    private WButtonIcon(int xPos, int yPos, int xSize, int ySize, Resource normal, Resource focused,
+                        @Nullable Resource disabled, @Nullable String name) {
         super(xPos, yPos, xSize, ySize, name);
         this.rNormal = normal;
         this.rFocused = focused;

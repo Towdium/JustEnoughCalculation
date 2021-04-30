@@ -2,16 +2,21 @@ package me.towdium.jecalculation.data.label;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import me.towdium.jecalculation.data.label.labels.*;
+import me.towdium.jecalculation.data.label.labels.LFluidStack;
+import me.towdium.jecalculation.data.label.labels.LItemStack;
+import me.towdium.jecalculation.data.label.labels.LOreDict;
+import me.towdium.jecalculation.data.label.labels.LPlaceholder;
 import me.towdium.jecalculation.gui.IWPicker;
 import me.towdium.jecalculation.gui.JecaGui;
-import me.towdium.jecalculation.gui.guis.pickers.PickerSimple;
+import me.towdium.jecalculation.gui.guis.pickers.PickerItemStack;
 import me.towdium.jecalculation.gui.guis.pickers.PickerPlaceholder;
+import me.towdium.jecalculation.gui.guis.pickers.PickerSimple;
 import me.towdium.jecalculation.polyfill.mc.client.renderer.GlStateManager;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.Utilities.Relation;
 import me.towdium.jecalculation.utils.Utilities.ReversedIterator;
 import me.towdium.jecalculation.utils.wrappers.Pair;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -19,7 +24,10 @@ import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -44,18 +52,25 @@ public interface ILabel {
 
     ILabel decreaseAmount();
 
-    ILabel invertAmount();
-
-    int getAmount();
-
     static void initClient() {
         CONVERTER.register(LOreDict::guess);
         EDITOR.register(PickerSimple.FluidStack::new, "fluid_stack", new LFluidStack(1000, FluidRegistry.WATER));
         EDITOR.register(PickerSimple.OreDict::new, "ore_dict", new LOreDict("ingotIron"));
         EDITOR.register(PickerPlaceholder::new, "placeholder", new LPlaceholder("example", 1, true));
+        EDITOR.register(PickerItemStack::new, "item_stack",
+                        new LItemStack(new ItemStack(Items.iron_pickaxe)).setFMeta(true));
         MERGER.register("itemStack", "itemStack", LItemStack::merge);
-        MERGER.register("oreDict", "oreDict", LOreDict::mergeOreDict);
+        MERGER.register("oreDict", "oreDict", LOreDict::merge);
+        MERGER.register("itemStack", "oreDict", LOreDict::merge);
     }
+
+    int getAmount();
+
+    ILabel multiply(int i);
+
+    boolean acceptPercent();
+
+    ILabel setPercent(boolean p);
 
     static void initServer() {
         DESERIALIZER.register(LFluidStack.IDENTIFIER, LFluidStack::new);
@@ -79,6 +94,7 @@ public interface ILabel {
 
     ILabel setAmount(int amount);
 
+    // test two labels are exactly same except amount
     boolean matches(Object l);
 
     @SideOnly(Side.CLIENT)
@@ -170,14 +186,23 @@ public interface ILabel {
         }
     }
 
+    /**
+     * Provides support to convert between different types of labels.
+     * For example, guess oreDict from list of labels.
+     * It can also convert ItemStack or FluidStack to ILabel
+     */
     class Converter {
         ArrayList<Function<List<ILabel>, List<ILabel>>> handlers = new ArrayList<>();
 
         public static ILabel from(@Nullable Object o) {
-            if (o == null) return ILabel.EMPTY;
-            else if (o instanceof ItemStack) return new LItemStack((ItemStack) o);
-            else if (o instanceof FluidStack) return new LFluidStack((FluidStack) o);
-            else throw new RuntimeException("Unrecognized ingredient type: " + o.getClass());
+            if (o == null)
+                return ILabel.EMPTY;
+            else if (o instanceof ItemStack)
+                return new LItemStack((ItemStack) o);
+            else if (o instanceof FluidStack)
+                return new LFluidStack((FluidStack) o);
+            else
+                throw new RuntimeException("Unrecognized ingredient type: " + o.getClass());
         }
 
         public void register(Function<List<ILabel>, List<ILabel>> handler) {
@@ -246,8 +271,18 @@ public interface ILabel {
         }
 
         @Override
-        public ILabel invertAmount() {
+        public ILabel multiply(int i) {
             return this;
+        }
+
+        @Override
+        public boolean acceptPercent() {
+            return false;
+        }
+
+        @Override
+        public ILabel setPercent(boolean p) {
+            throw new UnsupportedOperationException();
         }
 
         @Override
@@ -296,7 +331,9 @@ public interface ILabel {
 
     abstract class Impl implements ILabel {
         public static final String KEY_AMOUNT = "amount";
+        public static final String KEY_PERCENT = "percent";
         protected int amount;
+        protected boolean percent;
 
         @Override
         public String toString() {
@@ -305,14 +342,17 @@ public interface ILabel {
 
         public Impl(int amount) {
             this.amount = amount;
+            percent = false;
         }
 
         public Impl(Impl lsa) {
-            this(lsa.amount);
+            amount = lsa.amount;
+            percent = lsa.percent;
         }
 
         public Impl(NBTTagCompound nbt) {
             amount = nbt.getInteger(KEY_AMOUNT);
+            percent = nbt.getBoolean(KEY_PERCENT);
         }
 
         protected int getMultiplier() {
@@ -335,7 +375,8 @@ public interface ILabel {
 
         @Override
         public ILabel decreaseAmount() {
-            if (getAmount() <= getMultiplier()) return ILabel.EMPTY;
+            if (getAmount() <= getMultiplier())
+                return ILabel.EMPTY;
             else {
                 setAmount(getAmount() - getMultiplier());
                 return this;
@@ -343,23 +384,32 @@ public interface ILabel {
         }
 
         @Override
-        public ILabel invertAmount() {
-            setAmount(-getAmount());
+        public ILabel multiply(int i) {
+            setAmount(i * getAmount());
             return this;
         }
 
         @Override
         @SideOnly(Side.CLIENT)
         public void getToolTip(List<String> existing, boolean detailed) {
-            if (detailed) existing.add(FORMAT_GREY +
-                                       Utilities.I18n.format("label.common.tooltip.amount", getAmountString()));
+            if (detailed)
+                existing.add(FORMAT_GREY + Utilities.I18n.format("label.common.tooltip.amount", getAmountString()));
         }
 
-        @Override
-        public NBTTagCompound toNBTTagCompound() {
-            NBTTagCompound nbt = new NBTTagCompound();
-            nbt.setInteger(KEY_AMOUNT, amount);
-            return nbt;
+        protected static Optional<ILabel> merge(Impl a, Impl b, boolean add) {
+            Impl ret = a.copy();
+            boolean p = a.percent || b.percent;
+            int amountA = a.amount;
+            int amountB = b.amount;
+            if (p) {
+                if (!a.percent)
+                    amountA *= 100;
+                if (!b.percent)
+                    amountB *= 100;
+            }
+            ret.amount = add ? amountA + amountB : amountA - amountB;
+            ret.percent = p;
+            return Optional.of(ret.amount == 0 ? ILabel.EMPTY : ret);
         }
 
         @Override
@@ -369,20 +419,57 @@ public interface ILabel {
 
         @Override
         public ILabel setAmount(int amount) {
-            if (amount == 0) return ILabel.EMPTY;
+            if (amount == 0)
+                return ILabel.EMPTY;
             this.amount = amount;
             return this;
         }
 
         @Override
-        @SideOnly(Side.CLIENT)
-        public String getAmountString() {
-            return getAmount() == 0 ? "" : Utilities.cutNumber(getAmount(), 5);
+        public NBTTagCompound toNBTTagCompound() {
+            NBTTagCompound nbt = new NBTTagCompound();
+            nbt.setInteger(KEY_AMOUNT, amount);
+            nbt.setBoolean(KEY_PERCENT, percent);
+            return nbt;
+        }
+
+        @Override
+        public boolean acceptPercent() {
+            return true;
+        }
+
+        public ILabel setPercent(boolean p) {
+            if (!acceptPercent())
+                throw new UnsupportedOperationException();
+            if (p && !percent) {
+                amount *= 100;
+                percent = true;
+            } else if (!p && percent) {
+                amount = (amount + 99) / 100;
+                percent = false;
+            }
+            return this;
         }
 
         @Override
         public boolean equals(Object obj) {
             return obj instanceof Impl && amount == ((Impl) obj).amount && matches(obj);
+        }
+
+        @Override
+        @SideOnly(Side.CLIENT)
+        public String getAmountString() {
+            return getAmount() == 0 ?
+                   "" :
+                   (percent ? Utilities.cutNumber(getAmount(), 4) + "%" : Utilities.cutNumber(getAmount(), 5));
+        }
+
+        @Override
+        abstract public Impl copy();
+
+        @Override
+        public boolean matches(Object l) {
+            return l instanceof Impl && percent == ((Impl) l).percent;
         }
 
         abstract protected void drawLabel(JecaGui gui);

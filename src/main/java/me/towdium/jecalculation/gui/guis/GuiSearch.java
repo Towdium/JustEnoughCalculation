@@ -27,8 +27,8 @@ public class GuiSearch extends WContainer {
         add(switcherGroup);
         add(new WSearch(i -> content.stream().filter(j -> j.one.getRep() == i).findFirst().ifPresent(j ->
                                                                                                              JecaGui.displayGui(false, true, new GuiRecipe(j.two, j.three))), new WTextField(25, 27, 90), labelScroll));
-        add(new WIcon(149, 27, 20, 20, Resource.ICN_HELP_N, Resource.ICN_HELP_F, "search.help"));
-        add(new WIcon(7, 27, 20, 20, Resource.ICN_TEXT_N, Resource.ICN_TEXT_F, "search.text"));
+        add(new WIcon(149, 27, 20, 20, Resource.ICN_HELP, "search.help"));
+        add(new WIcon(7, 27, 20, 20, Resource.ICN_TEXT, "search.text"));
         refresh();
     }
 

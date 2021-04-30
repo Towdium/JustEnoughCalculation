@@ -49,8 +49,6 @@ public class WLabel implements IWidget {
 
     public void setLabel(ILabel label) {
         this.label = label;
-        //        if (mode == enumMode.EDITOR || mode == enumMode.SELECTOR)
-        //            notifyLsnr();
     }
 
     @Override
@@ -185,17 +183,15 @@ public class WLabel implements IWidget {
             WLabel wl = new WLabel(w.xPos, w.yPos, w.xSize, w.ySize, enumMode.SELECTOR);
             wl.setLabel(w.getLabel());
             WTextField wtf = new WTextField(xAlign + 10, w.yPos + w.ySize / 2 - WTextField.HEIGHT / 2, 50);
-            WButton wby = new WButtonIcon(xAlign + 60, w.yPos, 20, 20, Resource.BTN_YES_N, Resource.BTN_YES_F,
-                                          Resource.BTN_YES_D).setListenerLeft(() -> {
+            WButton wby = new WButtonIcon(xAlign + 60, w.yPos, 20, 20, Resource.BTN_YES).setLsnrLeft(() -> {
                 w.setLabel(wl.getLabel().setAmount(
                         wtf.getText().isEmpty() ? 0 : Integer.parseInt(wtf.getText())));
                 JecaGui.getCurrent().root.remove(this);
             });
-            WButton wbn = new WButtonIcon(xAlign + 79, w.yPos, 20, 20, Resource.BTN_NO_N, Resource.BTN_NO_F)
-                    .setListenerLeft(() -> {
-                        w.setLabel(ILabel.EMPTY);
-                        JecaGui.getCurrent().root.remove(this);
-                    });
+            WButton wbn = new WButtonIcon(xAlign + 79, w.yPos, 20, 20, Resource.BTN_NO).setLsnrLeft(() -> {
+                w.setLabel(ILabel.EMPTY);
+                JecaGui.getCurrent().root.remove(this);
+            });
             wtf.setText(Integer.toString(w.getLabel().getAmount()));
             wtf.setLsnrText(i -> {
                 try {
