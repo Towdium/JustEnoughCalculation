@@ -1,3 +1,6 @@
+# suppress inspection "UnusedProperty" for whole file
+item.item_calculator_crafting.name=Crafting Calculator
+item.item_calculator_math.name=Math Calculator
 jecalculation.key.category=Just Enough Calculation
 jecalculation.key.gui_craft=Open crafting calculator
 jecalculation.key.gui_math=Open math calculator
@@ -19,13 +22,13 @@ jecalculation.gui.craft.recipe=Add recipe
 jecalculation.gui.craft.search=Search recipe
 jecalculation.gui.craft.suggest=Suggestions
 jecalculation.gui.math.title=Math Calculator
-jecalculation.gui.math.help=You can use both buttons and keyboard (numpad or main keyboard) to use it. For main keyboard, the buttons are mapped to these keys:\n- plus: = / +\n- minus: - / --\n- times: ' / "\n- divide by: / / ?\n- equals: Enter\n- clear: Delete\n- backspace: Backspace
+jecalculation.gui.math.help=You can use both buttons and keyboard (numpad or main keyboard) to use it. For main keyboard, the buttons are mapped to these keys:\n- plus: = or +\n- minus: - or _\n- times: ' or "\n- divide by: / or ?\n- equals: Enter\n- clear: Delete\n- backspace: Backspace
 jecalculation.gui.disamb.list=Raw types
 jecalculation.gui.disamb.label=Inferred types
 jecalculation.gui.recipe.save.enabled=Save
 jecalculation.gui.recipe.save.disabled=Cannot save recipe because\nrecipe is invalid or you\nalready have same recipe
 jecalculation.gui.recipe.copy.enabled=Save as new recipe
-jecalculation.gui.recipe.copy.disabled=Cannot save as new recipe\nbecause you are not editing\na recipe
+jecalculation.gui.recipe.copy.disabled=Cannot save as new recipe\nbecause you are not editing\na recipe or already have\nsame recipe
 jecalculation.gui.recipe.delete.enabled=Delete recipe
 jecalculation.gui.recipe.delete.disabled=Cannot delete recipe because\nyou are not editing a recipe
 jecalculation.gui.recipe.clear=Clear grid
@@ -46,6 +49,10 @@ jecalculation.gui.search.export_all.enabled=Export all recipes
 jecalculation.gui.search.export_all.disabled=Cannot export because no recipe recorded
 jecalculation.gui.search.title=Recipe Management
 jecalculation.gui.search.help=This interface allows you to search, import and export recipes. Simply click the item to edit or delete the recipe. The two buttons in upper left will be helpful if you want to import or export recipes.
+jecalculation.gui.search.rename.enabled=Rename group
+jecalculation.gui.search.rename.disabled=Rename options only available\nwhen one group selected
+jecalculation.gui.search.confirm.enabled=Confirm
+jecalculation.gui.search.confirm.disabled=New name cannot be empty\nor the same as existing ones
 jecalculation.gui.import.title=Recipe Import
 jecalculation.gui.import.help=This interface allows you to import recipes. First place exported data files into "config/JustEnoughCalculation/data/", then you will see them in the list organized as "filename/group" if there is no error (otherwise check the log). Use the buttons to select recipe groups to import and hit the tick, then you are done.\fFor pack makers or server owners, you can rename the data file and place it at "config/JustEnoughCalculation/default.json" to set it as default. When player creates world or joins server, the default recipes will be automatically setup for the user.
 jecalculation.gui.import.confirm.enabled=Confirm

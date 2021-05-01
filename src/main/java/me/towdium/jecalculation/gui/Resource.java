@@ -81,6 +81,9 @@ public class Resource {
     public static final Resource BTN_NBT_F_N = getIcon(5, 4);
     public static final Resource BTN_NBT_F_F = getIcon(5, 3);
     public static final Resource BTN_NBT_D = getIcon(4, 5);
+    public static final Resource BTN_EDIT_N = getIcon(6, 4);
+    public static final Resource BTN_EDIT_F = getIcon(6, 3);
+    public static final Resource BTN_EDIT_D = getIcon(6, 5);
 
     public static final Resource WGT_BUTTON_N = getWidget(0);
     public static final Resource WGT_BUTTON_F = getWidget(1);
@@ -171,13 +174,14 @@ public class Resource {
     public static final ResourceGroup BTN_EXPORT_1 = new ResourceGroup(BTN_EXPORT_1_N, BTN_EXPORT_1_F, BTN_EXPORT_1_D);
     public static final ResourceGroup BTN_INV_E = new ResourceGroup(BTN_INV_E_N, BTN_INV_E_F);
     public static final ResourceGroup BTN_INV_D = new ResourceGroup(BTN_INV_D_N, BTN_INV_D_F);
-
     public static final ResourceGroup BTN_META_N = new ResourceGroup(BTN_META_N_N, BTN_META_N_F, BTN_META_D);
     public static final ResourceGroup BTN_CAP_N = new ResourceGroup(BTN_CAP_N_N, BTN_CAP_N_F, BTN_CAP_D);
     public static final ResourceGroup BTN_NBT_N = new ResourceGroup(BTN_NBT_N_N, BTN_NBT_N_F, BTN_NBT_D);
     public static final ResourceGroup BTN_META_F = new ResourceGroup(BTN_META_F_N, BTN_META_F_F, BTN_META_D);
     public static final ResourceGroup BTN_CAP_F = new ResourceGroup(BTN_CAP_F_N, BTN_CAP_F_F, BTN_CAP_D);
     public static final ResourceGroup BTN_NBT_F = new ResourceGroup(BTN_NBT_F_N, BTN_NBT_F_F, BTN_NBT_D);
+    public static final ResourceGroup BTN_EDIT = new ResourceGroup(BTN_EDIT_N, BTN_EDIT_F, BTN_EDIT_D);
+
     public static final ResourceGroup WGT_ARR_L = new ResourceGroup(WGT_ARR_L_N, WGT_ARR_L_F, WGT_ARR_L_D);
     public static final ResourceGroup WGT_ARR_R = new ResourceGroup(WGT_ARR_R_N, WGT_ARR_R_F, WGT_ARR_R_D);
     public static final ResourceGroup ICN_RECENT = new ResourceGroup(ICN_RECENT_N, ICN_RECENT_F);

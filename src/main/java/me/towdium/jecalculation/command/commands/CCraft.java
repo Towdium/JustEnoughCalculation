@@ -28,6 +28,6 @@ public class CCraft implements ISubCommand {
 
     @Override
     public void execute(ICommandSender sender, String[] args) {
-        Controller.openGuiCraft();
+        Controller.openGuiCraft(true);
     }
 }

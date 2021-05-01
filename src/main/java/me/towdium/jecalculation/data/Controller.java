@@ -19,6 +19,7 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.File;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -76,25 +77,24 @@ public class Controller {
 
     public static void inport(Recipes recipes, String group) {
         ArrayList<Recipe> buffer = new ArrayList<>();
-        recipes.getGroup(group)
-               .forEach(i -> getRecipes().getGroup(group).stream().filter(j -> j.equals(i)).findAny().orElseGet(() -> {
-                   buffer.add(i);
-                   return null;
-               }));
+        recipes.getGroup(group).stream().filter(i -> !hasDuplicate(i)).forEach(buffer::add);
         for (Recipe r : buffer)
             addRecipe(group, r);
     }
 
-    public static File export(String group) {
-        File f = JecaConfig.getDataFile(group);
-        Utilities.Json.write(getRecipes().serialize(Collections.singleton(group)), f);
-        return f;
+    private static void export(String s, Function<Recipes, NBTTagCompound> r) {
+        File f = JecaConfig.getDataFile(s);
+        Utilities.Json.write(r.apply(getRecipes()), f);
+        Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentTranslation(
+                "jecalculation.chat.export", f.getAbsolutePath()));
     }
 
-    public static File export() {
-        File f = JecaConfig.getDataFile("groups");
-        Utilities.Json.write(getRecipes().serialize(), f);
-        return f;
+    public static void export(String group) {
+        export(group, i -> i.serialize(Collections.singleton(group)));
+    }
+
+    public static void export() {
+        export("groups", Recipes::serialize);
     }
 
     @Nullable
@@ -104,11 +104,23 @@ public class Controller {
 
     static void setLast(String last) {
         if (isServerActive()) rPlayerServer.last = last;
-        else rPlayerServer.last = last;
+        else rPlayerClient.last = last;
     }
 
     public static List<String> getGroups() {
         return getRecipes().getGroups();
+    }
+
+    public static void setRecipe(String neu, String old, int index, Recipe recipe) {
+        getRecipes().set(neu, old, index, recipe);
+        setLast(neu);
+        writeToLocal();
+    }
+
+    public static void renameGroup(String old, String neu) {
+        getRecipes().renameGroup(old, neu);
+        setLast(neu);
+        writeToLocal();
     }
 
     public static void addRecipe(String group, Recipe recipe) {
@@ -146,27 +158,58 @@ public class Controller {
     }
 
     public static void setRMath(RecordMath math) {
-        rMathClient = math;
-    }
-
-    public static RecordCraft getRCraft() {
-        return rCraftClient;
-
+        setR(math, i -> rMathClient = i, KEY_MATH);
     }
 
     public static void setRCraft(RecordCraft rc) {
-        rCraftClient = rc;
+        setR(rc, i -> rCraftClient = i, KEY_CRAFT);
+    }
 
+    public static RecordCraft getRCraft() {
+        return getR(rCraftClient, KEY_CRAFT, RecordCraft::new);
     }
 
     public static RecordMath getRMath() {
-        return rMathClient;
+        return getR(rMathClient, KEY_MATH, RecordMath::new);
     }
 
+    private static <T extends IRecord> void setR(T t, Consumer<T> c, String s) {
+        if (!isServerActive()) c.accept(t);
+        else {
+            Optional<ItemStack> ois = getStack();
+            ois.ifPresent(is -> {
+                Utilities.getTag(is).setTag(s, t.serialize());
+            });
+        }
+    }
+
+    public static <T> T getR(T t, String s, Function<NBTTagCompound, T> f) {
+        if (!isServerActive()) return t;
+        else return f.apply(getStack()
+                                    .map(i -> Utilities.getTag(i).getCompoundTag(s))
+                                    .orElse(new NBTTagCompound()));
+    }
+
+    /**
+     * Checks if recipe has duplications, except the recipe at group->index
+     *
+     * @param r     Recipe to check
+     * @param group Group exclusive
+     * @param index Index exclusive
+     * @return if duplicate found
+     */
+    public static boolean hasDuplicate(Recipe r, String group, int index) {
+        Recipes.RecipeIterator ri = recipeIterator();
+        return ri.stream().anyMatch(i -> {
+            if (ri.getIndex() == index && ri.getGroup().equals(group)) return false;
+            else return i.equals(r);
+        });
+    }
 
     public static boolean hasDuplicate(Recipe r) {
-        return getRecipes().hasDuplicate(r);
+        return recipeIterator().stream().anyMatch(i -> i.equals(r));
     }
+
 
     public static void loadFromLocal() {
         //noinspection ResultOfMethodCallIgnored
@@ -194,15 +237,25 @@ public class Controller {
     }
 
     public static void openGuiCraft() {
-        if (!Controller.isServerActive()) JecaGui.displayGui(true, true, new GuiCraft());
+        openGuiCraft(false);
+    }
+
+    public static void openGuiMath() {
+        openGuiMath(false);
+    }
+
+    public static void openGuiCraft(boolean scheduled) {
+        if (!Controller.isServerActive()) JecaGui.displayGui(true, true, scheduled, new GuiCraft());
         else Minecraft.getMinecraft().thePlayer.addChatMessage(
                 new ChatComponentTranslation("jecalculation.chat.server_mode"));
     }
 
-    public static void openGuiMath() {
-        if (!Controller.isServerActive()) JecaGui.displayGui(true, true, new GuiMath());
+
+    public static void openGuiMath(boolean scheduled) {
+        if (!Controller.isServerActive()) JecaGui.displayGui(true, true, scheduled, new GuiMath());
         else Minecraft.getMinecraft().thePlayer.addChatMessage(
                 new ChatComponentTranslation("jecalculation.chat.server_mode"));
     }
+
 
 }

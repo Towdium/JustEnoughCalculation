@@ -43,6 +43,8 @@ public class JecaGui extends GuiContainer {
     public static final boolean ALWAYS_TOOLTIP = false;
     public ILabel hand = ILabel.EMPTY;
     protected static JecaGui last;
+    protected static Runnable scheduled;
+    protected static int timeout;
     protected JecaGui parent;
     public IGui root;
 
@@ -73,9 +75,19 @@ public class JecaGui extends GuiContainer {
     }
 
     public static void displayGui(boolean updateParent, boolean acceptsTransfer, IGui root) {
-        // isCallingFromMinecraftThread
-        if (Minecraft.getMinecraft().func_152345_ab())
-            displayGuiUnsafe(updateParent, acceptsTransfer, root);
+        displayGui(updateParent, acceptsTransfer, false, root);
+    }
+
+    public static void displayGui(boolean updateParent, boolean acceptsTransfer, boolean scheduled, IGui root) {
+        Runnable r = () -> {
+            // isCallingFromMinecraftThread
+            if (Minecraft.getMinecraft().func_152345_ab())
+                displayGuiUnsafe(updateParent, acceptsTransfer, root);
+        };
+        if (scheduled) {
+            JecaGui.scheduled = r;
+            JecaGui.timeout = 2;
+        } else r.run();
     }
 
     /**
@@ -116,6 +128,16 @@ public class JecaGui extends GuiContainer {
             gui.root.onVisible(gui);
             last = gui;
             Minecraft.getMinecraft().displayGuiScreen(gui);
+        }
+    }
+
+    public static void onGameTick() {
+        if (scheduled != null) {
+            if (timeout <= 0) {
+                Runnable r = scheduled;
+                scheduled = null;
+                r.run();
+            } else timeout--;
         }
     }
 
@@ -334,7 +356,7 @@ public class JecaGui extends GuiContainer {
 
     private void drawText(float xPos, float yPos, Font f, Runnable r) {
         boolean unicode = fontRendererObj.getUnicodeFlag();
-        if (f.half) fontRendererObj.setUnicodeFlag(false);
+        if (f.raw) fontRendererObj.setUnicodeFlag(false);
         GlStateManager.pushMatrix();
         GlStateManager.translate(xPos, yPos, 0);
         if (f.half) GlStateManager.scale(0.5, 0.5, 1);
@@ -379,23 +401,25 @@ public class JecaGui extends GuiContainer {
     }
 
     public static class Font {
-        public static final Font SHADOW = new Font(JecaGui.COLOR_TEXT_WHITE, true, false);
-        public static final Font PLAIN = new Font(JecaGui.COLOR_TEXT_GREY, false, false);
-        public static final Font HALF = new Font(JecaGui.COLOR_TEXT_WHITE, true, true);
+        public static final Font SHADOW = new Font(JecaGui.COLOR_TEXT_WHITE, true, false, false);
+        public static final Font PLAIN = new Font(JecaGui.COLOR_TEXT_GREY, false, false, false);
+        public static final Font RAW = new Font(JecaGui.COLOR_TEXT_GREY, false, false, true);
+        public static final Font HALF = new Font(JecaGui.COLOR_TEXT_WHITE, true, true, true);
 
         public int color;
-        public boolean shadow, half;
+        public boolean shadow, half, raw;
 
-        public Font(int color, boolean shadow, boolean half) {
+        public Font(int color, boolean shadow, boolean half, boolean raw) {
             this.color = color;
             this.shadow = shadow;
             this.half = half;
+            this.raw = raw;
         }
 
         public int getTextWidth(String s) {
             FontRenderer fr = getCurrent().fontRendererObj;
             boolean flag = fr.getUnicodeFlag();
-            if (half) fr.setUnicodeFlag(false);
+            if (raw) fr.setUnicodeFlag(false);
             int ret = (int) Math.ceil(fr.getStringWidth(s) * (half ? 0.5f : 1));
             fr.setUnicodeFlag(flag);
             return ret;

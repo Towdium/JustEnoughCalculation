@@ -29,6 +29,6 @@ public class CMath implements ISubCommand {
 
     @Override
     public void execute(ICommandSender sender, String[] args) {
-        Controller.openGuiMath();
+        Controller.openGuiMath(true);
     }
 }

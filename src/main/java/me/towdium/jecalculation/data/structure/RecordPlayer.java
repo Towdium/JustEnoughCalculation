@@ -6,7 +6,7 @@ import net.minecraft.nbt.NBTTagCompound;
  * Author: Towdium
  * Date: 19-1-21
  */
-public class RecordPlayer {
+public class RecordPlayer implements IRecord {
     public static final String KEY_RECIPES = "recipes";
     public static final String KEY_LAST = "last";
 
@@ -22,6 +22,7 @@ public class RecordPlayer {
         last = nbt.getString(KEY_LAST);
     }
 
+    @Override
     public NBTTagCompound serialize() {
         NBTTagCompound ret = new NBTTagCompound();
         if (last != null) ret.setString(KEY_LAST, last);

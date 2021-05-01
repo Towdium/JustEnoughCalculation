@@ -1,4 +1,6 @@
 # suppress inspection "UnusedProperty" for whole file
+item.item_calculator_crafting.name=合成计算器
+item.item_calculator_math.name=数学计算器
 jecalculation.key.category=Just Enough Calculation
 jecalculation.key.gui_craft=打开合成计算器
 jecalculation.key.gui_math=打开数学计算器
@@ -20,13 +22,13 @@ jecalculation.gui.craft.recipe=添加配方
 jecalculation.gui.craft.search=查找配方
 jecalculation.gui.craft.suggest=建议选项
 jecalculation.gui.math.title=数学计算器
-jecalculation.gui.math.help=按钮或者键盘都可以与计算器（主键盘或小键盘）进行交互。对于主键盘而言，各项功能以下列关系被映射到键盘按键上：\n- 加: = / +\n- 减: - / --\n- 乘: ' / "\n- 除: / / ?\n- 等于: Enter\n- 清零: Delete\n- 退格: Backspace
+jecalculation.gui.math.help=按钮或者键盘都可以与计算器（主键盘或小键盘）进行交互。对于主键盘而言，各项功能以下列关系被映射到键盘按键上：\n- 加: = 或 +\n- 减: - 或 --\n- 乘: ' 或 "\n- 除: / 或 ?\n- 等于: Enter\n- 清零: Delete\n- 退格: Backspace
 jecalculation.gui.disamb.list=原始类型
 jecalculation.gui.disamb.label=推测类型
 jecalculation.gui.recipe.save.enabled=保存配方
-jecalculation.gui.recipe.save.disabled=因为当前配方无效或者\n你已经保存过相同的配方\n所以无法保存当前配方
+jecalculation.gui.recipe.save.disabled=因为当前配方无效或者\n已经保存过相同的配方\n所以无法保存当前配方
 jecalculation.gui.recipe.copy.enabled=另存为新配方
-jecalculation.gui.recipe.copy.disabled=因为你不在编辑已有配方\n所以无法使用另存为
+jecalculation.gui.recipe.copy.disabled=因为你不在编辑已有配方\n或已经保存过相同的配方\n所以无法使用另存为
 jecalculation.gui.recipe.delete.enabled=删除配方
 jecalculation.gui.recipe.delete.disabled=因为你不在编辑已有配方\n所以无法使用删除
 jecalculation.gui.recipe.clear=清空所有槽位
@@ -47,6 +49,10 @@ jecalculation.gui.search.export_all.enabled=导出所有配方
 jecalculation.gui.search.export_all.disabled=没有配方记录，所以无法导出
 jecalculation.gui.search.title=配方管理
 jecalculation.gui.search.help=你可以使用该界面查找，导入和导出配方。你只需要点击其中的标签，就可以编辑对应的配方。使用右上方的按钮，你可以轻松地导入和导出配方。
+jecalculation.gui.search.rename.enabled=重命名分组
+jecalculation.gui.search.rename.disabled=重命名选项只在选中分组时有效
+jecalculation.gui.search.confirm.enabled=确认
+jecalculation.gui.search.confirm.disabled=分组名不能为空\n且不能与已有组名重复
 jecalculation.gui.import.title=导入配方
 jecalculation.gui.import.help=你可以使用该界面导入配方。首先，请将需要导入的文件放置于"config/ JustEnoughCalculation/data/"。在检测到合适的文件时，编组将会以“文件名/组名”的格式显示在列表中。最后选取需要导入的编组，点击确定就完成了。\n对于整合包作者，你可以将符合格式的文件放置于"config/JustEnoughCalculation/ default.json"。在玩家新建世界或者加入服务器时，其中的内容会做为默认值自动载入。
 jecalculation.gui.import.confirm.enabled=确认

@@ -22,8 +22,7 @@ import java.util.stream.StreamSupport;
 
 @ParametersAreNonnullByDefault
 public class Recipes {
-    LinkedHashMap<String, List<Recipe>> records = new LinkedHashMap<>();
-    HashSet<Recipe> cache = new HashSet<>();
+    HashMap<String, List<Recipe>> records = new HashMap<>();
 
     public Recipes() {
         File file = JecaConfig.defaultFile;
@@ -57,19 +56,32 @@ public class Recipes {
 
     public void add(String group, Recipe recipe) {
         records.computeIfAbsent(group, k -> new ArrayList<>()).add(recipe);
-        cache.add(recipe);
     }
 
-    public void modify(String group, int index, @Nullable Recipe recipe) {
-        if (index == -1 && recipe != null) add(group, recipe);
-        else if (recipe == null) remove(group, index);
-        else set(group, index, recipe);
+    public void renameGroup(String old, String neu) {
+        List<Recipe> rs = records.get(old);
+        records.remove(old);
+        records.put(neu, rs);
+    }
+
+    public void modify(String neu, @Nullable String old, int index, @Nullable Recipe recipe) {
+        if (index == -1) {
+            if (recipe != null) add(neu, recipe);
+            else if (old != null) renameGroup(old, neu);
+        } else {
+            if (recipe == null) remove(neu, index);
+            else if (old == null || old.equals(neu)) set(neu, index, recipe);
+            else set(neu, old, index, recipe);
+        }
     }
 
     public void set(String group, int index, Recipe recipe) {
-        Recipe r = records.get(group).set(index, recipe);
-        cache.remove(r);
-        cache.add(recipe);
+        records.get(group).set(index, recipe);
+    }
+
+    public void set(String neu, String old, int index, Recipe recipe) {
+        remove(old, index);
+        add(neu, recipe);
     }
 
     public int size() {
@@ -82,7 +94,7 @@ public class Recipes {
 
     public void remove(String group, int index) {
         List<Recipe> l = records.get(group);
-        cache.remove(l.remove(index));
+        l.remove(index);
         if (l.isEmpty()) records.remove(group);
     }
 
@@ -114,7 +126,7 @@ public class Recipes {
 
     public NBTTagCompound serialize(Collection<String> groups) {
         NBTTagCompound ret = new NBTTagCompound();
-        groups.stream().sorted().forEach(i -> {
+        groups.forEach(i -> {
             NBTTagList l = new NBTTagList();
             getGroup(i).forEach(r -> l.appendTag(r.serialize()));
             ret.setTag(i, l);
@@ -122,13 +134,12 @@ public class Recipes {
         return ret;
     }
 
-
     public List<String> getGroups() {
-        return new ArrayList<>(records.keySet());
+        return records.keySet().stream().sorted().collect(Collectors.toList());
     }
 
     public NBTTagCompound serialize() {
-        return serialize(records.keySet());
+        return serialize(getGroups());
     }
 
     public RecipeIterator recipeIterator() {
@@ -140,40 +151,50 @@ public class Recipes {
     }
 
     public class RecipeIterator implements Iterator<Recipe> {
-        Iterator<Map.Entry<String, List<Recipe>>> i;
+        String group;
+        int index;
+        Iterator<String> i;
         Iterator<Recipe> j;
 
         public RecipeIterator() {
-            i = records.entrySet().iterator();
+            i = getGroups().iterator();
         }
 
         public RecipeIterator(String group) {
-            HashMap<String, List<Recipe>> tmp = new HashMap<>();
-            tmp.put(group, records.get(group));
-            i = tmp.entrySet().iterator();
+            i = Collections.singleton(group).iterator();
         }
 
         @Override
         public boolean hasNext() {
             while (j == null || !j.hasNext()) {
-                if (i.hasNext()) j = i.next().getValue().iterator();
-                else return false;
+                if (i.hasNext()) {
+                    group = i.next();
+                    List<Recipe> rs = records.get(group);
+                    index = rs.size();
+                    j = new Utilities.ReversedIterator<>(rs);
+                } else return false;
             }
-            return j.hasNext();
+            return true;
         }
 
         @Override
         public Recipe next() {
-            while (j == null || !j.hasNext()) if (i.hasNext()) j = i.next().getValue().iterator();
+            //noinspection ResultOfMethodCallIgnored
+            hasNext();
+            index--;
             return j.next();
+        }
+
+        public String getGroup() {
+            return group;
+        }
+
+        public int getIndex() {
+            return index;
         }
 
         public Stream<Recipe> stream() {
             return StreamSupport.stream(Spliterators.spliteratorUnknownSize(this, Spliterator.ORDERED), false);
         }
-    }
-
-    public boolean hasDuplicate(Recipe r) {
-        return cache.contains(r);
     }
 }

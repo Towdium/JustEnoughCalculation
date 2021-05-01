@@ -5,6 +5,7 @@ import me.towdium.jecalculation.data.structure.Recipes;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.gui.widgets.*;
+import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import me.towdium.jecalculation.utils.wrappers.Quad;
 
@@ -77,7 +78,7 @@ public class GuiImport extends WContainer implements IGui, ISearchable {
     public boolean setFilter(String s) {
         if (s.isEmpty()) filtered = new ArrayList<>(data);
         else filtered = data.stream()
-                            .filter(i -> contains(i.two, s) || contains(i.three, s))
+                            .filter(i -> Utilities.I18n.contains(i.two, s) || Utilities.I18n.contains(i.three, s))
                             .collect(Collectors.toList());
         remove(page);
         page = new WSwitcher(7, 7, 162, (filtered.size() + 6) / 7).setListener(i -> refresh());
