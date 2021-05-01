@@ -1,12 +1,12 @@
 package me.towdium.jecalculation.gui;
 
+import codechicken.nei.guihook.GuiContainerManager;
 import cpw.mods.fml.client.config.GuiUtils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.guis.IGui;
-import me.towdium.jecalculation.gui.widgets.WContainer;
 import me.towdium.jecalculation.nei.NEIPlugin;
 import me.towdium.jecalculation.polyfill.mc.client.renderer.GlStateManager;
 import me.towdium.jecalculation.utils.Utilities;
@@ -27,7 +27,12 @@ import org.lwjgl.input.Mouse;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+
+import static codechicken.lib.gui.GuiDraw.renderEngine;
 
 /**
  * Author: towdium
@@ -98,7 +103,8 @@ public class JecaGui extends GuiContainer {
         if (scheduled) {
             JecaGui.scheduled = r;
             JecaGui.timeout = 2;
-        } else r.run();
+        } else
+            r.run();
     }
 
     /**
@@ -112,7 +118,6 @@ public class JecaGui extends GuiContainer {
         Objects.requireNonNull(ret);
         return ret;
     }
-
 
 
     private static void displayGuiUnsafe(boolean updateParent, boolean acceptsTransfer, IGui root) {
@@ -148,7 +153,8 @@ public class JecaGui extends GuiContainer {
                 Runnable r = scheduled;
                 scheduled = null;
                 r.run();
-            } else timeout--;
+            } else
+                timeout--;
         }
     }
 
@@ -198,13 +204,16 @@ public class JecaGui extends GuiContainer {
             int i = 0;
             for (String s : textLines) {
                 int j = this.fontRendererObj.getStringWidth(s);
-                if (j > i) i = j;
+                if (j > i)
+                    i = j;
             }
             int l1 = x + 12;
             int i2 = y - 12;
             int k = 8 + (textLines.size() - 1) * 10;
-            if (l1 + i > this.width) l1 -= 28 + i;
-            if (i2 + k + 6 > this.height) i2 = this.height - k - 6;
+            if (l1 + i > this.width)
+                l1 -= 28 + i;
+            if (i2 + k + 6 > this.height)
+                i2 = this.height - k - 6;
             zLevel = 300.0F;
             itemRender.zLevel = 300.0F;
             drawGradientRect(l1 - 3, i2 - 4, l1 + i + 3, i2 - 3, -267386864, -267386864);
@@ -288,11 +297,18 @@ public class JecaGui extends GuiContainer {
         drawResourceContinuous(r, xPos, yPos, xSize, ySize, border, border, border, border);
     }
 
-    public void drawResourceContinuous(
-            Resource r, int xPos, int yPos, int xSize, int ySize,
-            int borderTop, int borderBottom, int borderLeft, int borderRight) {
+    public void drawResourceContinuous(Resource r,
+                                       int xPos,
+                                       int yPos,
+                                       int xSize,
+                                       int ySize,
+                                       int borderTop,
+                                       int borderBottom,
+                                       int borderLeft,
+                                       int borderRight) {
         GuiUtils.drawContinuousTexturedBox(r.getResourceLocation(), xPos, yPos, r.getXPos(), r.getYPos(), xSize, ySize,
-                                           r.getXSize(), r.getYSize(), borderTop, borderBottom, borderLeft, borderRight, zLevel);
+                                           r.getXSize(), r.getYSize(), borderTop, borderBottom, borderLeft, borderRight,
+                                           zLevel);
     }
 
     private void setColor(int color) {
@@ -330,6 +346,16 @@ public class JecaGui extends GuiContainer {
         tessellator.draw();
         GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();
+    }
+
+    public void drawOverRectangle(int xPos, int yPos, int xSize, int ySize, int color) {
+        GlStateManager.disableLighting();
+        GlStateManager.disableDepth();
+        GlStateManager.colorMask(true, true, true, false);
+        this.drawGradientRect(xPos, yPos, xPos + xSize, yPos + ySize, color, color);
+        GlStateManager.colorMask(true, true, true, true);
+        GlStateManager.enableLighting();
+        GlStateManager.enableDepth();
     }
 
     public int getStringWidth(String s) {
@@ -371,10 +397,12 @@ public class JecaGui extends GuiContainer {
 
     private void drawText(float xPos, float yPos, Font f, Runnable r) {
         boolean unicode = fontRendererObj.getUnicodeFlag();
-        if (f.raw) fontRendererObj.setUnicodeFlag(false);
+        if (f.raw)
+            fontRendererObj.setUnicodeFlag(false);
         GlStateManager.pushMatrix();
         GlStateManager.translate(xPos, yPos, 0);
-        if (f.half) GlStateManager.scale(0.5, 0.5, 1);
+        if (f.half)
+            GlStateManager.scale(0.5, 0.5, 1);
         r.run();
         GlStateManager.popMatrix();
         fontRendererObj.setUnicodeFlag(unicode);
@@ -388,11 +416,14 @@ public class JecaGui extends GuiContainer {
             xPos -= 8;
             yPos -= 8;
         }
+        float zLevel = itemRender.zLevel += 100F;
         GlStateManager.enableDepth();
         RenderHelper.enableGUIStandardItemLighting();
-        itemRender.renderItemIntoGUI(fontRendererObj, mc.getTextureManager(), is, xPos, yPos);
+        itemRender.renderItemAndEffectIntoGUI(fontRendererObj, renderEngine, is, xPos, yPos);
+        itemRender.renderItemOverlayIntoGUI(fontRendererObj, renderEngine, is, xPos, yPos);
         RenderHelper.disableStandardItemLighting();
         GlStateManager.disableDepth();
+        itemRender.zLevel = zLevel - 100F;
     }
 
     @Override
@@ -407,10 +438,13 @@ public class JecaGui extends GuiContainer {
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) {
-        if (keyCode == Keyboard.KEY_ESCAPE && hand != ILabel.EMPTY) hand = ILabel.EMPTY;
+        if (keyCode == Keyboard.KEY_ESCAPE && hand != ILabel.EMPTY)
+            hand = ILabel.EMPTY;
         else if (!root.onKey(this, typedChar, keyCode)) {
-            if (keyCode == Keyboard.KEY_ESCAPE && parent != null) displayParent();
-            else super.keyTyped(typedChar, keyCode);
+            if (keyCode == Keyboard.KEY_ESCAPE && parent != null)
+                displayParent();
+            else
+                super.keyTyped(typedChar, keyCode);
         }
 
     }
@@ -434,7 +468,8 @@ public class JecaGui extends GuiContainer {
         public int getTextWidth(String s) {
             FontRenderer fr = getCurrent().fontRendererObj;
             boolean flag = fr.getUnicodeFlag();
-            if (raw) fr.setUnicodeFlag(false);
+            if (raw)
+                fr.setUnicodeFlag(false);
             int ret = (int) Math.ceil(fr.getStringWidth(s) * (half ? 0.5f : 1));
             fr.setUnicodeFlag(flag);
             return ret;

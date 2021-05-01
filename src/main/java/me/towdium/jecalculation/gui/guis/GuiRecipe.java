@@ -147,18 +147,19 @@ public class GuiRecipe extends WContainer implements IGui {
         disambCache = new HashMap<>();
 
         // input
-        List<ItemStack> inputItemStacks = recipe.getIngredientStacks(recipeIndex).stream()
-                                                .map((positionedStack) -> positionedStack.item)
-                                                .collect(Collectors.toList());
-        List<ItemStack> outputItemStacks = Collections.singletonList(recipe.getResultStack(recipeIndex).item);
+        recipe.getIngredientStacks(recipeIndex).stream()
+                                                  .map((positionedStack) -> positionedStack.items)
+                                                  .forEach(i -> merge(input, Arrays.asList(i), recipe));
+        // output
+        merge(output, Arrays.asList(recipe.getResultStack(recipeIndex).items), recipe);
 
-        merge(input, inputItemStacks, recipe);
-        merge(output, outputItemStacks, recipe);
-
-        // catalyst ignore multiple catalyst
+        // catalyst. Ignore multiple catalyst
         NEIPlugin.getCatalyst(recipe).map(ILabel.Converter::from).ifPresent(catalyst -> {
             this.catalyst.setLabel(catalyst, 0);
         });
+
+        // other. Unused. For example fuel in furnaces.
+        recipe.getOtherStacks(recipeIndex).stream();
 
         this.input.setLabel(sort(input, 0), 0);
         this.output.setLabel(sort(output, 21), 0);

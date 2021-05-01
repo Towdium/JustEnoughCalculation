@@ -247,12 +247,12 @@ public class Resource {
         return new Resource(x * 14, y * 14, 14, 14);
     }
 
-    private static Resource getLabel(int x) {
-        return new Resource(x * 16, 132, 16, 16);
-    }
-
     private static Resource getWidget(int x) {
         return new Resource(x * 20, 112, 20, 20);
+    }
+
+    private static Resource getLabel(int x) {
+        return new Resource(x * 16, 132, 16, 16);
     }
 
     public static class ResourceGroup {

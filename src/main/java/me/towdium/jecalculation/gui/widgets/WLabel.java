@@ -1,5 +1,6 @@
 package me.towdium.jecalculation.gui.widgets;
 
+import codechicken.lib.gui.GuiDraw;
 import codechicken.nei.recipe.GuiCraftingRecipe;
 import codechicken.nei.recipe.GuiUsageRecipe;
 import cpw.mods.fml.relauncher.Side;
@@ -9,12 +10,10 @@ import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.utils.IllegalPositionException;
 import me.towdium.jecalculation.utils.Utilities;
-import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
-import java.util.stream.IntStream;
 
 import static me.towdium.jecalculation.gui.JecaGui.COLOR_TEXT_RED;
 import static me.towdium.jecalculation.gui.JecaGui.COLOR_TEXT_WHITE;
@@ -66,10 +65,10 @@ public class WLabel implements IWidget {
         if (mode == Mode.EDITOR || mode == Mode.SELECTOR) {
             timer.setState(gui.hand != ILabel.EMPTY);
             int color = 0xFFFFFF + (int) ((-Math.cos(timer.getTime() * Math.PI / 1500) + 1) * 0x40) * 0x1000000;
-            gui.drawRectangle(xPos + 1, yPos + 1, xSize - 2, ySize - 2, color);
+            GuiDraw.drawRect(xPos + 1, yPos + 1, xSize - 2, ySize - 2, color);
         }
         if (mouseIn(xMouse, yMouse))
-            gui.drawRectangle(xPos + 1, yPos + 1, xSize - 2, ySize - 2, 0x80FFFFFF);
+            GuiDraw.drawRect(xPos + 1, yPos + 1, xSize - 2, ySize - 2, 0x80FFFFFF);
     }
 
     @Override
@@ -92,7 +91,8 @@ public class WLabel implements IWidget {
                 notifyLsnr();
             }
             return true;
-        } else return false;
+        } else
+            return false;
     }
 
     @Nullable
@@ -158,7 +158,8 @@ public class WLabel implements IWidget {
     }
 
     void notifyLsnr() {
-        if (listener != null) listener.invoke(this, label);
+        if (listener != null)
+            listener.invoke(this, label);
     }
 
 
@@ -172,17 +173,15 @@ public class WLabel implements IWidget {
 
     class WAmount extends WOverlay {
         WLabel temp = new WLabel(xPos, yPos, xSize, ySize, Mode.PICKER).setListener((i, v) -> update());
-        WButton number = new WButtonText(xPos + xSize + 60, yPos, 20, 20, "#", "general.to_percent")
-                .setListener(i -> {
-                    temp.label.setPercent(true);
-                    update();
-                });
+        WButton number = new WButtonText(xPos + xSize + 60, yPos, 20, 20, "#", "general.to_percent").setListener(i -> {
+            temp.label.setPercent(true);
+            update();
+        });
         WTextField text = new WTextField(xPos + xSize + 10, yPos + ySize / 2 - WTextField.HEIGHT / 2, 50);
-        WButton percent = new WButtonText(xPos + xSize + 60, yPos, 20, 20, "%", "general.to_percent")
-                .setListener(i -> {
-                    temp.label.setPercent(false);
-                    update();
-                });
+        WButton percent = new WButtonText(xPos + xSize + 60, yPos, 20, 20, "%", "general.to_percent").setListener(i -> {
+            temp.label.setPercent(false);
+            update();
+        });
         WButton pick = new WButtonIcon(xPos + xSize + 83, yPos, 20, 20, BTN_PICK, "label.pick").setListener(i -> {
             JecaGui.getCurrent().hand = temp.label;
             setLabel(ILabel.EMPTY);
@@ -200,7 +199,6 @@ public class WLabel implements IWidget {
             JecaGui.getCurrent().root.remove(this);
         });
 
-
         public WAmount() {
             temp.setLabel(label.copy());
             add(new WPanel(xPos - 5, yPos - 5, xSize + 152, ySize + 10));
@@ -212,7 +210,8 @@ public class WLabel implements IWidget {
                 try {
                     amount = Long.parseLong(text.getText());
                     acceptable = amount > 0;
-                    if (!acceptable) amount = 1;
+                    if (!acceptable)
+                        amount = 1;
                 } catch (NumberFormatException e) {
                     acceptable = text.getText().isEmpty();
                     amount = 1;

@@ -451,8 +451,7 @@ public interface ILabel {
 
         @Override
         public ILabel increaseAmount() {
-            setAmount(getAmount() + getMultiplier());
-            return this;
+            return setAmount(getAmount() + getMultiplier());
         }
 
         @Override
@@ -460,8 +459,7 @@ public interface ILabel {
             if (getAmount() <= getMultiplier())
                 return ILabel.EMPTY;
             else {
-                setAmount(getAmount() - getMultiplier());
-                return this;
+                return setAmount(getAmount() - getMultiplier());
             }
         }
 
@@ -496,12 +494,9 @@ public interface ILabel {
         @Override
         public ILabel multiply(float i) {
             float amount = i * getAmount();
-            if (amount > Long.MAX_VALUE)
-                throw new ArithmeticException("Multiply overflow");
-            setAmount((long) amount);
-            return this;
+            if (amount > Long.MAX_VALUE) throw new ArithmeticException("Multiply overflow");
+            return setAmount((long) amount);
         }
-
 
         @Override
         @SideOnly(Side.CLIENT)
