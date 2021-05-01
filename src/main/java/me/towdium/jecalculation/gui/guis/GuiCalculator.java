@@ -97,11 +97,11 @@ public class GuiCalculator extends WContainer implements IGui  {
     void refreshCalculator() {
         try {
             String s = amount.getText();
-            int i = s.isEmpty() ? 1 : Integer.parseInt(amount.getText());
+            long i = s.isEmpty() ? 1 : Long.parseLong(amount.getText());
             amount.setColor(JecaGui.COLOR_TEXT_WHITE);
             List<ILabel> dest = Collections.singletonList(label.getLabel().copy().setAmount(i));
             calculator = new CostList(getInventory(), dest).calculate();
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException | ArithmeticException e) {
             amount.setColor(JecaGui.COLOR_TEXT_RED);
             calculator = null;
         }

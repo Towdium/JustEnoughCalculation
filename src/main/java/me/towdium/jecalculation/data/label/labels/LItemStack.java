@@ -39,11 +39,6 @@ public class LItemStack extends ILabel.Impl {
     boolean fCap;
     transient ItemStack temp;
 
-    public LItemStack(int amount, Item item, int meta, @Nullable NBTTagCompound nbt, boolean percent) {
-        super(amount, percent);
-        init(item, meta, nbt, false, false, false);
-    }
-
     // Convert from itemStack
     public LItemStack(ItemStack is) {
         super(is.stackSize, false);
@@ -168,11 +163,11 @@ public class LItemStack extends ILabel.Impl {
     }
 
     @Override
-    public NBTTagCompound toNBT() {
+    public NBTTagCompound toNbt() {
         if (item == null)
-            return ILabel.EMPTY.toNBT();
+            return ILabel.EMPTY.toNbt();
         int id = Item.getIdFromItem(item);
-        NBTTagCompound ret = super.toNBT();
+        NBTTagCompound ret = super.toNbt();
         if (meta != 0)
             ret.setInteger(KEY_META, meta);
         ret.setInteger(KEY_ITEM, id);
@@ -202,7 +197,7 @@ public class LItemStack extends ILabel.Impl {
     }
 
     @Override
-    public int hashCode() {
-        return (nbt == null ? 0 : nbt.hashCode()) ^ meta ^ item.getUnlocalizedName().hashCode() ^ amount;
+    public int hashCode() { // TODO all labels use super hashcode
+        return (nbt == null ? 0 : nbt.hashCode()) ^ meta ^ item.getUnlocalizedName().hashCode() ^ (int) amount;
     }
 }

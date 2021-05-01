@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.BreakIterator;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -42,30 +43,17 @@ import java.util.stream.StreamSupport;
 @ParametersAreNonnullByDefault
 public class Utilities {
     // FLOAT FORMATTING
+    public static char[] suffix = new char[]{'K', 'M', 'B', 'G', 'T'};
+    public static DecimalFormat[] format = new DecimalFormat[]{
+            new DecimalFormat("#."), new DecimalFormat("#.#"), new DecimalFormat("#.##"),
+            new DecimalFormat("#.###"), new DecimalFormat("#.####")
+    };
+
     public static String cutNumber(float f, int size) {
-        BiFunction<Float, Integer, String> form = (fl, len) -> {
-            String ret = Float.toString(fl);
-            if (ret.endsWith(".0"))
-                ret = ret.substring(0, ret.length() - 2);
-            if (ret.length() > len)
-                ret = ret.substring(0, len);
-            return ret;
-        };
+        BiFunction<Float, Integer, String> form = (fl, len) -> format[len - 1 - (int) Math.log10(fl)].format(fl);
         int scale = (int) Math.log10(f) / 3;
-        switch (scale) {
-            case 0:
-                return form.apply(f, size);
-            case 1:
-                return form.apply(f / 1000.0f, size - 1) + 'K';
-            case 2:
-                return form.apply(f / 1000000.0f, size - 1) + 'M';
-            case 3:
-                return form.apply(f / 1000000000.0f, size - 1) + 'B';
-            case 4:
-                return form.apply(f / 1000000000000.0f, size - 1) + 'G';
-            default:
-                return form.apply(f / 1000000000000000.0f, size - 1) + 'T';
-        }
+        if (scale == 0) return form.apply(f, size);
+        else return form.apply(f / (float) Math.pow(1000, scale), size - 1) + suffix[scale - 1];
     }
 
 

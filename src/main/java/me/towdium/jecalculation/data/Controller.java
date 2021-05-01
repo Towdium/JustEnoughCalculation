@@ -3,6 +3,7 @@ package me.towdium.jecalculation.data;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.JecaConfig;
+import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.structure.Recents;
 import me.towdium.jecalculation.data.structure.Recipe;
@@ -14,17 +15,20 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
  * Author: towdium
  * Date:   17-10-15.
  */
+@ParametersAreNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class Controller {
     public static final String KEY_RECIPES = "recipes";
@@ -47,8 +51,14 @@ public class Controller {
         File dir = JecaConfig.dataDir;
         File[] fs = dir.listFiles();
         if (fs == null) return new ArrayList<>();
+        Function<File, Recipes> read = f -> {
+            NBTTagCompound nbt = Utilities.Json.read(f);
+            JustEnoughCalculation.logger.warn("File " + f.getAbsolutePath() + " contains invalid records.");
+            return nbt == null ? null : new Recipes(nbt);
+        };
         return Arrays.stream(fs)
-                     .map(i -> new Pair<>(i.getName(), new Recipes(Utilities.Json.read(i))))
+                     .map(i -> new Pair<>(i.getName(), read.apply(i)))
+                     .filter(i -> i.two != null)
                      .collect(Collectors.toList());
     }
 

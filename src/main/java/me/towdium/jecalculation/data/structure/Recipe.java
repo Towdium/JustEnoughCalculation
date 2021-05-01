@@ -8,6 +8,7 @@ import me.towdium.jecalculation.utils.wrappers.Wrapper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,6 +24,7 @@ import java.util.stream.StreamSupport;
  * Author: towdium
  * Date:   17-10-6.
  */
+@ParametersAreNonnullByDefault
 public class Recipe {
     public static final String KEY_INPUT = "input";
     public static final String KEY_CATALYST = "catalyst";
@@ -135,16 +137,17 @@ public class Recipe {
         return Arrays.stream(output).anyMatch(i -> ILabel.MERGER.merge(label, i).isPresent());
     }
 
-    public int multiplier(ILabel label) {
+    public long multiplier(ILabel label) {
         return Arrays.stream(output).filter(i -> ILabel.MERGER.merge(label, i).isPresent()).findAny()
                      .map(i -> {
-                         int amountA = label.getAmount();
-                         if (!label.isPercent()) amountA *= 100;
-                         int amountB = i.getAmount();
-                         if (!i.isPercent()) amountB *= 100;
+                         long amountA = label.getAmount();
+                         if (!label.isPercent()) amountA = Math.multiplyExact(amountA, 100L);
+                         long amountB = i.getAmount();
+                         if (!i.isPercent()) amountB = Math.multiplyExact(amountB, 100L);
                          return (amountB + Math.abs(amountA) - 1) / amountB;
-                     }).orElse(0);
+                     }).orElse(0L);
     }
+
     public enum enumIoType {
         INPUT, OUTPUT, CATALYST;
 

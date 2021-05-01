@@ -1,9 +1,9 @@
 package me.towdium.jecalculation.gui.guis;
 
 import codechicken.nei.recipe.IRecipeHandler;
-import me.towdium.jecalculation.data.structure.CostList;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
+import me.towdium.jecalculation.data.structure.CostList;
 import me.towdium.jecalculation.data.structure.Recipe;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
@@ -34,12 +34,13 @@ public class GuiRecipe extends WContainer implements IGui {
 
     WLabelGroup groupCatalyst = new WLabelGroup(28, 87, 7, 1, 20, 20, WLabel.enumMode.EDITOR);
     WButton buttonDisamb = new WButtonIcon(121, 33, 20, 20, Resource.BTN_DISAMB, "recipe.disamb").setLsnrLeft(() -> {
-        if (disambiguation != null) JecaGui.displayGui(new GuiDisambiguation(new ArrayList<>(disambiguation.values()))
-                                                               .setCallback(l -> {
-                                                                   JecaGui.displayParent();
-                                                                   JecaGui.getCurrent().hand = l;
-                                                               }));
-    });    WLabelGroup groupInput = new WLabelGroup(28, 111, 7, 2, 20, 20, WLabel.enumMode.EDITOR).setLsnrUpdate(i -> {
+        if (disambiguation != null)
+            JecaGui.displayGui(new GuiDisambiguation(new ArrayList<>(disambiguation.values())).setCallback(l -> {
+                JecaGui.displayParent();
+                JecaGui.getCurrent().hand = l;
+            }));
+    });
+    WLabelGroup groupInput = new WLabelGroup(28, 111, 7, 2, 20, 20, WLabel.enumMode.EDITOR).setLsnrUpdate(i -> {
         disambiguation.remove(i);
         refresh();
     });
@@ -73,11 +74,14 @@ public class GuiRecipe extends WContainer implements IGui {
     });
     WButton buttonNew = new WButtonIcon(7, 33, 20, 20, Resource.BTN_NEW, "recipe.new")
             .setLsnrLeft(() -> setModeNewGroup(true));
-    WButton buttonYes = new WButtonIcon(7, 33, 20, 20, Resource.BTN_YES, "recipe.confirm").setLsnrLeft(() -> {
-        switcherGroup.setTemp(textField.getText());
-        textField.setText("");
-        setModeNewGroup(false);
-    });
+    WButton buttonYes = new WButtonIcon(7, 33, 20, 20, Resource.BTN_YES, "recipe.confirm").setDisabled(true)
+                                                                                          .setLsnrLeft(() -> {
+                                                                                              switcherGroup.setTemp(
+                                                                                                      textField
+                                                                                                              .getText());
+                                                                                              textField.setText("");
+                                                                                              setModeNewGroup(false);
+                                                                                          });
     WButton buttonNo = new WButtonIcon(26, 33, 20, 20, Resource.BTN_NO, "recipe.cancel")
             .setLsnrLeft(() -> setModeNewGroup(false));
 
@@ -99,11 +103,13 @@ public class GuiRecipe extends WContainer implements IGui {
         add(new WIcon(7, 111, 21, 40, Resource.ICN_INPUT, "recipe.input"));
         add(new WLine(57));
         addAll(groupInput, groupCatalyst, groupOutput, switcherGroup);
-        if (switcherGroup.getTexts().isEmpty()) switcherGroup.setTemp(Utilities.I18n.format("common.default"));
+        if (switcherGroup.getTexts().isEmpty())
+            switcherGroup.setTemp(Utilities.I18n.format("common.default"));
         setModeNewGroup(false);
         buttonCopy.setDisabled(true);
         buttonDel.setDisabled(true);
         buttonDisamb.setDisabled(true);
+        textField.setLsnrText(s -> buttonYes.setDisabled(s.isEmpty()));
     }
 
     public void setModeNewGroup(boolean b) {

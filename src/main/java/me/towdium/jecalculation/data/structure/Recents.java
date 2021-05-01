@@ -6,10 +6,12 @@ import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+@ParametersAreNonnullByDefault
 public class Recents {
     Utilities.Recent<ILabel> record = new Utilities.Recent<>((a, b) -> a == ILabel.EMPTY || a.equals(b), 9);
 

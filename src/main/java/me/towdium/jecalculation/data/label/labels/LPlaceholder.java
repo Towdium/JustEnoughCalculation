@@ -32,11 +32,11 @@ public class LPlaceholder extends ILabel.Impl {
         name = tag.getString(KEY_NAME);
     }
 
-    public LPlaceholder(String name, int amount) {
+    public LPlaceholder(String name, long amount) {
         this(name, amount, false);
     }
 
-    public LPlaceholder(String name, int amount, boolean silent) {
+    public LPlaceholder(String name, long amount, boolean silent) {
         super(amount, false);
         this.name = name;
         if (!silent) getRecord().push(new LPlaceholder(name, 1, true));
@@ -65,8 +65,8 @@ public class LPlaceholder extends ILabel.Impl {
     }
 
     @Override
-    public NBTTagCompound toNBT() {
-        NBTTagCompound nbt = super.toNBT();
+    public NBTTagCompound toNbt() {
+        NBTTagCompound nbt = super.toNbt();
         nbt.setString(KEY_NAME, name);
         return nbt;
     }
@@ -80,7 +80,7 @@ public class LPlaceholder extends ILabel.Impl {
 
     @Override
     public int hashCode() {
-        return name.hashCode() ^ amount;
+        return name.hashCode() ^ (int) amount;
     }
 
     @Nullable

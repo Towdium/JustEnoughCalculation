@@ -19,7 +19,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -39,7 +38,7 @@ public class LOreDict extends ILabel.Impl {
         this(name, 1);
     }
 
-    public LOreDict(String name, int amount) {
+    public LOreDict(String name, long amount) {
         super(amount, false);
         this.name = name;
     }
@@ -103,7 +102,7 @@ public class LOreDict extends ILabel.Impl {
     public static List<ILabel> guess(List<ILabel> iss) {
         ILabel l = iss.get(0);
         HashSet<Integer> ids = new HashSet<>();
-        int amount = l.getAmount();
+        long amount = l.getAmount();
         for (int i : OreDictionary.getOreIDs(((LItemStack) l).getRep()))
             if (check(i, iss))
                 ids.add(i);
@@ -186,8 +185,8 @@ public class LOreDict extends ILabel.Impl {
     }
 
     @Override
-    public NBTTagCompound toNBT() {
-        NBTTagCompound ret = super.toNBT();
+    public NBTTagCompound toNbt() {
+        NBTTagCompound ret = super.toNbt();
         ret.setString(KEY_NAME, name);
         return ret;
     }
@@ -201,7 +200,7 @@ public class LOreDict extends ILabel.Impl {
 
     @Override
     public int hashCode() {
-        return name.hashCode() ^ amount;
+        return name.hashCode() ^ (int) amount;
     }
 
     public String getName() {

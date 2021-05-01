@@ -208,7 +208,7 @@ public class WLabel implements IWidget {
                 add(bAmount);
             }
             if (label.acceptPercent()) label.setPercent(b);
-            wtf.setText(Integer.toString(label.getAmount()));
+            wtf.setText(Long.toString(label.getAmount()));
         }
 
         @Override

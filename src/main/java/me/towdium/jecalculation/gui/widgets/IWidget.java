@@ -2,9 +2,11 @@ package me.towdium.jecalculation.gui.widgets;
 
 import me.towdium.jecalculation.gui.JecaGui;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
-public interface IWidget {
+@ParametersAreNonnullByDefault
+public interface IWidget { // TODO unify listener behavior when manually set and pass instance to listener
     void onDraw(JecaGui gui, int xMouse, int yMouse);
 
     default boolean onTooltip(JecaGui gui, int xMouse, int yMouse, List<String> tooltip) {
