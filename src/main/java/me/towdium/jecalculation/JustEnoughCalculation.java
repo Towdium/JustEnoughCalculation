@@ -28,6 +28,7 @@ import static me.towdium.jecalculation.gui.JecaGui.keyOpenGuiCraft;
 import static me.towdium.jecalculation.gui.JecaGui.keyOpenGuiMath;
 import static net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus.MOD;
 import static net.minecraftforge.fml.config.ModConfig.Type.COMMON;
+import static net.minecraftforge.fml.network.NetworkRegistry.ABSENT;
 
 @Mod.EventBusSubscriber(bus = MOD)
 @MethodsReturnNonnullByDefault
@@ -43,14 +44,16 @@ public class JustEnoughCalculation {
     public JustEnoughCalculation() {
         //noinspection ResultOfMethodCallIgnored
         Utilities.config().mkdirs();
-        ModLoadingContext.get().registerConfig(COMMON, JecaConfig.common, FMLPaths.CONFIGDIR.get().resolve(PATH).toString());
+        String cfgPath = FMLPaths.CONFIGDIR.get().resolve(PATH).toString();
+        ModLoadingContext.get().registerConfig(COMMON, JecaConfig.common, cfgPath);
     }
 
     @SubscribeEvent
     public static void setupCommon(FMLCommonSetupEvent event) {
         network = NetworkRegistry.newSimpleChannel(
-            new ResourceLocation(MODID, "main"),
-            () -> PROTOCOL, PROTOCOL::equals, PROTOCOL::equals
+            new ResourceLocation(MODID, "main"), () -> PROTOCOL,
+                v -> v.equals(PROTOCOL) || v.equals(ABSENT),
+                v -> v.equals(PROTOCOL) || v.equals(ABSENT)
         );
         network.registerMessage(0, PCalculator.class, PCalculator::write, PCalculator::new, PCalculator::handle);
         network.registerMessage(1, PEdit.class, PEdit::write, PEdit::new, PEdit::handle);
