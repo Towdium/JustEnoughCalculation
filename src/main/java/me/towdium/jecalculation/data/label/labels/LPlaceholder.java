@@ -61,13 +61,12 @@ public class LPlaceholder extends ILabel.Impl {
     }
 
     private static Utilities.Recent<LPlaceholder> getRecord() {
-        return JustEnoughCalculation.side == JustEnoughCalculation.enumSide.CLIENT
-                ? recentClient : recentServer;
+        return recentClient;
     }
 
     @Override
-    public NBTTagCompound toNBTTagCompound() {
-        NBTTagCompound nbt = super.toNBTTagCompound();
+    public NBTTagCompound toNBT() {
+        NBTTagCompound nbt = super.toNBT();
         nbt.setString(KEY_NAME, name);
         return nbt;
     }

@@ -11,7 +11,13 @@ import java.io.File;
 public class JecaConfig {
     public static File configDir = new File(Loader.instance().getConfigDir(), "JustEnoughCalculation/");
     public static final File configFile = new File(configDir, "main.cfg");
-    public static final File recordFile = new File(configDir, "record.data");
+    public static final File recordFile = new File(configDir, "record.json");
+    public static final File defaultFile = new File(configDir, "default.json");
+
+    public static final File dataDir = new File(configDir, "data/");
+    public static File getDataFile(String group) {
+        return new File(dataDir, group + ".json");
+    }
 
     public static boolean initialized = false;
     public static Configuration config;

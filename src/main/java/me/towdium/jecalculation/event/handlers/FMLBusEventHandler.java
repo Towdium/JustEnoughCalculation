@@ -24,10 +24,7 @@ public class FMLBusEventHandler {
     @SubscribeEvent(receiveCanceled = true)
     public void onKey(InputEvent.KeyInputEvent event) {
         if (ClientHandler.keyOpenGui.isPressed()) {
-            if (JustEnoughCalculation.side == JustEnoughCalculation.enumSide.CLIENT)
-                JecaGui.displayGui(true, true, new GuiCalculator());
-            else
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentTranslation("chat.server_mode"));
+            JecaGui.displayGui(true, true, new GuiCalculator());
         }
     }
 

@@ -30,7 +30,6 @@ public class LFluidStack extends ILabel.Impl {
     NBTTagCompound nbt;
     FluidStack temp;
 
-
     @Override
     public FluidStack getRepresentation() {
         return temp;
@@ -51,14 +50,19 @@ public class LFluidStack extends ILabel.Impl {
 
     public LFluidStack(int amount, Fluid fluid, @Nullable NBTTagCompound nbt) {
         super(amount, false);
-        this.fluid = fluid;
-        this.nbt = nbt;
-        temp = new FluidStack(fluid, amount, nbt);
+        init(fluid, nbt);
     }
 
     public LFluidStack(NBTTagCompound nbt) {
-        this(nbt.getInteger(KEY_AMOUNT), Objects.requireNonNull(FluidRegistry.getFluid(nbt.getString(KEY_FLUID))),
+        super(nbt);
+        init(FluidRegistry.getFluid(nbt.getString(KEY_FLUID)),
              nbt.hasKey(KEY_NBT) ? nbt.getCompoundTag(KEY_NBT) : null);
+    }
+
+    private void init(Fluid fluid, @Nullable NBTTagCompound nbt) {
+        this.fluid = fluid;
+        this.nbt = nbt;
+        temp = new FluidStack(fluid, amount, nbt);
     }
 
     public LFluidStack(LFluidStack lfs) {
@@ -105,8 +109,8 @@ public class LFluidStack extends ILabel.Impl {
     }
 
     @Override
-    public NBTTagCompound toNBTTagCompound() {
-        NBTTagCompound ret = super.toNBTTagCompound();
+    public NBTTagCompound toNBT() {
+        NBTTagCompound ret = super.toNBT();
         ret.setString(KEY_FLUID, FluidRegistry.getFluidName(fluid));
         if (nbt != null) ret.setTag(KEY_NBT, nbt);
         return ret;

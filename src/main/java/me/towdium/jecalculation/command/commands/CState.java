@@ -26,6 +26,6 @@ public class CState implements ISubCommand {
 
     @Override
     public void execute(ICommandSender sender, String[] args) {
-        sender.addChatMessage(new ChatComponentTranslation(getKey("desc"), JustEnoughCalculation.side.toString()));
+        sender.addChatMessage(new ChatComponentTranslation(getKey("desc"), "inactive"));
     }
 }

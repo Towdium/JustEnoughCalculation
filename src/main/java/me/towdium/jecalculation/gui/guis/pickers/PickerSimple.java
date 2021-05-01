@@ -12,6 +12,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,10 +30,11 @@ public class PickerSimple extends IPicker.Impl implements IGui {
      *                entire key should be "gui.l18nKey.help.tooltip"
      */
     public PickerSimple(List<ILabel> labels, String l18nKey) {
-        WLabelScroll ls = new WLabelScroll(7, 33, 8, 7, WLabel.enumMode.PICKER, true).setLabels(labels);
-        WTextField tf = new WTextField(26, 7, 90);
-        add(new WSearch(l -> callback.accept(l), tf, ls));
+        WLabelScroll ls = new WLabelScroll(7, 33, 8, 7, WLabel.enumMode.PICKER, true)
+                .setLabels(labels).setLsnrUpdate(callback);
+        add(new WSearch(26, 7, 90, ls));
         add(new WIcon(7, 7, 20, 20, Resource.ICN_TEXT, l18nKey + ".text"));
+        add(ls);
     }
 
 
@@ -46,8 +48,15 @@ public class PickerSimple extends IPicker.Impl implements IGui {
 
     public static class OreDict extends PickerSimple {
         public OreDict() {
-            super(Arrays.stream(OreDictionary.getOreNames()).map(LOreDict::new).collect(Collectors.toList()),
-                  "picker_ore_dict");
+            super(generate(), "picker_ore_dict");
+        }
+
+        static List<ILabel> generate() {
+            List<ILabel> present = new ArrayList<>();
+            List<ILabel> empty = new ArrayList<>();
+            Arrays.stream(OreDictionary.getOreNames()).map(LOreDict::new).forEach(i -> (i.isEmpty() ? empty : present).add(i));
+            present.addAll(empty);
+            return present;
         }
     }
 }

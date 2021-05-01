@@ -9,6 +9,7 @@ import me.towdium.jecalculation.data.label.ILabel;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Author: towdium
@@ -27,16 +28,13 @@ public class GuiDisambiguation extends IPicker.Impl implements IGui {
         lsUp = new WLabelScroll(25, 48, 7, 3, WLabel.enumMode.PICKER, true);
         lsDown = new WLabelScroll(25, 105, 7, 3, WLabel.enumMode.PICKER, true);
         switcher = new WSwitcher(7, 7, 162, this.record.size()).setListener(() -> setPage(switcher.getIndex()));
-        WTextField tf = new WTextField(25, 24, 90);
+        Consumer<ILabel> consumer = i -> callback.accept(i.copy().multiply(-1));
 
         add(new WPanel());
-        add(switcher);
         add(new WIcon(7, 48, 18, 54, Resource.ICN_LIST, "disambiguation.list"));
         add(new WIcon(7, 105, 18, 54, Resource.ICN_LABEL, "disambiguation.label"));
-        add(new WSearch(i -> {
-            if (callback != null) callback.accept(i.copy().multiply(-1));
-        }, tf, lsUp, lsDown));
-
+        add(new WSearch(25, 24, 90, lsUp.setLsnrUpdate(consumer), lsDown.setLsnrUpdate(consumer)));
+        addAll(switcher, lsUp, lsDown);
         setPage(0);
     }
 

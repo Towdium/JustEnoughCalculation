@@ -18,14 +18,14 @@ import java.util.stream.Collectors;
  */
 @ParametersAreNonnullByDefault
 @SideOnly(Side.CLIENT)
-public class WLabelScroll extends WContainer {
+public class WLabelScroll extends WContainer implements ISearchable {
     protected List<ILabel> labels = new ArrayList<>();
     protected List<ILabel> filtered = new ArrayList<>();
     protected WLabelGroup labelGroup;
     protected WScroll scroll;
     protected int xPos, yPos, column, row, current;
     protected String filter = "";
-    protected Consumer<Integer> lsnrUpdate;
+    protected Consumer<ILabel> lsnrUpdate;
 
     public WLabelScroll(int xPos, int yPos, int column, int row, WLabel.enumMode mode, boolean drawConnection) {
         this.xPos = xPos;
@@ -34,7 +34,7 @@ public class WLabelScroll extends WContainer {
         this.row = row;
         labelGroup = new WLabelGroup(xPos, yPos, column, row, mode)
                 .setLsnrUpdate(i -> {
-                    if (lsnrUpdate != null) lsnrUpdate.accept(i + current * column);
+                    if (lsnrUpdate != null) lsnrUpdate.accept(labels.get(i + current * column));
                 });
         scroll = new WScroll(xPos + column * 18 + 4, yPos, row * 18).setLsnrScroll(this::update);
         add(labelGroup);
@@ -82,7 +82,7 @@ public class WLabelScroll extends WContainer {
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    public WLabelScroll setLsnrUpdate(Consumer<Integer> lsnr) {
+    public WLabelScroll setLsnrUpdate(Consumer<ILabel> lsnr) {
         lsnrUpdate = lsnr;
         return this;
     }

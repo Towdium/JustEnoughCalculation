@@ -44,13 +44,17 @@ public class GuiCalculator extends WContainer implements IGui  {
     WTextField amount = new WTextField(60, 7, 65);
 
     public GuiCalculator() {
+        amount.setText(Controller.getAmount());
         label.setLsnrUpdate(() -> {
             Controller.setRecent(label.label);
             refreshRecent();
             refreshCalculator();
         });
         recent.setLsnrUpdate(l -> JecaGui.getCurrent().hand = recent.getLabelAt(l));
-        amount.setLsnrText(s -> refreshCalculator());
+        amount.setLsnrText(s -> {
+            Controller.setAmount(s);
+            refreshCalculator();
+        });
         add(new WHelp("calculator"));
         add(new WPanel());
         add(new WButtonIcon(7, 7, 20, 20, Resource.BTN_LABEL, "calculator.label")
@@ -85,9 +89,9 @@ public class GuiCalculator extends WContainer implements IGui  {
     }
 
     void refreshRecent() {
-        List<ILabel> recent = Controller.getRecent();
-        if (!recent.isEmpty()) label.setLabel(recent.get(0));
-        if (recent.size() > 1) this.recent.setLabel(recent.subList(1, recent.size()), 0);
+        List<ILabel> labels = Controller.getRecent();
+        label.setLabel(labels.isEmpty() ? ILabel.EMPTY : labels.get(0));
+        recent.setLabel(labels.isEmpty() ? new ArrayList<>() : labels.subList(1, labels.size()), 0);
     }
 
     void refreshCalculator() {

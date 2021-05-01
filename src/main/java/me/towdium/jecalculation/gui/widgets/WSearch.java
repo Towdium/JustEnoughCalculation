@@ -14,21 +14,23 @@ import java.util.function.Consumer;
  */
 @ParametersAreNonnullByDefault
 @SideOnly(Side.CLIENT)
-public class WSearch extends WContainer {
-    Consumer<ILabel> clbk;
+public class WSearch extends WTextField {
+    ISearchable[] lss;
 
-    public WSearch(Consumer<ILabel> callback, WTextField tf, WLabelScroll... lss) {
-        clbk = callback;
-        tf.setLsnrText(s -> {
-            boolean b = false;
-            for (WLabelScroll i : lss) if (i.setFilter(s)) b = true;
-            tf.setColor(b ? JecaGui.COLOR_TEXT_WHITE : JecaGui.COLOR_TEXT_RED);
-        });
-        add(tf);
-        addAll(lss);
-        for (WLabelScroll i : lss)
-            i.setLsnrUpdate(j -> {
-                if (clbk != null) clbk.accept(i.getLabelAt(j));
-            });
+    public WSearch(int xPos, int yPos, int xSize, ISearchable... lss) {
+        super(xPos, yPos, xSize);
+        this.lss = lss;
+    }
+
+    @Override
+    protected void notifyLsnr() {
+        super.notifyLsnr();
+        refresh();
+    }
+
+    public void refresh() {
+        boolean b = false;
+        for (ISearchable i : lss) if (i.setFilter(textField.getText())) b = true;
+        setColor(b ? JecaGui.COLOR_TEXT_WHITE : JecaGui.COLOR_TEXT_RED);
     }
 }

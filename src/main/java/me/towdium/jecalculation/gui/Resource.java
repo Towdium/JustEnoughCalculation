@@ -70,6 +70,9 @@ public class Resource {
     public static final Resource WGT_BUTTON_N = new Resource(40, 232, 20, 20);
     public static final Resource WGT_BUTTON_F = new Resource(60, 232, 20, 20);
     public static final Resource WGT_BUTTON_D = new Resource(80, 232, 20, 20);
+    public static final Resource WGT_BUTTON_S_N = new Resource(0, 212, 20, 20);
+    public static final Resource WGT_BUTTON_S_F = new Resource(20, 212, 20, 20);
+    public static final Resource WGT_BUTTON_S_D = new Resource(40, 212, 20, 20);
     public static final Resource WGT_SLOT = new Resource(20, 232, 20, 20);
     public static final Resource WGT_LINE = new Resource(0, 252, 163, 4);
     public static final Resource WGT_PANEL_F = new Resource(0, 232, 20, 20);

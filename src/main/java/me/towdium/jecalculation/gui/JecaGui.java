@@ -254,6 +254,10 @@ public class JecaGui extends GuiContainer {
         GlStateManager.enableTexture2D();
     }
 
+    public int getStringWidth(String s) {
+        return fontRendererObj.getStringWidth(s);
+    }
+
     public void drawSplitText(float xPos, float yPos, Font f, String s) {
         drawSplitText(xPos, yPos, Integer.MAX_VALUE, f, s);
     }

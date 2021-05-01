@@ -12,7 +12,7 @@ import net.minecraftforge.client.ClientCommandHandler;
 import org.lwjgl.input.Keyboard;
 
 public class ClientHandler {
-    public static final KeyBinding keyOpenGui = new KeyBinding("key.open_gui", Keyboard.KEY_NONE, "key.category");
+    public static final KeyBinding keyOpenGui = new KeyBinding("jecalculation.key.open_gui", Keyboard.KEY_NONE, "jecalculation.key.category");
 
     public void initPre() {
         Handlers.register();

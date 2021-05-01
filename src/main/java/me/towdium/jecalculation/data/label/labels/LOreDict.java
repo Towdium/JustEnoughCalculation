@@ -7,6 +7,7 @@ import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.polyfill.mc.util.NonNullList;
+import me.towdium.jecalculation.utils.ItemStackHelper;
 import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
@@ -53,6 +54,10 @@ public class LOreDict extends ILabel.Impl {
         name = nbt.getString(KEY_NAME);
     }
 
+    public boolean isEmpty() {
+        return OreDictionary.getOres(name).isEmpty();
+    }
+
     @Override
     @Nonnull
     public ItemStack getRepresentation() {
@@ -63,6 +68,7 @@ public class LOreDict extends ILabel.Impl {
             } else
                 list.add(is);
         });
+        if (list.isEmpty()) return ItemStackHelper.EMPTY_ITEM_STACK;
         long index = System.currentTimeMillis() / 1500;
         return list.get((int) (index % list.size()));
     }
@@ -180,10 +186,9 @@ public class LOreDict extends ILabel.Impl {
     }
 
     @Override
-    public NBTTagCompound toNBTTagCompound() {
-        NBTTagCompound ret = new NBTTagCompound();
+    public NBTTagCompound toNBT() {
+        NBTTagCompound ret = super.toNBT();
         ret.setString(KEY_NAME, name);
-        ret.setInteger(KEY_AMOUNT, amount);
         return ret;
     }
 

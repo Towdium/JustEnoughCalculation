@@ -66,7 +66,7 @@ public class WTextField implements IWidget {
         return this;
     }
 
-    void notifyLsnr() {
+    protected void notifyLsnr() {
         if (lsnrText != null) lsnrText.accept(textField.getText());
     }
 }

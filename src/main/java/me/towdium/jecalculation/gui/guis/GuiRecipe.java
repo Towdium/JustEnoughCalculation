@@ -11,7 +11,7 @@ import me.towdium.jecalculation.gui.widgets.*;
 import me.towdium.jecalculation.nei.NEIPlugin;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
-import me.towdium.jecalculation.utils.wrappers.Triple;
+import me.towdium.jecalculation.utils.wrappers.Trio;
 import net.minecraft.item.ItemStack;
 
 import java.util.*;
@@ -124,8 +124,8 @@ public class GuiRecipe extends WContainer implements IGui {
 
     public void transfer(IRecipeHandler recipe, int recipeIndex) {
         // item disamb raw
-        ArrayList<Triple<ILabel, CostList, CostList>> input = new ArrayList<>();
-        ArrayList<Triple<ILabel, CostList, CostList>> output = new ArrayList<>();
+        ArrayList<Trio<ILabel, CostList, CostList>> input = new ArrayList<>();
+        ArrayList<Trio<ILabel, CostList, CostList>> output = new ArrayList<>();
         disambiguation = new HashMap<>();
 
         // input
@@ -147,7 +147,7 @@ public class GuiRecipe extends WContainer implements IGui {
         refresh();
     }
 
-    private void merge(ArrayList<Triple<ILabel, CostList, CostList>> dst, List<ILabel> list) {
+    private void merge(ArrayList<Trio<ILabel, CostList, CostList>> dst, List<ILabel> list) {
         if (list.isEmpty())
             return;
         dst.stream().filter(p -> {
@@ -159,17 +159,17 @@ public class GuiRecipe extends WContainer implements IGui {
             } else
                 return false;
         }).findAny().orElseGet(() -> {
-            Triple<ILabel, CostList, CostList> ret = new Triple<>(ILabel.CONVERTER.first(list), new CostList(list),
-                                                                  new CostList(list));
+            Trio<ILabel, CostList, CostList> ret = new Trio<>(ILabel.CONVERTER.first(list), new CostList(list),
+                                                              new CostList(list));
             dst.add(ret);
             return ret;
         });
     }
 
-    private ArrayList<ILabel> sort(ArrayList<Triple<ILabel, CostList, CostList>> src, int offset, boolean guess) {
+    private ArrayList<ILabel> sort(ArrayList<Trio<ILabel, CostList, CostList>> src, int offset, boolean guess) {
         ArrayList<ILabel> ret = new ArrayList<>();
         for (int i = 0; i < src.size(); i++) {
-            Triple<ILabel, CostList, CostList> p = src.get(i);
+            Trio<ILabel, CostList, CostList> p = src.get(i);
             ret.add(p.one);
             if (guess && !ILabel.CONVERTER.guess(p.three.getLabels()).isEmpty())
                 disambiguation.put(i + offset, p.two.getLabels());

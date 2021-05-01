@@ -2,39 +2,35 @@ package me.towdium.jecalculation.data.structure;
 
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.polyfill.NBTHelper;
-import me.towdium.jecalculation.utils.wrappers.Triple;
+import me.towdium.jecalculation.utils.wrappers.Trio;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.BiConsumer;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 public class Recipes {
-    public static final String KEY_NAME = "name";
-    public static final String KEY_CONTENT = "content";
-
     LinkedHashMap<String, List<Recipe>> records = new LinkedHashMap<>();
 
     public Recipes() {
     }
 
-    public Recipes(NBTTagList nbt) {
+    public Recipes(NBTTagCompound nbt) {
         deserialize(nbt);
     }
 
-    public void deserialize(NBTTagList nbt) {
-        StreamSupport.stream(NBTHelper.spliterator(nbt), false).filter(g -> g instanceof NBTTagCompound).forEach(g -> {
-            NBTTagCompound group = (NBTTagCompound) g;
-            String name = group.getString(KEY_NAME);
-            NBTTagList recipes = group.getTagList(KEY_CONTENT, 10);
-            StreamSupport.stream(NBTHelper.spliterator(recipes), false).filter(r -> r instanceof NBTTagCompound)
-                         .map(r -> (NBTTagCompound) r).forEach(r -> add(name, new Recipe(r)));
+    public void deserialize(NBTTagCompound nbt) {
+        Set<String> keySet = (Set<String>) nbt.func_150296_c();
+        keySet.stream().sorted().forEach(i -> {
+            NBTTagList group = nbt.getTagList(i, 10);
+            StreamSupport.stream(NBTHelper.spliterator(group), false)
+                         .filter(r -> r instanceof  NBTTagCompound)
+                         .forEach(r -> add(i, new Recipe((NBTTagCompound) r)));
         });
     }
 
@@ -66,15 +62,15 @@ public class Recipes {
         return records.entrySet().stream();
     }
 
-    public Stream<Triple<Recipe, String, Integer>> flatStream() {
+    public Stream<Trio<Recipe, String, Integer>> flatStream() {
         return records.entrySet().stream().flatMap(i ->
                 IntStream.range(0, i.getValue().size()).mapToObj(j ->
-                        new Triple<>(i.getValue().get(j), i.getKey(), j)));
+                        new Trio<>(i.getValue().get(j), i.getKey(), j)));
     }
 
-    public Stream<Triple<Recipe, String, Integer>> flatStream(String group) {
+    public Stream<Trio<Recipe, String, Integer>> flatStream(String group) {
         List<Recipe> l = records.get(group);
-        return IntStream.range(0, l.size()).mapToObj(j -> new Triple<>(l.get(j), group, j));
+        return IntStream.range(0, l.size()).mapToObj(j -> new Trio<>(l.get(j), group, j));
     }
 
     public void remove(String group, int index) {
@@ -87,11 +83,11 @@ public class Recipes {
         return getGroup(group).get(index);
     }
 
-    public List<Triple<Recipe, String, Integer>> getRecipes() {
+    public List<Trio<Recipe, String, Integer>> getRecipes() {
         return flatStream().collect(Collectors.toCollection(ArrayList::new));
     }
 
-    public List<Triple<Recipe, String, Integer>> getRecipes(String group) {
+    public List<Trio<Recipe, String, Integer>> getRecipes(String group) {
         return flatStream(group).collect(Collectors.toCollection(ArrayList::new));
     }
 
@@ -106,16 +102,22 @@ public class Recipes {
         return records.get(group);
     }
 
-    public NBTTagList serialize() {
-        NBTTagList ret = new NBTTagList();
-        forEach((n, rs) -> {
-            NBTTagCompound nbt = new NBTTagCompound();
-            nbt.setString(KEY_NAME, n);
+    public NBTTagCompound serialize(Collection<String> groups) {
+        NBTTagCompound ret = new NBTTagCompound();
+        groups.stream().sorted().forEach(i -> {
             NBTTagList l = new NBTTagList();
-            rs.forEach(r -> l.appendTag(r.serialize()));
-            nbt.setTag(KEY_CONTENT, l);
-            ret.appendTag(nbt);
+            getGroup(i).forEach(r -> l.appendTag(r.serialize()));
+            ret.setTag(i, l);
         });
         return ret;
+    }
+
+
+    public List<String> getGroups() {
+        return records.keySet().stream().sorted().collect(Collectors.toList());
+    }
+
+    public NBTTagCompound serialize() {
+        return serialize(records.keySet());
     }
 }

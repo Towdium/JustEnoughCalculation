@@ -98,7 +98,7 @@ public interface ILabel {
 
     ILabel copy();
 
-    NBTTagCompound toNBTTagCompound();
+    NBTTagCompound toNBT();
 
     String getIdentifier();
 
@@ -176,7 +176,7 @@ public interface ILabel {
      * For {@link ILabel} operations, see {@link Merger}
      */
     class Serializer {
-        public static final String KEY_IDENTIFIER = "identifier";
+        public static final String KEY_IDENTIFIER = "type";
         public static final String KEY_CONTENT = "content";
 
         private HashMap<String, Function<NBTTagCompound, ILabel>> idToData = new HashMap<>();
@@ -215,7 +215,7 @@ public interface ILabel {
         public NBTTagCompound serialize(ILabel label) {
             NBTTagCompound ret = new NBTTagCompound();
             ret.setString(KEY_IDENTIFIER, label.getIdentifier());
-            ret.setTag(KEY_CONTENT, label.toNBTTagCompound());
+            ret.setTag(KEY_CONTENT, label.toNBT());
             return ret;
         }
     }
@@ -362,7 +362,7 @@ public interface ILabel {
         }
 
         @Override
-        public NBTTagCompound toNBTTagCompound() {
+        public NBTTagCompound toNBT() {
             return new NBTTagCompound();
         }
 
@@ -473,10 +473,10 @@ public interface ILabel {
         }
 
         @Override
-        public NBTTagCompound toNBTTagCompound() {
+        public NBTTagCompound toNBT() {
             NBTTagCompound nbt = new NBTTagCompound();
             nbt.setInteger(KEY_AMOUNT, amount);
-            nbt.setBoolean(KEY_PERCENT, percent);
+            nbt.setBoolean(KEY_PERCENT, true);
             return nbt;
         }
 

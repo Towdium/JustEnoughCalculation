@@ -1,5 +1,8 @@
 package me.towdium.jecalculation.utils;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.relauncher.Side;
@@ -7,17 +10,22 @@ import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.polyfill.NBTHelper;
 import me.towdium.jecalculation.utils.wrappers.Pair;
-import me.towdium.jecalculation.utils.wrappers.Wrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.*;
 import net.minecraftforge.fluids.Fluid;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.BreakIterator;
 import java.util.*;
 import java.util.function.BiFunction;
@@ -185,7 +193,7 @@ public class Utilities {
 
         public static Pair<String, Boolean> search(String translateKey, Object... parameters) {
             Pair<String, Boolean> ret = new Pair<>(null, null);
-            translateKey = "jecharacters." + translateKey;
+            translateKey = "jecalculation." + translateKey;
             String buffer = net.minecraft.client.resources.I18n.format(translateKey, parameters);
             ret.two = !buffer.equals(translateKey);
             buffer = StringEscapeUtils.unescapeJava(buffer);
@@ -198,8 +206,9 @@ public class Utilities {
         }
 
         public static List<String> wrap(String s, int width) {
-            return new TextWrapper().wrap(s, Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode(),
-                                          i -> TextWrapper.renderer.getCharWidth(i), width);
+            return new TextWrapper()
+                    .wrap(s, Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode(),
+                          i -> TextWrapper.renderer.getCharWidth(i), width);
         }
 
         static class TextWrapper {
@@ -213,9 +222,11 @@ public class Utilities {
 
             private void cut() {
                 char c = str.charAt(cursor);
-                if (c == '\f') cursor++;
+                if (c == '\f')
+                    cursor++;
                 temp.add(str.substring(start, cursor));
-                if (c == ' ' || c == '　' || c == '\n') cursor++;
+                if (c == ' ' || c == '　' || c == '\n')
+                    cursor++;
                 start = cursor;
                 end = cursor;
                 space = width;
@@ -244,10 +255,13 @@ public class Utilities {
                     for (cursor = end; cursor < i; cursor++) {
                         char ch = str.charAt(cursor);
                         section += func.apply(str.charAt(cursor));
-                        if (ch == '\n' || ch == '\f') cut();
+                        if (ch == '\n' || ch == '\f')
+                            cut();
                         else if (section > space) {
-                            if (start == end) cut();
-                            else move();
+                            if (start == end)
+                                cut();
+                            else
+                                move();
                         }
                     }
                     space -= section;
@@ -291,12 +305,132 @@ public class Utilities {
         }
     }
 
+    public static class Json {
+        @Nullable
+        public static NBTTagCompound read(File f) {
+            try {
+                String s = FileUtils.readFileToString(f, "UTF-8");
+                return read(s);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Nullable
+        public static NBTTagCompound read(String s) {
+            JsonParser parser = new JsonParser();
+            try {
+                JsonElement element = parser.parse(s);
+                return (NBTTagCompound) NBTJson.toNbt(element);
+            } catch (IllegalArgumentException | JsonSyntaxException e) {
+                e.printStackTrace();
+                JustEnoughCalculation.logger.error("Failed to load json to nbt");
+                return null;
+            }
+        }
+
+        public static void write(NBTTagCompound nbt, File f) {
+            FileOutputStream fos = null;
+            try {
+                fos = new FileOutputStream(f);
+                fos.write(write(nbt).getBytes(StandardCharsets.UTF_8));
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (fos != null) {
+                    try {
+                        fos.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+        public static String write(NBTTagCompound nbt) {
+            Writer w = new Writer();
+            write(nbt, w);
+            w.enter();
+            return w.build();
+        }
+
+        private static void write(NBTBase nbt, Writer w) {
+            if (nbt instanceof NBTTagCompound) {
+                NBTTagCompound tags = (NBTTagCompound) nbt;
+                //noinspection unchecked
+                Set<String> keySet = tags.func_150296_c();
+                boolean wrap = keySet.size() > 1;
+                boolean first = true;
+                w.sb.append('{');
+                if (wrap)
+                    w.indent++;
+                for (String i : keySet) {
+                    if (first)
+                        first = false;
+                    else
+                        w.sb.append(',');
+                    if (wrap)
+                        w.enter();
+                    w.sb.append('"');
+                    w.sb.append(i);
+                    w.sb.append("\": ");
+                    write(tags.getTag(i), w);
+                }
+                if (wrap) {
+                    w.indent--;
+                    w.enter();
+                }
+                w.sb.append('}');
+            } else if (nbt instanceof NBTTagList) {
+                NBTTagList tags = (NBTTagList) nbt;
+                boolean wrap = tags.tagCount() > 1;
+                boolean first = true;
+                w.sb.append('[');
+                if (wrap)
+                    w.indent++;
+                for (NBTBase i : (List<NBTBase>) tags.tagList) {
+                    if (first)
+                        first = false;
+                    else
+                        w.sb.append(',');
+                    if (wrap)
+                        w.enter();
+                    write(i, w);
+                }
+                if (wrap) {
+                    w.indent--;
+                    w.enter();
+                }
+                w.sb.append(']');
+            } else
+                w.sb.append(nbt);
+        }
+
+        private static class Writer {
+            public int indent = 0;
+            StringBuilder sb = new StringBuilder();
+
+            public void enter() {
+                sb.append('\n');
+                char[] tmp = new char[4 * indent];
+                Arrays.fill(tmp, ' ');
+                sb.append(tmp);
+            }
+
+            public String build() {
+                return sb.toString();
+            }
+        }
+    }
+
     public static Locale getLocaleFromString(String languageCode) {
         String[] parts = languageCode.split("_", -1);
-        if (parts.length == 1) return new Locale(parts[0]);
-        else if (parts.length == 2
-                 || (parts.length == 3 && parts[2].startsWith("#")))
+        if (parts.length == 1)
+            return new Locale(parts[0]);
+        else if (parts.length == 2 || (parts.length == 3 && parts[2].startsWith("#")))
             return new Locale(parts[0], parts[1]);
-        else return new Locale(parts[0], parts[1], parts[2]);
+        else
+            return new Locale(parts[0], parts[1], parts[2]);
     }
 }

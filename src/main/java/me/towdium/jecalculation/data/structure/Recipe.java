@@ -3,14 +3,17 @@ package me.towdium.jecalculation.data.structure;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.polyfill.NBTHelper;
 import me.towdium.jecalculation.utils.IllegalPositionException;
+import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Wrapper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -73,6 +76,19 @@ public class Recipe {
         return hashcode;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null || hashcode != obj.hashCode() || !(obj instanceof Recipe)) return false;
+        Recipe r = (Recipe) obj;
+        BiPredicate<ILabel[], ILabel[]> p = (i, j) -> {
+            if (i.length != j.length) return false;
+            for (int k = 0; k < i.length; k++)
+                if (!i[k].equals(j[k])) return false;
+            return true;
+        };
+        return p.test(input, r.input) && p.test(catalyst, r.catalyst) && p.test(output, r.output);
+    }
+
     public ILabel[] getLabel(enumIoType type) {
         switch (type) {
             case INPUT:
@@ -95,8 +111,18 @@ public class Recipe {
     public NBTTagCompound serialize() {
         NBTTagCompound ret = new NBTTagCompound();
         Function<ILabel[], NBTTagList> convert = (ls) -> {
+            ArrayList<ILabel> labels = new ArrayList<>();
+            boolean start = false;
+            for (int i = ls.length - 1; i >= 0; i--) {
+                if (start || ls[i] != ILabel.EMPTY) {
+                    labels.add(ls[i]);
+                    start = true;
+                }
+            }
+
             NBTTagList r = new NBTTagList();
-            Arrays.stream(ls).forEach(l -> r.appendTag(ILabel.SERIALIZER.serialize(l)));
+            new Utilities.ReversedIterator<>(labels).stream()
+                                                    .forEach(l -> r.appendTag(ILabel.SERIALIZER.serialize(l)));
             return r;
         };
         ret.setTag(KEY_INPUT, convert.apply(input));

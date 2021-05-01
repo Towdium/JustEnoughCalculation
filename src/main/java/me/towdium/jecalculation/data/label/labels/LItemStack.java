@@ -14,7 +14,6 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import static net.minecraftforge.oredict.OreDictionary.WILDCARD_VALUE;
 
@@ -28,10 +27,9 @@ public class LItemStack extends ILabel.Impl {
     public static final String KEY_ITEM = "item";
     public static final String KEY_META = "meta";
     public static final String KEY_NBT = "nbt";
-    public static final String KEY_FUZZY = "fuzzy";
-    public static final byte FUZZY_META = 0x1;
-    public static final byte FUZZY_CAP = 0x2;
-    public static final byte FUZZY_NBT = 0x4;
+    public static final String KEY_F_META = "fMeta";
+    public static final String KEY_F_CAP = "fCap";
+    public static final String KEY_F_NBT = "fNbt";
 
     Item item;
     int meta;
@@ -43,29 +41,20 @@ public class LItemStack extends ILabel.Impl {
 
     public LItemStack(int amount, Item item, int meta, @Nullable NBTTagCompound nbt, boolean percent) {
         super(amount, percent);
-        this.item = item;
-        this.meta = meta;
-        this.nbt = nbt == null ? null : (NBTTagCompound) nbt.copy();
-        temp = new ItemStack(item, 1, meta);
-        temp.setTagCompound(nbt);
+        init(item, meta, nbt, false, false, false);
     }
 
     // Convert from itemStack
     public LItemStack(ItemStack is) {
-        this(is.stackSize, is.getItem(), is.getItemDamage(), is.getTagCompound(), false);
+        super(is.stackSize, false);
+        init(is.getItem(), is.getItemDamage(), is.getTagCompound(), false, false, false);
     }
 
     public LItemStack(NBTTagCompound tag) {
         super(tag);
-        item = Item.getItemById(tag.getInteger(KEY_ITEM));
-        meta = tag.getInteger(KEY_META);
-        nbt = tag.hasKey(KEY_NBT) ? tag.getCompoundTag(KEY_NBT) : null;
-        byte fuzzy = tag.getByte(KEY_FUZZY);
-        fMeta = (fuzzy & FUZZY_META) != 0;
-        fCap = (fuzzy & FUZZY_CAP) != 0;
-        fNbt = (fuzzy & FUZZY_NBT) != 0;
-        temp = new ItemStack(item, 1, meta);
-        temp.setTagCompound(tag);
+        init(Item.getItemById(tag.getInteger(KEY_ITEM)), tag.getInteger(KEY_META),
+             tag.hasKey(KEY_NBT) ? tag.getCompoundTag(KEY_NBT) : null, tag.getBoolean(KEY_F_META),
+             tag.getBoolean(KEY_F_CAP), tag.getBoolean(KEY_F_NBT));
     }
 
     private LItemStack(LItemStack lis) {
@@ -76,6 +65,22 @@ public class LItemStack extends ILabel.Impl {
         fMeta = lis.fMeta;
         fNbt = lis.fNbt;
         fCap = lis.fCap;
+        temp = lis.temp;
+    }
+
+    private void init(@Nullable Item item,
+                      int meta,
+                      @Nullable NBTTagCompound nbt,
+                      boolean fMeta,
+                      boolean fCap,
+                      boolean fNbt) {
+        Objects.requireNonNull(item);
+        this.item = item;
+        this.meta = meta;
+        this.nbt = nbt;
+        this.fMeta = fMeta;
+        this.fCap = fCap;
+        this.fNbt = fNbt;
         temp = new ItemStack(item, 1, meta);
         temp.setTagCompound(nbt);
     }
@@ -85,15 +90,20 @@ public class LItemStack extends ILabel.Impl {
         if (a instanceof LItemStack && b instanceof LItemStack) {
             LItemStack lisA = (LItemStack) a;
             LItemStack lisB = (LItemStack) b;
-            if (lisA.meta != WILDCARD_VALUE && lisB.meta == WILDCARD_VALUE) return false;
+            if (!lisA.fMeta && lisA.meta != WILDCARD_VALUE && lisA.meta != lisB.meta)
+                return false;
             if (!lisA.fNbt) {
-                if (lisB.fNbt) return false;
+                if (lisB.fNbt)
+                    return false;
                 else if (lisA.nbt == null) {
-                    if (lisB.nbt != null) return false;
-                } else if (lisB.nbt == null || !lisA.nbt.equals(lisB.nbt)) return false;
+                    if (lisB.nbt != null)
+                        return false;
+                } else if (lisB.nbt == null || !lisA.nbt.equals(lisB.nbt))
+                    return false;
             }
             if (!lisA.fCap) {
-                if (lisB.fCap) return false;
+                if (lisB.fCap)
+                    return false;
             }
             return lisA.item == lisB.item;
         }
@@ -146,9 +156,8 @@ public class LItemStack extends ILabel.Impl {
     public boolean matches(Object l) {
         if (l instanceof LItemStack) {
             LItemStack lis = (LItemStack) l;
-            return (Objects.equals(nbt, lis.nbt)) && meta == lis.meta && item == lis.item
-                   && fNbt == lis.fNbt && super.matches(l)
-                   && fCap == lis.fCap && fMeta == lis.fMeta;
+            return (Objects.equals(nbt, lis.nbt)) && meta == lis.meta && item == lis.item && fNbt == lis.fNbt &&
+                   super.matches(l) && fCap == lis.fCap && fMeta == lis.fMeta;
         } else
             return false;
     }
@@ -159,17 +168,22 @@ public class LItemStack extends ILabel.Impl {
     }
 
     @Override
-    public NBTTagCompound toNBTTagCompound() {
+    public NBTTagCompound toNBT() {
         if (item == null)
-            return ILabel.EMPTY.toNBTTagCompound();
+            return ILabel.EMPTY.toNBT();
         int id = Item.getIdFromItem(item);
-        NBTTagCompound ret = super.toNBTTagCompound();
-        ret.setInteger(KEY_META, meta);
+        NBTTagCompound ret = super.toNBT();
+        if (meta != 0)
+            ret.setInteger(KEY_META, meta);
         ret.setInteger(KEY_ITEM, id);
         if (nbt != null)
             ret.setTag(KEY_NBT, nbt);
-        int fuzzy = (fMeta ? FUZZY_META : 0) | (fCap ? FUZZY_CAP : 0) | (fNbt ? FUZZY_NBT : 0);
-        ret.setByte(KEY_FUZZY, (byte) fuzzy);
+        if (fMeta)
+            ret.setBoolean(KEY_F_META, true);
+        if (fNbt)
+            ret.setBoolean(KEY_F_NBT, true);
+        if (fCap)
+            ret.setBoolean(KEY_F_CAP, true);
         return ret;
     }
 
@@ -177,10 +191,14 @@ public class LItemStack extends ILabel.Impl {
     @SideOnly(Side.CLIENT)
     public void drawLabel(JecaGui gui) {
         gui.drawItemStack(0, 0, temp, false);
-        if (fCap || fNbt || fMeta) gui.drawResource(Resource.LBL_FRAME, 0, 0);
-        if (fCap) gui.drawResource(Resource.LBL_FR_LL, 0, 0);
-        if (fNbt) gui.drawResource(Resource.LBL_FR_UL, 0, 0);
-        if (fMeta) gui.drawResource(Resource.LBL_FR_UR, 0, 0);
+        if (fCap || fNbt || fMeta)
+            gui.drawResource(Resource.LBL_FRAME, 0, 0);
+        if (fCap)
+            gui.drawResource(Resource.LBL_FR_LL, 0, 0);
+        if (fNbt)
+            gui.drawResource(Resource.LBL_FR_UL, 0, 0);
+        if (fMeta)
+            gui.drawResource(Resource.LBL_FR_UR, 0, 0);
     }
 
     @Override

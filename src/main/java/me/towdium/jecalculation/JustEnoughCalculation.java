@@ -31,7 +31,6 @@ public class JustEnoughCalculation {
     public static ClientHandler handler = new ClientHandler();
 
     public static Logger logger = LogManager.getLogger(Reference.MODID);
-    public static enumSide side = enumSide.CLIENT;
 
     @Mod.EventHandler
     public static void initPre(FMLPreInitializationEvent event) {
@@ -54,12 +53,5 @@ public class JustEnoughCalculation {
         public static final String MODID = "jecalculation";
         public static final String MODNAME = "Just Enough Calculation";
         public static final String VERSION = "@VERSION@";
-    }
-
-    // Only to use at client side
-    public enum enumSide {
-        CLIENT,  // Running at client side and server not installed
-        BOTH,  // Running at client side and both installed
-        UNDEFINED  // Default unknown
     }
 }
