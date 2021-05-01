@@ -5,23 +5,16 @@ import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.structure.Recipe;
 import me.towdium.jecalculation.data.structure.Recipes;
 import me.towdium.jecalculation.gui.JecaGui;
-import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.gui.widgets.*;
-import me.towdium.jecalculation.polyfill.google.common.collect.Streams;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Trio;
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.ChatComponentTranslation;
 import org.lwjgl.input.Keyboard;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import static me.towdium.jecalculation.data.Controller.recipeIterator;
 import static me.towdium.jecalculation.gui.Resource.*;
@@ -30,10 +23,8 @@ import static me.towdium.jecalculation.gui.widgets.WLabel.Mode.PICKER;
 @ParametersAreNonnullByDefault
 public class GuiSearch extends WContainer implements IGui {
     IdentityHashMap<ILabel, Trio<Recipe, String, Integer>> recipes;
-    WLabelScroll labels = new WLabelScroll(7, 51, 8, 6, PICKER, true).setListener((i, v) -> {
-        Trio<Recipe, String, Integer> recipe = recipes.get(i.get(v));
-        JecaGui.displayGui(true, true, new GuiRecipe(recipe.two, recipe.three));
-    });
+    WLabelScroll labels = new WLabelScroll(7, 51, 8, 6, PICKER, true)
+            .setListener((i, v) -> add(new Overlay(i.get(v))));
     WSwitcher group;
     WTextField text = new WTextField(7, 25, 119);
     WButton no = new WButtonIcon(130, 25, 20, 20, BTN_NO, "common.cancel")
@@ -46,16 +37,28 @@ public class GuiSearch extends WContainer implements IGui {
                 refreshDisplay();
                 setRename(false);
             });
-    WButton exportN = new WButtonIcon(130, 25, 20, 20, BTN_EXPORT_N, "search.export_all")
+    WButton exportN = new WButtonIcon(111, 25, 20, 20, BTN_EXPORT_N, "search.export_all")
             .setListener(i -> Controller.export());
-    WButton export1 = new WButtonIcon(130, 25, 20, 20, BTN_EXPORT_1, "search.export_group")
+    WButton export1 = new WButtonIcon(111, 25, 20, 20, BTN_EXPORT_1, "search.export_group")
             .setListener(i -> Controller.export(group.getText()));
-    WButton inport = new WButtonIcon(112, 25, 20, 20, BTN_IMPORT, "search.import")
+    WButton deleteN = new WButtonIcon(130, 25, 20, 20, BTN_DELETE_N, "search.delete_all")
+            .setListener(i -> {
+                Controller.getGroups().forEach(Controller::removeGroup);
+                refreshGroups();
+                refreshDisplay();
+            });
+    WButton delete1 = new WButtonIcon(130, 25, 20, 20, BTN_DELETE_1, "search.delete_group")
+            .setListener(i -> {
+                Controller.removeGroup(group.getText());
+                refreshGroups();
+                refreshDisplay();
+            });
+    WButton inport = new WButtonIcon(92, 25, 20, 20, BTN_IMPORT, "search.import")
             .setListener(i -> JecaGui.displayGui(new GuiImport()));
     WButton rename = new WButtonIcon(149, 25, 20, 20, BTN_EDIT, "search.rename")
             .setListener(i -> setRename(true));
     WIcon icon = new WIcon(7, 25, 20, 20, ICN_TEXT, "common.search");
-    WSearch search = new WSearch(26, 25, 80, labels);
+    WSearch search = new WSearch(26, 25, 61, labels);
     List<ILabel> identifiers;
 
     public GuiSearch() {
@@ -64,7 +67,7 @@ public class GuiSearch extends WContainer implements IGui {
             yes.setDisabled(s.isEmpty() || Controller.getGroups().contains(s));
         });
         add(new WHelp("search"), new WPanel());
-        add(labels, icon, search, inport, exportN, rename);
+        add(labels, icon, search, inport, exportN, deleteN, rename);
     }
 
 
@@ -77,7 +80,7 @@ public class GuiSearch extends WContainer implements IGui {
             identifiers.add(id);
         };
 
-        Recipes.RecipeIterator it = group.getIndex() == 0 ? recipeIterator() : recipeIterator(group.getText());
+        Recipes.RecipeIterator it = group.getIndex() == 0 ? Controller.recipeIterator() : Controller.recipeIterator(group.getText());
         it.stream().map(j -> new Trio<>(j, it.getGroup(), it.getIndex())).forEach(add);
     }
 
@@ -91,11 +94,13 @@ public class GuiSearch extends WContainer implements IGui {
     }
 
     public void refreshDisplay() {
-        remove(exportN, export1);
+        remove(exportN, export1, deleteN, delete1);
         generate();
         labels.setLabels(identifiers);
         add(group.getIndex() == 0 ? exportN : export1);
+        add(group.getIndex() == 0 ? deleteN : delete1);
         exportN.setDisabled(identifiers.size() == 0);
+        deleteN.setDisabled(identifiers.size() == 0);
         rename.setDisabled(group.getIndex() == 0);
     }
 
@@ -105,7 +110,8 @@ public class GuiSearch extends WContainer implements IGui {
         groups.add(Utilities.I18n.get("gui.search.all"));
         groups.addAll(Controller.getGroups());
         int index = group == null ? 0 : group.getIndex();
-        if (index >= groups.size()) index = groups.size() - 1;
+        if (index >= groups.size())
+            index = groups.size() - 1;
         group = new WSwitcher(7, 7, 162, groups).setListener(i -> refreshDisplay());
         group.setIndex(index);
         add(group);
@@ -127,6 +133,28 @@ public class GuiSearch extends WContainer implements IGui {
             remove(yes, no, text);
             text.setText("");
             yes.setDisabled(true);
+        }
+    }
+
+    class Overlay extends WOverlay {
+        public Overlay(ILabel l) {
+            Trio<Recipe, String, Integer> recipe = recipes.get(l);
+            int x = JecaGui.getMouseX();
+            int y = JecaGui.getMouseY();
+            x = ((x - 7) / 18) * 18 + 6;
+            y = ((y - 51) / 18) * 18 + 50;
+            add(new WPanel(x - 5, y - 5, 72, 30));
+            add(new WLabel(x, y, 20, 20, PICKER).setLabel(l));
+            add(new WButtonIcon(x + 23, y, 20, 20, BTN_EDIT, "search.edit").setListener(i -> {
+                JecaGui.displayGui(true, true, new GuiRecipe(recipe.two, recipe.three));
+                GuiSearch.this.remove(this);
+            }));
+            add(new WButtonIcon(x + 42, y, 20, 20, BTN_NO, "search.delete").setListener(i -> {
+                Controller.removeRecipe(recipe.two, recipe.three);
+                GuiSearch.this.remove(this);
+                refreshGroups();
+                refreshDisplay();
+            }));
         }
     }
 }

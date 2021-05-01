@@ -22,14 +22,20 @@ import java.util.stream.Collectors;
 public class LPlaceholder extends ILabel.Impl {
     public static final String KEY_NAME = "name";
     public static final String IDENTIFIER = "placeholder";
+    public static boolean state = true;  // true for client, false for server
     static Utilities.Recent<LPlaceholder> recentClient = new Utilities.Recent<>(100);
     static Utilities.Recent<LPlaceholder> recentServer = new Utilities.Recent<>(100);
 
     String name;
 
+    static Utilities.Recent<LPlaceholder> getActive() {
+        return state ? recentClient : recentServer;
+    }
+
     public LPlaceholder(NBTTagCompound tag) {
         super(tag);
         name = tag.getString(KEY_NAME);
+        getActive().push(new LPlaceholder(name, 1, true), false);
     }
 
     public LPlaceholder(String name, long amount) {
@@ -39,7 +45,7 @@ public class LPlaceholder extends ILabel.Impl {
     public LPlaceholder(String name, long amount, boolean silent) {
         super(amount, false);
         this.name = name;
-        if (!silent) getRecord().push(new LPlaceholder(name, 1, true), false);
+        if (!silent) getActive().push(new LPlaceholder(name, 1, true), false);
     }
 
     public LPlaceholder(LPlaceholder label) {
@@ -49,6 +55,7 @@ public class LPlaceholder extends ILabel.Impl {
 
     public static void onLogOut() {
         recentServer.clear();
+        state = true;
     }
 
     @Override
@@ -57,11 +64,7 @@ public class LPlaceholder extends ILabel.Impl {
     }
 
     public static List<ILabel> getRecent() {
-        return getRecord().toList().stream().map(LPlaceholder::copy).collect(Collectors.toList());
-    }
-
-    private static Utilities.Recent<LPlaceholder> getRecord() {
-        return recentClient;
+        return getActive().toList().stream().map(LPlaceholder::copy).collect(Collectors.toList());
     }
 
     @Override

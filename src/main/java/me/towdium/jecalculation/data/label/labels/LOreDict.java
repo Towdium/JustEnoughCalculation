@@ -57,27 +57,6 @@ public class LOreDict extends ILabel.Impl {
         name = nbt.getString(KEY_NAME);
     }
 
-    @Override
-    @Nonnull
-    public ItemStack getRepresentation() {
-        NonNullList<ItemStack> list = NonNullList.create();
-        OreDictionary.getOres(name).forEach(is -> {
-            if (is.getItemDamage() == OreDictionary.WILDCARD_VALUE) {
-                is.getItem().getSubItems(is.getItem(), CreativeTabs.tabAllSearch, list);
-            } else
-                list.add(is);
-        });
-        if (list.isEmpty()) return ItemStackHelper.EMPTY_ITEM_STACK;
-        long index = System.currentTimeMillis() / 1500;
-        return list.get((int) (index % list.size()));
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public String getDisplayName() {
-        return Utilities.I18n.get("label.ore_dict.name", name);
-    }
-
     public static boolean mergeSame(ILabel a, ILabel b) {
         if (a instanceof LOreDict && b instanceof LOreDict) {
             LOreDict lodA = (LOreDict) a;
@@ -90,9 +69,9 @@ public class LOreDict extends ILabel.Impl {
         if (a instanceof LOreDict && b instanceof LItemStack) {
             LOreDict lod = (LOreDict) a;
             LItemStack lis = (LItemStack) b;
-            return OreDictionary.getOres(lod.name).stream()
-                                .map(Converter::from)
-                                .anyMatch(i -> LItemStack.merge(i, lis));
+            return lod.getAmount() * lis.getAmount() < 0
+                   && OreDictionary.getOres(lod.name).stream().map(Converter::from)
+                                   .anyMatch(i -> LItemStack.merge(i, lis));
         }
         return false;
     }
@@ -136,6 +115,27 @@ public class LOreDict extends ILabel.Impl {
               .findAny().ifPresent(i -> acceptable.value = false);
         return acceptable.value;
     }
+
+    @Override
+    @Nonnull
+    public ItemStack getRepresentation() {
+        NonNullList<ItemStack> list = NonNullList.create();
+        OreDictionary.getOres(name).forEach(is -> {
+            if (is.getItemDamage() == OreDictionary.WILDCARD_VALUE) {
+                is.getItem().getSubItems(is.getItem(), CreativeTabs.tabAllSearch, list);
+            } else list.add(is);
+        });
+        if (list.isEmpty()) return ItemStackHelper.EMPTY_ITEM_STACK;
+        long index = System.currentTimeMillis() / 1500;
+        return list.get((int) (index % list.size()));
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public String getDisplayName() {
+        return Utilities.I18n.get("label.ore_dict.name", name);
+    }
+
 
     @Override
     public String getIdentifier() {

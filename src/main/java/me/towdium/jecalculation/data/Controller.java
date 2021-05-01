@@ -4,6 +4,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.JecaConfig;
 import me.towdium.jecalculation.JustEnoughCalculation;
+import me.towdium.jecalculation.data.label.labels.LPlaceholder;
 import me.towdium.jecalculation.data.structure.*;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.guis.GuiCraft;
@@ -141,6 +142,11 @@ public class Controller {
         writeToLocal();
     }
 
+    public static void removeGroup(String group) {
+        getRecipes().remove(group);
+        setLast(group);
+    }
+
     public static Recipe getRecipe(String group, int index) {
         return getRecipes().getRecipe(group, index);
     }
@@ -216,6 +222,8 @@ public class Controller {
         JecaConfig.dataDir.mkdirs();
         File file = JecaConfig.recordFile;
         NBTTagCompound nbt = Utilities.Json.read(file);
+        boolean s = LPlaceholder.state;
+        LPlaceholder.state = true;
         if (nbt != null) {
             rCraftClient = new RecordCraft(nbt.getCompoundTag(KEY_CRAFT));
             rMathClient = new RecordMath(nbt.getCompoundTag(KEY_MATH));
@@ -225,6 +233,7 @@ public class Controller {
             rCraftClient = new RecordCraft(new NBTTagCompound());
             rMathClient = new RecordMath(new NBTTagCompound());
         }
+        LPlaceholder.state = s;
     }
 
     public static void writeToLocal() {

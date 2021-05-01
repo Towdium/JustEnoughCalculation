@@ -186,7 +186,7 @@ public class GuiCraft extends WContainer implements IGui  {
     enum Mode {
         INPUT, OUTPUT, CATALYST, STEPS
     }
-    class Suggest extends WContainer {
+    class Suggest extends WOverlay {
         boolean replace;
 
         public Suggest(List<ILabel> labels, boolean replace) {
@@ -206,22 +206,6 @@ public class GuiCraft extends WContainer implements IGui  {
         public void refresh(ILabel l) {
             GuiCraft.this.remove(this);
             refreshLabel(l, replace, false);
-        }
-
-        @Override
-        public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
-            if (!super.onClicked(gui, xMouse, yMouse, button)) GuiCraft.this.remove(this);
-            return true;
-        }
-
-        @Override
-        public boolean onKey(JecaGui gui, char ch, int code) {
-            if (!super.onKey(gui, ch, code)) {
-                if (code == Keyboard.KEY_ESCAPE) {
-                    GuiCraft.this.remove(this);
-                    return true;
-                } else return false;
-            } else return true;
         }
     }
 }

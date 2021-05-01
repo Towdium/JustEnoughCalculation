@@ -201,7 +201,8 @@ public class CostList {
                                         .map(i -> i.two.labels.get(0))
                                         .collect(Collectors.toList());
             Collections.reverse(ret);
-            return ret;
+            CostList cl = new CostList(ret).multiply(-1);
+            return new CostList().merge(cl, false, true).labels;
         }
     }
 }

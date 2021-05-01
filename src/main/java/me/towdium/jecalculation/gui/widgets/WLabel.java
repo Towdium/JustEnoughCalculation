@@ -20,8 +20,7 @@ import static me.towdium.jecalculation.gui.JecaGui.COLOR_TEXT_RED;
 import static me.towdium.jecalculation.gui.JecaGui.COLOR_TEXT_WHITE;
 import static me.towdium.jecalculation.gui.JecaGui.Font.HALF;
 import static me.towdium.jecalculation.gui.JecaGui.Font.PLAIN;
-import static me.towdium.jecalculation.gui.Resource.BTN_NO;
-import static me.towdium.jecalculation.gui.Resource.BTN_YES;
+import static me.towdium.jecalculation.gui.Resource.*;
 
 /**
  * Author: towdium
@@ -96,6 +95,11 @@ public class WLabel implements IWidget {
         } else return false;
     }
 
+    @Nullable
+    @Override
+    public ILabel getLabelUnderMouse(int xMouse, int yMouse) {
+        return mouseIn(xMouse, yMouse) ? label : null;
+    }
 
     @Override
     public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
@@ -166,79 +170,70 @@ public class WLabel implements IWidget {
     }
 
 
-    class WAmount extends WContainer {
-        long old = label.getAmount();
-        WButton bAmount = new WButtonText(xPos + xSize + 60, yPos, 20, 20, "#", "general.to_percent")
-                .setListener(i -> setPercent(true));
-        WTextField wtf = new WTextField(xPos + xSize + 10, yPos + ySize / 2 - WTextField.HEIGHT / 2, 50);
-        WButton bPercent = new WButtonText(xPos + xSize + 60, yPos, 20, 20, "%", "general.to_percent")
-                .setListener(i -> setPercent(false));
-        WLabel wl = new WLabel(xPos, yPos, xSize, ySize, Mode.SELECTOR).setListener((i, v) -> update());
-        WButton bYes = new WButtonIcon(xPos + xSize + 83, yPos, 20, 20, BTN_YES)
-                .setListener(i -> JecaGui.getCurrent().root.remove(this));
-        WButton bNo = new WButtonIcon(xPos + xSize + 102, yPos, 20, 20, BTN_NO).setListener(i -> {
+    class WAmount extends WOverlay {
+        WLabel temp = new WLabel(xPos, yPos, xSize, ySize, Mode.PICKER).setListener((i, v) -> update());
+        WButton number = new WButtonText(xPos + xSize + 60, yPos, 20, 20, "#", "general.to_percent")
+                .setListener(i -> {
+                    temp.label.setPercent(true);
+                    update();
+                });
+        WTextField text = new WTextField(xPos + xSize + 10, yPos + ySize / 2 - WTextField.HEIGHT / 2, 50);
+        WButton percent = new WButtonText(xPos + xSize + 60, yPos, 20, 20, "%", "general.to_percent")
+                .setListener(i -> {
+                    temp.label.setPercent(false);
+                    update();
+                });
+        WButton pick = new WButtonIcon(xPos + xSize + 83, yPos, 20, 20, BTN_PICK, "label.pick").setListener(i -> {
+            JecaGui.getCurrent().hand = temp.label;
             setLabel(ILabel.EMPTY);
+            notifyLsnr();
+            JecaGui.getCurrent().root.remove(this);
+        });
+        WButton yes = new WButtonIcon(xPos + xSize + 102, yPos, 20, 20, BTN_YES, "label.confirm").setListener(i -> {
+            setLabel(temp.label);
+            notifyLsnr();
+            JecaGui.getCurrent().root.remove(this);
+        });
+        WButton no = new WButtonIcon(xPos + xSize + 121, yPos, 20, 20, BTN_NO, "label.delete").setListener(i -> {
+            setLabel(ILabel.EMPTY);
+            notifyLsnr();
             JecaGui.getCurrent().root.remove(this);
         });
 
 
         public WAmount() {
-            wl.setLabel(label);
-            add(new WPanel(xPos - 5, yPos - 5, xSize + 133, ySize + 10));
+            temp.setLabel(label.copy());
+            add(new WPanel(xPos - 5, yPos - 5, xSize + 152, ySize + 10));
             add(new WText(xPos + xSize + 3, yPos + 5, PLAIN, "x"));
-            add(wl, wtf, bYes, bNo);
-            wtf.setListener(i -> {
+            add(temp, text, pick, yes, no);
+            text.setListener(i -> {
+                boolean acceptable;
+                long amount;
                 try {
-                    long n = Long.parseLong(wtf.getText());
-                    label.setAmount(n);
-                    wtf.setColor(COLOR_TEXT_WHITE);
-                    bYes.setDisabled(false);
+                    amount = Long.parseLong(text.getText());
+                    acceptable = amount > 0;
+                    if (!acceptable) amount = 1;
                 } catch (NumberFormatException e) {
-                    boolean acceptable = wtf.getText().isEmpty();
-                    wtf.setColor(acceptable ? COLOR_TEXT_WHITE : COLOR_TEXT_RED);
-                    bYes.setDisabled(!acceptable);
-                    label.setAmount(acceptable ? 1 : old);
+                    acceptable = text.getText().isEmpty();
+                    amount = 1;
                 }
-                notifyLsnr();
+                text.setColor(acceptable ? COLOR_TEXT_WHITE : COLOR_TEXT_RED);
+                yes.setDisabled(!acceptable);
+                temp.label = temp.label.setAmount(amount);
             });
             update();
         }
 
         private void update() {
-            label = wl.label;
-            bAmount.setDisabled(!label.acceptPercent());
-            if (label.isPercent()) {
-                remove(bAmount);
-                add(bPercent);
+            number.setDisabled(!temp.label.acceptPercent());
+            if (temp.label.isPercent()) {
+                remove(number);
+                add(percent);
             } else {
-                remove(bPercent);
-                add(bAmount);
+                remove(percent);
+                add(number);
             }
-            wtf.setText(Long.toString(label.getAmount()));
+            text.setText(Long.toString(temp.label.getAmount()));
         }
-
-        private void setPercent(boolean b) {
-            boolean original = label.isPercent();
-            if (label.acceptPercent()) label.setPercent(b);
-            if (b != original) notifyLsnr();
-            update();
-        }
-
-        @Override
-        public boolean onKey(JecaGui gui, char ch, int code) {
-            if (super.onKey(gui, ch, code))
-                return true;
-            if (code == Keyboard.KEY_ESCAPE) {
-                gui.root.remove(this);
-                return true;
-            } else
-                return false;
-        }
-    }
-
-    @Nullable
-    @Override
-    public ILabel getLabelUnderMouse(int xMouse, int yMouse) {
-        return mouseIn(xMouse, yMouse) ? label : null;
     }
 }

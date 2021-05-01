@@ -17,7 +17,9 @@ import me.towdium.jecalculation.polyfill.mc.client.renderer.GlStateManager;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.Utilities.ReversedIterator;
 import me.towdium.jecalculation.utils.wrappers.Pair;
+import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.init.Items;
+import net.minecraft.item.ItemEnchantedBook;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -245,8 +247,14 @@ public interface ILabel {
                 return new LItemStack((ItemStack) o);
             else if (o instanceof FluidStack)
                 return new LFluidStack((FluidStack) o);
-            else
-                throw new RuntimeException("Unrecognized ingredient type: " + o.getClass());
+            else if (o instanceof EnchantmentData) {
+                ItemStack itemStack = new ItemStack(Items.enchanted_book);
+                new ItemEnchantedBook().addEnchantment(itemStack, (EnchantmentData) o);
+                return new LItemStack(itemStack);
+            } else {
+                JustEnoughCalculation.logger.warn("Unrecognized ingredient type: " + o.getClass());
+                return ILabel.EMPTY;
+            }
         }
 
         public void register(ConverterFunction handler, Priority priority) {

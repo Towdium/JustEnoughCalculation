@@ -68,6 +68,7 @@ public class Recipes {
         if (index == -1) {
             if (recipe != null) add(neu, recipe);
             else if (old != null) renameGroup(old, neu);
+            else remove(neu);
         } else {
             if (recipe == null) remove(neu, index);
             else if (old == null || old.equals(neu)) set(neu, index, recipe);
@@ -96,6 +97,10 @@ public class Recipes {
         List<Recipe> l = records.get(group);
         l.remove(index);
         if (l.isEmpty()) records.remove(group);
+    }
+
+    public void remove(String group) {
+        records.remove(group);
     }
 
     public Recipe getRecipe(String group, int index) {

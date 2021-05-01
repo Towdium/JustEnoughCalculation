@@ -60,6 +60,17 @@ public class JecaGui extends GuiContainer {
             ((JecContainer) inventorySlots).setGui(this);
     }
 
+    public static int getMouseX() {
+        JecaGui gui = getCurrent();
+        return Mouse.getEventX() * gui.width / gui.mc.displayWidth - gui.guiLeft;
+    }
+
+    public static int getMouseY() {
+        JecaGui gui = getCurrent();
+        return gui.height - Mouse.getEventY() * gui.height / gui.mc.displayHeight - 1 - gui.guiTop;
+    }
+
+
     @Override
     public void initGui() {
         this.guiLeft = (this.width - this.xSize) / 2;
@@ -284,14 +295,18 @@ public class JecaGui extends GuiContainer {
                                            r.getXSize(), r.getYSize(), borderTop, borderBottom, borderLeft, borderRight, zLevel);
     }
 
-    public void drawFluid(Fluid f, int xPos, int yPos, int xSize, int ySize) {
-        IIcon fluidStillIcon = f.getStillIcon();
-        mc.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
-        int color = f.getColor();
+    private void setColor(int color) {
         float red = (color >> 16 & 0xFF) / 255.0F;
         float green = (color >> 8 & 0xFF) / 255.0F;
         float blue = (color & 0xFF) / 255.0F;
-        GlStateManager.color(red, green, blue, 1.0F);
+        float alpha = (~(color >> 24) & 0xFF) / 255.0F;
+        GlStateManager.color(red, green, blue, alpha);
+    }
+
+    public void drawFluid(Fluid f, int xPos, int yPos, int xSize, int ySize) {
+        IIcon fluidStillIcon = f.getStillIcon();
+        mc.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+        setColor(f.getColor() & 0x00FFFFFF);
         if (fluidStillIcon != null)
             drawTexturedModelRectFromIcon(xPos, yPos, fluidStillIcon, xSize, ySize);
     }
