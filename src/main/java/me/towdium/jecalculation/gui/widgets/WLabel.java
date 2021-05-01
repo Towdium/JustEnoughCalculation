@@ -11,11 +11,17 @@ import me.towdium.jecalculation.utils.IllegalPositionException;
 import me.towdium.jecalculation.utils.Utilities;
 import org.lwjgl.input.Keyboard;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import static me.towdium.jecalculation.gui.JecaGui.COLOR_TEXT_RED;
+import static me.towdium.jecalculation.gui.JecaGui.COLOR_TEXT_WHITE;
 import static me.towdium.jecalculation.gui.JecaGui.Font.HALF;
+import static me.towdium.jecalculation.gui.JecaGui.Font.PLAIN;
+import static me.towdium.jecalculation.gui.Resource.BTN_NO;
+import static me.towdium.jecalculation.gui.Resource.BTN_YES;
 
 /**
  * Author: towdium
@@ -26,11 +32,12 @@ import static me.towdium.jecalculation.gui.JecaGui.Font.HALF;
 public class WLabel implements IWidget {
     public int xPos, yPos, xSize, ySize;
     public ILabel label;
-    public enumMode mode;
-    public Runnable lsnrUpdate;
+    public Mode mode;
+    public ListenerValue<? super WLabel, ILabel> listener;
     protected Utilities.Timer timer = new Utilities.Timer();
 
-    public WLabel(int xPos, int yPos, int xSize, int ySize, enumMode mode) {
+
+    public WLabel(int xPos, int yPos, int xSize, int ySize, Mode mode) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.xSize = xSize;
@@ -51,12 +58,12 @@ public class WLabel implements IWidget {
     public void onDraw(JecaGui gui, int xMouse, int yMouse) {
         gui.drawResourceContinuous(Resource.WGT_SLOT, xPos, yPos, xSize, ySize, 3, 3, 3, 3);
         label.drawLabel(gui, xPos + xSize / 2, yPos + ySize / 2, true);
-        if (mode == enumMode.RESULT || mode == enumMode.EDITOR) {
-            String s = label.getAmountString(mode == enumMode.RESULT);
+        if (mode == Mode.RESULT || mode == Mode.EDITOR) {
+            String s = label.getAmountString(mode == Mode.RESULT);
             gui.drawText(xPos + xSize / 2.0f + 8 - HALF.getTextWidth(s),
                          yPos + ySize / 2.0f + 8.5f - HALF.getTextHeight(), HALF, s);
         }
-        if (mode == enumMode.EDITOR || mode == enumMode.SELECTOR) {
+        if (mode == Mode.EDITOR || mode == Mode.SELECTOR) {
             timer.setState(gui.hand != ILabel.EMPTY);
             int color = 0xFFFFFF + (int) ((-Math.cos(timer.getTime() * Math.PI / 1500) + 1) * 0x40) * 0x1000000;
             gui.drawRectangle(xPos + 1, yPos + 1, xSize - 2, ySize - 2, color);
@@ -71,16 +78,16 @@ public class WLabel implements IWidget {
             return false;
         if (label != ILabel.EMPTY) {
             tooltip.add(label.getDisplayName());
-            label.getToolTip(tooltip, mode == enumMode.EDITOR || mode == enumMode.RESULT);
+            label.getToolTip(tooltip, mode == Mode.EDITOR || mode == Mode.RESULT);
         }
         return false;
     }
 
     @Override
     public boolean onScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
-        if (mouseIn(xMouse, yMouse) && mode == enumMode.EDITOR && label != ILabel.EMPTY) {
-            IntStream.range(0, Math.abs(diff))
-                     .forEach(i -> label = diff > 0 ? label.increaseAmount() : label.decreaseAmount());
+        if (mouseIn(xMouse, yMouse) && mode == Mode.EDITOR && label != ILabel.EMPTY) {
+            for (int i = 0; i < Math.abs(diff); i++)
+                label = diff > 0 ? label.increaseAmount() : label.decreaseAmount();
             notifyLsnr();
             return true;
         } else
@@ -133,8 +140,8 @@ public class WLabel implements IWidget {
         }
     }
 
-    public WLabel setLsnrUpdate(Runnable lsnr) {
-        lsnrUpdate = lsnr;
+    public WLabel setListener(ListenerValue<? super WLabel, ILabel> listener) {
+        this.listener = listener;
         return this;
     }
 
@@ -145,12 +152,11 @@ public class WLabel implements IWidget {
     }
 
     void notifyLsnr() {
-        if (lsnrUpdate != null)
-            lsnrUpdate.run();
+        if (listener != null) listener.invoke(this, label);
     }
 
 
-    public enum enumMode {
+    public enum Mode {
         EDITOR,  // Slots in editor gui. Can use to edit amount. Exact amount displayed.
         RESULT,  // Slots to display calculate/getRecipes result. Rounded amount displayed.
         PICKER,  // Slots that can pick items from. No amount displayed.
@@ -159,17 +165,18 @@ public class WLabel implements IWidget {
 
 
     class WAmount extends WContainer {
-        WLabel wl = new WLabel(xPos, yPos, xSize, ySize, enumMode.SELECTOR).setLsnrUpdate(this::update);
+        WButton bAmount = new WButtonText(xPos + xSize + 60, yPos, 20, 20, "general.to_percent", "#")
+                .setListener(i -> setPercent(true));
         WTextField wtf = new WTextField(xPos + xSize + 10, yPos + ySize / 2 - WTextField.HEIGHT / 2, 50);
         WButton bPercent = new WButtonText(xPos + xSize + 60, yPos, 20, 20, "general.to_percent", "%")
-                .setLsnrLeft(() -> setPercent(false));
-        WButton bAmount = new WButtonText(xPos + xSize + 60, yPos, 20, 20, "general.to_percent", "#")
-                .setLsnrLeft(() -> setPercent(true));
-        WButton bYes = new WButtonIcon(xPos + xSize + 83, yPos, 20, 20, Resource.BTN_YES).setLsnrLeft(() -> {
-            setLabel(wl.getLabel().setAmount(wtf.getText().isEmpty() ? 0 : Integer.parseInt(wtf.getText())));
+                .setListener(i -> setPercent(false));
+        WLabel wl = new WLabel(xPos, yPos, xSize, ySize, Mode.SELECTOR).setListener((i, v) -> update());
+        WButton bYes = new WButtonIcon(xPos + xSize + 83, yPos, 20, 20, BTN_YES).setListener(i -> {
+            setLabel(wl.getLabel().setAmount(
+                    wtf.getText().isEmpty() ? 0 : Integer.parseInt(wtf.getText())));
             JecaGui.getCurrent().root.remove(this);
         });
-        WButton bNo = new WButtonIcon(xPos + xSize + 102, yPos, 20, 20, Resource.BTN_NO).setLsnrLeft(() -> {
+        WButton bNo = new WButtonIcon(xPos + xSize + 102, yPos, 20, 20, BTN_NO).setListener(i -> {
             setLabel(ILabel.EMPTY);
             JecaGui.getCurrent().root.remove(this);
         });
@@ -177,16 +184,16 @@ public class WLabel implements IWidget {
         public WAmount() {
             wl.setLabel(label);
             add(new WPanel(xPos - 5, yPos - 5, xSize + 133, ySize + 10));
-            add(new WText(xPos + xSize + 3, yPos + 5, JecaGui.Font.PLAIN, "x"));
+            add(new WText(xPos + xSize + 3, yPos + 5, PLAIN, "x"));
             addAll(wl, wtf, bYes, bNo);
-            wtf.setLsnrText(i -> {
+            wtf.setListener(i -> {
                 try {
                     Integer.parseInt(wtf.getText());
-                    wtf.setColor(JecaGui.COLOR_TEXT_WHITE);
+                    wtf.setColor(COLOR_TEXT_WHITE);
                     bYes.setDisabled(false);
                 } catch (NumberFormatException e) {
                     boolean acceptable = wtf.getText().isEmpty();
-                    wtf.setColor(acceptable ? JecaGui.COLOR_TEXT_WHITE : JecaGui.COLOR_TEXT_RED);
+                    wtf.setColor(acceptable ? COLOR_TEXT_WHITE : COLOR_TEXT_RED);
                     bYes.setDisabled(!acceptable);
                 }
             });
@@ -221,5 +228,11 @@ public class WLabel implements IWidget {
             } else
                 return false;
         }
+    }
+
+    @Nullable
+    @Override
+    public ILabel getLabelUnderMouse(int xMouse, int yMouse) {
+        return mouseIn(xMouse, yMouse) ? label : null;
     }
 }

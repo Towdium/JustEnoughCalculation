@@ -37,7 +37,7 @@ public class GuiLabel extends WContainer implements IGui {
         Wrapper<Integer> index = new Wrapper<>(0);
         ILabel.EDITOR.getRecords().forEach(r -> {
             int i = index.value;
-            add(new WPage(i, r, false).setListener(() -> refresh(i)));
+            add(new WPage(i, r, false).setListener(j -> refresh(i)));
             index.value += 1;
         });
         addAll(new WHelp("label"), new WPanel());

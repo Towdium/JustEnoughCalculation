@@ -83,7 +83,6 @@ public interface ILabel {
     boolean isPercent();
 
     static void initServer() {
-        // TODO handle invalid items
         SERIALIZER.register(LFluidStack.IDENTIFIER, LFluidStack::new);
         SERIALIZER.register(LItemStack.IDENTIFIER, LItemStack::new);
         SERIALIZER.register(LOreDict.IDENTIFIER, LOreDict::new);
@@ -121,13 +120,13 @@ public interface ILabel {
      * For registering, see {@link Serializer}.
      */
     class Merger {
-        private HashMap<Pair<String, String>, MergerFunction> functions = new HashMap<>();
+        private Utilities.Relation<String, MergerFunction> functions = new Utilities.Relation<>();
 
         private Merger() {
         }
 
         public void register(String a, String b, MergerFunction func) {
-            functions.put(new Pair<>(a, b), func);
+            functions.put(a, b, func);
         }
 
         /**
@@ -140,21 +139,10 @@ public interface ILabel {
          * So generally speaking, a and b has no priority in this function
          */
         public Optional<ILabel> merge(ILabel a, ILabel b) {
-            BiFunction<ILabel, ILabel, ILabel> get = (c, d) -> {
-                MergerFunction mf = functions.get(new Pair<>(c.getIdentifier(), d.getIdentifier()));
-                if (mf != null) return mf.merge(c, d);
-                else return null;
-            };
-            return new Wrapper<ILabel>(null)
-                    .or(() -> get.apply(a, b))
-                    .or(() -> get.apply(b, a))
-                    .ifPresent(i -> {
-                        if (i != ILabel.EMPTY && (i == a || i == b))
-                            throw new RuntimeException("Merger should not modify the given label.");
-                    })
-                    .toOptional();
+            MergerFunction mf = functions.get(a.getIdentifier(), b.getIdentifier());
+            if (mf == null) return Optional.empty();
+            return Optional.ofNullable(mf.merge(a, b));
         }
-
 
         @FunctionalInterface
         public interface MergerFunction {
@@ -205,12 +193,12 @@ public interface ILabel {
         public ILabel deserialize(NBTTagCompound nbt) {
             String s = nbt.getString(KEY_IDENTIFIER);
             Function<NBTTagCompound, ILabel> func = idToData.get(s);
-            if (func != null)
+            if (func == null) JustEnoughCalculation.logger.warn("Unrecognized identifier \"" + s + "\", abort");
+            else try {
                 return func.apply(nbt.getCompoundTag(KEY_CONTENT));
-            else {
-                JustEnoughCalculation.logger.warn("Unrecognized type identifier \"" + s + "\", use empty instead.");
-                return ILabel.EMPTY;
+            } catch (SerializationException ignored) {
             }
+            return EMPTY;
         }
 
         public NBTTagCompound serialize(ILabel label) {
@@ -218,6 +206,13 @@ public interface ILabel {
             ret.setString(KEY_IDENTIFIER, label.getIdentifier());
             ret.setTag(KEY_CONTENT, label.toNbt());
             return ret;
+        }
+
+        public static class SerializationException extends RuntimeException {
+            public SerializationException(String s) {
+                super(s);
+                JustEnoughCalculation.logger.warn(s);
+            }
         }
     }
 
@@ -431,9 +426,18 @@ public interface ILabel {
             }
         }
 
+        @Override
+        public int hashCode() {
+            return (int) (amount ^ (percent ? 1 : 0));
+        }
+
         protected static Merger.MergerFunction form(Class a, Class b, BiPredicate<ILabel, ILabel> p) {
             return (c, d) -> {
-                if (c == EMPTY || d == EMPTY) return null;
+                if (a.isInstance(d) && b.isInstance(c)) {
+                    ILabel tmp = c;
+                    c = d;
+                    d = tmp;
+                }
                 if (a.isInstance(c) && b.isInstance(d) && p.test(c, d)) {
                     long amountC = c.isPercent() ? c.getAmount() : Math.multiplyExact(c.getAmount(), 100);
                     long amountD = d.isPercent() ? d.getAmount() : Math.multiplyExact(d.getAmount(), 100);

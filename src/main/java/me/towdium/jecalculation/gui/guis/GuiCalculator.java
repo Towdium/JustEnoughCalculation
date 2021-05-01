@@ -28,50 +28,47 @@ import java.util.stream.Stream;
 @ParametersAreNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class GuiCalculator extends WContainer implements IGui  {
-    enumMode mode = enumMode.INPUT;
+    Mode mode = Mode.INPUT;
     CostList.Calculator calculator = null;
-    WLabelGroup recent = new WLabelGroup(7, 31, 8, 1, WLabel.enumMode.PICKER);
-    WLabel label = new WLabel(31, 7, 20, 20, WLabel.enumMode.SELECTOR);
-    WLabelScroll result = new WLabelScroll(7, 87, 8, 4, WLabel.enumMode.RESULT, true);
-    WButton input = new WButtonIcon(7, 62, 20, 20, Resource.BTN_IN, "calculator.input")
-            .setLsnrLeft(() -> setMode(enumMode.INPUT));
-    WButton output = new WButtonIcon(26, 62, 20, 20, Resource.BTN_OUT, "calculator.output")
-            .setLsnrLeft(() -> setMode(enumMode.OUTPUT));
-    WButton catalyst = new WButtonIcon(45, 62, 20, 20, Resource.BTN_CAT, "calculator.catalyst")
-            .setLsnrLeft(() -> setMode(enumMode.CATALYST));
+    WLabelGroup recent = new WLabelGroup(7, 31, 8, 1, WLabel.Mode.PICKER)
+            .setListener((i, v) -> JecaGui.getCurrent().hand = i.get(v));
+    WLabelScroll result = new WLabelScroll(7, 87, 8, 4, WLabel.Mode.RESULT, true);
     WButton steps = new WButtonIcon(64, 62, 20, 20, Resource.BTN_LIST, "calculator.step")
-            .setLsnrLeft(() -> setMode(enumMode.STEPS));
-    WTextField amount = new WTextField(60, 7, 65);
+            .setListener(i -> setMode(Mode.STEPS));
+    WButton catalyst = new WButtonIcon(45, 62, 20, 20, Resource.BTN_CAT, "calculator.catalyst")
+            .setListener(i -> setMode(Mode.CATALYST));
+    WButton output = new WButtonIcon(26, 62, 20, 20, Resource.BTN_OUT, "calculator.output")
+            .setListener(i -> setMode(Mode.OUTPUT));
+    WButton input = new WButtonIcon(7, 62, 20, 20, Resource.BTN_IN, "calculator.input")
+            .setListener(i -> setMode(Mode.INPUT));
+    WTextField amount = new WTextField(60, 7, 65).setText(Controller.getAmount()).setListener(i -> {
+        Controller.setAmount(i.getText());
+        refreshCalculator();
+    });
+    WLabel label = new WLabel(31, 7, 20, 20, WLabel.Mode.SELECTOR).setListener((i, v) -> {
+        Controller.setRecent(v);
+        refreshRecent();
+        refreshCalculator();
+    });
 
     public GuiCalculator() {
-        amount.setText(Controller.getAmount());
-        label.setLsnrUpdate(() -> {
-            Controller.setRecent(label.label);
-            refreshRecent();
-            refreshCalculator();
-        });
-        recent.setLsnrUpdate(l -> JecaGui.getCurrent().hand = recent.getLabelAt(l));
-        amount.setLsnrText(s -> {
-            Controller.setAmount(s);
-            refreshCalculator();
-        });
         add(new WHelp("calculator"));
         add(new WPanel());
         add(new WButtonIcon(7, 7, 20, 20, Resource.BTN_LABEL, "calculator.label")
-                    .setLsnrLeft(() -> JecaGui.displayGui(new GuiLabel(l -> {
+                    .setListener(i -> JecaGui.displayGui(new GuiLabel(l -> {
                         JecaGui.displayParent();
                         JecaGui.getCurrent().hand = l;
                     }))));
         add(new WButtonIcon(130, 7, 20, 20, Resource.BTN_NEW, "calculator.recipe")
-                    .setLsnrLeft(() -> JecaGui.displayGui(true, true, new GuiRecipe())));
+                    .setListener(i -> JecaGui.displayGui(true, true, new GuiRecipe())));
         add(new WButtonIcon(149, 7, 20, 20, Resource.BTN_SEARCH, "calculator.search")
-                    .setLsnrLeft(() -> JecaGui.displayGui(new GuiSearch())));
+                    .setListener(i -> JecaGui.displayGui(new GuiSearch())));
         add(new WText(53, 13, JecaGui.Font.PLAIN, "x"));
         add(new WLine(55));
         add(new WIcon(151, 31, 18, 18, Resource.ICN_RECENT, "calculator.history"));
         addAll(recent, label, input, output, catalyst, steps, result, amount);
         refreshRecent();
-        setMode(enumMode.INPUT);
+        setMode(Mode.INPUT);
     }
 
     @Override
@@ -79,12 +76,12 @@ public class GuiCalculator extends WContainer implements IGui  {
         refreshCalculator();
     }
 
-    void setMode(enumMode mode) {
+    void setMode(Mode mode) {
         this.mode = mode;
-        input.setDisabled(mode == enumMode.INPUT);
-        output.setDisabled(mode == enumMode.OUTPUT);
-        catalyst.setDisabled(mode == enumMode.CATALYST);
-        steps.setDisabled(mode == enumMode.STEPS);
+        input.setDisabled(mode == Mode.INPUT);
+        output.setDisabled(mode == Mode.OUTPUT);
+        catalyst.setDisabled(mode == Mode.CATALYST);
+        steps.setDisabled(mode == Mode.STEPS);
         refreshResult();
     }
 
@@ -141,7 +138,7 @@ public class GuiCalculator extends WContainer implements IGui  {
         }
     }
 
-    enum enumMode {
+    enum Mode {
         INPUT, OUTPUT, CATALYST, STEPS
     }
 }

@@ -32,6 +32,7 @@ import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -56,6 +57,18 @@ public class Utilities {
         else return form.apply(f / (float) Math.pow(1000, scale), size - 1) + suffix[scale - 1];
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    public static <T> Stream<T> stream(Optional<T> o) {
+        return o.map(Stream::of).orElse(Stream.empty());
+    }
+
+    public static <T> Supplier<T> fake(Runnable r) {
+        return () -> {
+            r.run();
+            return null;
+        };
+    }
+
 
     // MOD NAME
     @Nullable
@@ -76,6 +89,23 @@ public class Utilities {
 
     public static NBTTagCompound getTag(ItemStack is) {
         return NBTHelper.getOrCreateSubCompound(is, JustEnoughCalculation.Reference.MODID);
+    }
+
+    public static class Relation<K, V> {
+        public HashMap<Pair<K, K>, V> data = new HashMap<>();
+
+        public void put(K a, K b, V v) {
+            Pair<K, K> pair = new Pair<>(a, b);
+            V tmp = data.get(pair);
+            data.put(tmp == null ? new Pair<>(b, a) : pair, v);
+        }
+
+        @Nullable
+        public V get(K a, K b) {
+            V ret = data.get(new Pair<>(a, b));
+            if (ret == null) data.get(new Pair<>(b, a));
+            return ret;
+        }
     }
 
     public static class Timer {

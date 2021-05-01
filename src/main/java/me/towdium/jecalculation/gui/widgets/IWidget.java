@@ -1,12 +1,14 @@
 package me.towdium.jecalculation.gui.widgets;
 
+import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
 @ParametersAreNonnullByDefault
-public interface IWidget { // TODO unify listener behavior when manually set and pass instance to listener
+public interface IWidget {
     void onDraw(JecaGui gui, int xMouse, int yMouse);
 
     default boolean onTooltip(JecaGui gui, int xMouse, int yMouse, List<String> tooltip) {
@@ -23,5 +25,20 @@ public interface IWidget { // TODO unify listener behavior when manually set and
 
     default boolean onScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
         return false;
+    }
+
+    @Nullable
+    default ILabel getLabelUnderMouse(int xMouse, int yMouse) {
+        return null;
+    }
+
+    @FunctionalInterface
+    interface ListenerValue<W extends IWidget, V> {
+        void invoke(W widget, V value);
+    }
+
+    @FunctionalInterface
+    interface ListenerAction<W extends IWidget> {
+        void invoke(W widget);
     }
 }

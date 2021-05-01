@@ -16,7 +16,7 @@ import java.util.function.Consumer;
 @ParametersAreNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class WTextField implements IWidget {
-    public Consumer<String> lsnrText;
+    public ListenerAction<? super WTextField> listener;
     protected int xPos, yPos, xSize;
     GuiTextField textField;
     public static final int HEIGHT = 20;
@@ -50,14 +50,14 @@ public class WTextField implements IWidget {
         return textField.getText();
     }
 
-    public void setText(String s) {
+    public WTextField setText(String s) {
         textField.setText(s);
-        notifyLsnr();
+        return this;
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    public WTextField setLsnrText(Consumer<String> lsnrText) {
-        this.lsnrText = lsnrText;
+    public WTextField setListener(ListenerAction<? super WTextField> listener) {
+        this.listener = listener;
         return this;
     }
 
@@ -67,6 +67,6 @@ public class WTextField implements IWidget {
     }
 
     protected void notifyLsnr() {
-        if (lsnrText != null) lsnrText.accept(textField.getText());
+        if (listener != null) listener.invoke(this);
     }
 }

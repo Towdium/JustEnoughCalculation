@@ -1,13 +1,16 @@
 package me.towdium.jecalculation.gui.widgets;
 
 import me.towdium.jecalculation.gui.JecaGui;
-import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.utils.Utilities.I18n;
 import org.lwjgl.input.Keyboard;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
+
+import static me.towdium.jecalculation.gui.JecaGui.Font.PLAIN;
+import static me.towdium.jecalculation.gui.JecaGui.Font.SHADOW;
+import static me.towdium.jecalculation.gui.Resource.*;
 
 /**
  * Author: Towdium
@@ -24,8 +27,8 @@ public class WHelp extends WTooltip {
 
     @Override
     public void onDraw(JecaGui gui, int xMouse, int yMouse) {
-        gui.drawResourceContinuous(Resource.WGT_PANEL_N, -21, 0, 25, 24, 4);
-        gui.drawResource(Resource.WGT_HELP_N, -19, 2);
+        gui.drawResourceContinuous(WGT_PANEL_N, -21, 0, 25, 24, 4);
+        gui.drawResource(WGT_HELP_N, -19, 2);
     }
 
     @Override
@@ -36,7 +39,8 @@ public class WHelp extends WTooltip {
     @Override
     public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
         boolean ret = mouseIn(xMouse, yMouse);
-        if (ret) gui.root.add(new Doc());
+        if (ret)
+            gui.root.add(new Doc());
         return ret;
     }
 
@@ -44,14 +48,15 @@ public class WHelp extends WTooltip {
         public Doc() {
             Text tContent = new Text();
             WSwitcher sPage = new WSwitcher(7, 146, 162, tContent.amount());
-            sPage.setListener(() -> tContent.setPage(sPage.getIndex()));
-            WText tTitle = new WText(7, 7, JecaGui.Font.SHADOW, I18n.format("gui." + WHelp.this.key + ".title"));
+            sPage.setListener(i -> tContent.setPage(i.getIndex()));
+            WText tTitle = new WText(7, 7, SHADOW, I18n.format("gui." + WHelp.this.key + ".title"));
             addAll(new WPanel(), new Icon(), tTitle, tContent, sPage);
         }
 
         @Override
         public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
-            if (!super.onClicked(gui, xMouse, yMouse, button)) gui.root.remove(this);
+            if (!super.onClicked(gui, xMouse, yMouse, button))
+                gui.root.remove(this);
             return true;
         }
 
@@ -79,12 +84,13 @@ public class WHelp extends WTooltip {
                         count++;
                     }
                 }
-                if (!tmp.isEmpty()) pages.add(tmp);
+                if (!tmp.isEmpty())
+                    pages.add(tmp);
             }
 
             @Override
             public void onDraw(JecaGui gui, int xMouse, int yMouse) {
-                gui.drawSplitText(7, 21, JecaGui.Font.PLAIN, pages.get(page));
+                gui.drawSplitText(7, 21, PLAIN, pages.get(page));
             }
 
             public int amount() {
@@ -103,14 +109,15 @@ public class WHelp extends WTooltip {
 
             @Override
             public void onDraw(JecaGui gui, int xMouse, int yMouse) {
-                gui.drawResourceContinuous(Resource.WGT_HELP_B, -21, 0, 25, 24, 4);
-                gui.drawResource(Resource.WGT_HELP_F, -19, 2);
+                gui.drawResourceContinuous(WGT_HELP_B, -21, 0, 25, 24, 4);
+                gui.drawResource(WGT_HELP_F, -19, 2);
             }
 
             @Override
             public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
                 boolean ret = mouseIn(xMouse, yMouse);
-                if (ret) gui.root.remove(Doc.this);
+                if (ret)
+                    gui.root.remove(Doc.this);
                 return ret;
             }
 
@@ -121,11 +128,13 @@ public class WHelp extends WTooltip {
 
             @Override
             public boolean onKey(JecaGui gui, char ch, int code) {
-                if (super.onKey(gui, ch, code)) return true;
+                if (super.onKey(gui, ch, code))
+                    return true;
                 if (code == Keyboard.KEY_ESCAPE) {
                     gui.root.remove(Doc.this);
                     return true;
-                } else return false;
+                } else
+                    return false;
             }
         }
     }

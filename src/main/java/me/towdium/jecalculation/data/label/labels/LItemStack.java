@@ -47,9 +47,15 @@ public class LItemStack extends ILabel.Impl {
 
     public LItemStack(NBTTagCompound tag) {
         super(tag);
-        init(Item.getItemById(tag.getInteger(KEY_ITEM)), tag.getInteger(KEY_META),
-             tag.hasKey(KEY_NBT) ? tag.getCompoundTag(KEY_NBT) : null, tag.getBoolean(KEY_F_META),
-             tag.getBoolean(KEY_F_CAP), tag.getBoolean(KEY_F_NBT));
+        String id = tag.getString(KEY_ITEM);
+        Item i = Item.getItemById(tag.getInteger(KEY_ITEM));
+        if (i == null) throw new Serializer.SerializationException("Item " + id + " cannot be resolved, ignoring");
+        init(i, tag.getInteger(KEY_META),
+             tag.hasKey(KEY_NBT) ? tag.getCompoundTag(KEY_NBT) : null,
+             tag.getBoolean(KEY_F_META),
+             tag.getBoolean(KEY_F_CAP),
+             tag.getBoolean(KEY_F_NBT)
+        );
     }
 
     private LItemStack(LItemStack lis) {
@@ -85,20 +91,12 @@ public class LItemStack extends ILabel.Impl {
         if (a instanceof LItemStack && b instanceof LItemStack) {
             LItemStack lisA = (LItemStack) a;
             LItemStack lisB = (LItemStack) b;
-            if (!lisA.fMeta && lisA.meta != WILDCARD_VALUE && lisA.meta != lisB.meta)
-                return false;
-            if (!lisA.fNbt) {
-                if (lisB.fNbt)
-                    return false;
-                else if (lisA.nbt == null) {
-                    if (lisB.nbt != null)
-                        return false;
-                } else if (lisB.nbt == null || !lisA.nbt.equals(lisB.nbt))
-                    return false;
-            }
-            if (!lisA.fCap) {
-                if (lisB.fCap)
-                    return false;
+            if (lisA.meta != lisB.meta && !lisA.fMeta && lisA.meta != WILDCARD_VALUE
+                && !lisB.fMeta && lisB.meta != WILDCARD_VALUE) return false;
+            if (!lisA.fNbt && !lisB.fNbt) {
+                if (lisA.nbt == null) {
+                    if (lisB.nbt != null) return false;
+                } else if (lisB.nbt == null || !lisA.nbt.equals(lisB.nbt)) return false;
             }
             return lisA.item == lisB.item;
         }

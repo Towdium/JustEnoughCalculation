@@ -91,7 +91,7 @@ public class Recipe {
         return p.test(input, r.input) && p.test(catalyst, r.catalyst) && p.test(output, r.output);
     }
 
-    public ILabel[] getLabel(enumIoType type) {
+    public ILabel[] getLabel(IO type) {
         switch (type) {
             case INPUT:
                 return input;
@@ -148,7 +148,7 @@ public class Recipe {
                      }).orElse(0L);
     }
 
-    public enum enumIoType {
+    public enum IO {
         INPUT, OUTPUT, CATALYST;
 
         public int getSize() {

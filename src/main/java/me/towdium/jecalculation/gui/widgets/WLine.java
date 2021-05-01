@@ -6,7 +6,7 @@ import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-
+import static me.towdium.jecalculation.gui.Resource.WGT_LINE;
 /**
  * Author: towdium
  * Date:   17-8-18.
@@ -22,6 +22,6 @@ public class WLine implements IWidget {
 
     @Override
     public void onDraw(JecaGui gui, int xMouse, int yMouse) {
-        gui.drawResource(Resource.WGT_LINE, 6, y - 1);
+        gui.drawResource(WGT_LINE, 6, y - 1);
     }
 }

@@ -55,8 +55,10 @@ public class LFluidStack extends ILabel.Impl {
 
     public LFluidStack(NBTTagCompound nbt) {
         super(nbt);
-        init(FluidRegistry.getFluid(nbt.getString(KEY_FLUID)),
-             nbt.hasKey(KEY_NBT) ? nbt.getCompoundTag(KEY_NBT) : null);
+        String id = nbt.getString(KEY_FLUID);
+        Fluid f = FluidRegistry.getFluid(id);
+        if (f == null) throw new Serializer.SerializationException("Fluid " + id + " cannot be resolved, ignoring");
+        init(f, nbt.hasKey(KEY_NBT) ? nbt.getCompoundTag(KEY_NBT) : null);
     }
 
     private void init(Fluid fluid, @Nullable NBTTagCompound nbt) {

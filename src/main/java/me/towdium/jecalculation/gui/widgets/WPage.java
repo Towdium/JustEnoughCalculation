@@ -10,6 +10,7 @@ import me.towdium.jecalculation.utils.Utilities;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
+import static me.towdium.jecalculation.gui.Resource.*;
 
 /**
  * Author: towdium
@@ -17,14 +18,14 @@ import java.util.List;
  */
 @ParametersAreNonnullByDefault
 @SideOnly(Side.CLIENT)
-public class WPage implements IWidget {
+public class WPage extends WTooltip {
     protected int index;
-    protected ILabel.RegistryEditor.Record record;
-    protected Utilities.Timer timer = new Utilities.Timer();
+    protected Record record;
     protected boolean focused;
-    protected Runnable listener;
+    protected ListenerAction<? super WPage> listener;
 
     public WPage(int index, Record record, boolean focused) {
+        super(record.localizeKey);
         this.index = index;
         this.record = record;
         this.focused = focused;
@@ -32,30 +33,25 @@ public class WPage implements IWidget {
 
     @Override
     public void onDraw(JecaGui gui, int xMouse, int yMouse) {
-        Resource resource = focused ?
-                            (index == 0 ? Resource.WGT_PAGER_F0 : Resource.WGT_PAGER_FN) :
-                            Resource.WGT_PANEL_N;
+        Resource resource = focused ? (index == 0 ? WGT_PAGER_F0 : WGT_PAGER_FN) : WGT_PANEL_N;
         gui.drawResourceContinuous(resource, index * 24, -21, 24, 25, 4, 4, 4, 4);
         record.representation.drawLabel(gui, index * 24 + 4, -17, false);
-        timer.setState(JecaGui.mouseIn(index * 24, -21, 24, 21, xMouse, yMouse));
+        super.onDraw(gui, xMouse, yMouse);
     }
 
     @Override
     public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
         boolean ret = JecaGui.mouseIn(index * 24, -21, 24, 21, xMouse, yMouse) && listener != null && !focused;
-        if (ret)
-            listener.run();
+        if (ret) listener.invoke(this);
         return ret;
     }
 
     @Override
-    public boolean onTooltip(JecaGui gui, int xMouse, int yMouse, List<String> tooltip) {
-        if (timer.getTime() > 1000 && !focused)
-            tooltip.add(Utilities.I18n.format("gui." + record.localizeKey));
-        return false;
+    public boolean mouseIn(int xMouse, int yMouse) {
+        return JecaGui.mouseIn(index * 24, -21, 24, 21, xMouse, yMouse);
     }
 
-    public WPage setListener(Runnable r) {
+    public WPage setListener(ListenerAction<? super WPage> r) {
         listener = r;
         return this;
     }
