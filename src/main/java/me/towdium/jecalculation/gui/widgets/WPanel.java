@@ -2,6 +2,7 @@ package me.towdium.jecalculation.gui.widgets;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 
@@ -42,9 +43,10 @@ public class WPanel implements IWidget {
 
     @Override
     public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
-        return mouseIn(xMouse, yMouse);
+        boolean ret = mouseIn(xMouse, yMouse);
+        if (ret) gui.hand = ILabel.EMPTY;
+        return ret;
     }
-
     public boolean mouseIn(int x, int y) {
         int xx = x - xPos;
         int yy = y - yPos;

@@ -9,10 +9,8 @@ import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.labels.LPlaceholder;
 import me.towdium.jecalculation.gui.JecaGui;
-import me.towdium.jecalculation.gui.guis.GuiCalculator;
+import me.towdium.jecalculation.gui.guis.GuiCraft;
 import me.towdium.jecalculation.network.ClientHandler;
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.ChatComponentTranslation;
 
 /**
  * Author: towdium
@@ -23,9 +21,8 @@ public class FMLBusEventHandler {
     @SideOnly(Side.CLIENT)
     @SubscribeEvent(receiveCanceled = true)
     public void onKey(InputEvent.KeyInputEvent event) {
-        if (ClientHandler.keyOpenGui.isPressed()) {
-            JecaGui.displayGui(true, true, new GuiCalculator());
-        }
+        if (ClientHandler.keyOpenGuiCraft.isPressed()) Controller.openGuiCraft();
+        if (ClientHandler.keyOpenGuiMath.isPressed()) Controller.openGuiMath();
     }
 
     @SubscribeEvent

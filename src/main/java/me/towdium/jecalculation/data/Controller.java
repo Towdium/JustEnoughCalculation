@@ -4,15 +4,18 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.JecaConfig;
 import me.towdium.jecalculation.JustEnoughCalculation;
-import me.towdium.jecalculation.data.label.ILabel;
-import me.towdium.jecalculation.data.structure.Recents;
-import me.towdium.jecalculation.data.structure.Recipe;
-import me.towdium.jecalculation.data.structure.Recipes;
+import me.towdium.jecalculation.data.structure.*;
+import me.towdium.jecalculation.gui.JecaGui;
+import me.towdium.jecalculation.gui.guis.GuiCraft;
+import me.towdium.jecalculation.gui.guis.GuiMath;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ChatComponentTranslation;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.File;
 import java.util.*;
@@ -28,16 +31,28 @@ import java.util.stream.Stream;
 @SideOnly(Side.CLIENT)
 public class Controller {
     public static final String KEY_RECIPES = "recipes";
-    public static final String KEY_RECENTS = "recents";
-    public static final String KEY_AMOUNT = "amount";
-    public static final String KEY_INVENTORY = "inventory";
-    static Recipes recipesClient;
-    static Recents recentsClient;
-    static boolean inventoryClient;
-    static String amountClient;
+    public static final String KEY_MATH = "math";
+    public static final String KEY_CRAFT = "craft";
+    public static final String KEY_PLAYER = "player";
 
-    static Recipes getRecord() {
-        return recipesClient;
+    static RecordPlayer rPlayerServer;
+    static RecordPlayer rPlayerClient;
+    static RecordCraft rCraftClient;
+    static RecordMath rMathClient;
+
+    public static void setRecordsServer(RecordPlayer r) {
+        rPlayerServer = r;
+    }
+
+    public static boolean isServerActive() {
+        return rPlayerServer != null;
+    }
+
+    static Recipes getRecipes() {
+        if (isServerActive())
+            return rPlayerServer.recipes;
+        else
+            return rPlayerClient.recipes;
     }
 
     static Optional<ItemStack> getStack() {
@@ -62,7 +77,7 @@ public class Controller {
     public static void inport(Recipes recipes, String group) {
         ArrayList<Recipe> buffer = new ArrayList<>();
         recipes.getGroup(group)
-               .forEach(i -> getRecord().getGroup(group).stream().filter(j -> j.equals(i)).findAny().orElseGet(() -> {
+               .forEach(i -> getRecipes().getGroup(group).stream().filter(j -> j.equals(i)).findAny().orElseGet(() -> {
                    buffer.add(i);
                    return null;
                }));
@@ -72,82 +87,85 @@ public class Controller {
 
     public static File export(String group) {
         File f = JecaConfig.getDataFile(group);
-        Utilities.Json.write(getRecord().serialize(Collections.singleton(group)), f);
+        Utilities.Json.write(getRecipes().serialize(Collections.singleton(group)), f);
         return f;
     }
 
     public static File export() {
         File f = JecaConfig.getDataFile("groups");
-        Utilities.Json.write(getRecord().serialize(), f);
+        Utilities.Json.write(getRecipes().serialize(), f);
         return f;
     }
 
+    @Nullable
+    public static String getLast() {
+        return isServerActive() ? rPlayerServer.last : rPlayerClient.last;
+    }
+
+    static void setLast(String last) {
+        if (isServerActive()) rPlayerServer.last = last;
+        else rPlayerServer.last = last;
+    }
+
     public static List<String> getGroups() {
-        return getRecord().getGroups();
+        return getRecipes().getGroups();
     }
 
     public static void addRecipe(String group, Recipe recipe) {
-        getRecord().add(group, recipe);
+        getRecipes().add(group, recipe);
+        setLast(group);
         writeToLocal();
     }
 
     public static void setRecipe(String group, int index, Recipe recipe) {
-        getRecord().set(group, index, recipe);
+        getRecipes().set(group, index, recipe);
+        setLast(group);
         writeToLocal();
     }
 
     public static void removeRecipe(String group, int index) {
-        getRecord().remove(group, index);
+        getRecipes().remove(group, index);
+        setLast(group);
         writeToLocal();
     }
 
     public static Recipe getRecipe(String group, int index) {
-        return getRecord().getRecipe(group, index);
+        return getRecipes().getRecipe(group, index);
     }
 
     public static Stream<Pair<String, List<Recipe>>> stream() {
-        return getRecord().stream();
+        return getRecipes().stream();
     }
 
     public static Recipes.RecipeIterator recipeIterator() {
-        return getRecord().recipeIterator();
+        return getRecipes().recipeIterator();
     }
 
-    public static List<Recipe> getRecipes() {
-        return getRecord().getRecipes();
+    public static Recipes.RecipeIterator recipeIterator(String group) {
+        return getRecipes().recipeIterator(group);
     }
 
-    public static List<Recipe> getRecipes(String group) {
-        return getRecord().getRecipes(group);
+    public static void setRMath(RecordMath math) {
+        rMathClient = math;
     }
 
-    public static String getAmount() {
-        return amountClient;
+    public static RecordCraft getRCraft() {
+        return rCraftClient;
+
     }
 
-    public static void setAmount(String amount) {
-        amountClient = amount;
+    public static void setRCraft(RecordCraft rc) {
+        rCraftClient = rc;
+
     }
 
-    public static boolean getDetectInv() {
-        return inventoryClient;
+    public static RecordMath getRMath() {
+        return rMathClient;
     }
 
-    public static void setDetectInv(boolean b) {
-        inventoryClient = b;
-    }
-
-    public static List<ILabel> getRecent() {
-        return recentsClient.getRecords();
-    }
-
-    public static void setRecent(ILabel label, boolean replace) {
-        recentsClient.push(label, replace);
-        writeToLocal();
-    }
 
     public static boolean hasDuplicate(Recipe r) {
-        return getRecord().hasDuplicate(r);
+        return getRecipes().hasDuplicate(r);
     }
 
     public static void loadFromLocal() {
@@ -156,25 +174,35 @@ public class Controller {
         File file = JecaConfig.recordFile;
         NBTTagCompound nbt = Utilities.Json.read(file);
         if (nbt != null) {
-            recipesClient = nbt.hasKey(KEY_RECIPES) ? new Recipes(nbt.getCompoundTag(KEY_RECIPES)) : new Recipes();
-            recentsClient = nbt.hasKey(KEY_RECENTS) ? new Recents(nbt.getTagList(KEY_RECENTS, 10)) : new Recents();
-            amountClient = nbt.hasKey(KEY_AMOUNT) ? nbt.getString(KEY_AMOUNT) : "";
-            inventoryClient = !nbt.hasKey(KEY_INVENTORY) || nbt.getBoolean(KEY_INVENTORY);
+            rCraftClient = new RecordCraft(nbt.getCompoundTag(KEY_CRAFT));
+            rMathClient = new RecordMath(nbt.getCompoundTag(KEY_MATH));
+            rPlayerClient = nbt.hasKey(KEY_PLAYER) ? new RecordPlayer(nbt.getCompoundTag(KEY_PLAYER)) : new RecordPlayer();
         } else {
-            recipesClient = new Recipes();
-            recentsClient = new Recents();
-            amountClient = "";
-            inventoryClient = true;
+            rPlayerClient = new RecordPlayer();
+            rCraftClient = new RecordCraft(new NBTTagCompound());
+            rMathClient = new RecordMath(new NBTTagCompound());
         }
     }
 
     public static void writeToLocal() {
         File file = JecaConfig.recordFile;
         NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setTag(KEY_RECENTS, recentsClient.serialize());
-        nbt.setTag(KEY_RECIPES, recipesClient.serialize());
-        nbt.setString(KEY_AMOUNT, amountClient);
-        nbt.setBoolean(KEY_INVENTORY, inventoryClient);
+        nbt.setTag(KEY_CRAFT, rCraftClient.serialize());
+        nbt.setTag(KEY_PLAYER, rPlayerClient.serialize());
+        nbt.setTag(KEY_MATH, rMathClient.serialize());
         Utilities.Json.write(nbt, file);
     }
+
+    public static void openGuiCraft() {
+        if (!Controller.isServerActive()) JecaGui.displayGui(true, true, new GuiCraft());
+        else Minecraft.getMinecraft().thePlayer.addChatMessage(
+                new ChatComponentTranslation("jecalculation.chat.server_mode"));
+    }
+
+    public static void openGuiMath() {
+        if (!Controller.isServerActive()) JecaGui.displayGui(true, true, new GuiMath());
+        else Minecraft.getMinecraft().thePlayer.addChatMessage(
+                new ChatComponentTranslation("jecalculation.chat.server_mode"));
+    }
+
 }

@@ -58,7 +58,7 @@ public class GuiSearch extends WContainer implements IGui {
                       .forEach(add);
         } else {
             String s = group.getText();
-            Streams.mapWithIndex(Controller.getRecipes(s).stream(), (j, k) -> new Trio<>(j, s, (int) k))
+            Streams.mapWithIndex(Controller.recipeIterator(s).stream(), (j, k) -> new Trio<>(j, s, (int) k))
                    .forEach(add);
         }
     }

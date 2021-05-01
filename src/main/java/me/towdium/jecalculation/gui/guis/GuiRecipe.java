@@ -1,6 +1,5 @@
 package me.towdium.jecalculation.gui.guis;
 
-import codechicken.nei.PositionedStack;
 import codechicken.nei.recipe.IRecipeHandler;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
@@ -16,7 +15,7 @@ import net.minecraft.item.ItemStack;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
 import static me.towdium.jecalculation.gui.Resource.*;
 
 /**
@@ -41,13 +40,14 @@ public class GuiRecipe extends WContainer implements IGui {
         refresh();
     });
     WButton buttonDisamb = new WButtonIcon(121, 31, 20, 20, BTN_DISAMB, "recipe.disamb").setListener(i -> {
-        if (disambiguation != null) JecaGui.displayGui(new GuiDisambiguation(new ArrayList<>(disambiguation.values()))
+        if (disambiguation != null) JecaGui.displayGui(new GuiDisamb(new ArrayList<>(disambiguation.values()))
                                                                .setCallback(l -> {
                                                                    JecaGui.displayParent();
                                                                    JecaGui.getCurrent().hand = l;
                                                                }));
     });
     WButton buttonClear = new WButtonIcon(64, 31, 20, 20, BTN_DEL, "recipe.clear").setListener(i -> clear());
+    // check duplicate and valid
     WButton buttonCopy = new WButtonIcon(83, 31, 20, 20, BTN_COPY, "recipe.copy").setListener(i -> {
         Controller.addRecipe(switcherGroup.getText(), toRecipe());
         JecaGui.displayParent();
@@ -101,6 +101,10 @@ public class GuiRecipe extends WContainer implements IGui {
         add(new WLine(57));
         add(groupInput, groupCatalyst, groupOutput, switcherGroup);
         if (switcherGroup.getTexts().isEmpty()) switcherGroup.setTemp(Utilities.I18n.get("gui.common.default"));
+        String last = Controller.getLast();
+        int index = -1;
+        if (last != null) index = switcherGroup.getTexts().indexOf(last);
+        if (index != -1) switcherGroup.setIndex(index);
         setNewGroup(false);
         buttonCopy.setDisabled(true);
         buttonDel.setDisabled(true);

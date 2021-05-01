@@ -104,6 +104,26 @@ public class Resource {
     public static final Resource WGT_SCROLL = new Resource(133, 132, 14, 17);
     public static final Resource WGT_HELP_F = new Resource(147, 132, 20, 20);
     public static final Resource WGT_HELP_N = new Resource(167, 132, 20, 20);
+    public static final Resource WGT_LCD_UL_F = new Resource(187, 132, 4, 16);
+    public static final Resource WGT_LCD_UR_F = new Resource(191, 132, 4, 16);
+    public static final Resource WGT_LCD_LL_F = new Resource(195, 132, 4, 16);
+    public static final Resource WGT_LCD_LR_F = new Resource(199, 132, 4, 16);
+    public static final Resource WGT_LCD_H_F = new Resource(187, 148, 12, 4);
+    public static final Resource WGT_LCD_DO_F = new Resource(199, 148, 4, 4);
+    public static final Resource WGT_LCD_UL_N = new Resource(203, 132, 4, 16);
+    public static final Resource WGT_LCD_UR_N = new Resource(207, 132, 4, 16);
+    public static final Resource WGT_LCD_LL_N = new Resource(211, 132, 4, 16);
+    public static final Resource WGT_LCD_LR_N = new Resource(215, 132, 4, 16);
+    public static final Resource WGT_LCD_H_N = new Resource(203, 148, 12, 4);
+    public static final Resource WGT_LCD_DO_N = new Resource(215, 148, 4, 4);
+    public static final Resource WGT_LCD_P_F = new Resource(219, 132, 7, 7);
+    public static final Resource WGT_LCD_M_F = new Resource(226, 132, 7, 7);
+    public static final Resource WGT_LCD_T_F = new Resource(233, 132, 7, 7);
+    public static final Resource WGT_LCD_D_F = new Resource(240, 132, 7, 7);
+    public static final Resource WGT_LCD_P_N = new Resource(219, 139, 7, 7);
+    public static final Resource WGT_LCD_M_N = new Resource(226, 139, 7, 7);
+    public static final Resource WGT_LCD_T_N = new Resource(233, 139, 7, 7);
+    public static final Resource WGT_LCD_D_N = new Resource(240, 139, 7, 7);
 
     public static final Resource ICN_RECENT_N = getIcon(0, 7);
     public static final Resource ICN_RECENT_F = getIcon(0, 6);
@@ -182,6 +202,10 @@ public class Resource {
 
     public Resource(int xPos, int yPos, int xSize, int ySize) {
         this(xPos, yPos, xSize, ySize, location);
+    }
+
+    public Resource sub(int xPos, int yPos, int xSize, int ySize) {
+        return new Resource(this.xPos + xPos, this.yPos + yPos, xSize, ySize);
     }
 
     public int getXPos() {

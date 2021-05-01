@@ -5,6 +5,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.structure.CostList;
+import me.towdium.jecalculation.data.structure.RecordCraft;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.gui.widgets.*;
@@ -27,13 +28,14 @@ import java.util.stream.Stream;
  */
 @ParametersAreNonnullByDefault
 @SideOnly(Side.CLIENT)
-public class GuiCalculator extends WContainer implements IGui  {
+public class GuiCraft extends WContainer implements IGui  {
     Mode mode = Mode.INPUT;
     CostList.Calculator calculator = null;
+    RecordCraft record = Controller.getRCraft();
     WLabelGroup recent = new WLabelGroup(7, 31, 8, 1, WLabel.Mode.PICKER)
             .setListener((i, v) -> JecaGui.getCurrent().hand = i.get(v));
     WLabelScroll result = new WLabelScroll(7, 87, 8, 4, WLabel.Mode.RESULT, true);
-    WButton steps = new WButtonIcon(64, 62, 20, 20, Resource.BTN_LIST, "calculator.step")
+    WButton steps = new WButtonIcon(64, 62, 20, 20, Resource.BTN_LIST, "craft.step")
             .setListener(i -> setMode(Mode.STEPS));
     WButton catalyst = new WButtonIcon(45, 62, 20, 20, Resource.BTN_CAT, "common.catalyst")
             .setListener(i -> setMode(Mode.CATALYST));
@@ -41,38 +43,43 @@ public class GuiCalculator extends WContainer implements IGui  {
             .setListener(i -> setMode(Mode.OUTPUT));
     WButton input = new WButtonIcon(7, 62, 20, 20, Resource.BTN_IN, "common.input")
             .setListener(i -> setMode(Mode.INPUT));
-    WTextField amount = new WTextField(60, 7, 65).setText(Controller.getAmount()).setListener(i -> {
-        Controller.setAmount(i.getText());
+
+    WLabel label = new WLabel(31, 7, 20, 20, WLabel.Mode.SELECTOR).setListener((i, v) -> refreshLabel(v, false, true));
+    WButton invE = new WButtonIcon(149, 62, 20, 20, Resource.BTN_INV_E, "craft.inventory_enabled");
+    WButton invD = new WButtonIcon(149, 62, 20, 20, Resource.BTN_INV_D, "craft.inventory_disabled");
+    WTextField amount = new WTextField(60, 7, 65).setText(record.amount).setListener(i -> {
+        record.amount = i.getText();
+        Controller.setRCraft(record);
         refreshCalculator();
     });
-    WLabel label = new WLabel(31, 7, 20, 20, WLabel.Mode.SELECTOR).setListener((i, v) -> refreshLabel(v, false));
-    WButton invE = new WButtonIcon(149, 62, 20, 20, Resource.BTN_INV_E, "calculator.inventory_enabled");
-    WButton invD = new WButtonIcon(149, 62, 20, 20, Resource.BTN_INV_D, "calculator.inventory_disabled");
 
-    public GuiCalculator() {
-        add(new WHelp("calculator"));
+
+    public GuiCraft() {
+        add(new WHelp("craft"));
         add(new WPanel());
-        add(new WButtonIcon(7, 7, 20, 20, Resource.BTN_LABEL, "calculator.label")
+        add(new WButtonIcon(7, 7, 20, 20, Resource.BTN_LABEL, "craft.label")
                     .setListener(i -> JecaGui.displayGui(new GuiLabel(l -> {
                         JecaGui.displayParent();
                         JecaGui.getCurrent().hand = l;
                     }))));
-        add(new WButtonIcon(130, 7, 20, 20, Resource.BTN_NEW, "calculator.recipe")
+        add(new WButtonIcon(130, 7, 20, 20, Resource.BTN_NEW, "craft.recipe")
                     .setListener(i -> JecaGui.displayGui(true, true, new GuiRecipe())));
-        add(new WButtonIcon(149, 7, 20, 20, Resource.BTN_SEARCH, "calculator.search")
+        add(new WButtonIcon(149, 7, 20, 20, Resource.BTN_SEARCH, "craft.search")
                     .setListener(i -> JecaGui.displayGui(new GuiSearch())));
         add(new WText(53, 13, JecaGui.Font.PLAIN, "x"));
         add(new WLine(55));
-        add(new WIcon(151, 31, 18, 18, Resource.ICN_RECENT, "calculator.history"));
-        add(recent, label, input, output, catalyst, steps, result, amount, Controller.getDetectInv() ? invE : invD);
+        add(new WIcon(151, 31, 18, 18, Resource.ICN_RECENT, "craft.history"));
+        add(recent, label, input, output, catalyst, steps, result, amount, record.inventory ? invE : invD);
         invE.setListener(i -> {
-            Controller.setDetectInv(false);
+            record.inventory = false;
+            Controller.setRCraft(record);
             remove(invE);
             add(invD);
             refreshCalculator();
         });
         invD.setListener(i -> {
-            Controller.setDetectInv(true);
+            record.inventory = true;
+            Controller.setRCraft(record);
             remove(invD);
             add(invE);
             refreshCalculator();
@@ -96,9 +103,8 @@ public class GuiCalculator extends WContainer implements IGui  {
     }
 
     void refreshRecent() {
-        List<ILabel> labels = Controller.getRecent();
-        label.setLabel(labels.isEmpty() ? ILabel.EMPTY : labels.get(0));
-        recent.setLabel(labels.isEmpty() ? new ArrayList<>() : labels.subList(1, labels.size()), 0);
+        label.setLabel(record.getLatest());
+        recent.setLabel(record.getHistory(), 0);
     }
 
     void refreshCalculator() {
@@ -107,7 +113,7 @@ public class GuiCalculator extends WContainer implements IGui  {
             long i = s.isEmpty() ? 1 : Long.parseLong(amount.getText());
             amount.setColor(JecaGui.COLOR_TEXT_WHITE);
             List<ILabel> dest = Collections.singletonList(label.getLabel().copy().setAmount(i));
-            CostList list = Controller.getDetectInv() ? new CostList(getInventory(), dest) : new CostList(dest);
+            CostList list = record.inventory ? new CostList(getInventory(), dest) : new CostList(dest);
             calculator = list.calculate();
         } catch (NumberFormatException | ArithmeticException e) {
             amount.setColor(JecaGui.COLOR_TEXT_RED);
@@ -149,11 +155,12 @@ public class GuiCalculator extends WContainer implements IGui  {
         }
     }
 
-    private void refreshLabel(ILabel l, boolean replace) {
-        Controller.setRecent(l, replace);
+    private void refreshLabel(ILabel l, boolean replace, boolean suggest) {
+        boolean dup = record.push(l, replace);
+        Controller.setRCraft(record);
         refreshRecent();
         refreshCalculator();
-        if (findRecipe(l).isEmpty()) {
+        if (suggest && findRecipe(l).isEmpty()) {
             Pair<List<ILabel>, List<ILabel>> guess = ILabel.CONVERTER.guess(Collections.singletonList(l));
             LinkedHashSet<ILabel> match = new LinkedHashSet<>();
             List<ILabel> fuzzy = new ArrayList<>();
@@ -164,7 +171,7 @@ public class GuiCalculator extends WContainer implements IGui  {
             });
             match.addAll(fuzzy);
             List<ILabel> list = new ArrayList<>(match);
-            if (!match.isEmpty()) add(new Suggest(list.size() > 3 ? list.subList(0, 3) : list));
+            if (!match.isEmpty()) add(new Suggest(list.size() > 3 ? list.subList(0, 3) : list, !dup));
         }
     }
 
@@ -180,12 +187,15 @@ public class GuiCalculator extends WContainer implements IGui  {
         INPUT, OUTPUT, CATALYST, STEPS
     }
     class Suggest extends WContainer {
-        public Suggest(List<ILabel> labels) {
+        boolean replace;
+
+        public Suggest(List<ILabel> labels, boolean replace) {
+            this.replace = replace;
             int width = labels.size() * 20;
             add(new WPanel(0 - width, 2, 56 + width, 30));
-            add(new WLabel(31, 7, 20, 20, WLabel.Mode.SELECTOR).setLabel(label.getLabel())
-                                                               .setListener((i, v) -> refresh(v)));
-            add(new WIcon(5 - width, 7, 18, 20, Resource.ICN_HELP, "calculator.suggest"));
+            add(new WLabel(31, 7, 20, 20, WLabel.Mode.PICKER).setLabel(label.getLabel())
+                                                             .setListener((i, v) -> refresh(v)));
+            add(new WIcon(5 - width, 7, 18, 20, Resource.ICN_HELP, "craft.suggest"));
             add(new WLine(26, 7, 20, false));
             for (int i = 0; i < labels.size(); i++) {
                 add(new WLabel(3 - i * 20, 7, 20, 20, WLabel.Mode.PICKER).setLabel(labels.get(i))
@@ -194,13 +204,13 @@ public class GuiCalculator extends WContainer implements IGui  {
         }
 
         public void refresh(ILabel l) {
-            GuiCalculator.this.remove(this);
-            refreshLabel(l, true);
+            GuiCraft.this.remove(this);
+            refreshLabel(l, replace, false);
         }
 
         @Override
         public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
-            if (!super.onClicked(gui, xMouse, yMouse, button)) GuiCalculator.this.remove(this);
+            if (!super.onClicked(gui, xMouse, yMouse, button)) GuiCraft.this.remove(this);
             return true;
         }
 
@@ -208,7 +218,7 @@ public class GuiCalculator extends WContainer implements IGui  {
         public boolean onKey(JecaGui gui, char ch, int code) {
             if (!super.onKey(gui, ch, code)) {
                 if (code == Keyboard.KEY_ESCAPE) {
-                    GuiCalculator.this.remove(this);
+                    GuiCraft.this.remove(this);
                     return true;
                 } else return false;
             } else return true;

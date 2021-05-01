@@ -11,8 +11,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.ClientCommandHandler;
 import org.lwjgl.input.Keyboard;
 
+import static org.lwjgl.input.Keyboard.KEY_NONE;
+
 public class ClientHandler {
-    public static final KeyBinding keyOpenGui = new KeyBinding("jecalculation.key.open_gui", Keyboard.KEY_NONE, "jecalculation.key.category");
+    public static final KeyBinding keyOpenGuiCraft = new KeyBinding("jecalculation.key.gui_craft", KEY_NONE, "jecalculation.key.category");
+    public static final KeyBinding keyOpenGuiMath = new KeyBinding("jecalculation.key.gui_math", KEY_NONE, "jecalculation.key.category");
 
     public void initPre() {
         Handlers.register();
@@ -26,7 +29,8 @@ public class ClientHandler {
     }
 
     public void init() {
-        ClientRegistry.registerKeyBinding(keyOpenGui);
+        ClientRegistry.registerKeyBinding(keyOpenGuiCraft);
+        ClientRegistry.registerKeyBinding(keyOpenGuiMath);
     }
 
 

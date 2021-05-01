@@ -1,9 +1,9 @@
 package me.towdium.jecalculation.command;
 
 import me.towdium.jecalculation.command.commands.CHelp;
-import me.towdium.jecalculation.command.commands.COreDict;
+import me.towdium.jecalculation.command.commands.CMath;
 import me.towdium.jecalculation.command.commands.CState;
-import me.towdium.jecalculation.command.commands.CUuid;
+import me.towdium.jecalculation.command.commands.CCraft;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.HashMap;
@@ -19,8 +19,8 @@ public class Commands {
     static {
         add(new CHelp());
         add(new CState());
-        add(new COreDict());
-        add(new CUuid());
+        add(new CMath());
+        add(new CCraft());
     }
 
     static void add(ISubCommand c) {

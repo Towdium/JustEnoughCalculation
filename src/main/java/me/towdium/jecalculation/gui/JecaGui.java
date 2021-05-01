@@ -11,6 +11,7 @@ import me.towdium.jecalculation.nei.NEIPlugin;
 import me.towdium.jecalculation.polyfill.mc.client.renderer.GlStateManager;
 import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.RenderHelper;
@@ -150,6 +151,49 @@ public class JecaGui extends GuiContainer {
         drawHoveringText(tooltip, mouseX, mouseY);
         GlStateManager.enableLighting();
         GlStateManager.enableDepth();
+    }
+
+    @Override
+    // modified from vanilla
+    public void drawHoveringText(List lines, int x, int y, FontRenderer font) {
+        List<String> textLines = (List<String>) lines;
+        if (!textLines.isEmpty()) {
+            GlStateManager.disableRescaleNormal();
+            RenderHelper.disableStandardItemLighting();
+            GlStateManager.disableLighting();
+            GlStateManager.disableDepth();
+            int i = 0;
+            for (String s : textLines) {
+                int j = this.fontRendererObj.getStringWidth(s);
+                if (j > i) i = j;
+            }
+            int l1 = x + 12;
+            int i2 = y - 12;
+            int k = 8 + (textLines.size() - 1) * 10;
+            if (l1 + i > this.width) l1 -= 28 + i;
+            if (i2 + k + 6 > this.height) i2 = this.height - k - 6;
+            zLevel = 300.0F;
+            itemRender.zLevel = 300.0F;
+            drawGradientRect(l1 - 3, i2 - 4, l1 + i + 3, i2 - 3, -267386864, -267386864);
+            drawGradientRect(l1 - 3, i2 + k + 3, l1 + i + 3, i2 + k + 4, -267386864, -267386864);
+            drawGradientRect(l1 - 3, i2 - 3, l1 + i + 3, i2 + k + 3, -267386864, -267386864);
+            drawGradientRect(l1 - 4, i2 - 3, l1 - 3, i2 + k + 3, -267386864, -267386864);
+            drawGradientRect(l1 + i + 3, i2 - 3, l1 + i + 4, i2 + k + 3, -267386864, -267386864);
+            drawGradientRect(l1 - 3, i2 - 3 + 1, l1 - 3 + 1, i2 + k + 3 - 1, 1347420415, 1344798847);
+            drawGradientRect(l1 + i + 2, i2 - 3 + 1, l1 + i + 3, i2 + k + 3 - 1, 1347420415, 1344798847);
+            drawGradientRect(l1 - 3, i2 - 3, l1 + i + 3, i2 - 3 + 1, 1347420415, 1347420415);
+            drawGradientRect(l1 - 3, i2 + k + 2, l1 + i + 3, i2 + k + 3, 1344798847, 1344798847);
+            for (String s1 : textLines) {
+                fontRendererObj.drawStringWithShadow(s1, l1, i2, -1);
+                i2 += 10;
+            }
+            zLevel = 0.0F;
+            itemRender.zLevel = 0.0F;
+            GlStateManager.enableLighting();
+            GlStateManager.enableDepth();
+            RenderHelper.enableStandardItemLighting();
+            GlStateManager.enableRescaleNormal();
+        }
     }
 
     /**
@@ -292,7 +336,7 @@ public class JecaGui extends GuiContainer {
         boolean unicode = fontRendererObj.getUnicodeFlag();
         if (f.half) fontRendererObj.setUnicodeFlag(false);
         GlStateManager.pushMatrix();
-        GlStateManager.translate(unicode && f.half ? xPos - 5 : xPos, yPos, 0);
+        GlStateManager.translate(xPos, yPos, 0);
         if (f.half) GlStateManager.scale(0.5, 0.5, 1);
         r.run();
         GlStateManager.popMatrix();
@@ -349,7 +393,12 @@ public class JecaGui extends GuiContainer {
         }
 
         public int getTextWidth(String s) {
-            return (int) Math.ceil(getCurrent().fontRendererObj.getStringWidth(s) * (half ? 0.5f : 1));
+            FontRenderer fr = getCurrent().fontRendererObj;
+            boolean flag = fr.getUnicodeFlag();
+            if (half) fr.setUnicodeFlag(false);
+            int ret = (int) Math.ceil(fr.getStringWidth(s) * (half ? 0.5f : 1));
+            fr.setUnicodeFlag(flag);
+            return ret;
         }
 
         public int getTextHeight() {
