@@ -9,6 +9,7 @@ import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.nbt.NBTTagCompound;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,7 +28,8 @@ public class LPlaceholder extends ILabel.Impl {
     String name;
 
     public LPlaceholder(NBTTagCompound tag) {
-        this(tag.getString(KEY_NAME), tag.getInteger(KEY_AMOUNT));
+        super(tag);
+        name = tag.getString(KEY_NAME);
     }
 
     public LPlaceholder(String name, int amount) {
@@ -35,7 +37,7 @@ public class LPlaceholder extends ILabel.Impl {
     }
 
     public LPlaceholder(String name, int amount, boolean silent) {
-        super(amount);
+        super(amount, false);
         this.name = name;
         if (!silent) getRecord().push(new LPlaceholder(name, 1, true));
     }
@@ -80,6 +82,12 @@ public class LPlaceholder extends ILabel.Impl {
     @Override
     public int hashCode() {
         return name.hashCode() ^ amount;
+    }
+
+    @Nullable
+    @Override
+    public Object getRepresentation() {
+        return null;
     }
 
     @Override

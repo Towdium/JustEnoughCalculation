@@ -6,10 +6,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.cache.Weigher;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import me.towdium.jecalculation.gui.IWidget;
-import me.towdium.jecalculation.gui.drawables.WContainer;
-import me.towdium.jecalculation.gui.drawables.WPage;
-import me.towdium.jecalculation.gui.drawables.WPanel;
+import me.towdium.jecalculation.gui.widgets.*;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.utils.wrappers.Wrapper;
 
@@ -22,7 +19,7 @@ import java.util.function.Consumer;
  */
 @ParametersAreNonnullByDefault
 @SideOnly(Side.CLIENT)
-public class GuiLabel extends WContainer {
+public class GuiLabel extends WContainer implements IGui {
     WContainer container = new WContainer();
     Consumer<ILabel> callback;
     LoadingCache<Integer, IWidget> cache = CacheBuilder.newBuilder().concurrencyLevel(1)
@@ -43,7 +40,7 @@ public class GuiLabel extends WContainer {
             add(new WPage(i, r, false).setListener(() -> refresh(i)));
             index.value += 1;
         });
-        add(new WPanel());
+        addAll(new WHelp("label"), new WPanel());
         add(container);
         refresh(0);
     }

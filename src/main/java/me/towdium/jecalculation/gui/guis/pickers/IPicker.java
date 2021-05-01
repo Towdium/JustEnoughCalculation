@@ -1,10 +1,11 @@
-package me.towdium.jecalculation.gui;
+package me.towdium.jecalculation.gui.guis.pickers;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import me.towdium.jecalculation.gui.drawables.WContainer;
+import me.towdium.jecalculation.gui.guis.IGui;
+import me.towdium.jecalculation.gui.widgets.IWidget;
+import me.towdium.jecalculation.gui.widgets.WContainer;
 import me.towdium.jecalculation.data.label.ILabel;
-import me.towdium.jecalculation.utils.wrappers.Wrapper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.Consumer;
@@ -15,10 +16,10 @@ import java.util.function.Consumer;
  */
 @ParametersAreNonnullByDefault
 @SideOnly(Side.CLIENT)
-public interface IWPicker extends IWidget {
-    IWPicker setCallback(Consumer<ILabel> callback);
+public interface IPicker extends IGui {
+    IPicker setCallback(Consumer<ILabel> callback);
 
-    class Impl extends WContainer implements IWPicker {
+    class Impl extends WContainer implements IPicker {
         protected Consumer<ILabel> callback;
 
         @Override

@@ -23,4 +23,8 @@ public interface ISubCommand {
     default List<String> getTabCompletions(ICommandSender sender, String[] args) {
         return Collections.emptyList();
     }
+
+    default String getKey(String key) {
+        return "jecharacters.command." + getName() + '.' + key;
+    }
 }

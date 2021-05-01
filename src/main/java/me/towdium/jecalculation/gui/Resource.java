@@ -141,10 +141,7 @@ public class Resource {
     public static final ResourceGroup ICN_CATALYST = new ResourceGroup(ICN_CATALYST_N, ICN_CATALYST_F);
     public static final ResourceGroup ICN_LIST = new ResourceGroup(ICN_LIST_N, ICN_LIST_F);
     public static final ResourceGroup ICN_LABEL = new ResourceGroup(ICN_LABEL_N, ICN_LABEL_F);
-    public static final ResourceGroup ICN_HELP = new ResourceGroup(ICN_HELP_N, ICN_HELP_F);
-    public static final ResourceGroup ICN_STACK = new ResourceGroup(ICN_STACK_N, ICN_STACK_F);
     public static final ResourceGroup ICN_TEXT = new ResourceGroup(ICN_TEXT_N, ICN_TEXT_F);
-    public static final ResourceGroup ICN_MULTI = new ResourceGroup(ICN_MULTI_N, ICN_MULTI_F);
 
     protected int xPos, yPos, xSize, ySize;
     protected ResourceLocation rl;

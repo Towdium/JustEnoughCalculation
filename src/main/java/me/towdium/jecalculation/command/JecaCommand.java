@@ -1,5 +1,6 @@
 package me.towdium.jecalculation.command;
 
+import me.towdium.jecalculation.command.commands.CHelp;
 import me.towdium.jecalculation.utils.wrappers.Wrapper;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -18,19 +19,19 @@ import java.util.List;
 public class JecaCommand extends CommandBase {
     @Override
     public String getCommandName() {
-        return "jec";
+        return "jeca";
     }
 
     @Override
     public String getCommandUsage(ICommandSender sender) {
-        return "/jec [help]";
+        return "/jeca [options]";
     }
 
 
     @Override
     public void processCommand(ICommandSender sender, String[] args) throws CommandException {
-        if (args.length == 0 || args[0].toLowerCase().equals("help")) {
-            Commands.commandHelp.execute(sender, cut(args));
+        if (args.length == 0 || args[0].equalsIgnoreCase("help")) {
+            Commands.commands.get(CHelp.NAME).execute(sender, cut(args));
         } else {
             ISubCommand cmd = Commands.commands.get(args[0].toLowerCase());
             if (cmd != null) {
@@ -71,4 +72,6 @@ public class JecaCommand extends CommandBase {
                     : Collections.emptyList();
         }
     }
+
+
 }

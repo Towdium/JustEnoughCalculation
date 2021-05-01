@@ -4,11 +4,11 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.label.labels.LItemStack;
-import me.towdium.jecalculation.gui.IWPicker;
 import me.towdium.jecalculation.gui.Resource;
-import me.towdium.jecalculation.gui.drawables.WButton;
-import me.towdium.jecalculation.gui.drawables.WButtonIcon;
-import me.towdium.jecalculation.gui.drawables.WLabel;
+import me.towdium.jecalculation.gui.guis.IGui;
+import me.towdium.jecalculation.gui.widgets.WButton;
+import me.towdium.jecalculation.gui.widgets.WButtonIcon;
+import me.towdium.jecalculation.gui.widgets.WLabel;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.Consumer;
@@ -19,7 +19,7 @@ import java.util.function.Consumer;
  */
 @ParametersAreNonnullByDefault
 @SideOnly(Side.CLIENT)
-public class PickerItemStack extends IWPicker.Impl {
+public class PickerItemStack extends IPicker.Impl implements IGui {
     WLabel label = new WLabel(7, 7, 20, 20, WLabel.enumMode.SELECTOR).setLsnrUpdate(this::update);
     WButton bConfirm = new WButtonIcon(149, 7, 20, 20, Resource.BTN_YES).setLsnrLeft(() -> callback.accept(label.getLabel()));
     WButton bNbtF = new WButtonIcon(49, 7, 20, 20, Resource.BTN_NBT_F).setLsnrLeft(() -> setFNbt(false));

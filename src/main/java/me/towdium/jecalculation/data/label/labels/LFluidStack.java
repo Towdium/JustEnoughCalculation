@@ -30,6 +30,12 @@ public class LFluidStack extends ILabel.Impl {
     NBTTagCompound nbt;
     FluidStack temp;
 
+
+    @Override
+    public FluidStack getRepresentation() {
+        return temp;
+    }
+
     @Override
     public boolean acceptPercent() {
         return false;
@@ -44,7 +50,7 @@ public class LFluidStack extends ILabel.Impl {
     }
 
     public LFluidStack(int amount, Fluid fluid, @Nullable NBTTagCompound nbt) {
-        super(amount);
+        super(amount, false);
         this.fluid = fluid;
         this.nbt = nbt;
         temp = new FluidStack(fluid, amount, nbt);
@@ -68,10 +74,11 @@ public class LFluidStack extends ILabel.Impl {
     }
 
     @Override
-    public String getAmountString() {
+    public String getAmountString(boolean round) {
         return amount >= 1000 ? Utilities.cutNumber(amount / 1000f, 4) + "B"
-                              : Integer.toString(amount) + "mB";
+                              : amount + "mB";
     }
+
 
     @Override
     @SideOnly(Side.CLIENT)
@@ -88,7 +95,7 @@ public class LFluidStack extends ILabel.Impl {
     public boolean matches(Object l) {
         if (l instanceof LFluidStack) {
             LFluidStack lfs = (LFluidStack) l;
-            return (nbt == null ? lfs.nbt == null : nbt.equals(lfs.nbt)) && fluid == lfs.fluid;
+            return (Objects.equals(nbt, lfs.nbt)) && fluid == lfs.fluid;
         } else return false;
     }
 
@@ -124,5 +131,10 @@ public class LFluidStack extends ILabel.Impl {
     @Override
     public int hashCode() {
         return fluid.getUnlocalizedName().hashCode() ^ amount ^ (nbt == null ? 0 : nbt.hashCode());
+    }
+
+    public static boolean merge(ILabel a, ILabel b) {
+        if (a instanceof LFluidStack && b instanceof LFluidStack) return a.matches(b);
+        else return false;
     }
 }

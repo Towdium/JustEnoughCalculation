@@ -1,4 +1,4 @@
-package me.towdium.jecalculation.gui.drawables;
+package me.towdium.jecalculation.gui.widgets;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -74,7 +74,7 @@ public class WLabelScroll extends WContainer {
 
     public boolean setFilter(String str) {
         filter = str;
-        filtered = labels.stream().filter(l -> Utilities.contains(l.getDisplayName().toLowerCase(), str.toLowerCase()))
+        filtered = labels.stream().filter(l -> Utilities.I18n.contains(l.getDisplayName().toLowerCase(), str.toLowerCase()))
                          .collect(Collectors.toList());
         scroll.setCurrent(0);
         update(0);

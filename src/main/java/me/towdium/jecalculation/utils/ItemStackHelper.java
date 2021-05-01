@@ -127,6 +127,10 @@ public class ItemStackHelper {
     }
 
 
+    public static boolean isEmpty(ItemStack stack) {
+        return stack == null || stack == EMPTY_ITEM_STACK || stack.getItem() == EMPTY_ITEM;
+    }
+
     public static boolean isTypeEqual(@Nullable ItemStack one, @Nullable ItemStack two) {
         return one != null && two != null && one.getItem() == two.getItem() && getMetadata(one) == getMetadata(two) &&
                NBT.equalsIgnoreJEC(one.getTagCompound(), two.getTagCompound());

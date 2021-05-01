@@ -1,8 +1,7 @@
-package me.towdium.jecalculation.gui.drawables;
+package me.towdium.jecalculation.gui.widgets;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import me.towdium.jecalculation.gui.IWidget;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.utils.wrappers.Wrapper;
 
@@ -38,13 +37,6 @@ public class WLabelGroup extends WContainer {
         }));
     }
 
-    @Override
-    public void remove(IWidget w) {
-        super.remove(w);
-        if (w instanceof WLabel)
-            labels.remove(w);
-    }
-
     public ILabel getLabelAt(int index) {
         return labels.get(index).getLabel();
     }
@@ -62,8 +54,7 @@ public class WLabelGroup extends WContainer {
     }
 
     public void setLabel(List<ILabel> labels, int start) {
-        Wrapper<Integer> i = new Wrapper<>(start);  // TODO simplify
-        this.labels.forEach(l -> l.setLabel(i.value < labels.size() ? labels.get(i.value++) : ILabel.EMPTY));
+        for (WLabel label : this.labels) label.setLabel(start < labels.size() ? labels.get(start++) : ILabel.EMPTY);
     }
 
     public WLabelGroup setLsnrUpdate(Consumer<Integer> listener) {

@@ -41,8 +41,8 @@ public class LItemStack extends ILabel.Impl {
     boolean fCap;
     transient ItemStack temp;
 
-    public LItemStack(int amount, Item item, int meta, @Nullable NBTTagCompound nbt) {
-        super(amount);
+    public LItemStack(int amount, Item item, int meta, @Nullable NBTTagCompound nbt, boolean percent) {
+        super(amount, percent);
         this.item = item;
         this.meta = meta;
         this.nbt = nbt == null ? null : (NBTTagCompound) nbt.copy();
@@ -52,13 +52,20 @@ public class LItemStack extends ILabel.Impl {
 
     // Convert from itemStack
     public LItemStack(ItemStack is) {
-        this(is.stackSize, is.getItem(), is.getItemDamage(), is.getTagCompound());
+        this(is.stackSize, is.getItem(), is.getItemDamage(), is.getTagCompound(), false);
     }
 
-    public LItemStack(NBTTagCompound nbt) {
-        this(nbt.getInteger(KEY_AMOUNT), Objects.requireNonNull(Item.getItemById(nbt.getInteger(KEY_ITEM))),
-             nbt.getInteger(KEY_META), nbt.hasKey(KEY_NBT) ? nbt.getCompoundTag(KEY_NBT) : null);
-        fromFuzzy(nbt.getByte(KEY_FUZZY));
+    public LItemStack(NBTTagCompound tag) {
+        super(tag);
+        item = Item.getItemById(tag.getInteger(KEY_ITEM));
+        meta = tag.getInteger(KEY_META);
+        nbt = tag.hasKey(KEY_NBT) ? tag.getCompoundTag(KEY_NBT) : null;
+        byte fuzzy = tag.getByte(KEY_FUZZY);
+        fMeta = (fuzzy & FUZZY_META) != 0;
+        fCap = (fuzzy & FUZZY_CAP) != 0;
+        fNbt = (fuzzy & FUZZY_NBT) != 0;
+        temp = new ItemStack(item, 1, meta);
+        temp.setTagCompound(tag);
     }
 
     private LItemStack(LItemStack lis) {
@@ -66,36 +73,31 @@ public class LItemStack extends ILabel.Impl {
         item = lis.item;
         meta = lis.meta;
         nbt = lis.nbt;
+        fMeta = lis.fMeta;
+        fNbt = lis.fNbt;
+        fCap = lis.fCap;
         temp = new ItemStack(item, 1, meta);
         temp.setTagCompound(nbt);
     }
 
 
-    public static Optional<ILabel> merge(ILabel a, ILabel b, boolean add) {
+    public static boolean merge(ILabel a, ILabel b) {
         if (a instanceof LItemStack && b instanceof LItemStack) {
             LItemStack lisA = (LItemStack) a;
             LItemStack lisB = (LItemStack) b;
-
-            // check meta
-            int resultMeta = 0;
-            boolean checkedMeta = true;
-            if (lisA.meta == WILDCARD_VALUE || lisB.meta == WILDCARD_VALUE)
-                resultMeta = WILDCARD_VALUE;
-            else if (lisA.fMeta || lisB.fMeta || lisA.meta == lisB.meta)
-                resultMeta = lisA.meta;
-            else
-                checkedMeta = false;
-
-            // check nbt and cap
-            boolean checkedNbt = (Objects.equals(lisA.nbt, lisB.nbt)) || lisA.fNbt || lisB.fNbt;
-
-            if (lisA.item == lisB.item && checkedMeta && checkedNbt) {
-                LItemStack is = lisA.copy();
-                is.meta = resultMeta;
-                return Impl.mergeUnchecked(is, lisB, add);
+            if (lisA.meta != WILDCARD_VALUE && lisB.meta == WILDCARD_VALUE) return false;
+            if (!lisA.fNbt) {
+                if (lisB.fNbt) return false;
+                else if (lisA.nbt == null) {
+                    if (lisB.nbt != null) return false;
+                } else if (lisB.nbt == null || !lisA.nbt.equals(lisB.nbt)) return false;
             }
+            if (!lisA.fCap) {
+                if (lisB.fCap) return false;
+            }
+            return lisA.item == lisB.item;
         }
-        return Optional.empty();
+        return false;
     }
 
     public ILabel setFMeta(boolean f) {
@@ -122,6 +124,11 @@ public class LItemStack extends ILabel.Impl {
     public void getToolTip(List<String> existing, boolean detailed) {
         super.getToolTip(existing, detailed);
         existing.add(FORMAT_BLUE + FORMAT_ITALIC + Utilities.getModName(item));
+    }
+
+    @Override
+    public ItemStack getRepresentation() {
+        return temp;
     }
 
     @Override
@@ -161,18 +168,9 @@ public class LItemStack extends ILabel.Impl {
         ret.setInteger(KEY_ITEM, id);
         if (nbt != null)
             ret.setTag(KEY_NBT, nbt);
-        ret.setByte(KEY_FUZZY, toFuzzy());
+        int fuzzy = (fMeta ? FUZZY_META : 0) | (fCap ? FUZZY_CAP : 0) | (fNbt ? FUZZY_NBT : 0);
+        ret.setByte(KEY_FUZZY, (byte) fuzzy);
         return ret;
-    }
-
-    private byte toFuzzy() {
-        return (byte) ((fMeta ? FUZZY_META : 0) | (fCap ? FUZZY_CAP : 0) | (fNbt ? FUZZY_NBT : 0));
-    }
-
-    private void fromFuzzy(byte i) {
-        fMeta = (i & FUZZY_META) != 0;
-        fCap = (i & FUZZY_CAP) != 0;
-        fNbt = (i & FUZZY_NBT) != 0;
     }
 
     @Override

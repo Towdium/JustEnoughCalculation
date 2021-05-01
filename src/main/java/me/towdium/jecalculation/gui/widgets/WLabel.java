@@ -1,9 +1,10 @@
-package me.towdium.jecalculation.gui.drawables;
+package me.towdium.jecalculation.gui.widgets;
 
+import codechicken.nei.recipe.GuiCraftingRecipe;
+import codechicken.nei.recipe.GuiUsageRecipe;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.data.label.ILabel;
-import me.towdium.jecalculation.gui.IWidget;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.utils.IllegalPositionException;
@@ -51,7 +52,7 @@ public class WLabel implements IWidget {
         gui.drawResourceContinuous(Resource.WGT_SLOT, xPos, yPos, xSize, ySize, 3, 3, 3, 3);
         label.drawLabel(gui, xPos + xSize / 2, yPos + ySize / 2, true);
         if (mode == enumMode.RESULT || mode == enumMode.EDITOR) {
-            String s = label.getAmountString();
+            String s = label.getAmountString(mode == enumMode.RESULT);
             gui.drawText(xPos + xSize / 2.0f + 8 - HALF.getTextWidth(s),
                          yPos + ySize / 2.0f + 8.5f - HALF.getTextHeight(), HALF, s);
         }
@@ -60,12 +61,14 @@ public class WLabel implements IWidget {
             int color = 0xFFFFFF + (int) ((-Math.cos(timer.getTime() * Math.PI / 1500) + 1) * 0x40) * 0x1000000;
             gui.drawRectangle(xPos + 1, yPos + 1, xSize - 2, ySize - 2, color);
         }
-        if (mouseIn(xMouse, yMouse)) gui.drawRectangle(xPos + 1, yPos + 1, xSize - 2, ySize - 2, 0x80FFFFFF);
+        if (mouseIn(xMouse, yMouse))
+            gui.drawRectangle(xPos + 1, yPos + 1, xSize - 2, ySize - 2, 0x80FFFFFF);
     }
 
     @Override
     public boolean onTooltip(JecaGui gui, int xMouse, int yMouse, List<String> tooltip) {
-        if (!mouseIn(xMouse, yMouse)) return false;
+        if (!mouseIn(xMouse, yMouse))
+            return false;
         if (label != ILabel.EMPTY) {
             tooltip.add(label.getDisplayName());
             label.getToolTip(tooltip, mode == enumMode.EDITOR || mode == enumMode.RESULT);
@@ -87,7 +90,8 @@ public class WLabel implements IWidget {
 
     @Override
     public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
-        if (!mouseIn(xMouse, yMouse)) return false;
+        if (!mouseIn(xMouse, yMouse))
+            return false;
         switch (mode) {
             case EDITOR:
                 if (gui.hand != label.EMPTY) {
@@ -98,14 +102,27 @@ public class WLabel implements IWidget {
                 } else if (label != label.EMPTY) {
                     gui.root.add(new WAmount());
                     return true;
-                } else return false;
+                } else
+                    return false;
             case RESULT:
+                // open NEI
+                Object item = label.getRepresentation();
+                if (item != null) {
+                    if (button == 0) {
+                        GuiCraftingRecipe.openRecipeGui("item", item);
+                        return true;
+                    } else if (button == 1) {
+                        GuiUsageRecipe.openRecipeGui("item", item);
+                        return true;
+                    }
+                }
                 return false;
             case PICKER:
                 if (label != label.EMPTY) {
                     notifyLsnr();
                     return true;
-                } else return false;
+                } else
+                    return false;
             case SELECTOR:
                 label = gui.hand;
                 gui.hand = label.EMPTY;
@@ -134,23 +151,12 @@ public class WLabel implements IWidget {
 
 
     public enum enumMode {
-        /**
-         * Slots in editor gui. Can use to edit amount. Exact amount displayed.
-         */
-        EDITOR,
-        /**
-         * Slots to display calculate/getRecipes result. Rounded amount displayed.
-         */
-        RESULT,
-        /**
-         * Slots that can pick items from. No amount displayed.
-         */
-        PICKER,
-        /**
-         * Slots to put labels into. No amount displayed.
-         */
-        SELECTOR
+        EDITOR,  // Slots in editor gui. Can use to edit amount. Exact amount displayed.
+        RESULT,  // Slots to display calculate/getRecipes result. Rounded amount displayed.
+        PICKER,  // Slots that can pick items from. No amount displayed.
+        SELECTOR  // Slots to put labels into. No amount displayed.
     }
+
 
     class WAmount extends WContainer {
         WLabel wl = new WLabel(xPos, yPos, xSize, ySize, enumMode.SELECTOR).setLsnrUpdate(this::update);
@@ -160,8 +166,7 @@ public class WLabel implements IWidget {
         WButton bAmount = new WButtonText(xPos + xSize + 60, yPos, 20, 20, "general.to_percent", "#")
                 .setLsnrLeft(() -> setPercent(true));
         WButton bYes = new WButtonIcon(xPos + xSize + 83, yPos, 20, 20, Resource.BTN_YES).setLsnrLeft(() -> {
-            setLabel(wl.getLabel().setAmount(
-                    wtf.getText().isEmpty() ? 0 : Integer.parseInt(wtf.getText())));
+            setLabel(wl.getLabel().setAmount(wtf.getText().isEmpty() ? 0 : Integer.parseInt(wtf.getText())));
             JecaGui.getCurrent().root.remove(this);
         });
         WButton bNo = new WButtonIcon(xPos + xSize + 102, yPos, 20, 20, Resource.BTN_NO).setLsnrLeft(() -> {
@@ -170,8 +175,10 @@ public class WLabel implements IWidget {
         });
 
         public WAmount() {
-            wl.setLabel(getLabel());
-            wtf.setText(Integer.toString(getLabel().getAmount()));
+            wl.setLabel(label);
+            add(new WPanel(xPos - 5, yPos - 5, xSize + 133, ySize + 10));
+            add(new WText(xPos + xSize + 3, yPos + 5, JecaGui.Font.PLAIN, "x"));
+            addAll(wl, wtf, bYes, bNo);
             wtf.setLsnrText(i -> {
                 try {
                     Integer.parseInt(wtf.getText());
@@ -183,15 +190,13 @@ public class WLabel implements IWidget {
                     bYes.setDisabled(!acceptable);
                 }
             });
-            add(new WPanel(xPos - 5, yPos - 5, xSize + 133, ySize + 10));
-            add(new WText(xPos + xSize + 3, yPos + 5, JecaGui.Font.PLAIN, "x"));
-            addAll(wl, wtf, bYes, bNo);
             update();
         }
 
         private void update() {
-            bYes.setDisabled(!wl.getLabel().acceptPercent());
-            setPercent(false);
+            label = wl.getLabel();
+            bAmount.setDisabled(!wl.label.acceptPercent());
+            setPercent(label.isPercent());
         }
 
         private void setPercent(boolean b) {
@@ -202,16 +207,19 @@ public class WLabel implements IWidget {
                 remove(bPercent);
                 add(bAmount);
             }
-            wl.getLabel().setPercent(b);
+            wl.label.setPercent(b);
+            wtf.setText(Integer.toString(wl.label.getAmount()));
         }
 
         @Override
         public boolean onKey(JecaGui gui, char ch, int code) {
-            if (super.onKey(gui, ch, code)) return true;
+            if (super.onKey(gui, ch, code))
+                return true;
             if (code == Keyboard.KEY_ESCAPE) {
                 gui.root.remove(this);
                 return true;
-            } else return false;
+            } else
+                return false;
         }
     }
 }

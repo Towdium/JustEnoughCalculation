@@ -1,4 +1,4 @@
-package me.towdium.jecalculation.gui.drawables;
+package me.towdium.jecalculation.gui.widgets;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -6,8 +6,6 @@ import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.data.label.ILabel;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Arrays;
-import java.util.List;
 import java.util.function.Consumer;
 
 /**

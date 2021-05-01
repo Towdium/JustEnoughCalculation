@@ -1,4 +1,6 @@
-package me.towdium.jecalculation.gui;
+package me.towdium.jecalculation.gui.widgets;
+
+import me.towdium.jecalculation.gui.JecaGui;
 
 import java.util.List;
 

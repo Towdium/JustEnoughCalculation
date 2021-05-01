@@ -56,18 +56,10 @@ public class JustEnoughCalculation {
         public static final String VERSION = "@VERSION@";
     }
 
+    // Only to use at client side
     public enum enumSide {
-        /**
-         * Running at client side and server not installed.
-         */
-        CLIENT,
-        /**
-         * Running at client side and both installed.
-         */
-        BOTH,
-        /**
-         * Default unknown.
-         */
-        UNDEFINED
+        CLIENT,  // Running at client side and server not installed
+        BOTH,  // Running at client side and both installed
+        UNDEFINED  // Default unknown
     }
 }

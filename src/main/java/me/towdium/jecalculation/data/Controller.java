@@ -9,6 +9,9 @@ import me.towdium.jecalculation.data.structure.Recents;
 import me.towdium.jecalculation.data.structure.Recipe;
 import me.towdium.jecalculation.data.structure.Recipes;
 import me.towdium.jecalculation.utils.wrappers.Triple;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -27,7 +30,7 @@ import java.util.stream.Collectors;
  * Date:   17-10-15.
  */
 @SideOnly(Side.CLIENT)
-public class Controller { // TODO record calculate amount
+public class Controller {
     public static final String KEY_RECIPES = "recipes";
     public static final String KEY_RECENTS = "recents";
     static Recipes recipesClient;
@@ -35,6 +38,10 @@ public class Controller { // TODO record calculate amount
 
     static Recipes getRecord() {
         return recipesClient;
+    }
+
+    static Optional<ItemStack> getStack() {
+        return Optional.empty();
     }
 
     public static List<String> getGroups() {
@@ -72,11 +79,11 @@ public class Controller { // TODO record calculate amount
         return getRecord().getRecipes(group);
     }
 
-    public static Optional<Recipe> getRecipe(ILabel label, Recipe.enumIoType type) {
-        return getRecord().getRecipe(label, type);
+    public static Optional<Recipe> getRecipe(ILabel label) {
+        return getRecord().getRecipe(label);
     }
 
-    public static List<ILabel> getRecent() { // TODO reduce usage of it since it reads nbt again
+    public static List<ILabel> getRecent() {
         return recentsClient.getRecords();
     }
 

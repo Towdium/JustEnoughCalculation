@@ -1,13 +1,13 @@
 package me.towdium.jecalculation.gui.guis;
 
 import codechicken.nei.recipe.IRecipeHandler;
-import me.towdium.jecalculation.algorithm.CostList;
+import me.towdium.jecalculation.data.structure.CostList;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.structure.Recipe;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
-import me.towdium.jecalculation.gui.drawables.*;
+import me.towdium.jecalculation.gui.widgets.*;
 import me.towdium.jecalculation.nei.NEIPlugin;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
@@ -22,7 +22,7 @@ import java.util.stream.Stream;
  * Author: towdium
  * Date:   17-9-8.
  */
-public class GuiRecipe extends WContainer {
+public class GuiRecipe extends WContainer implements IGui {
     Pair<String, Integer> dest;
     HashMap<Integer, List<ILabel>> disambiguation = new HashMap<>();
     WSwitcher switcherGroup = new WSwitcher(7, 7, 162, Controller.getGroups());
@@ -88,10 +88,12 @@ public class GuiRecipe extends WContainer {
         Recipe r = Controller.getRecipe(group, index);
         fromRecipe(r);
         switcherGroup.setIndex(Controller.getGroups().indexOf(group));
+        buttonCopy.setDisabled(false);
+        buttonDel.setDisabled(false);
     }
 
     public GuiRecipe() {
-        add(new WPanel());
+        addAll(new WHelp("recipe"), new WPanel());
         add(new WIcon(7, 63, 21, 20, Resource.ICN_OUTPUT, "recipe.output"));
         add(new WIcon(7, 87, 21, 20, Resource.ICN_CATALYST, "recipe.catalyst"));
         add(new WIcon(7, 111, 21, 40, Resource.ICN_INPUT, "recipe.input"));
@@ -151,8 +153,8 @@ public class GuiRecipe extends WContainer {
         dst.stream().filter(p -> {
             CostList cl = new CostList(list);
             if (p.three.equals(cl)) {
-                ILabel.MERGER.merge(p.one, ILabel.CONVERTER.first(list), true).ifPresent(i -> p.one = i);
-                p.two = p.two.merge(cl, true, true);
+                ILabel.MERGER.merge(p.one, ILabel.CONVERTER.first(list)).ifPresent(i -> p.one = i);
+                p.two = p.two.merge(cl, true, false);
                 return true;
             } else
                 return false;

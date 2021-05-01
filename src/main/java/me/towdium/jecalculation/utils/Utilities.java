@@ -82,31 +82,6 @@ public class Utilities {
         return NBTHelper.getOrCreateSubCompound(is, JustEnoughCalculation.Reference.MODID);
     }
 
-    public static boolean contains(String s1, String s2) {
-        return s1.contains(s2);
-    }
-
-    //    public static Recipes getRecipes(EntityPlayer player) {
-    //        IExtendedEntityProperties properties = player
-    //                .getExtendedProperties(JecaCapabilityProvider.PROPERTIES_NAME);
-    //        if(properties instanceof JecaCapabilityProvider) {
-    //            return ((JecaCapabilityProvider) properties).record;
-    //        } else {
-    //            JustEnoughCalculation.logger.info("getExtendedProperties error: " + properties.toString());
-    //            return new Recipes();
-    //        }
-    //    }
-
-
-    //    // get calculator item in player inventory
-    //    public static Optional<ItemStack> getStack() {
-    //        InventoryPlayer inv = Minecraft.getMinecraft().thePlayer.inventory;
-    //        ItemStack is = inv.getCurrentItem();
-    //        if (is.getItem() instanceof ItemCalculator)
-    //            return Optional.of(is);
-    //        return Optional.empty();
-    //    }
-
     public static class Timer {
         long time = System.currentTimeMillis();
         boolean running = false;
@@ -202,27 +177,12 @@ public class Utilities {
         }
     }
 
-    public static class Relation<T, R> {
-        HashMap<Pair<T, T>, R> data = new HashMap<>();
-
-        public void add(T a, T b, R relation) {
-            data.put(a.hashCode() < b.hashCode() ? new Pair<>(a, b) : new Pair<>(b, a), relation);
-        }
-
-        public Optional<R> get(T a, T b) {
-            int ah = a.hashCode();
-            int bh = b.hashCode();
-            Wrapper<R> ret = new Wrapper<>(null);
-            if (ah == bh)
-                ret.push(data.get(new Pair<>(a, b))).push(data.get(new Pair<>(b, a)));
-            else
-                ret.push(data.get(ah < bh ? new Pair<>(a, b) : new Pair<>(b, a)));
-            return Optional.ofNullable(ret.value);
-        }
-    }
-
     @SideOnly(Side.CLIENT)
     public static class I18n {
+        public static boolean contains(String s1, String s2) {
+            return s1.contains(s2);
+        }
+
         public static Pair<String, Boolean> search(String translateKey, Object... parameters) {
             Pair<String, Boolean> ret = new Pair<>(null, null);
             translateKey = "jecharacters." + translateKey;
@@ -332,7 +292,7 @@ public class Utilities {
     }
 
     public static Locale getLocaleFromString(String languageCode) {
-        String parts[] = languageCode.split("_", -1);
+        String[] parts = languageCode.split("_", -1);
         if (parts.length == 1) return new Locale(parts[0]);
         else if (parts.length == 2
                  || (parts.length == 3 && parts[2].startsWith("#")))

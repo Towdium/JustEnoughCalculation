@@ -5,7 +5,8 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.label.ILabel;
-import me.towdium.jecalculation.gui.drawables.WContainer;
+import me.towdium.jecalculation.gui.guis.IGui;
+import me.towdium.jecalculation.gui.widgets.WContainer;
 import me.towdium.jecalculation.nei.NEIPlugin;
 import me.towdium.jecalculation.polyfill.mc.client.renderer.GlStateManager;
 import me.towdium.jecalculation.utils.Utilities;
@@ -25,10 +26,7 @@ import org.lwjgl.input.Mouse;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Author: towdium
@@ -43,14 +41,15 @@ public class JecaGui extends GuiContainer {
     public static final int COLOR_TEXT_WHITE = 0xFFFFFF;
     public static final boolean ALWAYS_TOOLTIP = false;
     public ILabel hand = ILabel.EMPTY;
-    public WContainer root;
+    protected static JecaGui last;
     protected JecaGui parent;
+    public IGui root;
 
-    public JecaGui(@Nullable JecaGui parent, WContainer root) {
+    public JecaGui(@Nullable JecaGui parent, IGui root) {
         this(parent, false, root);
     }
 
-    public JecaGui(@Nullable JecaGui parent, boolean acceptsTransfer, WContainer root) {
+    public JecaGui(@Nullable JecaGui parent, boolean acceptsTransfer, IGui root) {
         super(acceptsTransfer ? new ContainerTransfer() : new ContainerNonTransfer());
         this.parent = parent;
         this.root = root;
@@ -62,11 +61,11 @@ public class JecaGui extends GuiContainer {
         return xMouse > xPos && yMouse > yPos && xMouse <= xPos + xSize && yMouse <= yPos + ySize;
     }
 
-    public static void displayGui(WContainer root) {
+    public static void displayGui(IGui root) {
         displayGui(true, false, root);
     }
 
-    public static void displayGui(boolean updateParent, boolean acceptsTransfer, WContainer root) {
+    public static void displayGui(boolean updateParent, boolean acceptsTransfer, IGui root) {
         // isCallingFromMinecraftThread
         if (Minecraft.getMinecraft().func_152345_ab())
             displayGuiUnsafe(updateParent, acceptsTransfer, root);
@@ -86,25 +85,30 @@ public class JecaGui extends GuiContainer {
 
 
 
-    private static void displayGuiUnsafe(boolean updateParent, boolean acceptsTransfer, WContainer root) {
+    private static void displayGuiUnsafe(boolean updateParent, boolean acceptsTransfer, IGui root) {
         Minecraft mc = Minecraft.getMinecraft();
         JecaGui parent;
         if (mc.currentScreen == null)
             parent = null;
         else if (!(mc.currentScreen instanceof JecaGui))
-            parent = getCurrent();
+            parent = last;
         else if (updateParent)
             parent = (JecaGui) mc.currentScreen;
         else
             parent = ((JecaGui) mc.currentScreen).parent;
         JecaGui toShow = new JecaGui(parent, acceptsTransfer, root);
+        root.onVisible(toShow);
+        last = toShow;
         mc.displayGuiScreen(toShow);
     }
 
     public static void displayParent() {
         // isCallingFromMinecraftThread
         if (Minecraft.getMinecraft().func_152345_ab()) {
-            Minecraft.getMinecraft().displayGuiScreen(getCurrent().parent);
+            JecaGui gui = getCurrent().parent;
+            gui.root.onVisible(gui);
+            last = gui;
+            Minecraft.getMinecraft().displayGuiScreen(gui);
         }
     }
 
@@ -389,7 +393,7 @@ public class JecaGui extends GuiContainer {
     }
 
     public void drawHoveringText(String text, int x, int y) {
-        super.drawHoveringText(Arrays.asList(text), x, y, fontRendererObj);
+        super.drawHoveringText(Collections.singletonList(text), x, y, fontRendererObj);
     }
 
     public void drawHoveringText(List<String> textLines, int x, int y) {
