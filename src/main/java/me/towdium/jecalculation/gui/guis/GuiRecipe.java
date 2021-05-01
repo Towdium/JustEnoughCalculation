@@ -6,7 +6,6 @@ import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.structure.CostList;
 import me.towdium.jecalculation.data.structure.Recipe;
 import me.towdium.jecalculation.gui.JecaGui;
-import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.gui.widgets.*;
 import me.towdium.jecalculation.nei.NEIPlugin;
 import me.towdium.jecalculation.utils.Utilities;
@@ -76,7 +75,7 @@ public class GuiRecipe extends WContainer implements IGui {
         textField.setText("");
         setNewGroup(false);
     });
-    WButton buttonNo = new WButtonIcon(26, 33, 20, 20, BTN_NO, "recipe.cancel").setListener(i -> setNewGroup(false));
+    WButton buttonNo = new WButtonIcon(26, 33, 20, 20, BTN_NO, "common.cancel").setListener(i -> setNewGroup(false));
     WButton buttonNew = new WButtonIcon(7, 33, 20, 20, BTN_NEW, "recipe.new").setListener(i -> setNewGroup(true));
 
     public GuiRecipe(String group, int index) {
@@ -91,12 +90,12 @@ public class GuiRecipe extends WContainer implements IGui {
 
     public GuiRecipe() {
         addAll(new WHelp("recipe"), new WPanel());
-        add(new WIcon(7, 63, 21, 20, ICN_OUTPUT, "recipe.output"));
-        add(new WIcon(7, 87, 21, 20, ICN_CATALYST, "recipe.catalyst"));
-        add(new WIcon(7, 111, 21, 40, ICN_INPUT, "recipe.input"));
+        add(new WIcon(7, 63, 21, 20, ICN_OUTPUT, "common.output"));
+        add(new WIcon(7, 87, 21, 20, ICN_CATALYST, "common.catalyst"));
+        add(new WIcon(7, 111, 21, 40, ICN_INPUT, "common.input"));
         add(new WLine(57));
         addAll(groupInput, groupCatalyst, groupOutput, switcherGroup);
-        if (switcherGroup.getTexts().isEmpty()) switcherGroup.setTemp(Utilities.I18n.format("common.default"));
+        if (switcherGroup.getTexts().isEmpty()) switcherGroup.setTemp(Utilities.I18n.get("gui.common.default"));
         setNewGroup(false);
         buttonCopy.setDisabled(true);
         buttonDel.setDisabled(true);

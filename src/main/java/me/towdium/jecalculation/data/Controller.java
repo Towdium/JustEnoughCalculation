@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Author: towdium
@@ -64,11 +65,11 @@ public class Controller {
 
     public static void inport(Recipes recipes, String group) {
         ArrayList<Recipe> buffer = new ArrayList<>();
-        recipes.flatStream(group).forEach(i ->
-                                                  getRecord().flatStream(group).filter(j -> j.one.equals(i.one)).findAny().orElseGet(() -> {
-                                                      buffer.add(i.one);
-                                                      return null;
-                                                  }));
+        recipes.getGroup(group).forEach(i ->
+                                                getRecord().getGroup(group).stream().filter(j -> j.equals(i)).findAny().orElseGet(() -> {
+                                                    buffer.add(i);
+                                                    return null;
+                                                }));
         for (Recipe r : buffer) addRecipe(group, r);
     }
 
@@ -107,16 +108,20 @@ public class Controller {
         return getRecord().getRecipe(group, index);
     }
 
-    public static List<Trio<Recipe, String, Integer>> getRecipes() {
+    public static Stream<Pair<String, List<Recipe>>> stream() {
+        return getRecord().stream();
+    }
+
+    public static Recipes.RecipeIterator recipeIterator() {
+        return getRecord().recipeIterator();
+    }
+
+    public static List<Recipe> getRecipes() {
         return getRecord().getRecipes();
     }
 
-    public static List<Trio<Recipe, String, Integer>> getRecipes(String group) {
+    public static List<Recipe> getRecipes(String group) {
         return getRecord().getRecipes(group);
-    }
-
-    public static Optional<Recipe> getRecipe(ILabel label) {
-        return getRecord().getRecipe(label);
     }
 
     public static String getAmount() {

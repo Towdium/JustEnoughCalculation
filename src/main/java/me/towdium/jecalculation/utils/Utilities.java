@@ -14,7 +14,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.fluids.Fluid;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -24,7 +26,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.BreakIterator;
 import java.text.DecimalFormat;
@@ -36,6 +37,8 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import static net.minecraft.client.resources.I18n.format;
+
 /**
  * Author: Towdium
  * Date:   2016/6/25.
@@ -45,16 +48,19 @@ import java.util.stream.StreamSupport;
 public class Utilities {
     // FLOAT FORMATTING
     public static char[] suffix = new char[]{'K', 'M', 'B', 'G', 'T'};
-    public static DecimalFormat[] format = new DecimalFormat[]{
-            new DecimalFormat("#."), new DecimalFormat("#.#"), new DecimalFormat("#.##"),
-            new DecimalFormat("#.###"), new DecimalFormat("#.####")
-    };
+    public static DecimalFormat[] format = new DecimalFormat[]{new DecimalFormat("#."),
+                                                               new DecimalFormat("#.#"),
+                                                               new DecimalFormat("#.##"),
+                                                               new DecimalFormat("#.###"),
+                                                               new DecimalFormat("#.####")};
 
     public static String cutNumber(float f, int size) {
         BiFunction<Float, Integer, String> form = (fl, len) -> format[len - 1 - (int) Math.log10(fl)].format(fl);
         int scale = (int) Math.log10(f) / 3;
-        if (scale == 0) return form.apply(f, size);
-        else return form.apply(f / (float) Math.pow(1000, scale), size - 1) + suffix[scale - 1];
+        if (scale == 0)
+            return form.apply(f, size);
+        else
+            return form.apply(f / (float) Math.pow(1000, scale), size - 1) + suffix[scale - 1];
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
@@ -103,7 +109,7 @@ public class Utilities {
         @Nullable
         public V get(K a, K b) {
             V ret = data.get(new Pair<>(a, b));
-            if (ret == null) data.get(new Pair<>(b, a));
+            if (ret == null) ret = data.get(new Pair<>(b, a));
             return ret;
         }
     }
@@ -212,14 +218,14 @@ public class Utilities {
         public static Pair<String, Boolean> search(String translateKey, Object... parameters) {
             Pair<String, Boolean> ret = new Pair<>(null, null);
             translateKey = "jecalculation." + translateKey;
-            String buffer = net.minecraft.client.resources.I18n.format(translateKey, parameters);
+            String buffer = format(translateKey, parameters);
             ret.two = !buffer.equals(translateKey);
             buffer = StringEscapeUtils.unescapeJava(buffer);
             ret.one = buffer.replace("\t", "    ");
             return ret;
         }
 
-        public static String format(String translateKey, Object... parameters) {
+        public static String get(String translateKey, Object... parameters) {
             return search(translateKey, parameters).one;
         }
 

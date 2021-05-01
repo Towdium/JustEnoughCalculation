@@ -9,7 +9,6 @@ import me.towdium.jecalculation.utils.ClientUtils;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static me.towdium.jecalculation.gui.Resource.*;
@@ -83,6 +82,6 @@ public abstract class WButton extends WTooltip {
 
     @Override
     protected List<String> getSuffix() {
-        return disabled ? Arrays.asList("disabled", "active") : Collections.singletonList("active");
+        return disabled ? Arrays.asList("disabled", "active", "") : Arrays.asList("active", "");
     }
 }

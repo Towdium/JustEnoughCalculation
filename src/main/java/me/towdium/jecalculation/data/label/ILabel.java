@@ -15,8 +15,6 @@ import me.towdium.jecalculation.gui.guis.pickers.PickerSimple;
 import me.towdium.jecalculation.polyfill.mc.client.renderer.GlStateManager;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.Utilities.ReversedIterator;
-import me.towdium.jecalculation.utils.wrappers.Pair;
-import me.towdium.jecalculation.utils.wrappers.Wrapper;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -29,7 +27,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -464,7 +461,7 @@ public interface ILabel {
         public void getToolTip(List<String> existing, boolean detailed) {
             if (detailed)
                 existing.add(
-                        FORMAT_GREY + Utilities.I18n.format("label.common.tooltip.amount", getAmountString(false)));
+                        FORMAT_GREY + Utilities.I18n.get("label.common.tooltip.amount", getAmountString(false)));
         }
 
         @Override

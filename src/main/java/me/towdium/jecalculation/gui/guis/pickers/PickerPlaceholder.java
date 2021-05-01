@@ -23,14 +23,14 @@ import static me.towdium.jecalculation.gui.Resource.ICN_TEXT;
 public class PickerPlaceholder extends IPicker.Impl implements IGui {
     public PickerPlaceholder() {
         WLabelScroll scroll = new WLabelScroll(7, 69, 8, 5, WLabel.Mode.PICKER, true)
-                .setLabels(LPlaceholder.getRecent()).setListener((i, v) -> notifyLsnr(v));
+                .setLabels(LPlaceholder.getRecent()).setListener((i, v) -> notifyLsnr(i.get(v)));
         WTextField create = new WTextField(26, 7, 69)
                 .setListener(i -> i.setColor(i.getText().equals("") ? COLOR_TEXT_RED : COLOR_TEXT_WHITE));
         add(new WSearch(26, 45, 90, scroll));
-        add(new WIcon(7, 45, 20, 20, ICN_TEXT, "picker_placeholder.text_search"));
-        add(new WIcon(7, 7, 20, 20, ICN_TEXT, "picker_placeholder.text_create"));
+        add(new WIcon(7, 45, 20, 20, ICN_TEXT, "common.search"));
+        add(new WIcon(7, 7, 20, 20, ICN_TEXT, "placeholder.create"));
         add(new WLine(36));
-        add(new WButtonIcon(95, 7, 20, 20, BTN_YES).setListener(i -> {
+        add(new WButtonIcon(95, 7, 20, 20, BTN_YES, "common.confirm").setListener(i -> {
             if (!create.getText().equals("")) callback.accept(new LPlaceholder(create.getText(), 1));
         }));
         addAll(scroll, create);

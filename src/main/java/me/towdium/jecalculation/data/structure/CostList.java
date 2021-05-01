@@ -26,10 +26,6 @@ public class CostList {
         labels = new ArrayList<>();
     }
 
-    public CostList(ILabel label) {
-        labels = Collections.singletonList(label.copy().multiply(-1));
-    }
-
     public CostList(List<ILabel> labels) {
         this.labels = labels.stream()
                             .filter(i -> i != ILabel.EMPTY)
@@ -41,12 +37,6 @@ public class CostList {
         this(positive);
         multiply(-1);
         merge(new CostList(negative), false, true);
-    }
-
-
-    public CostList(Recipe recipe) {
-        this(Arrays.stream(recipe.getLabel(OUTPUT)).filter(i -> i != ILabel.EMPTY).collect(Collectors.toList()),
-             Arrays.stream(recipe.getLabel(INPUT)).filter(i -> i != ILabel.EMPTY).collect(Collectors.toList()));
     }
 
     @SuppressWarnings("UnusedReturnValue")
@@ -121,6 +111,7 @@ public class CostList {
     public class Calculator {
         ArrayList<Pair<CostList, CostList>> procedure = new ArrayList<>();
         ArrayList<ILabel> catalysts = new ArrayList<>();
+        Recipes.RecipeIterator iterator = Controller.recipeIterator();
         private int index;
 
         public Calculator() throws ArithmeticException {
@@ -130,14 +121,20 @@ public class CostList {
             int count = 0;
             while (next != null) {
                 CostList original = getCurrent();
-                CostList difference = new CostList(next.one);
-                difference.multiply(next.two);
-                CostList result = original.merge(difference, false, false);
-                if (set.contains(result))
-                    next = find(false);
+                List<ILabel> outL = Arrays.stream(next.one.getLabel(OUTPUT))
+                                          .filter(i -> i != ILabel.EMPTY).collect(Collectors.toList());
+                CostList outC = new CostList(outL);
+                outC.multiply(-next.two);
+                List<ILabel> inL = Arrays.stream(next.one.getLabel(INPUT))
+                                         .filter(i -> i != ILabel.EMPTY).collect(Collectors.toList());
+                CostList inC = new CostList(inL);
+                inC.multiply(next.two);
+                CostList result = original.merge(outC, false, false);
+                result.merge(inC, false, true);
+                if (set.contains(result)) next = find(false);
                 else {
                     set.add(result);
-                    procedure.add(new Pair<>(result, difference));
+                    procedure.add(new Pair<>(result, outC));
                     addCatalyst(next.one.getLabel(Recipe.IO.CATALYST));
                     next = find(true);
                 }
@@ -151,14 +148,19 @@ public class CostList {
 
         @Nullable
         private Pair<Recipe, Long> find(boolean reset) {
-            index = reset ? 0 : index + 1;
+            if (reset) {
+                index = 0;
+                iterator = Controller.recipeIterator();
+            }
             List<ILabel> labels = getCurrent().labels;
             for (; index < labels.size(); index++) {
                 ILabel label = labels.get(index);
-                if (label.getAmount() >= 0)
-                    continue;
-                Optional<Recipe> recipe = Controller.getRecipe(label);
-                if (recipe.isPresent()) return new Pair<>(recipe.get(), recipe.get().multiplier(label));
+                if (label.getAmount() >= 0) continue;
+                while (iterator.hasNext()) {
+                    Recipe r = iterator.next();
+                    if (r.matches(label)) return new Pair<>(r, r.multiplier(label));
+                }
+                iterator = Controller.recipeIterator();
             }
             return null;
         }
@@ -195,9 +197,8 @@ public class CostList {
         }
 
         public List<ILabel> getSteps() {
-            //noinspection OptionalGetWithoutIsPresent
             List<ILabel> ret = procedure.stream()
-                                        .map(i -> i.two.labels.stream().filter(l -> l.getAmount() > 0).findFirst().get())
+                                        .map(i -> i.two.labels.get(0))
                                         .collect(Collectors.toList());
             Collections.reverse(ret);
             return ret;
