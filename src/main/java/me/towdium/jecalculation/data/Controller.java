@@ -10,16 +10,11 @@ import me.towdium.jecalculation.data.structure.Recipe;
 import me.towdium.jecalculation.data.structure.Recipes;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
-import me.towdium.jecalculation.utils.wrappers.Trio;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -35,8 +30,10 @@ public class Controller {
     public static final String KEY_RECIPES = "recipes";
     public static final String KEY_RECENTS = "recents";
     public static final String KEY_AMOUNT = "amount";
+    public static final String KEY_INVENTORY = "inventory";
     static Recipes recipesClient;
     static Recents recentsClient;
+    static boolean inventoryClient;
     static String amountClient;
 
     static Recipes getRecord() {
@@ -51,26 +48,26 @@ public class Controller {
     public static List<Pair<String, Recipes>> discover() {
         File dir = JecaConfig.dataDir;
         File[] fs = dir.listFiles();
-        if (fs == null) return new ArrayList<>();
+        if (fs == null)
+            return new ArrayList<>();
         Function<File, Recipes> read = f -> {
             NBTTagCompound nbt = Utilities.Json.read(f);
             JustEnoughCalculation.logger.warn("File " + f.getAbsolutePath() + " contains invalid records.");
             return nbt == null ? null : new Recipes(nbt);
         };
-        return Arrays.stream(fs)
-                     .map(i -> new Pair<>(i.getName(), read.apply(i)))
-                     .filter(i -> i.two != null)
+        return Arrays.stream(fs).map(i -> new Pair<>(i.getName(), read.apply(i))).filter(i -> i.two != null)
                      .collect(Collectors.toList());
     }
 
     public static void inport(Recipes recipes, String group) {
         ArrayList<Recipe> buffer = new ArrayList<>();
-        recipes.getGroup(group).forEach(i ->
-                                                getRecord().getGroup(group).stream().filter(j -> j.equals(i)).findAny().orElseGet(() -> {
-                                                    buffer.add(i);
-                                                    return null;
-                                                }));
-        for (Recipe r : buffer) addRecipe(group, r);
+        recipes.getGroup(group)
+               .forEach(i -> getRecord().getGroup(group).stream().filter(j -> j.equals(i)).findAny().orElseGet(() -> {
+                   buffer.add(i);
+                   return null;
+               }));
+        for (Recipe r : buffer)
+            addRecipe(group, r);
     }
 
     public static File export(String group) {
@@ -132,14 +129,25 @@ public class Controller {
         amountClient = amount;
     }
 
+    public static boolean getDetectInv() {
+        return inventoryClient;
+    }
+
+    public static void setDetectInv(boolean b) {
+        inventoryClient = b;
+    }
 
     public static List<ILabel> getRecent() {
         return recentsClient.getRecords();
     }
 
-    public static void setRecent(ILabel label) {
-        recentsClient.push(label);
+    public static void setRecent(ILabel label, boolean replace) {
+        recentsClient.push(label, replace);
         writeToLocal();
+    }
+
+    public static boolean hasDuplicate(Recipe r) {
+        return getRecord().hasDuplicate(r);
     }
 
     public static void loadFromLocal() {
@@ -151,13 +159,13 @@ public class Controller {
             recipesClient = nbt.hasKey(KEY_RECIPES) ? new Recipes(nbt.getCompoundTag(KEY_RECIPES)) : new Recipes();
             recentsClient = nbt.hasKey(KEY_RECENTS) ? new Recents(nbt.getTagList(KEY_RECENTS, 10)) : new Recents();
             amountClient = nbt.hasKey(KEY_AMOUNT) ? nbt.getString(KEY_AMOUNT) : "";
-            return;
+            inventoryClient = !nbt.hasKey(KEY_INVENTORY) || nbt.getBoolean(KEY_INVENTORY);
+        } else {
+            recipesClient = new Recipes();
+            recentsClient = new Recents();
+            amountClient = "";
+            inventoryClient = true;
         }
-        file = JecaConfig.defaultFile;
-        nbt = Utilities.Json.read(file);
-        recipesClient = nbt == null ? new Recipes() : new Recipes(nbt);
-        recentsClient = new Recents();
-        amountClient = "";
     }
 
     public static void writeToLocal() {
@@ -166,6 +174,7 @@ public class Controller {
         nbt.setTag(KEY_RECENTS, recentsClient.serialize());
         nbt.setTag(KEY_RECIPES, recipesClient.serialize());
         nbt.setString(KEY_AMOUNT, amountClient);
+        nbt.setBoolean(KEY_INVENTORY, inventoryClient);
         Utilities.Json.write(nbt, file);
     }
 }

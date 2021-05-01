@@ -40,7 +40,7 @@ public class GuiLabel extends WContainer implements IGui {
             add(new WPage(i, r, false).setListener(j -> refresh(i)));
             index.value += 1;
         });
-        addAll(new WHelp("label"), new WPanel());
+        add(new WHelp("label"), new WPanel());
         add(container);
         refresh(0);
     }

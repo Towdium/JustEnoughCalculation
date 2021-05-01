@@ -37,24 +37,12 @@ public abstract class WButton extends WTooltip {
         return this;
     }
 
-    protected Resource getDisabled() {
-        return WGT_BUTTON_D;
-    }
-
-    protected Resource getNormal() {
-        return WGT_BUTTON_N;
-    }
-
-    protected Resource getFocused() {
-        return WGT_BUTTON_F;
-    }
-
     @Override
     public void onDraw(JecaGui gui, int xMouse, int yMouse) {
         super.onDraw(gui, xMouse, yMouse);
         boolean hovered = JecaGui.mouseIn(xPos + 1, yPos + 1, xSize - 2, ySize - 2, xMouse, yMouse);
-        gui.drawResourceContinuous(disabled ? getDisabled() : (hovered ? getFocused() : getNormal()), xPos, yPos, xSize,
-                                   ySize, 5, 5, 5, 5);
+        gui.drawResourceContinuous(disabled ? WGT_BUTTON_D : (hovered ? WGT_BUTTON_F : WGT_BUTTON_N)
+                , xPos, yPos, xSize, ySize, 5, 5, 5, 5);
     }
 
     @Override
@@ -82,6 +70,6 @@ public abstract class WButton extends WTooltip {
 
     @Override
     protected List<String> getSuffix() {
-        return disabled ? Arrays.asList("disabled", "active", "") : Arrays.asList("active", "");
+        return disabled ? Arrays.asList("disabled", "enabled", "") : Arrays.asList("enabled", "");
     }
 }

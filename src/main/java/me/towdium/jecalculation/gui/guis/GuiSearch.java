@@ -1,8 +1,10 @@
 package me.towdium.jecalculation.gui.guis;
 
 import me.towdium.jecalculation.data.Controller;
+import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.structure.Recipe;
 import me.towdium.jecalculation.gui.JecaGui;
+import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.gui.widgets.*;
 import me.towdium.jecalculation.polyfill.google.common.collect.Streams;
 import me.towdium.jecalculation.utils.Utilities;
@@ -12,37 +14,52 @@ import net.minecraft.util.ChatComponentTranslation;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
 import static me.towdium.jecalculation.gui.Resource.*;
 import static me.towdium.jecalculation.gui.widgets.WLabel.Mode.PICKER;
 
 public class GuiSearch extends WContainer implements IGui {
     WSwitcher group;
     WButton export;
-    List<Trio<Recipe, String, Integer>> recipes;
-    WLabelScroll labels = new WLabelScroll(7, 51, 8, 6, PICKER, true).setListener((i, v) ->
-                                                                                          JecaGui.displayGui(true, true, new GuiRecipe(recipes.get(v).two, recipes.get(v).three)));
+    List<ILabel> identifiers;
+    IdentityHashMap<ILabel, Trio<Recipe, String, Integer>> recipes;
+    WLabelScroll labels = new WLabelScroll(7, 51, 8, 6, PICKER, true).setListener((i, v) -> {
+        Trio<Recipe, String, Integer> recipe = recipes.get(i.get(v));
+        JecaGui.displayGui(true, true, new GuiRecipe(recipe.two, recipe.three));
+    });
+
 
     public GuiSearch() {
-        add(new WPanel());
-        add(new WSearch(25, 25, 90, labels));
+        add(new WHelp("search"), new WPanel());
+        add(new WSearch(26, 25, 90, labels));
         add(new WIcon(7, 25, 20, 20, ICN_TEXT, "common.search"));
-        add(new WButtonIcon(131, 25, 20, 20, BTN_IN, "search.import")
+        add(new WButtonIcon(131, 25, 20, 20, BTN_IMPORT, "search.import")
                     .setListener(i -> JecaGui.displayGui(new GuiImport())));
         add(labels);
     }
 
     private void generate() {
+        identifiers = new ArrayList<>();
+        recipes = new IdentityHashMap<>();
+        Consumer<Trio<Recipe, String, Integer>> add = i -> {
+            ILabel id = i.one.getRep();
+            recipes.put(id, i);
+            identifiers.add(id);
+        };
+
         if (group.getIndex() == 0) {
-            recipes = Controller.stream()
-                                .flatMap(i -> Streams.mapWithIndex(i.two.stream(), (j, k) -> new Trio<>(j, i.one, (int) k)))
-                                .collect(Collectors.toList());
+            Controller.stream()
+                      .flatMap(i -> Streams.mapWithIndex(i.two.stream(), (j, k) -> new Trio<>(j, i.one, (int) k)))
+                      .forEach(add);
         } else {
             String s = group.getText();
-            recipes = Streams.mapWithIndex(Controller.getRecipes(s).stream(), (i, j) -> new Trio<>(i, s, (int) j))
-                             .collect(Collectors.toList());
+            Streams.mapWithIndex(Controller.getRecipes(s).stream(), (j, k) -> new Trio<>(j, s, (int) k))
+                   .forEach(add);
         }
     }
 
@@ -51,16 +68,19 @@ public class GuiSearch extends WContainer implements IGui {
         remove(export);
         String tooltip;
         Supplier<File> func;
+        ResourceGroup texture;
         generate();
         if (group.getIndex() == 0) {
             tooltip = "search.export_all";
             func = Controller::export;
+            texture = Resource.BTN_EXPORT_N;
         } else {
             tooltip = "search.export_group";
             func = () -> Controller.export(group.getText());
+            texture = Resource.BTN_EXPORT_1;
         }
-        labels.setLabels(recipes.stream().map(i -> i.one.getRep()).collect(Collectors.toList()));
-        export = new WButtonIcon(149, 25, 20, 20, BTN_OUT, tooltip).setListener(i -> {
+        labels.setLabels(identifiers);
+        export = new WButtonIcon(149, 25, 20, 20, texture, tooltip).setListener(i -> {
             File f = func.get();
             Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentTranslation(
                     "jecalculation.chat.export", f.getAbsolutePath()));
@@ -70,7 +90,7 @@ public class GuiSearch extends WContainer implements IGui {
 
     @Override
     public void onVisible(JecaGui gui) {
-        removeAll(group);
+        this.remove(group);
         ArrayList<String> groups = new ArrayList<>();
         groups.add(Utilities.I18n.get("gui.search.all"));
         groups.addAll(Controller.getGroups());
@@ -78,7 +98,7 @@ public class GuiSearch extends WContainer implements IGui {
         if (index >= groups.size()) index = groups.size() - 1;
         group = new WSwitcher(7, 7, 162, groups).setListener(i -> refresh());
         group.setIndex(index);
-        addAll(group);
+        this.add(group);
         refresh();
     }
 }

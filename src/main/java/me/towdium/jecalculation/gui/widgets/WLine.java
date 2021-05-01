@@ -6,7 +6,7 @@ import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import static me.towdium.jecalculation.gui.Resource.WGT_LINE;
+
 /**
  * Author: towdium
  * Date:   17-8-18.
@@ -14,14 +14,26 @@ import static me.towdium.jecalculation.gui.Resource.WGT_LINE;
 @ParametersAreNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class WLine implements IWidget {
-    public int y;
+    int xPos, yPos, xSize, ySize;
 
     public WLine(int y) {
-        this.y = y;
+        this(7, y, 162, true);
+    }
+
+    public WLine(int xPos, int yPos, int size, boolean horizontal) {
+        this.yPos = yPos;
+        this.xPos = xPos;
+        if (horizontal) {
+            xSize = size;
+            ySize = 2;
+        } else {
+            xSize = 2;
+            ySize = size;
+        }
     }
 
     @Override
     public void onDraw(JecaGui gui, int xMouse, int yMouse) {
-        gui.drawResource(WGT_LINE, 6, y - 1);
+        gui.drawResourceContinuous(Resource.WGT_SLOT, xPos, yPos, xSize, ySize, 1);
     }
 }

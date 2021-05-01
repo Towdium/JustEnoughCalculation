@@ -1,5 +1,6 @@
 package me.towdium.jecalculation.data.label.labels;
 
+import codechicken.nei.recipe.IRecipeHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.JustEnoughCalculation;
@@ -9,16 +10,19 @@ import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.polyfill.mc.util.NonNullList;
 import me.towdium.jecalculation.utils.ItemStackHelper;
 import me.towdium.jecalculation.utils.Utilities;
+import me.towdium.jecalculation.utils.wrappers.Wrapper;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
 /**
@@ -51,10 +55,6 @@ public class LOreDict extends ILabel.Impl {
     public LOreDict(NBTTagCompound nbt) {
         super(nbt);
         name = nbt.getString(KEY_NAME);
-    }
-
-    public boolean isEmpty() {
-        return OreDictionary.getOres(name).isEmpty();
     }
 
     @Override
@@ -97,53 +97,44 @@ public class LOreDict extends ILabel.Impl {
         return false;
     }
 
-    public static List<ILabel> guess(List<ILabel> iss) {
+    public static List<ILabel> suggest(List<ILabel> iss, @Nullable IRecipeHandler rl) {
         ILabel l = iss.get(0);
+        if (!(l instanceof LItemStack)) return new ArrayList<>();
+        LItemStack lis = (LItemStack) l;
         HashSet<Integer> ids = new HashSet<>();
-        long amount = l.getAmount();
-        for (int i : OreDictionary.getOreIDs(((LItemStack) l).getRep()))
-            if (check(i, iss))
+        long amount = lis.getAmount();
+        for (int i : OreDictionary.getOreIDs(lis.getRep()))
+            if (check(i, iss, true)) ids.add(i);
+        return ids.stream().map(i -> new LOreDict(OreDictionary.getOreName(i), amount))
+                  .collect(Collectors.toList());
+    }
+
+    public static List<ILabel> fallback(List<ILabel> iss, @Nullable IRecipeHandler rl) {
+        ILabel l = iss.get(0);
+        if (!(l instanceof LItemStack)) return new ArrayList<>();
+        LItemStack lis = (LItemStack) l;
+        HashSet<Integer> ids = new HashSet<>();
+        long amount = lis.getAmount();
+        for (int i : OreDictionary.getOreIDs(lis.getRep()))
+            if (check(i, iss, false))
                 ids.add(i);
         return ids.stream().map(i -> new LOreDict(OreDictionary.getOreName(i), amount)).collect(Collectors.toList());
     }
 
     // check labels in the list suitable for the ore id
-    private static boolean check(int id, List<ILabel> labels) {
+    private static boolean check(int id, List<ILabel> labels, boolean biDir) {
         ArrayList<ItemStack> ores = OreDictionary.getOres(OreDictionary.getOreName(id));
-        if (labels.size() == 1 && ores.size() == 1 &&
-            (ores.get(0).getItemDamage() == OreDictionary.WILDCARD_VALUE || !MODE_FORCE))
+        if (labels.size() == 1 && ores.size() == 1 && biDir && !MODE_FORCE)
             return false;
 
-        boolean acceptable = true;
-        for (ItemStack ore : ores) {
-            boolean found = false;
-            for (ILabel label : labels) {
-                if (label instanceof LItemStack &&
-                    OreDictionary.itemMatches(ore, ((LItemStack) label).getRep(), false)) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                acceptable = false;
-                break;
-            }
-        }
-        for (ILabel label : labels) {
-            boolean found = false;
-            for (ItemStack ore : ores) {
-                if (label instanceof LItemStack &&
-                    OreDictionary.itemMatches(ore, ((LItemStack) label).getRep(), false)) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                acceptable = false;
-                break;
-            }
-        }
-        return acceptable;
+        Wrapper<Boolean> acceptable = new Wrapper<>(true);
+        BiPredicate<ILabel, ItemStack> match = (l, o) -> l instanceof LItemStack
+                                                         && OreDictionary.itemMatches(o, ((LItemStack) l).getRep(), false);
+        if (biDir) ores.stream().filter(ore -> labels.stream().noneMatch(label -> match.test(label, ore)))
+            .findAny().ifPresent(i -> acceptable.value = false);
+        labels.stream().filter(label -> ores.stream().noneMatch(ore -> match.test(label, ore)))
+              .findAny().ifPresent(i -> acceptable.value = false);
+        return acceptable.value;
     }
 
     @Override
@@ -164,21 +155,7 @@ public class LOreDict extends ILabel.Impl {
     @Override
     @SideOnly(Side.CLIENT)
     public void drawLabel(JecaGui gui) {
-        NonNullList<ItemStack> list = NonNullList.create();
-        OreDictionary.getOres(name).forEach(is -> {
-            if (is.getItemDamage() == OreDictionary.WILDCARD_VALUE) {
-                is.getItem().getSubItems(is.getItem(), CreativeTabs.tabAllSearch, list);
-            } else
-                list.add(is);
-        });
-        if (list.isEmpty())
-            return;
-        long index = System.currentTimeMillis() / 1500;
-        //GlStateManager.pushMatrix();
-        //GlStateManager.translate(1, 1, 0);
-        //GlStateManager.scale(14f / 16, 14f / 16, 1);
-        gui.drawItemStack(0, 0, list.get((int) (index % list.size())), false);
-        //GlStateManager.popMatrix();
+        gui.drawItemStack(0, 0, getRepresentation(), false);
         gui.drawResource(Resource.LBL_FRAME, 0, 0);
     }
 

@@ -31,7 +31,7 @@ import static me.towdium.jecalculation.gui.Resource.BTN_YES;
 @SideOnly(Side.CLIENT)
 public class WLabel implements IWidget {
     public int xPos, yPos, xSize, ySize;
-    public ILabel label;
+    ILabel label;
     public Mode mode;
     public ListenerValue<? super WLabel, ILabel> listener;
     protected Utilities.Timer timer = new Utilities.Timer();
@@ -50,8 +50,9 @@ public class WLabel implements IWidget {
         return label;
     }
 
-    public void setLabel(ILabel label) {
+    public WLabel setLabel(ILabel label) {
         this.label = label;
+        return this;
     }
 
     @Override
@@ -85,13 +86,14 @@ public class WLabel implements IWidget {
 
     @Override
     public boolean onScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
-        if (mouseIn(xMouse, yMouse) && mode == Mode.EDITOR && label != ILabel.EMPTY) {
-            for (int i = 0; i < Math.abs(diff); i++)
-                label = diff > 0 ? label.increaseAmount() : label.decreaseAmount();
-            notifyLsnr();
+        if (mouseIn(xMouse, yMouse)) {
+            if (mode == Mode.EDITOR && label != ILabel.EMPTY) {
+                for (int i = 0; i < Math.abs(diff); i++)
+                    label = diff > 0 ? label.increaseAmount() : label.decreaseAmount();
+                notifyLsnr();
+            }
             return true;
-        } else
-            return false;
+        } else return false;
     }
 
 
@@ -165,57 +167,60 @@ public class WLabel implements IWidget {
 
 
     class WAmount extends WContainer {
+        long old = label.getAmount();
         WButton bAmount = new WButtonText(xPos + xSize + 60, yPos, 20, 20, "general.to_percent", "#")
                 .setListener(i -> setPercent(true));
         WTextField wtf = new WTextField(xPos + xSize + 10, yPos + ySize / 2 - WTextField.HEIGHT / 2, 50);
         WButton bPercent = new WButtonText(xPos + xSize + 60, yPos, 20, 20, "general.to_percent", "%")
                 .setListener(i -> setPercent(false));
         WLabel wl = new WLabel(xPos, yPos, xSize, ySize, Mode.SELECTOR).setListener((i, v) -> update());
-        WButton bYes = new WButtonIcon(xPos + xSize + 83, yPos, 20, 20, BTN_YES).setListener(i -> {
-            setLabel(wl.getLabel().setAmount(
-                    wtf.getText().isEmpty() ? 0 : Integer.parseInt(wtf.getText())));
-            JecaGui.getCurrent().root.remove(this);
-        });
+        WButton bYes = new WButtonIcon(xPos + xSize + 83, yPos, 20, 20, BTN_YES)
+                .setListener(i -> JecaGui.getCurrent().root.remove(this));
         WButton bNo = new WButtonIcon(xPos + xSize + 102, yPos, 20, 20, BTN_NO).setListener(i -> {
             setLabel(ILabel.EMPTY);
             JecaGui.getCurrent().root.remove(this);
         });
 
+
         public WAmount() {
             wl.setLabel(label);
             add(new WPanel(xPos - 5, yPos - 5, xSize + 133, ySize + 10));
             add(new WText(xPos + xSize + 3, yPos + 5, PLAIN, "x"));
-            addAll(wl, wtf, bYes, bNo);
+            add(wl, wtf, bYes, bNo);
             wtf.setListener(i -> {
                 try {
-                    Integer.parseInt(wtf.getText());
+                    long n = Long.parseLong(wtf.getText());
+                    label.setAmount(n);
                     wtf.setColor(COLOR_TEXT_WHITE);
                     bYes.setDisabled(false);
                 } catch (NumberFormatException e) {
                     boolean acceptable = wtf.getText().isEmpty();
                     wtf.setColor(acceptable ? COLOR_TEXT_WHITE : COLOR_TEXT_RED);
                     bYes.setDisabled(!acceptable);
+                    label.setAmount(acceptable ? 1 : old);
                 }
+                notifyLsnr();
             });
             update();
         }
 
         private void update() {
-            label = wl.label;
-            bAmount.setDisabled(!wl.label.acceptPercent());
-            setPercent(label.isPercent());
-        }
-
-        private void setPercent(boolean b) {
-            if (b) {
+            bAmount.setDisabled(!label.acceptPercent());
+            if (label.isPercent()) {
                 remove(bAmount);
                 add(bPercent);
             } else {
                 remove(bPercent);
                 add(bAmount);
             }
-            if (label.acceptPercent()) label.setPercent(b);
             wtf.setText(Long.toString(label.getAmount()));
+        }
+
+        private void setPercent(boolean b) {
+            boolean original = label.isPercent();
+            if (label.acceptPercent()) label.setPercent(b);
+            if (b != original) notifyLsnr();
+            update();
         }
 
         @Override

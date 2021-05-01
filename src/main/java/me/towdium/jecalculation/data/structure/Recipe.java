@@ -9,15 +9,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
@@ -33,7 +31,6 @@ public class Recipe {
     ILabel[] input;
     ILabel[] catalyst;
     ILabel[] output;
-    int hashcode;
 
     public Recipe(NBTTagCompound nbt) {
         this(readNbtList(nbt.getTagList(KEY_INPUT, 10)),
@@ -53,18 +50,14 @@ public class Recipe {
             for (int j = ls.length; j < i; j++) ret[j] = ILabel.EMPTY;
             return ret;
         };
-        this.input = convert.apply(input, 16);
-        this.catalyst = convert.apply(catalyst, 8);
-        this.output = convert.apply(output, 8);
-
-        Wrapper<Integer> hash = new Wrapper<>(0);
-        Consumer<ILabel[]> hasher = (ls) -> Arrays.stream(ls)
-                                                  .filter(Objects::nonNull).forEach(i -> hash.value ^= i.hashCode());
-        hasher.accept(input);
-        hasher.accept(catalyst);
-        hasher.accept(output);
-        hashcode = hash.value;
+        this.input = convert.apply(input, 14);
+        this.catalyst = convert.apply(catalyst, 7);
+        this.output = convert.apply(output, 7);
+        Stream.of(input, output).forEach(i -> Arrays.stream(i).filter(j -> j != ILabel.EMPTY).findAny()
+                                                    .orElseThrow(() -> new IllegalArgumentException("Invalid recipe")));
     }
+
+
 
     static private List<ILabel> readNbtList(NBTTagList list) {
         return StreamSupport.stream(NBTHelper.spliterator(list), false)
@@ -75,12 +68,18 @@ public class Recipe {
 
     @Override
     public int hashCode() {
-        return hashcode;
+        Wrapper<Integer> hash = new Wrapper<>(0);
+        Consumer<ILabel[]> hasher = (ls) -> Arrays.stream(ls)
+                                                  .filter(Objects::nonNull).forEach(i -> hash.value ^= i.hashCode());
+        hasher.accept(input);
+        hasher.accept(catalyst);
+        hasher.accept(output);
+        return hash.value;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null || hashcode != obj.hashCode() || !(obj instanceof Recipe)) return false;
+        if (!(obj instanceof Recipe)) return false;
         Recipe r = (Recipe) obj;
         BiPredicate<ILabel[], ILabel[]> p = (i, j) -> {
             if (i.length != j.length) return false;
@@ -133,8 +132,8 @@ public class Recipe {
         return ret;
     }
 
-    public boolean matches(ILabel label) {
-        return Arrays.stream(output).anyMatch(i -> ILabel.MERGER.merge(label, i).isPresent());
+    public Optional<ILabel> matches(ILabel label) {
+        return Arrays.stream(output).filter(i -> ILabel.MERGER.merge(label, i).isPresent()).findAny();
     }
 
     public long multiplier(ILabel label) {

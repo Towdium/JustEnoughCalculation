@@ -1,5 +1,6 @@
 package me.towdium.jecalculation.data.label.labels;
 
+import codechicken.nei.recipe.IRecipeHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.gui.JecaGui;
@@ -13,6 +14,8 @@ import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -122,7 +125,7 @@ public class LFluidStack extends ILabel.Impl {
     @SideOnly(Side.CLIENT)
     public void getToolTip(List<String> existing, boolean detailed) {
         if (detailed) existing.add(FORMAT_GREY +
-                                   Utilities.I18n.get("label.common.tooltip.amount", Long.toString(getAmount())) + "mB");
+                                   Utilities.I18n.get("label.common.amount", Long.toString(getAmount())) + "mB");
         existing.add(FORMAT_BLUE + FORMAT_ITALIC + Utilities.getModName(fluid));
     }
 
@@ -136,7 +139,11 @@ public class LFluidStack extends ILabel.Impl {
 
     @Override
     public int hashCode() {
-        return fluid.getUnlocalizedName().hashCode() ^ (int) amount ^ (nbt == null ? 0 : nbt.hashCode());
+        return super.hashCode() ^ fluid.getUnlocalizedName().hashCode() ^ (nbt == null ? 0 : nbt.hashCode());
+    }
+
+    public static List<ILabel> suggest(List<ILabel> iss, @Nullable IRecipeHandler rl) {
+        return new ArrayList<>();
     }
 
     public static boolean merge(ILabel a, ILabel b) {

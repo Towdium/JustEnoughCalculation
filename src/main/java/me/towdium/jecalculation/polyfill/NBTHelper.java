@@ -34,8 +34,8 @@ public class NBTHelper {
     }
 
     public static Spliterator<NBTBase> spliterator(NBTTagList list) {
-        List tagList = (List) ReflectionHelper.get(list, "tagList");
-        return Spliterators.spliteratorUnknownSize(((List<NBTBase>)tagList).iterator(), 0);
+        List<NBTBase> tagList = (List<NBTBase>) list.tagList;
+        return Spliterators.spliteratorUnknownSize(tagList.iterator(), 0);
     }
 
     public static NBTTagCompound getOrCreateSubCompound(ItemStack itemStack, String key) {

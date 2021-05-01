@@ -39,7 +39,7 @@ public class LPlaceholder extends ILabel.Impl {
     public LPlaceholder(String name, long amount, boolean silent) {
         super(amount, false);
         this.name = name;
-        if (!silent) getRecord().push(new LPlaceholder(name, 1, true));
+        if (!silent) getRecord().push(new LPlaceholder(name, 1, true), false);
     }
 
     public LPlaceholder(LPlaceholder label) {
@@ -110,5 +110,13 @@ public class LPlaceholder extends ILabel.Impl {
     public void getToolTip(List<String> existing, boolean detailed) {
         super.getToolTip(existing, detailed);
         existing.add(FORMAT_BLUE + FORMAT_ITALIC + JustEnoughCalculation.Reference.MODNAME);
+    }
+
+    public static boolean merge(ILabel a, ILabel b) {
+        if (a instanceof LPlaceholder && b instanceof LPlaceholder) {
+            LPlaceholder lpA = (LPlaceholder) a;
+            LPlaceholder lpB = (LPlaceholder) b;
+            return lpA.name.equals(lpB.name);
+        } else return false;
     }
 }

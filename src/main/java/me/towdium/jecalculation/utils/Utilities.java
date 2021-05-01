@@ -75,6 +75,11 @@ public class Utilities {
         };
     }
 
+    public static String repeat(String s, int n) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < n; i++) sb.append(s);
+        return sb.toString();
+    }
 
     // MOD NAME
     @Nullable
@@ -312,11 +317,11 @@ public class Utilities {
             this.limit = limit;
         }
 
-        public void push(T obj) {
+        public void push(T obj, boolean replace) {
+            if (replace) data.pop();
             data.removeIf(t -> tester != null ? tester.test(t, obj) : t.equals(obj));
-            data.push(obj);
-            if (data.size() > limit)
-                data.pop();
+            data.addFirst(obj);
+            if (data.size() > limit) data.removeLast();
         }
 
         public List<T> toList() {

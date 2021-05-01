@@ -25,9 +25,9 @@ import static me.towdium.jecalculation.gui.Resource.ICN_TEXT;
 public class GuiImport extends WContainer implements IGui, ISearchable {
     List<Quad<Boolean, String, String, Recipes>> data;  // selected, file, group, recipes
     List<Quad<Boolean, String, String, Recipes>> filtered;
-    WSearch search = new WSearch(25, 25, 90, this);
+    WSearch search = new WSearch(26, 25, 90, this);
     WSwitcher page;
-    WButton confirm = new WButtonIcon(149, 25, 20, 20, BTN_YES, "common.confirm").setDisabled(true)
+    WButton confirm = new WButtonIcon(149, 25, 20, 20, BTN_YES, "import.confirm").setDisabled(true)
                                                                                  .setListener(i -> {
                                                                                      data.stream().filter(j -> j.one).forEach(j -> Controller.inport(j.four, j.three));
                                                                                      JecaGui.displayParent();
@@ -35,9 +35,9 @@ public class GuiImport extends WContainer implements IGui, ISearchable {
     List<Pair<WTick, WText>> content = new ArrayList<>();
 
     public GuiImport() {
-        add(new WPanel());
+        add(new WHelp("import"), new WPanel());
         add(new WIcon(7, 25, 20, 20, ICN_TEXT, "common.search"));
-        addAll(search, confirm);
+        add(search, confirm);
         IntStream.range(0, 7).forEach(i -> {
             WTick tick = new WTick(7, 49 + 16 * i, 13, 13, "import.tick").setDisabled(true)
                                                                          .setListener(j -> {
@@ -45,7 +45,7 @@ public class GuiImport extends WContainer implements IGui, ISearchable {
                                                                              confirm.setDisabled(data.stream().noneMatch(k -> k.one));
                                                                          });
             WText text = new WTextExpand(49 + 16 * i, "");
-            addAll(tick, text);
+            add(tick, text);
             content.add(new Pair<>(tick, text));
         });
     }

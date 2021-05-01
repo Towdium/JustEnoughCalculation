@@ -33,6 +33,6 @@ public class PickerPlaceholder extends IPicker.Impl implements IGui {
         add(new WButtonIcon(95, 7, 20, 20, BTN_YES, "common.confirm").setListener(i -> {
             if (!create.getText().equals("")) callback.accept(new LPlaceholder(create.getText(), 1));
         }));
-        addAll(scroll, create);
+        add(scroll, create);
     }
 }

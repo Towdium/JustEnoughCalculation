@@ -1,5 +1,6 @@
 package me.towdium.jecalculation.data.label;
 
+import codechicken.nei.recipe.IRecipeHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.JustEnoughCalculation;
@@ -15,6 +16,7 @@ import me.towdium.jecalculation.gui.guis.pickers.PickerSimple;
 import me.towdium.jecalculation.polyfill.mc.client.renderer.GlStateManager;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.Utilities.ReversedIterator;
+import me.towdium.jecalculation.utils.wrappers.Pair;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -23,10 +25,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -56,7 +55,11 @@ public interface ILabel {
     ILabel decreaseAmount();
 
     static void initClient() {
-        CONVERTER.register(LOreDict::guess);
+        CONVERTER.register(LItemStack::suggest, Converter.Priority.SUGGEST);
+        CONVERTER.register(LOreDict::suggest, Converter.Priority.SUGGEST);
+        CONVERTER.register(LFluidStack::suggest, Converter.Priority.SUGGEST);
+        CONVERTER.register(LItemStack::fallback, Converter.Priority.FALLBACK);
+        CONVERTER.register(LOreDict::fallback, Converter.Priority.FALLBACK);
         EDITOR.register(PickerSimple.FluidStack::new, "fluid", new LFluidStack(1000, FluidRegistry.WATER));
         EDITOR.register(PickerSimple.OreDict::new, "ore", new LOreDict("ingotIron"));
         EDITOR.register(PickerPlaceholder::new, "placeholder", new LPlaceholder("example", 1, true));
@@ -64,7 +67,10 @@ public interface ILabel {
         MERGER.register("itemStack", "itemStack", Impl.form(LItemStack.class, LItemStack.class, LItemStack::merge));
         MERGER.register("oreDict", "oreDict", Impl.form(LOreDict.class, LOreDict.class, LOreDict::mergeSame));
         MERGER.register("oreDict", "itemStack", Impl.form(LOreDict.class, LItemStack.class, LOreDict::mergeFuzzy));
-        MERGER.register("fluidStack", "fluidStack", Impl.form(LFluidStack.class, LFluidStack.class, LFluidStack::merge));
+        MERGER.register("fluidStack", "fluidStack",
+                        Impl.form(LFluidStack.class, LFluidStack.class, LFluidStack::merge));
+        MERGER.register("placeholder", "placeholder",
+                        Impl.form(LPlaceholder.class, LPlaceholder.class, LPlaceholder::merge));
     }
 
     long getAmount();
@@ -137,7 +143,8 @@ public interface ILabel {
          */
         public Optional<ILabel> merge(ILabel a, ILabel b) {
             MergerFunction mf = functions.get(a.getIdentifier(), b.getIdentifier());
-            if (mf == null) return Optional.empty();
+            if (mf == null)
+                return Optional.empty();
             return Optional.ofNullable(mf.merge(a, b));
         }
 
@@ -190,11 +197,13 @@ public interface ILabel {
         public ILabel deserialize(NBTTagCompound nbt) {
             String s = nbt.getString(KEY_IDENTIFIER);
             Function<NBTTagCompound, ILabel> func = idToData.get(s);
-            if (func == null) JustEnoughCalculation.logger.warn("Unrecognized identifier \"" + s + "\", abort");
-            else try {
-                return func.apply(nbt.getCompoundTag(KEY_CONTENT));
-            } catch (SerializationException ignored) {
-            }
+            if (func == null)
+                JustEnoughCalculation.logger.warn("Unrecognized identifier \"" + s + "\", abort");
+            else
+                try {
+                    return func.apply(nbt.getCompoundTag(KEY_CONTENT));
+                } catch (SerializationException ignored) {
+                }
             return EMPTY;
         }
 
@@ -219,7 +228,15 @@ public interface ILabel {
      * It can also convert ItemStack or FluidStack to ILabel
      */
     class Converter {
-        ArrayList<Function<List<ILabel>, List<ILabel>>> handlers = new ArrayList<>();
+        static EnumMap<Priority, ArrayList<ConverterFunction>> handlers;
+
+        public enum Priority {SUGGEST, FALLBACK}
+
+        static {
+            handlers = new EnumMap<>(Priority.class);
+            handlers.put(Priority.SUGGEST, new ArrayList<>());
+            handlers.put(Priority.FALLBACK, new ArrayList<>());
+        }
 
         public static ILabel from(@Nullable Object o) {
             if (o == null)
@@ -232,20 +249,37 @@ public interface ILabel {
                 throw new RuntimeException("Unrecognized ingredient type: " + o.getClass());
         }
 
-        public void register(Function<List<ILabel>, List<ILabel>> handler) {
-            handlers.add(handler);
+        public void register(ConverterFunction handler, Priority priority) {
+            handlers.get(priority).add(handler);
         }
 
         // get most possible guess from labels
-        public ILabel first(List<ILabel> labels) {
-            List<ILabel> guess = guess(labels);
+        public ILabel first(List<ILabel> labels, @Nullable IRecipeHandler context) {
+            List<ILabel> guess = guess(labels, context).one;
             return guess.isEmpty() ? labels.get(0) : guess.get(0);
         }
 
+        public ILabel first(List<ILabel> labels) {
+            return first(labels, null);
+        }
+
         // to test if the labels can be converted to other labels (like oreDict)
-        public List<ILabel> guess(List<ILabel> labels) {
-            return new ReversedIterator<>(handlers).stream().flatMap(h -> h.apply(labels).stream())
-                                                   .collect(Collectors.toList());
+        public Pair<List<ILabel>, List<ILabel>> guess(List<ILabel> labels) {
+            return guess(labels, null);
+        }
+
+        public Pair<List<ILabel>, List<ILabel>> guess(List<ILabel> labels, @Nullable IRecipeHandler context) {
+            List<ILabel> ret = new ArrayList<>();
+            List<ILabel> suggest = new ReversedIterator<>(handlers.get(Priority.SUGGEST)).stream().flatMap(
+                    h -> h.convert(labels, context).stream()).collect(Collectors.toList());
+            List<ILabel> fallback = new ReversedIterator<>(handlers.get(Priority.FALLBACK)).stream().flatMap(
+                    h -> h.convert(labels, context).stream()).collect(Collectors.toList());
+            return new Pair<>(suggest, fallback);
+        }
+
+        @FunctionalInterface
+        public interface ConverterFunction {
+            List<ILabel> convert(List<ILabel> a, @Nullable IRecipeHandler context);
         }
     }
 
@@ -440,17 +474,22 @@ public interface ILabel {
                     long amountD = d.isPercent() ? d.getAmount() : Math.multiplyExact(d.getAmount(), 100);
                     long amount = Math.addExact(amountC, amountD);
                     long amountI = (amount > 0 ? Math.addExact(amount, 99) : Math.subtractExact(amount, 99)) / 100;
-                    if (amount == 0) return EMPTY;
-                    else if (amount > 0) return d.copy().setAmount(d.isPercent() ? amount : amountI);
-                    else return c.copy().setAmount(c.isPercent() ? amount : amountI);
-                } else return null;
+                    if (amount == 0)
+                        return EMPTY;
+                    else if (amount > 0)
+                        return d.copy().setAmount(d.isPercent() ? amount : amountI);
+                    else
+                        return c.copy().setAmount(c.isPercent() ? amount : amountI);
+                } else
+                    return null;
             };
         }
 
         @Override
         public ILabel multiply(float i) {
             float amount = i * getAmount();
-            if (amount > Long.MAX_VALUE) throw new ArithmeticException("Multiply overflow");
+            if (amount > Long.MAX_VALUE)
+                throw new ArithmeticException("Multiply overflow");
             setAmount((long) amount);
             return this;
         }
@@ -460,8 +499,7 @@ public interface ILabel {
         @SideOnly(Side.CLIENT)
         public void getToolTip(List<String> existing, boolean detailed) {
             if (detailed)
-                existing.add(
-                        FORMAT_GREY + Utilities.I18n.get("label.common.tooltip.amount", getAmountString(false)));
+                existing.add(FORMAT_GREY + Utilities.I18n.get("label.common.amount", getAmountString(false)));
         }
 
         @Override
@@ -481,7 +519,8 @@ public interface ILabel {
         public NBTTagCompound toNbt() {
             NBTTagCompound nbt = new NBTTagCompound();
             nbt.setLong(KEY_AMOUNT, amount);
-            if (percent) nbt.setBoolean(KEY_PERCENT, true);
+            if (percent)
+                nbt.setBoolean(KEY_PERCENT, true);
             return nbt;
         }
 

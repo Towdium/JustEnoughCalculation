@@ -57,6 +57,12 @@ public class JecaGui extends GuiContainer {
             ((JecContainer) inventorySlots).setGui(this);
     }
 
+    @Override
+    public void initGui() {
+        this.guiLeft = (this.width - this.xSize) / 2;
+        this.guiTop = (this.height - this.ySize) / 2;
+    }
+
     public static boolean mouseIn(int xPos, int yPos, int xSize, int ySize, int xMouse, int yMouse) {
         return xMouse > xPos && yMouse > yPos && xMouse <= xPos + xSize && yMouse <= yPos + ySize;
     }
@@ -173,22 +179,13 @@ public class JecaGui extends GuiContainer {
         int yMouse = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
         int button = Mouse.getEventButton();
         if (Mouse.getEventButtonState()) {
-            if (button == 0) {
-                if (hand == ILabel.EMPTY) {
-                    ILabel e = NEIPlugin.getLabelUnderMouse();
-                    if (e != ILabel.EMPTY) {
-                        hand = e;
-                        return true;
-                    }
-                } else {
-                    if (!mouseIn(guiLeft, guiTop, width, height, xMouse, yMouse)) {
-                        hand = ILabel.EMPTY;
-                        return true;
-                    }
-                }
-            } else if (button == 1) {
-                if (hand != ILabel.EMPTY) {
-                    hand = ILabel.EMPTY;
+            if (hand != ILabel.EMPTY) {
+                hand = ILabel.EMPTY;
+                return true;
+            } else {
+                ILabel e = NEIPlugin.getLabelUnderMouse();
+                if (e != ILabel.EMPTY) {
+                    hand = e;
                     return true;
                 }
             }
@@ -295,7 +292,7 @@ public class JecaGui extends GuiContainer {
         boolean unicode = fontRendererObj.getUnicodeFlag();
         if (f.half) fontRendererObj.setUnicodeFlag(false);
         GlStateManager.pushMatrix();
-        GlStateManager.translate(xPos, yPos, 0);
+        GlStateManager.translate(unicode && f.half ? xPos - 5 : xPos, yPos, 0);
         if (f.half) GlStateManager.scale(0.5, 0.5, 1);
         r.run();
         GlStateManager.popMatrix();

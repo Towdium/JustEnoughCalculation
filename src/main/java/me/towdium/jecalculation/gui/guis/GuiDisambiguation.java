@@ -11,8 +11,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static me.towdium.jecalculation.gui.Resource.ICN_LABEL;
-import static me.towdium.jecalculation.gui.Resource.ICN_LIST;
+import static me.towdium.jecalculation.gui.Resource.*;
 
 /**
  * Author: towdium
@@ -30,16 +29,17 @@ public class GuiDisambiguation extends IPicker.Impl implements IGui {
         WSwitcher switcher = new WSwitcher(7, 7, 162, this.record.size()).setListener(i -> setPage(i.getIndex()));
         ListenerValue<WLabelScroll, Integer> consumer = (i, v) -> callback.accept(i.get(v).copy().multiply(-1));
         add(new WPanel());
-        add(new WIcon(7, 48, 18, 54, ICN_LIST, "disambiguation.list"));
-        add(new WIcon(7, 105, 18, 54, ICN_LABEL, "disambiguation.label"));
+        add(new WIcon(7, 24, 20, 20, ICN_TEXT, "common.search"));
+        add(new WIcon(7, 48, 18, 54, ICN_LIST, "disamb.list"));
+        add(new WIcon(7, 105, 18, 54, ICN_LABEL, "disamb.label"));
         add(new WSearch(25, 24, 90, lsUp.setListener(consumer), lsDown.setListener(consumer)));
-        addAll(switcher, lsUp, lsDown);
+        add(switcher, lsUp, lsDown);
         setPage(0);
     }
 
 
     protected void setPage(int n) {
         lsUp.setLabels(record.get(n));
-        lsDown.setLabels(ILabel.CONVERTER.guess(record.get(n)));
+        lsDown.setLabels(ILabel.CONVERTER.guess(record.get(n)).one);
     }
 }

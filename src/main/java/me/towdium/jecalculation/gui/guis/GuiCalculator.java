@@ -9,16 +9,16 @@ import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.gui.widgets.*;
 import me.towdium.jecalculation.utils.ItemStackHelper;
+import me.towdium.jecalculation.utils.wrappers.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
+import org.lwjgl.input.Keyboard;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -45,11 +45,9 @@ public class GuiCalculator extends WContainer implements IGui  {
         Controller.setAmount(i.getText());
         refreshCalculator();
     });
-    WLabel label = new WLabel(31, 7, 20, 20, WLabel.Mode.SELECTOR).setListener((i, v) -> {
-        Controller.setRecent(v);
-        refreshRecent();
-        refreshCalculator();
-    });
+    WLabel label = new WLabel(31, 7, 20, 20, WLabel.Mode.SELECTOR).setListener((i, v) -> refreshLabel(v, false));
+    WButton invE = new WButtonIcon(149, 62, 20, 20, Resource.BTN_INV_E, "calculator.inventory_enabled");
+    WButton invD = new WButtonIcon(149, 62, 20, 20, Resource.BTN_INV_D, "calculator.inventory_disabled");
 
     public GuiCalculator() {
         add(new WHelp("calculator"));
@@ -66,7 +64,19 @@ public class GuiCalculator extends WContainer implements IGui  {
         add(new WText(53, 13, JecaGui.Font.PLAIN, "x"));
         add(new WLine(55));
         add(new WIcon(151, 31, 18, 18, Resource.ICN_RECENT, "calculator.history"));
-        addAll(recent, label, input, output, catalyst, steps, result, amount);
+        add(recent, label, input, output, catalyst, steps, result, amount, Controller.getDetectInv() ? invE : invD);
+        invE.setListener(i -> {
+            Controller.setDetectInv(false);
+            remove(invE);
+            add(invD);
+            refreshCalculator();
+        });
+        invD.setListener(i -> {
+            Controller.setDetectInv(true);
+            remove(invD);
+            add(invE);
+            refreshCalculator();
+        });
         refreshRecent();
         setMode(Mode.INPUT);
     }
@@ -97,7 +107,8 @@ public class GuiCalculator extends WContainer implements IGui  {
             long i = s.isEmpty() ? 1 : Long.parseLong(amount.getText());
             amount.setColor(JecaGui.COLOR_TEXT_WHITE);
             List<ILabel> dest = Collections.singletonList(label.getLabel().copy().setAmount(i));
-            calculator = new CostList(getInventory(), dest).calculate();
+            CostList list = Controller.getDetectInv() ? new CostList(getInventory(), dest) : new CostList(dest);
+            calculator = list.calculate();
         } catch (NumberFormatException | ArithmeticException e) {
             amount.setColor(JecaGui.COLOR_TEXT_RED);
             calculator = null;
@@ -138,7 +149,69 @@ public class GuiCalculator extends WContainer implements IGui  {
         }
     }
 
+    private void refreshLabel(ILabel l, boolean replace) {
+        Controller.setRecent(l, replace);
+        refreshRecent();
+        refreshCalculator();
+        if (findRecipe(l).isEmpty()) {
+            Pair<List<ILabel>, List<ILabel>> guess = ILabel.CONVERTER.guess(Collections.singletonList(l));
+            LinkedHashSet<ILabel> match = new LinkedHashSet<>();
+            List<ILabel> fuzzy = new ArrayList<>();
+            Stream.of(guess.one, guess.two).flatMap(Collection::stream).forEach(i -> {
+                List<ILabel> list = findRecipe(i);
+                list.forEach(j -> match.add(j.setPercent(false).setAmount(1)));
+                if (!list.isEmpty()) fuzzy.add(i);
+            });
+            match.addAll(fuzzy);
+            List<ILabel> list = new ArrayList<>(match);
+            if (!match.isEmpty()) add(new Suggest(list.size() > 3 ? list.subList(0, 3) : list));
+        }
+    }
+
+    private static List<ILabel> findRecipe(ILabel l) {
+        return Controller.recipeIterator().stream()
+                         .map(i -> i.matches(l))
+                         .filter(Optional::isPresent)
+                         .map(Optional::get)
+                         .collect(Collectors.toList());
+    }
+
     enum Mode {
         INPUT, OUTPUT, CATALYST, STEPS
+    }
+    class Suggest extends WContainer {
+        public Suggest(List<ILabel> labels) {
+            int width = labels.size() * 20;
+            add(new WPanel(0 - width, 2, 56 + width, 30));
+            add(new WLabel(31, 7, 20, 20, WLabel.Mode.SELECTOR).setLabel(label.getLabel())
+                                                               .setListener((i, v) -> refresh(v)));
+            add(new WIcon(5 - width, 7, 18, 20, Resource.ICN_HELP, "calculator.suggest"));
+            add(new WLine(26, 7, 20, false));
+            for (int i = 0; i < labels.size(); i++) {
+                add(new WLabel(3 - i * 20, 7, 20, 20, WLabel.Mode.PICKER).setLabel(labels.get(i))
+                                                                         .setListener((j, v) -> refresh(v)));
+            }
+        }
+
+        public void refresh(ILabel l) {
+            GuiCalculator.this.remove(this);
+            refreshLabel(l, true);
+        }
+
+        @Override
+        public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
+            if (!super.onClicked(gui, xMouse, yMouse, button)) GuiCalculator.this.remove(this);
+            return true;
+        }
+
+        @Override
+        public boolean onKey(JecaGui gui, char ch, int code) {
+            if (!super.onKey(gui, ch, code)) {
+                if (code == Keyboard.KEY_ESCAPE) {
+                    GuiCalculator.this.remove(this);
+                    return true;
+                } else return false;
+            } else return true;
+        }
     }
 }

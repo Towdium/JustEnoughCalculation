@@ -158,7 +158,7 @@ public class CostList {
                 if (label.getAmount() >= 0) continue;
                 while (iterator.hasNext()) {
                     Recipe r = iterator.next();
-                    if (r.matches(label)) return new Pair<>(r, r.multiplier(label));
+                    if (r.matches(label).isPresent()) return new Pair<>(r, r.multiplier(label));
                 }
                 iterator = Controller.recipeIterator();
             }
@@ -187,7 +187,7 @@ public class CostList {
                                       .collect(Collectors.toList());
         }
 
-        public List<ILabel> getOutputs(List<ILabel> ignore) {
+        public List<ILabel> getOutputs(List<ILabel> ignore) {  // TODO check logic
             return getCurrent().labels.stream()
                                       .map(i -> i.copy().multiply(-1))
                                       .map(i -> ignore.stream().flatMap(j -> stream(ILabel.MERGER.merge(i, j))).findFirst().orElse(i))

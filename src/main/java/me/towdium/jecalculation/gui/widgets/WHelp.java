@@ -17,42 +17,52 @@ import static me.towdium.jecalculation.gui.Resource.*;
  * Date: 18-9-23
  */
 @ParametersAreNonnullByDefault
-public class WHelp extends WTooltip {
+public class WHelp extends WContainer {
     protected String key;
 
     public WHelp(String content) {
-        super("common.help");
         key = content;
+        if (I18n.search("gui." + WHelp.this.key + ".title").two
+            && I18n.search("gui." + WHelp.this.key + ".help").two) {
+            add(new Impl());
+        }
     }
 
-    @Override
-    public void onDraw(JecaGui gui, int xMouse, int yMouse) {
-        super.onDraw(gui, xMouse, yMouse);
-        gui.drawResourceContinuous(WGT_PANEL_N, -21, 0, 25, 24, 4);
-        gui.drawResource(WGT_HELP_N, -19, 2);
-    }
+    private class Impl extends WTooltip {
+        public Impl() {
+            super("common.help");
+        }
 
-    @Override
-    public boolean mouseIn(int xMouse, int yMouse) {
-        return JecaGui.mouseIn(-21, 0, 24, 24, xMouse, yMouse);
-    }
+        @Override
+        public void onDraw(JecaGui gui, int xMouse, int yMouse) {
+            super.onDraw(gui, xMouse, yMouse);
+            gui.drawResourceContinuous(WGT_PANEL_N, -21, 0, 25, 24, 4);
+            gui.drawResource(WGT_HELP_N, -19, 2);
+        }
 
-    @Override
-    public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
-        boolean ret = mouseIn(xMouse, yMouse);
-        if (ret)
-            gui.root.add(new Doc());
-        return ret;
+        @Override
+        public boolean mouseIn(int xMouse, int yMouse) {
+            return JecaGui.mouseIn(-21, 0, 24, 24, xMouse, yMouse);
+        }
+
+        @Override
+        public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
+            boolean ret = mouseIn(xMouse, yMouse);
+            if (ret)
+                gui.root.add(new Doc());
+            return ret;
+        }
     }
 
     private class Doc extends WContainer {
+        Text text = new Text();
+        WSwitcher switcher = new WSwitcher(7, 146, 162, text.amount()).setListener(i -> text.setPage(i.getIndex()));
+
         public Doc() {
-            Text tContent = new Text();
-            WSwitcher sPage = new WSwitcher(7, 146, 162, tContent.amount());
-            sPage.setListener(i -> tContent.setPage(i.getIndex()));
-            WText tTitle = new WText(7, 7, SHADOW, I18n.get("gui." + WHelp.this.key + ".title"));
-            addAll(new WPanel(), new Icon(), tTitle, tContent, sPage);
+            WText title = new WText(7, 7, SHADOW, I18n.get("gui." + key + ".title"));
+            add(new WPanel(), new Icon(), title, text, switcher);
         }
+
 
         @Override
         public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
@@ -61,12 +71,19 @@ public class WHelp extends WTooltip {
             return true;
         }
 
+        @Override
+        public boolean onScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
+            switcher.move(-diff);
+            text.setPage(switcher.getIndex());
+            return super.onScroll(gui, xMouse, yMouse, diff);
+        }
+
         public class Text implements IWidget {
             List<List<String>> pages = new ArrayList<>();
             int page;
 
             public Text() {
-                List<String> ss = I18n.wrap(I18n.get("gui." + WHelp.this.key + ".help"), 162);
+                List<String> ss = I18n.wrap(I18n.get("gui." + key + ".help"), 162);
                 List<String> tmp = new ArrayList<>();
                 int count = 0;
                 for (String s : ss) {
@@ -85,8 +102,7 @@ public class WHelp extends WTooltip {
                         count++;
                     }
                 }
-                if (!tmp.isEmpty())
-                    pages.add(tmp);
+                if (!tmp.isEmpty()) pages.add(tmp);
             }
 
             @Override

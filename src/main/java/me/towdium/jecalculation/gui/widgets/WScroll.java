@@ -34,7 +34,7 @@ public class WScroll implements IWidget {
         else drag = false;
 
         gui.drawResourceContinuous(Resource.WGT_SLOT, xPos, yPos, 14, ySize, 3, 3, 3, 3);
-        gui.drawResource(Resource.WGT_SCROLL, xPos + 1, yPos + 1 + current);
+        gui.drawResource(Resource.WGT_SCROLL, xPos, yPos + current);
     }
 
     @Override

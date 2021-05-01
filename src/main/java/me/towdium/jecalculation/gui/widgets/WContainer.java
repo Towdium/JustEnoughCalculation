@@ -9,6 +9,7 @@ import me.towdium.jecalculation.utils.Utilities;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,18 +26,14 @@ public class WContainer implements IContainer {
         widgets.add(w);
     }
 
-    public void addAll(IWidget... w) {
-        for (IWidget aw : w)
-            add(aw);
+    public void add(IWidget... w) {
+        if (w.length == 1) widgets.add(w[0]);
+        else widgets.addAll(Arrays.asList(w));
     }
 
-    public void remove(IWidget w) {
-        widgets.remove(w);
-    }
-
-    public void removeAll(IWidget... w) {
-        for (IWidget aw : w)
-            remove(aw);
+    public void remove(IWidget... w) {
+        if (w.length == 1) widgets.remove(w[0]);
+        else widgets.removeAll(Arrays.asList(w));
     }
 
     public void clear() {
