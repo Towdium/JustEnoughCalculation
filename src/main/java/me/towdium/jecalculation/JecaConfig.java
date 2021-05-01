@@ -84,7 +84,6 @@ public class JecaConfig {
         public Object getDefault() {
             switch (this) {
                 case ClientMode:
-                    return false;
                 case EnableInventoryCheck:
                     return true;
                 case ListRecipeBlackList:

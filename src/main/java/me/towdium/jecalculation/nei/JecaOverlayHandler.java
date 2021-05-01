@@ -18,6 +18,10 @@ public class JecaOverlayHandler implements IOverlayHandler {
             JecaGui gui = (JecaGui) firstGui;
             if (gui.root instanceof GuiRecipe) {
                 ((GuiRecipe) gui.root).transfer(recipe, recipeIndex);
+            } else {
+                GuiRecipe guiRecipe = new GuiRecipe();
+                JecaGui.displayGui(true, true, guiRecipe);
+                guiRecipe.transfer(recipe, recipeIndex);
             }
         } else {
             System.out.println(firstGui.getClass().toString());

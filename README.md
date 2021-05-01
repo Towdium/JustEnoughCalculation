@@ -20,8 +20,8 @@ the [release page](https://minecraft.curseforge.com/projects/just-enough-calcula
 - [ ] 无法覆盖NEI默认点击行为
 - [ ] OreDict 渲染存在问题
 - [ ] capability
-- [ ] 带 nbt 的物品存储到本地存在问题
-- [ ] 主界面合成表转移存在问题
+- [x] 带 nbt 的物品存储到本地存在问题
+- [x] 主界面合成表转移存在问题
 
 [1]: http://cf.way2muchnoise.eu/full_just-enough-calculation_downloads.svg
 
