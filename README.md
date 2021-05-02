@@ -17,8 +17,9 @@ the [release page](https://minecraft.curseforge.com/projects/just-enough-calcula
 
 ## Known Issues
 
+- [ ] 无法识别流体
 - [x] 无法覆盖NEI默认点击行为
-- [ ] OreDict 渲染存在问题
+- [ ] OreDict 部分渲染存在问题
 - [ ] capability
 - [x] 带 nbt 的物品存储到本地存在问题
 - [x] 主界面合成表转移存在问题

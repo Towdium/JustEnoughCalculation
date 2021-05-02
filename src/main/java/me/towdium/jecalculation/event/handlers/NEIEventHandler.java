@@ -37,7 +37,7 @@ public class NEIEventHandler implements IContainerInputHandler {
 
     @Override
     public boolean mouseScrolled(GuiContainer guiContainer, int i, int i1, int i2) {
-        return false;
+        return JecaGui.onMouse();
     }
 
     @Override
