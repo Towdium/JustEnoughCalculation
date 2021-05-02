@@ -10,8 +10,6 @@ import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.labels.LPlaceholder;
 import me.towdium.jecalculation.gui.JecaGui;
-import me.towdium.jecalculation.gui.guis.GuiCraft;
-import me.towdium.jecalculation.network.ClientHandler;
 
 /**
  * Author: towdium
@@ -22,10 +20,15 @@ public class FMLBusEventHandler {
     @SideOnly(Side.CLIENT)
     @SubscribeEvent(receiveCanceled = true)
     public void onKey(InputEvent.KeyInputEvent event) {
-        if (ClientHandler.keyOpenGuiCraft.isPressed()) Controller.openGuiCraft();
-        if (ClientHandler.keyOpenGuiMath.isPressed()) Controller.openGuiMath();
+        JecaGui.onKey();
     }
 
+    /**
+     * No effect at client only
+     *
+     * @param event event
+     */
+    @Deprecated
     @SubscribeEvent
     public void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {
         JustEnoughCalculation.logger.info("on log out event");

@@ -1,14 +1,16 @@
 package me.towdium.jecalculation.gui;
 
-import codechicken.nei.guihook.GuiContainerManager;
 import cpw.mods.fml.client.config.GuiUtils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import me.towdium.jecalculation.JustEnoughCalculation;
+import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
+import me.towdium.jecalculation.data.label.labels.LItemStack;
 import me.towdium.jecalculation.gui.guis.IGui;
 import me.towdium.jecalculation.nei.NEIPlugin;
+import me.towdium.jecalculation.network.ClientHandler;
 import me.towdium.jecalculation.polyfill.mc.client.renderer.GlStateManager;
+import me.towdium.jecalculation.utils.ItemStackHelper;
 import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -19,6 +21,9 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryBasic;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.fluids.Fluid;
@@ -28,9 +33,9 @@ import org.lwjgl.input.Mouse;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import static codechicken.lib.gui.GuiDraw.renderEngine;
 
@@ -76,6 +81,48 @@ public class JecaGui extends GuiContainer {
     }
 
 
+    /**
+     * @return true to terminate further processing of this event.
+     */
+    public static boolean onMouse() {
+        Optional<JecaGui> optionalJecaGui = currentJecaGui();
+        if(!optionalJecaGui.isPresent()) return false;
+        JecaGui gui = optionalJecaGui.get();
+        int mouseX = getMouseX();
+        int mouseY = getMouseY();
+        int button = Mouse.getEventButton();
+        if (button == -1) {
+            int diff = Mouse.getEventDWheel() / 120;
+            if (diff != 0)
+                gui.root.onScroll(gui, mouseX, mouseY, diff);
+        } else if (Mouse.getEventButtonState()) {
+            if (gui.root.onClicked(gui, mouseX, mouseY, button))
+                return true;
+            else if (gui.hand != ILabel.EMPTY) {
+                gui.hand = ILabel.EMPTY;
+                return true;
+            } else {
+                ILabel e = NEIPlugin.getLabelUnderMouse();
+                if (e != ILabel.EMPTY) {
+                    gui.hand = e;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    @Nullable
+    public Slot getSlotUnderMouse() {
+        IInventory i = new InventoryBasic("", false, 1);
+        Slot s = new Slot(i, 0, 0, 0);
+        ILabel l = getLabelUnderMouse();
+        if (l instanceof LItemStack)
+            s.putStack(((LItemStack) l).getRep());
+        return s;
+    }
+
     @Override
     public void initGui() {
         this.guiLeft = (this.width - this.xSize) / 2;
@@ -107,6 +154,15 @@ public class JecaGui extends GuiContainer {
             r.run();
     }
 
+    public static Optional<JecaGui> currentJecaGui() {
+        GuiScreen gui = Minecraft.getMinecraft().currentScreen;
+        if (gui instanceof JecaGui) {
+            return Optional.of((JecaGui) gui);
+        } else {
+            return Optional.empty();
+        }
+    }
+
     /**
      * @return The currently displayed {@link JecaGui}
      * Make sure the method is called when a {@link JecaGui} is displayed!
@@ -118,7 +174,6 @@ public class JecaGui extends GuiContainer {
         Objects.requireNonNull(ret);
         return ret;
     }
-
 
     private static void displayGuiUnsafe(boolean updateParent, boolean acceptsTransfer, IGui root) {
         Minecraft mc = Minecraft.getMinecraft();
@@ -145,6 +200,23 @@ public class JecaGui extends GuiContainer {
             last = gui;
             Minecraft.getMinecraft().displayGuiScreen(gui);
         }
+    }
+
+    @Nullable
+    public ILabel getLabelUnderMouse() {
+        int xMouse = Mouse.getEventX() * width / mc.displayWidth - guiLeft;
+        int yMouse = height - Mouse.getEventY() * height / mc.displayHeight - 1 - guiTop;
+        return root.getLabelUnderMouse(xMouse, yMouse);
+    }
+
+    /**
+     * called by {@link me.towdium.jecalculation.event.handlers.FMLBusEventHandler}
+     */
+    public static void onKey() {
+        if (ClientHandler.keyOpenGuiCraft.isPressed())
+            Controller.openGuiCraft();
+        if (ClientHandler.keyOpenGuiMath.isPressed())
+            Controller.openGuiMath();
     }
 
     public static void onGameTick() {
@@ -238,57 +310,12 @@ public class JecaGui extends GuiContainer {
         }
     }
 
-    /**
-     * This function handles events within the interface.
-     * Specifically, handles mouse wheel within interface.
-     * Different from {@link #handleMouseEvent()}, which is
-     * used to handle mouse event outside.
-     */
-    @Override
-    public void handleMouseInput() {
-        super.handleMouseInput();
-        int diff = Mouse.getEventDWheel() / 120;
-        if (diff != 0)
-            root.onScroll(this, Mouse.getEventX() * width / mc.displayWidth - guiLeft,
-                          height - Mouse.getEventY() * height / mc.displayHeight - 1 - guiTop, diff);
-    }
-
-    /**
-     * @return if the event is canceled
-     * This function handles click outside the rNormal region,
-     * especially the overlap with JEI overlay. It handles
-     * mouse event before JEI.
-     */
-    public boolean handleMouseEvent() {
-        JustEnoughCalculation.logger.info("handle mouse clicked");
-        int xMouse = Mouse.getEventX() * this.width / this.mc.displayWidth;
-        int yMouse = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
-        int button = Mouse.getEventButton();
-        if (Mouse.getEventButtonState()) {
-            if (hand != ILabel.EMPTY) {
-                hand = ILabel.EMPTY;
-                return true;
-            } else {
-                ILabel e = NEIPlugin.getLabelUnderMouse();
-                if (e != ILabel.EMPTY) {
-                    hand = e;
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     public void drawResource(Resource r, int xPos, int yPos) {
         drawResource(r, xPos, yPos, 0xFFFFFF);
     }
 
     public void drawResource(Resource r, int xPos, int yPos, int color) {
-        float red = (color >> 16 & 0xFF) / 255.0F;
-        float green = (color >> 8 & 0xFF) / 255.0F;
-        float blue = (color & 0xFF) / 255.0F;
-        float alpha = (~(color >> 24) & 0xFF) / 255.0F;
-        GlStateManager.color(red, green, blue, alpha);
+        setColor(color);
         mc.getTextureManager().bindTexture(r.getResourceLocation());
         drawTexturedModalRect(xPos, yPos, r.getXPos(), r.getYPos(), r.getXSize(), r.getYSize());
     }
@@ -348,16 +375,6 @@ public class JecaGui extends GuiContainer {
         GlStateManager.enableTexture2D();
     }
 
-    public void drawOverRectangle(int xPos, int yPos, int xSize, int ySize, int color) {
-        GlStateManager.disableLighting();
-        GlStateManager.disableDepth();
-        GlStateManager.colorMask(true, true, true, false);
-        this.drawGradientRect(xPos, yPos, xPos + xSize, yPos + ySize, color, color);
-        GlStateManager.colorMask(true, true, true, true);
-        GlStateManager.enableLighting();
-        GlStateManager.enableDepth();
-    }
-
     public int getStringWidth(String s) {
         return fontRendererObj.getStringWidth(s);
     }
@@ -409,7 +426,7 @@ public class JecaGui extends GuiContainer {
     }
 
     public void drawItemStack(int xPos, int yPos, ItemStack is, boolean centred) {
-        if (is.getItem() == null) {
+        if (ItemStackHelper.isEmpty(is)) {
             return;
         }
         if (centred) {
@@ -426,15 +443,15 @@ public class JecaGui extends GuiContainer {
         itemRender.zLevel = zLevel - 100F;
     }
 
-    @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-        JustEnoughCalculation.logger.info("mouse clicked");
-        super.mouseClicked(mouseX, mouseY, mouseButton);
-        boolean inGui = root.onClicked(this, mouseX - guiLeft, mouseY - guiTop, mouseButton);
-        if (!inGui) {
-            this.handleMouseEvent();
-        }
-    }
+    //    @Override
+    //    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+    //        JustEnoughCalculation.logger.info("mouse clicked");
+    //        super.mouseClicked(mouseX, mouseY, mouseButton);
+    //        boolean inGui = root.onClicked(this, mouseX - guiLeft, mouseY - guiTop, mouseButton);
+    //        if (!inGui) {
+    //            this.handleMouseEvent();
+    //        }
+    //    }
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) {
@@ -508,27 +525,8 @@ public class JecaGui extends GuiContainer {
     public static class ContainerNonTransfer extends JecContainer {
     }
 
-    public int getGuiLeft() {
-        return guiLeft;
-    }
-
-    public int getGuiTop() {
-        return guiTop;
-    }
-
-    public void drawHoveringText(String text, int x, int y) {
-        super.drawHoveringText(Collections.singletonList(text), x, y, fontRendererObj);
-    }
-
     public void drawHoveringText(List<String> textLines, int x, int y) {
         super.drawHoveringText(textLines, x, y, fontRendererObj);
     }
 
-    public int getXSize() {
-        return xSize;
-    }
-
-    public int getYSize() {
-        return ySize;
-    }
 }
