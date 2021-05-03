@@ -5,16 +5,22 @@ import codechicken.nei.api.IConfigureNEI;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.gui.JecaGui;
 
+import java.util.stream.Stream;
+
 public class NEICalculatorConfig implements IConfigureNEI {
 
     @Override
     public void loadConfig() {
-        System.out.println("loaded nei config");
-        String [] recipeType = new String[]{ "crafting", "crafting2x2", "smelting", "fuel", "brewing"};
-        for (String ident : recipeType) {
-            API.registerGuiOverlay(JecaGui.class, ident);
-            API.registerGuiOverlayHandler(JecaGui.class, new JecaOverlayHandler(), ident);
-        }
+        String[] baseOverlayIdentifiers = new String[]{"crafting", "crafting2x2", "smelting", "fuel", "brewing"};
+        String[] ae2OverlayIdentifiers = new String[]{"inscriber", "grindstone"};
+        /* For the recipeHandlers which extend `TemplateRecipeHandler` without override the `getOverlayIdentifier` function */
+        String[] nullOverlayIdentifiers = new String[]{null};
+        Stream.of(baseOverlayIdentifiers, ae2OverlayIdentifiers, nullOverlayIdentifiers)
+              .flatMap(Stream::of)
+              .forEach(ident -> {
+                  API.registerGuiOverlay(JecaGui.class, ident);
+                  API.registerGuiOverlayHandler(JecaGui.class, new JecaOverlayHandler(), ident);
+              });
     }
 
     @Override

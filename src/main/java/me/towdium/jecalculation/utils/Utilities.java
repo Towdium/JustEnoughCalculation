@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -17,9 +18,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.IIcon;
 import net.minecraftforge.fluids.Fluid;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.text.WordUtils;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -77,7 +80,8 @@ public class Utilities {
 
     public static String repeat(String s, int n) {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < n; i++) sb.append(s);
+        for (int i = 0; i < n; i++)
+            sb.append(s);
         return sb.toString();
     }
 
@@ -89,13 +93,46 @@ public class Utilities {
         return id.equals("minecraft") ? "Minecraft" : Loader.instance().getIndexedModList().get(id).getName();
     }
 
+    /**
+     * If fluid is lava or water, return 'Minecraft'.
+     * If has still icon or flowing icon, get the icon name, or return 'unknown';
+     * The icon name should be similar to 'modId:fluidId', then get the modId.
+     * Use the mod id to find in mod list, if not found, use the capitalized mod id to find in mod list;
+     * If still not found, return the capitalized mod id
+     * @param fluid fluid
+     * @return mod name
+     */
     public static String getModName(Fluid fluid) {
         String name = fluid.getName();
         if (name.equals("lava") || name.equals("water"))
             return "Minecraft";
-        else
-            return Loader.instance().getIndexedModList().get(fluid.getStillIcon().getIconName().split(":")[0])
-                         .getName();
+        else {
+            IIcon icon = getFluidIcon(fluid);
+            if (icon == null) {
+                return "Unknown";
+            }
+            String iconName = icon.getIconName();
+            String modId = iconName.split(":")[0];
+
+            Map<String, ModContainer> indexedModList = Loader.instance().getIndexedModList();
+            ModContainer modContainer = indexedModList.get(modId);
+            if(modContainer == null) {
+                String capitalizedModId =WordUtils.capitalize(modId);
+                modContainer = indexedModList.get(capitalizedModId);
+                if(modContainer == null) {
+                    return capitalizedModId;
+                }
+            }
+            return modContainer.getName();
+        }
+    }
+
+    private static IIcon getFluidIcon(Fluid fluid) {
+        IIcon icon = fluid.getFlowingIcon();
+        if(icon == null) {
+            icon = fluid.getStillIcon();
+        }
+        return icon;
     }
 
     public static NBTTagCompound getTag(ItemStack is) {
@@ -114,7 +151,8 @@ public class Utilities {
         @Nullable
         public V get(K a, K b) {
             V ret = data.get(new Pair<>(a, b));
-            if (ret == null) ret = data.get(new Pair<>(b, a));
+            if (ret == null)
+                ret = data.get(new Pair<>(b, a));
             return ret;
         }
     }
@@ -318,10 +356,12 @@ public class Utilities {
         }
 
         public boolean push(T obj, boolean replace) {
-            if (replace) data.pop();
+            if (replace)
+                data.pop();
             boolean ret = data.removeIf(t -> tester != null ? tester.test(t, obj) : t.equals(obj));
             data.addFirst(obj);
-            if (data.size() > limit) data.removeLast();
+            if (data.size() > limit)
+                data.removeLast();
             return ret;
         }
 
@@ -423,6 +463,7 @@ public class Utilities {
                 w.sb.append('[');
                 if (wrap)
                     w.indent++;
+                //noinspection unchecked
                 for (NBTBase i : (List<NBTBase>) tags.tagList) {
                     if (first)
                         first = false;
@@ -466,5 +507,11 @@ public class Utilities {
             return new Locale(parts[0], parts[1]);
         else
             return new Locale(parts[0], parts[1], parts[2]);
+    }
+
+    public static String[] mergeStringArrays(String[] ...arrays){
+        return Stream.of(arrays)
+                .flatMap(Stream::of)
+                .toArray(String[]::new);
     }
 }

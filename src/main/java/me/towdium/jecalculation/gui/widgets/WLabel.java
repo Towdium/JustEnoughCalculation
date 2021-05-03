@@ -5,11 +5,14 @@ import codechicken.nei.recipe.GuiCraftingRecipe;
 import codechicken.nei.recipe.GuiUsageRecipe;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.utils.IllegalPositionException;
 import me.towdium.jecalculation.utils.Utilities;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -118,16 +121,19 @@ public class WLabel implements IWidget {
                 } else
                     return false;
             case RESULT:
-                // open NEI
+                // open NEI recipe gui
                 Object item = label.getRepresentation();
-                if (item != null) {
+                if ((item instanceof ItemStack || item instanceof FluidStack)) {
+                    String id = item instanceof ItemStack ? "item" : "liquid";
                     if (button == 0) {
-                        GuiCraftingRecipe.openRecipeGui("item", item);
+                        GuiCraftingRecipe.openRecipeGui(id, item);
                         return true;
                     } else if (button == 1) {
-                        GuiUsageRecipe.openRecipeGui("item", item);
+                        GuiUsageRecipe.openRecipeGui(id, item);
                         return true;
                     }
+                } else if (item != null) {
+                    JustEnoughCalculation.logger.warn("unknown label representation " + item);
                 }
                 return false;
             case PICKER:

@@ -1,5 +1,6 @@
 package me.towdium.jecalculation.gui.guis;
 
+import codechicken.nei.PositionedStack;
 import codechicken.nei.recipe.IRecipeHandler;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
@@ -55,8 +56,8 @@ public class GuiRecipe extends WContainer implements IGui {
         Controller.addRecipe(group.getText(), toRecipe());
         JecaGui.displayParent();
     });
-    WButton label = new WButtonIcon(45, 32, 20, 20, BTN_LABEL, "recipe.label")
-            .setListener(i -> JecaGui.displayGui(new GuiLabel((l) -> {
+    WButton label = new WButtonIcon(45, 32, 20, 20, BTN_LABEL, "recipe.label").setListener(
+            i -> JecaGui.displayGui(new GuiLabel((l) -> {
                 JecaGui.displayParent();
                 JecaGui.getCurrent().hand = l;
             })));
@@ -147,19 +148,22 @@ public class GuiRecipe extends WContainer implements IGui {
         disambCache = new HashMap<>();
 
         // input
-        recipe.getIngredientStacks(recipeIndex).stream()
-                                                  .map((positionedStack) -> positionedStack.items)
-                                                  .forEach(i -> merge(input, Arrays.asList(i), recipe));
+        recipe.getIngredientStacks(recipeIndex)
+              .stream()
+              .map((positionedStack) -> positionedStack.items)
+              .forEach(i -> merge(input, Arrays.asList(i), recipe));
         // output
-        merge(output, Arrays.asList(recipe.getResultStack(recipeIndex).items), recipe);
+        PositionedStack resultStack = recipe.getResultStack(recipeIndex);
+        if (resultStack != null)
+            merge(output, Arrays.asList(resultStack.items), recipe);
 
         // catalyst. Ignore multiple catalyst
-        NEIPlugin.getCatalyst(recipe).map(ILabel.Converter::from).ifPresent(catalyst -> {
-            this.catalyst.setLabel(catalyst, 0);
-        });
+        NEIPlugin.getCatalyst(recipe)
+                 .map(ILabel.Converter::from)
+                 .ifPresent(catalyst -> this.catalyst.setLabel(catalyst, 0));
 
         // other. Unused. For example fuel in furnaces.
-        recipe.getOtherStacks(recipeIndex).stream();
+        //        recipe.getOtherStacks(recipeIndex).stream();
 
         this.input.setLabel(sort(input, 0), 0);
         this.output.setLabel(sort(output, 21), 0);
@@ -167,7 +171,9 @@ public class GuiRecipe extends WContainer implements IGui {
     }
 
     private void merge(ArrayList<Trio<ILabel, CostList, CostList>> dst, List<ItemStack> gi, IRecipeHandler context) {
-        List<ILabel> list = gi.stream().map(ILabel.Converter::from).filter(i -> i != ILabel.EMPTY)
+        List<ILabel> list = gi.stream()
+                              .map(ILabel.Converter::from)
+                              .filter(i -> i != ILabel.EMPTY)
                               .collect(Collectors.toList());
         if (list.isEmpty())
             return;

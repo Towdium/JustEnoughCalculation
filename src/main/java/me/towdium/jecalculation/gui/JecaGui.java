@@ -96,12 +96,12 @@ public class JecaGui extends GuiContainer {
             if (diff != 0)
                 gui.root.onScroll(gui, mouseX, mouseY, diff);
         } else if (Mouse.getEventButtonState()) {
-            if (gui.root.onClicked(gui, mouseX, mouseY, button))
+            if (gui.root.onClicked(gui, mouseX, mouseY, button)) {
                 return true;
-            else if (gui.hand != ILabel.EMPTY) {
-                gui.hand = ILabel.EMPTY;
+            } else if (gui.hand != ILabel.EMPTY) {
+                gui.hand = button == 0 ? NEIPlugin.getLabelUnderMouse() : ILabel.EMPTY;
                 return true;
-            } else {
+            } else if (button == 0) {
                 ILabel e = NEIPlugin.getLabelUnderMouse();
                 if (e != ILabel.EMPTY) {
                     gui.hand = e;
@@ -171,8 +171,7 @@ public class JecaGui extends GuiContainer {
     public static JecaGui getCurrent() {
         GuiScreen gui = Minecraft.getMinecraft().currentScreen;
         JecaGui ret = gui instanceof JecaGui ? (JecaGui) gui : null;
-        Objects.requireNonNull(ret);
-        return ret;
+        return Objects.requireNonNull(ret);
     }
 
     private static void displayGuiUnsafe(boolean updateParent, boolean acceptsTransfer, IGui root) {
@@ -267,6 +266,7 @@ public class JecaGui extends GuiContainer {
     @Override
     // modified from vanilla
     public void drawHoveringText(List lines, int x, int y, FontRenderer font) {
+        //noinspection unchecked
         List<String> textLines = (List<String>) lines;
         if (!textLines.isEmpty()) {
             GlStateManager.disableRescaleNormal();
@@ -347,11 +347,12 @@ public class JecaGui extends GuiContainer {
     }
 
     public void drawFluid(Fluid f, int xPos, int yPos, int xSize, int ySize) {
-        IIcon fluidStillIcon = f.getStillIcon();
+        IIcon fluidIcon = f.getFlowingIcon();
+        if(fluidIcon == null) fluidIcon = f.getStillIcon();
         mc.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
         setColor(f.getColor() & 0x00FFFFFF);
-        if (fluidStillIcon != null)
-            drawTexturedModelRectFromIcon(xPos, yPos, fluidStillIcon, xSize, ySize);
+        if (fluidIcon != null)
+            drawTexturedModelRectFromIcon(xPos, yPos, fluidIcon, xSize, ySize);
     }
 
     public void drawRectangle(int xPos, int yPos, int xSize, int ySize, int color) {
@@ -366,10 +367,10 @@ public class JecaGui extends GuiContainer {
         GlStateManager.color(f, f1, f2, f3);
         GlStateManager.disableAlpha();
         tessellator.startDrawingQuads();
-        tessellator.addVertex((double) xPos, (double) bottom, 0.0D);
-        tessellator.addVertex((double) right, (double) bottom, 0.0D);
-        tessellator.addVertex((double) right, (double) yPos, 0.0D);
-        tessellator.addVertex((double) xPos, (double) yPos, 0.0D);
+        tessellator.addVertex(xPos, bottom, 0.0D);
+        tessellator.addVertex(right, bottom, 0.0D);
+        tessellator.addVertex(right, yPos, 0.0D);
+        tessellator.addVertex(xPos, yPos, 0.0D);
         tessellator.draw();
         GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();
