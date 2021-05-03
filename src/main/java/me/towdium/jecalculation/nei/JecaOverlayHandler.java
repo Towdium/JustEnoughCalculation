@@ -13,8 +13,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 public class JecaOverlayHandler implements IOverlayHandler {
     @Override
     public void overlayRecipe(GuiContainer firstGui, IRecipeHandler recipe, int recipeIndex, boolean shift) {
-        JustEnoughCalculation.logger.info("shift ? " + shift);
-        if (shift && firstGui instanceof JecaGui) {
+        if (firstGui instanceof JecaGui) {
             JecaGui gui = (JecaGui) firstGui;
             if (gui.root instanceof GuiRecipe) {
                 ((GuiRecipe) gui.root).transfer(recipe, recipeIndex);
@@ -23,9 +22,6 @@ public class JecaOverlayHandler implements IOverlayHandler {
                 JecaGui.displayGui(true, true, guiRecipe);
                 guiRecipe.transfer(recipe, recipeIndex);
             }
-        } else {
-            System.out.println(firstGui.getClass().toString());
         }
-
     }
 }

@@ -86,7 +86,8 @@ public class JecaGui extends GuiContainer {
      */
     public static boolean onMouse() {
         Optional<JecaGui> optionalJecaGui = currentJecaGui();
-        if(!optionalJecaGui.isPresent()) return false;
+        if (!optionalJecaGui.isPresent())
+            return false;
         JecaGui gui = optionalJecaGui.get();
         int mouseX = getMouseX();
         int mouseY = getMouseY();
@@ -348,7 +349,8 @@ public class JecaGui extends GuiContainer {
 
     public void drawFluid(Fluid f, int xPos, int yPos, int xSize, int ySize) {
         IIcon fluidIcon = f.getFlowingIcon();
-        if(fluidIcon == null) fluidIcon = f.getStillIcon();
+        if (fluidIcon == null)
+            fluidIcon = f.getStillIcon();
         mc.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
         setColor(f.getColor() & 0x00FFFFFF);
         if (fluidIcon != null)

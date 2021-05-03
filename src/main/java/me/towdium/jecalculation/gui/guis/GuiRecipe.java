@@ -2,6 +2,7 @@ package me.towdium.jecalculation.gui.guis;
 
 import codechicken.nei.PositionedStack;
 import codechicken.nei.recipe.IRecipeHandler;
+import me.towdium.jecalculation.nei.Adapter;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.structure.CostList;
@@ -12,7 +13,6 @@ import me.towdium.jecalculation.nei.NEIPlugin;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import me.towdium.jecalculation.utils.wrappers.Trio;
-import net.minecraft.item.ItemStack;
 import org.lwjgl.input.Keyboard;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -147,15 +147,15 @@ public class GuiRecipe extends WContainer implements IGui {
         ArrayList<Trio<ILabel, CostList, CostList>> output = new ArrayList<>();
         disambCache = new HashMap<>();
 
+
+        List<Object[]> recipeInputs = new ArrayList<>();
+        List<Object[]> recipeOutputs = new ArrayList<>();
+        Adapter.handleRecipe(recipe, recipeIndex, recipeInputs, recipeOutputs);
+
         // input
-        recipe.getIngredientStacks(recipeIndex)
-              .stream()
-              .map((positionedStack) -> positionedStack.items)
-              .forEach(i -> merge(input, Arrays.asList(i), recipe));
+        recipeInputs.forEach(i -> merge(input, Arrays.asList(i), recipe));
         // output
-        PositionedStack resultStack = recipe.getResultStack(recipeIndex);
-        if (resultStack != null)
-            merge(output, Arrays.asList(resultStack.items), recipe);
+        recipeOutputs.forEach(o -> merge(output, Arrays.asList(o), recipe));
 
         // catalyst. Ignore multiple catalyst
         NEIPlugin.getCatalyst(recipe)
@@ -170,7 +170,7 @@ public class GuiRecipe extends WContainer implements IGui {
         refresh();
     }
 
-    private void merge(ArrayList<Trio<ILabel, CostList, CostList>> dst, List<ItemStack> gi, IRecipeHandler context) {
+    private void merge(ArrayList<Trio<ILabel, CostList, CostList>> dst, List<Object> gi, IRecipeHandler context) {
         List<ILabel> list = gi.stream()
                               .map(ILabel.Converter::from)
                               .filter(i -> i != ILabel.EMPTY)

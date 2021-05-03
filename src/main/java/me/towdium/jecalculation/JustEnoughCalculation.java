@@ -1,11 +1,13 @@
 package me.towdium.jecalculation;
 
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import me.towdium.jecalculation.nei.Adapter;
 import me.towdium.jecalculation.nei.NEIPlugin;
 import me.towdium.jecalculation.network.ClientHandler;
 import org.apache.logging.log4j.LogManager;
@@ -41,6 +43,8 @@ public class JustEnoughCalculation {
     @Mod.EventHandler
     public static void init(FMLInitializationEvent event) {
         handler.init();
+        Adapter.init();
+
     }
 
     @Mod.EventHandler
