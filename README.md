@@ -16,14 +16,16 @@ For all the release files, description or videos, refer to
 the [release page](https://minecraft.curseforge.com/projects/just-enough-calculation).
 
 ## Known Issues
-
-- [ ] 无法识别流体
-- [ ] OreDict 部分渲染存在问题
-- [ ] OreDict 识别存在问题
-- [ ] capability
-- [ ] gui 界面 z-level 过高，会遮住 nei 的各种 gui
-- [ ] 重启游戏之后 最近物品 存在问题
-- [ ] 判断 NEI 版本，适配旧版本
+- [ ] Client Only
+- [ ] Fluid from NEI ItemPanel will be recognized as item
+- [ ] **Capability**
+    - [ ] Some OreDict items renders wrong
+    - [ ] OreDict have many other problems
+    - [ ] Recent records have problem after reboot game 
+- [ ] GUI will cover the NEI's GUI like tooltip on item panel
+- [ ] Check the nei version and adapter the old version.
+- [ ] Fluid from recipe needs lots of adapters, see [Adapter](./src/main/java/me/towdium/jecalculation/nei/Adapter.java). 
+  Currently, only support Forestry
 
 
 [1]: http://cf.way2muchnoise.eu/full_just-enough-calculation_downloads.svg
