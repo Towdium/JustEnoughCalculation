@@ -8,10 +8,12 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Spliterator;
 import java.util.Spliterators;
 
+@ParametersAreNonnullByDefault
 public class NBTHelper {
     /**
      * Get an NBTTagCompound from this stack's NBT data.
@@ -46,6 +48,12 @@ public class NBTHelper {
             itemStack.setTagInfo(key, nbtTagCompound);
             return nbtTagCompound;
         }
+    }
+
+    public static NBTTagCompound serializeNBT(ItemStack stack) {
+        NBTTagCompound ret = new NBTTagCompound();
+        stack.writeToNBT(ret);
+        return ret;
     }
 
 }

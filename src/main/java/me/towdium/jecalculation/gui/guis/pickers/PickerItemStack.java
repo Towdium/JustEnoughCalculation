@@ -26,8 +26,6 @@ public class PickerItemStack extends IPicker.Impl implements IGui {
     WButton bConfirm = new WButtonIcon(149, 7, 20, 20, BTN_YES, "item_stack.confirm").setListener(i -> callback.accept(label.getLabel()));
     WButton bNbtN = new WButtonIcon(49, 7, 20, 20, BTN_NBT_N, "item_stack.nbt_normal").setListener(i -> setFNbt(true));
     WButton bNbtF = new WButtonIcon(49, 7, 20, 20, BTN_NBT_F, "item_stack.nbt_fuzzy").setListener(i -> setFNbt(false));
-    WButton bCapN = new WButtonIcon(68, 7, 20, 20, BTN_CAP_N, "item_stack.capability_normal").setListener(i -> setFCap(true));
-    WButton bCapF = new WButtonIcon(68, 7, 20, 20, BTN_CAP_F, "item_stack.capability_fuzzy").setListener(i -> setFCap(false));
     WButton bMetaN = new WButtonIcon(30, 7, 20, 20, BTN_META_N, "item_stack.meta_normal").setListener(i -> setFMeta(true));
     WButton bMetaF = new WButtonIcon(30, 7, 20, 20, BTN_META_F, "item_stack.meta_fuzzy").setListener(i -> setFMeta(false));
     ILabel raw = ILabel.EMPTY;
@@ -40,12 +38,10 @@ public class PickerItemStack extends IPicker.Impl implements IGui {
 
     public void update(ILabel l) {
         raw = l;
-        setFCap(false);
         setFMeta(false);
         setFNbt(false);
         boolean b = l == ILabel.EMPTY;
         bNbtN.setDisabled(b);
-        bCapN.setDisabled(b);
         bMetaN.setDisabled(b);
         bConfirm.setDisabled(b);
     }
@@ -58,10 +54,6 @@ public class PickerItemStack extends IPicker.Impl implements IGui {
         setF(b, bMetaN, bMetaF, () -> fMeta = b);
     }
 
-    private void setFCap(boolean b) {
-        setF(b, bCapN, bCapF, () -> fCap = b);
-    }
-
     private void setF(boolean b, WButton be, WButton bd, Runnable r) {
         remove(be, bd);
         if (b) add(bd);
@@ -69,7 +61,7 @@ public class PickerItemStack extends IPicker.Impl implements IGui {
         r.run();
         if (raw instanceof LItemStack) {
             LItemStack lis = (LItemStack) raw;
-            label.setLabel(lis.copy().setFCap(fCap).setFMeta(fMeta).setFNbt(fNbt));
+            label.setLabel(lis.copy().setFMeta(fMeta).setFNbt(fNbt));
         }
     }
 }

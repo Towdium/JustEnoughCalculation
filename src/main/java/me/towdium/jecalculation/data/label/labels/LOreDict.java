@@ -23,7 +23,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
 /**
@@ -70,9 +69,13 @@ public class LOreDict extends ILabel.Impl {
         if (a instanceof LOreDict && b instanceof LItemStack) {
             LOreDict lod = (LOreDict) a;
             LItemStack lis = (LItemStack) b;
-            return lod.getAmount() * lis.getAmount() < 0 &&
-                   OreDictionary.getOres(lod.name).stream().map(Converter::from)
-                                .anyMatch(i -> LItemStack.merge(i, lis));
+            if (lod.getAmount() * lis.getAmount() < 0) {
+                for (ItemStack ore : OreDictionary.getOres(lod.name)) {
+                    if (LItemStack.merge(Converter.from(ore), lis)) {
+                        return true;
+                    }
+                }
+            }
         }
         return false;
     }
@@ -110,14 +113,39 @@ public class LOreDict extends ILabel.Impl {
             return false;
 
         Wrapper<Boolean> acceptable = new Wrapper<>(true);
-        BiPredicate<ILabel, ItemStack> match = (l, o) -> l instanceof LItemStack &&
-                                                         OreDictionary.itemMatches(o, ((LItemStack) l).getRep(), false);
-        if (biDir)
-            ores.stream().filter(ore -> labels.stream().noneMatch(label -> match.test(label, ore))).findAny()
-                .ifPresent(i -> acceptable.value = false);
-        labels.stream().filter(label -> ores.stream().noneMatch(ore -> match.test(label, ore))).findAny()
-              .ifPresent(i -> acceptable.value = false);
+        if (biDir) {
+            for (ItemStack ore : ores) {
+                boolean noneMatch = true;
+                for (ILabel label : labels) {
+                    if (checkMatch(label, ore)) {
+                        noneMatch = false;
+                        break;
+                    }
+                }
+                if (noneMatch) {
+                    acceptable.value = false;
+                    break;
+                }
+            }
+        }
+        for (ILabel label : labels) {
+            boolean noneMatch = true;
+            for (ItemStack ore : ores) {
+                if (checkMatch(label, ore)) {
+                    noneMatch = false;
+                    break;
+                }
+            }
+            if (noneMatch) {
+                acceptable.value = false;
+                break;
+            }
+        }
         return acceptable.value;
+    }
+
+    private static boolean checkMatch(ILabel l, ItemStack o) {
+        return l instanceof LItemStack && OreDictionary.itemMatches(o, ((LItemStack) l).getRep(), false);
     }
 
     @Override

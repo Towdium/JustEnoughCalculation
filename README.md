@@ -15,13 +15,25 @@ This mod is focused on calculation, so you might find it powerful and high perfo
 For all the release files, description or videos, refer to
 the [release page](https://minecraft.curseforge.com/projects/just-enough-calculation).
 
+## Features
+
+- Recipe from NEI recipe handler (recipe gui)
+  - [x] vanilla
+  - [x] gregtech
+  - [x] Forestry
+  - [ ] AE2
+  - [ ] Others
+- [x] Item from NEI item panel
+- [ ] Fluid from NEI item panel (Need to get fluid from labels)
+- [x] OreDictionary recognize
+
+
 ## Known Issues
 - [ ] Client Only
 - [ ] Fluid from NEI ItemPanel will be recognized as item
 - [ ] **Capability**
     - [ ] Some OreDict items renders wrong
-    - [ ] OreDict have many other problems
-    - [ ] Recent records have problem after reboot game 
+    - [ ] OreDict have many some problems
 - [ ] GUI will cover the NEI's GUI like tooltip on item panel
 - [ ] Check the nei version and adapter the old version.
 - [ ] Fluid from recipe needs lots of adapters, see [Adapter](./src/main/java/me/towdium/jecalculation/nei/Adapter.java). 

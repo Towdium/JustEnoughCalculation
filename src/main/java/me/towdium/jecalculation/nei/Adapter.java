@@ -4,7 +4,9 @@ import codechicken.nei.PositionedStack;
 import codechicken.nei.recipe.IRecipeHandler;
 import cpw.mods.fml.common.Loader;
 import me.towdium.jecalculation.JustEnoughCalculation;
+import me.towdium.jecalculation.nei.adapter.AE2;
 import me.towdium.jecalculation.nei.adapter.Forestry;
+import me.towdium.jecalculation.nei.adapter.GregTech;
 import me.towdium.jecalculation.nei.adapter.IAdapter;
 
 import java.util.ArrayList;
@@ -17,6 +19,14 @@ public class Adapter {
         if (Loader.isModLoaded("Forestry")) {
             JustEnoughCalculation.logger.info("Forestry is installed");
             adapters.add(new Forestry());
+        }
+        if (Loader.isModLoaded("appliedenergistics2")) {
+            JustEnoughCalculation.logger.info("ae2 installed");
+            adapters.add(new AE2());
+        }
+        if( Loader.isModLoaded("gregtech")) {
+            JustEnoughCalculation.logger.info("gregtech installed");
+            adapters.add(new GregTech());
         }
     }
 

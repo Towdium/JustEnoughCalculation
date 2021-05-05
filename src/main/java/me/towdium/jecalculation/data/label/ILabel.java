@@ -277,7 +277,6 @@ public interface ILabel {
         }
 
         public Pair<List<ILabel>, List<ILabel>> guess(List<ILabel> labels, @Nullable IRecipeHandler context) {
-            List<ILabel> ret = new ArrayList<>();
             List<ILabel> suggest = new ReversedIterator<>(handlers.get(Priority.SUGGEST)).stream().flatMap(
                     h -> h.convert(labels, context).stream()).collect(Collectors.toList());
             List<ILabel> fallback = new ReversedIterator<>(handlers.get(Priority.FALLBACK)).stream().flatMap(

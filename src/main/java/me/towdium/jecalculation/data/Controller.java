@@ -32,29 +32,16 @@ import java.util.stream.Stream;
 @ParametersAreNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class Controller {
-    public static final String KEY_RECIPES = "recipes";
     public static final String KEY_MATH = "math";
     public static final String KEY_CRAFT = "craft";
     public static final String KEY_PLAYER = "player";
 
-    static RecordPlayer rPlayerServer;
     static RecordPlayer rPlayerClient;
     static RecordCraft rCraftClient;
     static RecordMath rMathClient;
 
-    public static void setRecordsServer(RecordPlayer r) {
-        rPlayerServer = r;
-    }
-
-    public static boolean isServerActive() {
-        return rPlayerServer != null;
-    }
-
     static Recipes getRecipes() {
-        if (isServerActive())
-            return rPlayerServer.recipes;
-        else
-            return rPlayerClient.recipes;
+        return rPlayerClient.recipes;
     }
 
     static Optional<ItemStack> getStack() {
@@ -72,7 +59,9 @@ public class Controller {
             JustEnoughCalculation.logger.warn("File " + f.getAbsolutePath() + " contains invalid records.");
             return nbt == null ? null : new Recipes(nbt);
         };
-        return Arrays.stream(fs).map(i -> new Pair<>(i.getName(), read.apply(i))).filter(i -> i.two != null)
+        return Arrays.stream(fs)
+                     .map(i -> new Pair<>(i.getName(), read.apply(i)))
+                     .filter(i -> i.two != null)
                      .collect(Collectors.toList());
     }
 
@@ -86,8 +75,8 @@ public class Controller {
     private static void export(String s, Function<Recipes, NBTTagCompound> r) {
         File f = JecaConfig.getDataFile(s);
         Utilities.Json.write(r.apply(getRecipes()), f);
-        Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentTranslation(
-                "jecalculation.chat.export", f.getAbsolutePath()));
+        Minecraft.getMinecraft().thePlayer.addChatMessage(
+                new ChatComponentTranslation("jecalculation.chat.export", f.getAbsolutePath()));
     }
 
     public static void export(String group) {
@@ -100,12 +89,11 @@ public class Controller {
 
     @Nullable
     public static String getLast() {
-        return isServerActive() ? rPlayerServer.last : rPlayerClient.last;
+        return rPlayerClient.last;
     }
 
     static void setLast(String last) {
-        if (isServerActive()) rPlayerServer.last = last;
-        else rPlayerClient.last = last;
+        rPlayerClient.last = last;
     }
 
     public static List<String> getGroups() {
@@ -180,20 +168,11 @@ public class Controller {
     }
 
     private static <T extends IRecord> void setR(T t, Consumer<T> c, String s) {
-        if (!isServerActive()) c.accept(t);
-        else {
-            Optional<ItemStack> ois = getStack();
-            ois.ifPresent(is -> {
-                Utilities.getTag(is).setTag(s, t.serialize());
-            });
-        }
+        c.accept(t);
     }
 
     public static <T> T getR(T t, String s, Function<NBTTagCompound, T> f) {
-        if (!isServerActive()) return t;
-        else return f.apply(getStack()
-                                    .map(i -> Utilities.getTag(i).getCompoundTag(s))
-                                    .orElse(new NBTTagCompound()));
+        return t;
     }
 
     /**
@@ -207,8 +186,10 @@ public class Controller {
     public static boolean hasDuplicate(Recipe r, String group, int index) {
         Recipes.RecipeIterator ri = recipeIterator();
         return ri.stream().anyMatch(i -> {
-            if (ri.getIndex() == index && ri.getGroup().equals(group)) return false;
-            else return i.equals(r);
+            if (ri.getIndex() == index && ri.getGroup().equals(group))
+                return false;
+            else
+                return i.equals(r);
         });
     }
 
@@ -227,7 +208,9 @@ public class Controller {
         if (nbt != null) {
             rCraftClient = new RecordCraft(nbt.getCompoundTag(KEY_CRAFT));
             rMathClient = new RecordMath(nbt.getCompoundTag(KEY_MATH));
-            rPlayerClient = nbt.hasKey(KEY_PLAYER) ? new RecordPlayer(nbt.getCompoundTag(KEY_PLAYER)) : new RecordPlayer();
+            rPlayerClient = nbt.hasKey(KEY_PLAYER) ?
+                            new RecordPlayer(nbt.getCompoundTag(KEY_PLAYER)) :
+                            new RecordPlayer();
         } else {
             rPlayerClient = new RecordPlayer();
             rCraftClient = new RecordCraft(new NBTTagCompound());
@@ -254,16 +237,12 @@ public class Controller {
     }
 
     public static void openGuiCraft(boolean scheduled) {
-        if (!Controller.isServerActive()) JecaGui.displayGui(true, true, scheduled, new GuiCraft());
-        else Minecraft.getMinecraft().thePlayer.addChatMessage(
-                new ChatComponentTranslation("jecalculation.chat.server_mode"));
+        JecaGui.displayGui(true, true, scheduled, new GuiCraft());
     }
 
 
     public static void openGuiMath(boolean scheduled) {
-        if (!Controller.isServerActive()) JecaGui.displayGui(true, true, scheduled, new GuiMath());
-        else Minecraft.getMinecraft().thePlayer.addChatMessage(
-                new ChatComponentTranslation("jecalculation.chat.server_mode"));
+        JecaGui.displayGui(true, true, scheduled, new GuiMath());
     }
 
 

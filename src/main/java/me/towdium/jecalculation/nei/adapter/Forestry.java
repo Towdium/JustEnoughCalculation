@@ -34,7 +34,7 @@ public class Forestry implements IAdapter {
     private void bottler(RecipeHandlerBase recipe, int recipeIndex, List<Object[]> inputs) {
         if (recipe instanceof NEIHandlerBottler) {
             List<List<FluidStack>> fluids = getFluids(recipe, recipeIndex);
-            if(fluids.size() >= 1)
+            if (fluids.size() >= 1)
                 inputs.add(fluids.get(0).toArray());
         }
     }
@@ -42,7 +42,7 @@ public class Forestry implements IAdapter {
     private void carpenter(RecipeHandlerBase recipe, int recipeIndex, List<Object[]> inputs) {
         if (recipe instanceof NEIHandlerCarpenter) {
             List<List<FluidStack>> fluids = getFluids(recipe, recipeIndex);
-            if(fluids.size() >= 1)
+            if (fluids.size() >= 1)
                 inputs.add(fluids.get(0).toArray());
         }
     }
@@ -50,22 +50,20 @@ public class Forestry implements IAdapter {
     private void centrifuge(RecipeHandlerBase recipe, int recipeIndex, List<Object[]> outputs) {
         if (recipe instanceof NEIHandlerCentrifuge) {
             List<PositionedStack> otherStacks = recipe.getOtherStacks(recipeIndex);
-            otherStacks.stream()
-                       .map(positionedStack -> positionedStack.items)
-                       .forEach(outputs::add);
+            otherStacks.stream().map(positionedStack -> positionedStack.items).forEach(outputs::add);
         }
     }
 
     private void fabricator(RecipeHandlerBase recipe, int recipeIndex, List<Object[]> inputs) {
         if (recipe instanceof NEIHandlerFabricator) {
             List<List<FluidStack>> fluids = getFluids(recipe, recipeIndex);
-            if(fluids.size() >= 1)
+            if (fluids.size() >= 1)
                 inputs.add(fluids.get(0).toArray());
         }
     }
 
     private void fermenter(RecipeHandlerBase recipe, int recipeIndex, List<Object[]> inputs, List<Object[]> outputs) {
-        if(recipe instanceof NEIHandlerFermenter) {
+        if (recipe instanceof NEIHandlerFermenter) {
             List<PositionedFluidTank> tanks = getTanks(recipe, recipeIndex);
             tanks.forEach(tank -> {
                 Object[] fluids = Arrays.stream(tank.tanks).map(FluidTank::getFluid).toArray();
@@ -81,14 +79,14 @@ public class Forestry implements IAdapter {
     }
 
     private void moistener(RecipeHandlerBase recipe, int recipeIndex, List<Object[]> inputs, List<Object[]> outputs) {
-        if(recipe instanceof NEIHandlerMoistener) {
+        if (recipe instanceof NEIHandlerMoistener) {
             List<List<FluidStack>> fluids = getFluids(recipe, recipeIndex);
-            if(fluids.size() >= 1)
+            if (fluids.size() >= 1)
                 inputs.add(fluids.get(0).toArray());
             List<PositionedStack> otherStacks = recipe.getOtherStacks(recipeIndex);
             otherStacks.forEach(positionedStack -> {
                 ItemStack[] items = positionedStack.items;
-                if(positionedStack.relx == 34) {
+                if (positionedStack.relx == 34) {
                     // item
                     inputs.add(items);
                 } else {
@@ -100,18 +98,18 @@ public class Forestry implements IAdapter {
     }
 
     private void squeezer(RecipeHandlerBase recipe, int recipeIndex, List<Object[]> inputs, List<Object[]> outputs) {
-        if(recipe instanceof NEIHandlerSqueezer) {
+        if (recipe instanceof NEIHandlerSqueezer) {
             List<List<FluidStack>> fluids = getFluids(recipe, recipeIndex);
-            if(fluids.size() >= 1)
+            if (fluids.size() >= 1)
                 outputs.add(fluids.get(0).toArray());
         }
     }
 
     private void still(RecipeHandlerBase recipe, int recipeIndex, List<Object[]> inputs, List<Object[]> outputs) {
-        if(recipe instanceof NEIHandlerStill) {
+        if (recipe instanceof NEIHandlerStill) {
             getTanks(recipe, recipeIndex).forEach(tank -> {
                 Object[] fluids = Arrays.stream(tank.tanks).map(FluidTank::getFluid).toArray();
-                if(tank.position.x == 30) {
+                if (tank.position.x == 30) {
                     // input
                     inputs.add(fluids);
                 } else {

@@ -20,6 +20,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.text.WordUtils;
@@ -126,6 +127,8 @@ public class Utilities {
             return modContainer.getName();
         }
     }
+
+
 
     private static IIcon getFluidIcon(Fluid fluid) {
         IIcon icon = fluid.getFlowingIcon();
