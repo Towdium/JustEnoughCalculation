@@ -176,7 +176,6 @@ public class Utilities {
         public long getTime() {
             return running ? System.currentTimeMillis() - time : 0;
         }
-
     }
 
     @SuppressWarnings("UnusedReturnValue")
@@ -195,7 +194,6 @@ public class Utilities {
         public int next() {
             return current + 1 == total ? 0 : current + 1;
         }
-
 
         public int prev() {
             return current == 0 ? total - 1 : current - 1;

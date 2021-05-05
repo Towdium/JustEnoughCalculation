@@ -267,10 +267,6 @@ public interface ILabel {
             return guess.isEmpty() ? labels.get(0) : guess.get(0);
         }
 
-        public ILabel first(List<ILabel> labels) {
-            return first(labels, null);
-        }
-
         // to test if the labels can be converted to other labels (like oreDict)
         public Pair<List<ILabel>, List<ILabel>> guess(List<ILabel> labels) {
             return guess(labels, null);
@@ -467,7 +463,7 @@ public interface ILabel {
             return (int) (amount ^ (percent ? 1 : 0));
         }
 
-        protected static Merger.MergerFunction form(Class a, Class b, BiPredicate<ILabel, ILabel> p) {
+        protected static Merger.MergerFunction form(Class<?> a, Class<?> b, BiPredicate<ILabel, ILabel> p) {
             return (c, d) -> {
                 if (a.isInstance(d) && b.isInstance(c)) {
                     ILabel tmp = c;

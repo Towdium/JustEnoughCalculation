@@ -37,8 +37,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static codechicken.lib.gui.GuiDraw.renderEngine;
-
 /**
  * Author: towdium
  * Date:   8/12/17.
@@ -204,9 +202,7 @@ public class JecaGui extends GuiContainer {
 
     @Nullable
     public ILabel getLabelUnderMouse() {
-        int xMouse = Mouse.getEventX() * width / mc.displayWidth - guiLeft;
-        int yMouse = height - Mouse.getEventY() * height / mc.displayHeight - 1 - guiTop;
-        return root.getLabelUnderMouse(xMouse, yMouse);
+        return root.getLabelUnderMouse(getMouseX(), getMouseY());
     }
 
     /**
@@ -439,8 +435,11 @@ public class JecaGui extends GuiContainer {
         float zLevel = itemRender.zLevel += 100F;
         GlStateManager.enableDepth();
         RenderHelper.enableGUIStandardItemLighting();
-        itemRender.renderItemAndEffectIntoGUI(fontRendererObj, renderEngine, is, xPos, yPos);
-        itemRender.renderItemOverlayIntoGUI(fontRendererObj, renderEngine, is, xPos, yPos);
+        FontRenderer font = is.getItem().getFontRenderer(is);
+        if (font == null)
+            font = this.fontRendererObj;
+        itemRender.renderItemAndEffectIntoGUI(font, Minecraft.getMinecraft().renderEngine, is, xPos, yPos);
+        itemRender.renderItemOverlayIntoGUI(font, Minecraft.getMinecraft().renderEngine, is, xPos, yPos);
         RenderHelper.disableStandardItemLighting();
         GlStateManager.disableDepth();
         itemRender.zLevel = zLevel - 100F;

@@ -25,19 +25,21 @@ the [release page](https://minecraft.curseforge.com/projects/just-enough-calcula
   - [ ] Others
 - [x] Item from NEI item panel
 - [ ] Fluid from NEI item panel (Need to get fluid from labels)
-- [x] OreDictionary recognize
+- [x] OreDictionary recognize'
 
+## TODO
+
+- Backport the 1.16 feature
+  - [ ] Disambiguation in picker
+  - [ ] Infinite recipe inputs, outputs and catalysts)
 
 ## Known Issues
 - [ ] Client Only
 - [ ] Fluid from NEI ItemPanel will be recognized as item
-- [ ] **Capability**
-    - [ ] Some OreDict items renders wrong
-    - [ ] OreDict have many some problems
+- [ ] Some OreDict items renders wrong with overlay (Now removed the overlay)
 - [ ] GUI will cover the NEI's GUI like tooltip on item panel
 - [ ] Check the nei version and adapter the old version.
-- [ ] Fluid from recipe needs lots of adapters, see [Adapter](./src/main/java/me/towdium/jecalculation/nei/Adapter.java). 
-  Currently, only support Forestry
+- [ ] Fluid from recipe needs lots of adapters, see [Adapter](./src/main/java/me/towdium/jecalculation/nei/Adapter.java).
 
 
 [1]: http://cf.way2muchnoise.eu/full_just-enough-calculation_downloads.svg

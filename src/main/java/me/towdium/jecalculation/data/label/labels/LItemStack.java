@@ -6,7 +6,6 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
-import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.utils.ItemStackHelper;
 import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.item.Item;
@@ -52,10 +51,10 @@ public class LItemStack extends ILabel.Impl {
     public LItemStack(NBTTagCompound tag) {
         super(tag);
         final String strId = tag.getString(KEY_ITEM);
-        if(!tag.hasKey("id"))
+        if (!tag.hasKey("id"))
             tag.setShort("id", (short) GameData.getItemRegistry().getId(strId));
-        tag.setByte("Count", (byte)1);
-        tag.setShort("Damage", tag.hasKey(KEY_META) ? (short)tag.getInteger(KEY_META) : 0);
+        tag.setByte("Count", (byte) 1);
+        tag.setShort("Damage", tag.hasKey(KEY_META) ? (short) tag.getInteger(KEY_META) : 0);
         ItemStack stack = ItemStack.loadItemStackFromNBT(tag);
 
         if (ItemStackHelper.isEmpty(stack))
@@ -233,12 +232,13 @@ public class LItemStack extends ILabel.Impl {
     @SideOnly(Side.CLIENT)
     public void drawLabel(JecaGui gui) {
         gui.drawItemStack(0, 0, temp, false);
-        if (fNbt || fMeta)
-            gui.drawResource(Resource.LBL_FRAME, 0, 0);
-        if (fNbt)
-            gui.drawResource(Resource.LBL_FR_UL, 0, 0);
-        if (fMeta)
-            gui.drawResource(Resource.LBL_FR_UR, 0, 0);
+        // TODO some item won't render correctly with overlay
+        //        if (fNbt || fMeta)
+        //            gui.drawResource(Resource.LBL_FRAME, 0, 0);
+        //        if (fNbt)
+        //            gui.drawResource(Resource.LBL_FR_UL, 0, 0);
+        //        if (fMeta)
+        //            gui.drawResource(Resource.LBL_FR_UR, 0, 0);
     }
 
     @Override

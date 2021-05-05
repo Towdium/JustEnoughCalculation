@@ -191,7 +191,8 @@ public class LOreDict extends ILabel.Impl {
     @SideOnly(Side.CLIENT)
     public void drawLabel(JecaGui gui) {
         gui.drawItemStack(0, 0, getRepresentation(), false);
-        gui.drawResource(Resource.LBL_FRAME, 0, 0);
+        // TODO some item won't render correctly if has this overlay
+        // gui.drawResource(Resource.LBL_FRAME, 0, 0);
     }
 
     @Override
