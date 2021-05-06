@@ -411,9 +411,6 @@ public interface ILabel {
             return IDENTIFIER;
         }
 
-//        @Override
-//        public void drawLabel(JecaGui gui, int xPos, int yPos, boolean center) {
-//        }
     }
 
     abstract class Impl implements ILabel {

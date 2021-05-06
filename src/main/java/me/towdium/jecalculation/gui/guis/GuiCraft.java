@@ -25,6 +25,8 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static me.towdium.jecalculation.data.structure.RecordCraft.Mode.*;
+
 /**
  * Author: towdium
  * Date:   8/14/17.
@@ -33,28 +35,25 @@ import java.util.stream.Stream;
 @MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class GuiCraft extends WContainer implements IGui {
-    Mode mode = Mode.INPUT;
     ItemStack itemStack;
     Calculator calculator = null;
     RecordCraft record;
-    WLabelGroup recent = new WLabelGroup(7, 31, 8, 1, false, false).setLsnrClick(
-            (i, v) -> JecaGui.getCurrent().hand = i.get(v).getLabel());
-    WLabelScroll result = new WLabelScroll(7, 87, 8, 4, true, false, false, true).setListener((i, v) -> {
+    WLabel label = new WLabel(31, 7, 20, 20, true).setLsnrUpdate((i, v) -> refreshLabel(v, false, true));
+    WLabelGroup recent = new WLabelGroup(7, 31, 8, 1, false).setLsnrClick(
+            (i, v) -> label.setLabel(i.get(v).getLabel().copy(), true));
+    WLabelScroll result = new WLabelScroll(7, 87, 8, 4, false).setLsnrClick((i, v) -> {
         Object rep = i.get(v).getLabel().getRepresentation();
         NEIPlugin.openRecipeGui(rep, Mouse.getEventButton());
-    }).setFormatter(i -> i.getAmountString(true));
-    WButton steps = new WButtonIcon(64, 62, 20, 20, Resource.BTN_LIST, "craft.step").setListener(
-            i -> setMode(Mode.STEPS));
+    }).setFmtAmount(i -> i.getAmountString(true)).setFmtTooltip((i, j) -> i.getToolTip(j, true));
+    WButton steps = new WButtonIcon(64, 62, 20, 20, Resource.BTN_LIST, "craft.step").setListener(i -> setMode(STEPS));
     WButton catalyst = new WButtonIcon(45, 62, 20, 20, Resource.BTN_CAT, "common.catalyst").setListener(
-            i -> setMode(Mode.CATALYST));
+            i -> setMode(CATALYST));
     WButton output = new WButtonIcon(26, 62, 20, 20, Resource.BTN_OUT, "craft.output").setListener(
-            i -> setMode(Mode.OUTPUT));
-    WButton input = new WButtonIcon(7, 62, 20, 20, Resource.BTN_IN, "common.input").setListener(
-            i -> setMode(Mode.INPUT));
-    WLabel label = new WLabel(31, 7, 20, 20, false, true).setLsnrUpdate((i, v) -> refreshLabel(v, false, true));
+            i -> setMode(OUTPUT));
+    WButton input = new WButtonIcon(7, 62, 20, 20, Resource.BTN_IN, "common.input").setListener(i -> setMode(INPUT));
     WButton invE = new WButtonIcon(149, 62, 20, 20, Resource.BTN_INV_E, "craft.inventory_enabled");
     WButton invD = new WButtonIcon(149, 62, 20, 20, Resource.BTN_INV_D, "craft.inventory_disabled");
-    WTextField amount = new WTextField(60, 7, 65).setText(record.amount).setListener(i -> {
+    WTextField amount = new WTextField(60, 7, 65).setListener(i -> {
         record.amount = i.getText();
         Controller.setRCraft(record);
         refreshCalculator();
@@ -62,6 +61,8 @@ public class GuiCraft extends WContainer implements IGui {
 
 
     public GuiCraft() {
+        record = Controller.getRCraft();
+        amount.setText(record.amount);
         add(new WHelp("craft"));
         add(new WPanel());
         add(new WButtonIcon(7, 7, 20, 20, Resource.BTN_LABEL, "craft.label").setListener(
@@ -92,7 +93,7 @@ public class GuiCraft extends WContainer implements IGui {
             refreshCalculator();
         });
         refreshRecent();
-        setMode(Mode.INPUT);
+        setMode(record.mode);
     }
 
     @Override
@@ -100,12 +101,13 @@ public class GuiCraft extends WContainer implements IGui {
         refreshCalculator();
     }
 
-    void setMode(Mode mode) {
-        this.mode = mode;
-        input.setDisabled(mode == Mode.INPUT);
-        output.setDisabled(mode == Mode.OUTPUT);
-        catalyst.setDisabled(mode == Mode.CATALYST);
-        steps.setDisabled(mode == Mode.STEPS);
+    void setMode(RecordCraft.Mode mode) {
+        record.mode = mode;
+        Controller.setRCraft(record);
+        input.setDisabled(mode == INPUT);
+        output.setDisabled(mode == OUTPUT);
+        catalyst.setDisabled(mode == CATALYST);
+        steps.setDisabled(mode == STEPS);
         refreshResult();
     }
 
@@ -145,7 +147,7 @@ public class GuiCraft extends WContainer implements IGui {
         if (calculator == null) {
             result.setLabels(new ArrayList<>());
         } else {
-            switch (mode) {
+            switch (record.mode) {
                 case INPUT:
                     result.setLabels(calculator.getInputs());
                     break;
@@ -193,10 +195,6 @@ public class GuiCraft extends WContainer implements IGui {
                          .collect(Collectors.toList());
     }
 
-    enum Mode {
-        INPUT, OUTPUT, CATALYST, STEPS
-    }
-
     class Suggest extends WOverlay {
         boolean replace;
 
@@ -204,12 +202,12 @@ public class GuiCraft extends WContainer implements IGui {
             this.replace = replace;
             int width = labels.size() * 20;
             add(new WPanel(-width, 2, 56 + width, 30));
-            add(new WLabel(31, 7, 20, 20, false, false).setLabel(label.getLabel()).setLsnrUpdate((i, v) -> refresh(v)));
+            add(new WLabel(31, 7, 20, 20, false).setLabel(label.getLabel()).setLsnrUpdate((i, v) -> refresh(v)));
             add(new WIcon(5 - width, 7, 18, 20, Resource.ICN_HELP, "craft.suggest"));
             add(new WLine(26, 7, 20, false));
             for (int i = 0; i < labels.size(); i++) {
-                add(new WLabel(3 - i * 20, 7, 20, 20, false, false).setLabel(labels.get(i))
-                                                                   .setLsnrUpdate((j, v) -> refresh(v)));
+                add(new WLabel(3 - i * 20, 7, 20, 20, false).setLabel(labels.get(i))
+                                                            .setLsnrUpdate((j, v) -> refresh(v)));
             }
         }
 

@@ -8,6 +8,7 @@ import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -24,22 +25,15 @@ public class WLabelGroup extends WContainer {
     ListenerValue<? super WLabelGroup, Integer> lsnrUpdate;
     ListenerValue<? super WLabelGroup, Integer> lsnrClick;
 
-    public WLabelGroup(int xPos, int yPos, int column, int row, boolean multiple, boolean accept) {
-        this(xPos, yPos, column, row, 18, 18, multiple, accept);
+    public WLabelGroup(int xPos, int yPos, int column, int row, boolean accept) {
+        this(xPos, yPos, column, row, 18, 18, accept);
     }
 
-    public WLabelGroup(int xPos,
-                       int yPos,
-                       int column,
-                       int row,
-                       int xSize,
-                       int ySize,
-                       boolean multiple,
-                       boolean accept) {
+    public WLabelGroup(int xPos, int yPos, int column, int row, int xSize, int ySize, boolean accept) {
         for (int j = 0; j < row; j++) {
             int r = j;
             IntStream.range(0, column).forEach(c -> {
-                WLabel l = new WLabel(xPos + c * xSize, yPos + r * ySize, xSize, ySize, multiple, accept).setLsnrUpdate(
+                WLabel l = new WLabel(xPos + c * xSize, yPos + r * ySize, xSize, ySize, accept).setLsnrUpdate(
                         (i, v) -> {
                             if (lsnrUpdate != null)
                                 lsnrUpdate.invoke(this, r * column + c);
@@ -80,8 +74,13 @@ public class WLabelGroup extends WContainer {
         return this;
     }
 
-    public WLabelGroup setFormatter(Function<ILabel, String> f) {
-        labels.forEach(i -> i.setFormatter(f));
+    public WLabelGroup setFmtAmount(Function<ILabel, String> f) {
+        labels.forEach(i -> i.setFmtAmount(f));
+        return this;
+    }
+
+    public WLabelGroup setFmtTooltip(BiConsumer<ILabel, List<String>> f) {
+        labels.forEach(i -> i.setFmtTooltip(f));
         return this;
     }
 }

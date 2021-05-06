@@ -6,6 +6,7 @@ import me.towdium.jecalculation.data.structure.Recipe;
 import me.towdium.jecalculation.data.structure.Recipes;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.widgets.*;
+import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Trio;
 import org.lwjgl.input.Keyboard;
@@ -19,10 +20,11 @@ import java.util.function.Consumer;
 import static me.towdium.jecalculation.gui.Resource.*;
 
 @ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class GuiSearch extends WContainer implements IGui {
     IdentityHashMap<ILabel, Trio<Recipe, String, Integer>> recipes;
-    WLabelScroll labels = new WLabelScroll(7, 51, 8, 6, false, true, false, true)
-            .setListener((i, v) -> {
+    WLabelScroll labels = new WLabelScroll(7, 51, 8, 6, false)
+            .setLsnrClick((i, v) -> {
                 ILabel l = i.get(v).getLabel();
                 if (l != ILabel.EMPTY) add(new Overlay(i.get(v)));
             });
@@ -143,7 +145,7 @@ public class GuiSearch extends WContainer implements IGui {
             int x = l.xPos - 1;
             int y = l.yPos - 1;
             add(new WPanel(x - 5, y - 5, 72, 30));
-            add(new WLabel(x, y, 20, 20, false, false).setLabel(l.getLabel()));
+            add(new WLabel(x, y, 20, 20, false).setLabel(l.getLabel()));
             add(new WButtonIcon(x + 23, y, 20, 20, BTN_EDIT, "search.edit").setListener(i -> {
                 JecaGui.displayGui(true, true, new GuiRecipe(recipe.two, recipe.three));
                 GuiSearch.this.remove(this);

@@ -69,6 +69,7 @@ public class LOreDict extends ILabel.Impl {
         if (a instanceof LOreDict && b instanceof LItemStack) {
             LOreDict lod = (LOreDict) a;
             LItemStack lis = (LItemStack) b;
+            // TODO check performance
             if (lod.getAmount() * lis.getAmount() < 0) {
                 for (ItemStack ore : OreDictionary.getOres(lod.name)) {
                     if (LItemStack.merge(Converter.from(ore), lis)) {

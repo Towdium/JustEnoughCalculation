@@ -57,6 +57,8 @@ public class JecaGui extends GuiContainer {
     public static final int COLOR_TEXT_GREY = 0x404040;
     public static final int COLOR_TEXT_WHITE = 0xFFFFFF;
     public static final boolean ALWAYS_TOOLTIP = false;
+    @SuppressWarnings("StringOperationCanBeSimplified")
+    public static final String SEPARATOR = new String();
     public ILabel hand = ILabel.EMPTY;
     protected static JecaGui last;
     protected static Runnable scheduled;
@@ -69,7 +71,7 @@ public class JecaGui extends GuiContainer {
     }
 
     public JecaGui(@Nullable JecaGui parent, boolean acceptsTransfer, IGui root) {
-        super(acceptsTransfer ? new ContainerTransfer() : new ContainerNonTransfer());
+        super(acceptsTransfer ? new JecaGui.ContainerTransfer() : new JecaGui.ContainerNonTransfer());
         this.parent = parent;
         this.root = root;
         if (inventorySlots instanceof JecaContainer)
@@ -293,14 +295,19 @@ public class JecaGui extends GuiContainer {
             GlStateManager.disableLighting();
             GlStateManager.disableDepth();
             int i = 0;
+            int separators = 0;
             for (String s : textLines) {
                 int j = this.fontRendererObj.getStringWidth(s);
                 if (j > i)
                     i = j;
+                //noinspection StringEquality
+                if (s == JecaGui.SEPARATOR) separators++;
             }
+            //noinspection StringEquality
+            if (textLines.get(textLines.size() - 1) == SEPARATOR) separators--;
             int l1 = x + 12;
             int i2 = y - 12;
-            int k = 8 + (textLines.size() - 1) * 10;
+            int k = 8 + (textLines.size() - separators - 1) * 10 + 2 * separators;
             if (l1 + i > this.width)
                 l1 -= 28 + i;
             if (i2 + k + 6 > this.height)
@@ -317,8 +324,12 @@ public class JecaGui extends GuiContainer {
             drawGradientRect(l1 - 3, i2 - 3, l1 + i + 3, i2 - 3 + 1, 1347420415, 1347420415);
             drawGradientRect(l1 - 3, i2 + k + 2, l1 + i + 3, i2 + k + 3, 1344798847, 1344798847);
             for (String s1 : textLines) {
-                fontRendererObj.drawStringWithShadow(s1, l1, i2, -1);
-                i2 += 10;
+                //noinspection StringEquality
+                if (s1 == SEPARATOR) i2 += 2;
+                else {
+                    font.drawStringWithShadow(s1, l1, i2, -1);
+                    i2 += 10;
+                }
             }
             zLevel = 0.0F;
             itemRender.zLevel = 0.0F;

@@ -16,6 +16,7 @@ import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
@@ -38,19 +39,11 @@ public class Recipe {
     }
 
     public Recipe(List<ILabel> input, List<ILabel> catalyst, List<ILabel> output) {
-        Consumer<List<ILabel>> check = ls -> {
-            boolean ret = false;
-            for (ILabel i : ls) {
-                Objects.requireNonNull(i);
-                if (i != ILabel.EMPTY)
-                    ret = true;
-            }
-            if (!ret || ls.get(ls.size() - 1) == ILabel.EMPTY)
-                throw new IllegalArgumentException("Invalid recipe");
-        };
-        check.accept(input);
-        check.accept(catalyst);
-        check.accept(output);
+        boolean a = Stream.of(input, output, catalyst).anyMatch(i ->
+                !i.isEmpty() && i.get(i.size() - 1) == ILabel.EMPTY);
+        boolean b = Stream.of(input, output).anyMatch(i ->
+                i.stream().allMatch(j -> j == ILabel.EMPTY));
+        if (a || b) throw new IllegalArgumentException("Invalid recipe");
         this.input = input;
         this.catalyst = catalyst;
         this.output = output;
@@ -155,10 +148,6 @@ public class Recipe {
     }
 
     public enum IO {
-        INPUT, OUTPUT, CATALYST;
-
-        public int getSize() {
-            return this == INPUT ? 16 : 8;
-        }
+        INPUT, OUTPUT, CATALYST
     }
 }

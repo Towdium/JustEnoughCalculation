@@ -11,6 +11,7 @@ import me.towdium.jecalculation.utils.Utilities.Timer;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import static me.towdium.jecalculation.gui.JecaGui.Font.HALF;
@@ -26,18 +27,18 @@ import static me.towdium.jecalculation.gui.Resource.WGT_SLOT;
 public class WLabel implements IWidget {
     public int xPos, yPos, xSize, ySize;
     ILabel label = ILabel.EMPTY;
-    public boolean multiple, accept;
+    public boolean accept;
     public ListenerValue<? super WLabel, ILabel> update;
     public ListenerAction<? super WLabel> click;
-    Function<ILabel, String> formatter = i -> i.getAmountString(false);
+    Function<ILabel, String> fmtAmount = i -> "";
+    BiConsumer<ILabel, List<String>> fmtTooltip = (i, j) -> i.getToolTip(j, false);
     protected Timer timer = new Timer();
 
-    public WLabel(int xPos, int yPos, int xSize, int ySize, boolean multiple, boolean accept) {
+    public WLabel(int xPos, int yPos, int xSize, int ySize, boolean accept) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.xSize = xSize;
         this.ySize = ySize;
-        this.multiple = multiple;
         this.accept = accept;
     }
 
@@ -60,11 +61,9 @@ public class WLabel implements IWidget {
     public void onDraw(JecaGui gui, int xMouse, int yMouse) {
         gui.drawResourceContinuous(WGT_SLOT, xPos, yPos, xSize, ySize, 3, 3, 3, 3);
         label.drawLabel(gui, xPos + xSize / 2, yPos + ySize / 2, true);
-        if (multiple) {
-            String s = formatter.apply(label);
-            gui.drawText(xPos + xSize / 2.0f + 8 - HALF.getTextWidth(s),
-                         yPos + ySize / 2.0f + 8.5f - HALF.getTextHeight(), HALF, s);
-        }
+        String s = fmtAmount.apply(label);
+        gui.drawText(xPos + xSize / 2.0f + 8 - HALF.getTextWidth(s), yPos + ySize / 2.0f + 8.5f - HALF.getTextHeight(),
+                     HALF, s);
         if (accept) {
             timer.setState(gui.hand != ILabel.EMPTY);
             int color = 0xFFFFFF + (int) ((-Math.cos(timer.getTime() * Math.PI / 1500) + 1) * 0x40) * 0x1000000;
@@ -80,7 +79,8 @@ public class WLabel implements IWidget {
             return false;
         if (label != ILabel.EMPTY) {
             tooltip.add(label.getDisplayName());
-            label.getToolTip(tooltip, multiple);
+            tooltip.add(JecaGui.SEPARATOR);
+            fmtTooltip.accept(label, tooltip);
         }
         return false;
     }
@@ -177,8 +177,13 @@ public class WLabel implements IWidget {
         return this;
     }
 
-    public WLabel setFormatter(Function<ILabel, String> f) {
-        formatter = f;
+    public WLabel setFmtAmount(Function<ILabel, String> f) {
+        fmtAmount = f;
+        return this;
+    }
+
+    public WLabel setFmtTooltip(BiConsumer<ILabel, List<String>> f) {
+        fmtTooltip = f;
         return this;
     }
 

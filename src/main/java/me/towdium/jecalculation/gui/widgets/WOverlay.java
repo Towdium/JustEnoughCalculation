@@ -2,6 +2,7 @@ package me.towdium.jecalculation.gui.widgets;
 
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
+import me.towdium.jecalculation.polyfill.mc.client.renderer.GlStateManager;
 import org.lwjgl.input.Keyboard;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -32,5 +33,13 @@ public class WOverlay extends WContainer {
     public boolean onMouseScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
         if (!super.onMouseScroll(gui, xMouse, yMouse, diff)) gui.root.remove(this);
         return true;
+    }
+
+    @Override
+    public void onDraw(JecaGui gui, int mouseX, int mouseY) {
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(0, 0, 40);
+        super.onDraw(gui, mouseX, mouseY);
+        GlStateManager.popMatrix();
     }
 }
