@@ -4,6 +4,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
+import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -12,6 +13,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * Date:   17-8-18.
  */
 @ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class WLine implements IWidget {
     int xPos, yPos, xSize, ySize;

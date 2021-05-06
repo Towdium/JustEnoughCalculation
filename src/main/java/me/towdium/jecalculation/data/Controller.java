@@ -6,9 +6,7 @@ import me.towdium.jecalculation.JecaConfig;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.label.labels.LPlaceholder;
 import me.towdium.jecalculation.data.structure.*;
-import me.towdium.jecalculation.gui.JecaGui;
-import me.towdium.jecalculation.gui.guis.GuiCraft;
-import me.towdium.jecalculation.gui.guis.GuiMath;
+import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import net.minecraft.client.Minecraft;
@@ -29,6 +27,7 @@ import java.util.stream.Stream;
  * Author: towdium
  * Date:   17-10-15.
  */
+@MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class Controller {
@@ -227,23 +226,4 @@ public class Controller {
         nbt.setTag(KEY_MATH, rMathClient.serialize());
         Utilities.Json.write(nbt, file);
     }
-
-    public static void openGuiCraft() {
-        openGuiCraft(false);
-    }
-
-    public static void openGuiMath() {
-        openGuiMath(false);
-    }
-
-    public static void openGuiCraft(boolean scheduled) {
-        JecaGui.displayGui(true, true, scheduled, new GuiCraft());
-    }
-
-
-    public static void openGuiMath(boolean scheduled) {
-        JecaGui.displayGui(true, true, scheduled, new GuiMath());
-    }
-
-
 }

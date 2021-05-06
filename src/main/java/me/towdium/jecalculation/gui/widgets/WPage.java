@@ -2,21 +2,23 @@ package me.towdium.jecalculation.gui.widgets;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.label.ILabel.RegistryEditor.Record;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
-import me.towdium.jecalculation.utils.Utilities;
+import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
-import static me.towdium.jecalculation.gui.Resource.*;
+
+import static me.towdium.jecalculation.gui.Resource.WGT_PAGER_F;
+import static me.towdium.jecalculation.gui.Resource.WGT_PANEL_N;
 
 /**
  * Author: towdium
  * Date:   17-9-16.
  */
 @ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class WPage extends WTooltip {
     protected int index;
@@ -47,7 +49,8 @@ public class WPage extends WTooltip {
     @Override
     public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
         boolean ret = JecaGui.mouseIn(index * 24, -21, 24, 21, xMouse, yMouse) && listener != null && !focused;
-        if (ret) listener.invoke(this);
+        if (ret)
+            listener.invoke(this);
         return ret;
     }
 

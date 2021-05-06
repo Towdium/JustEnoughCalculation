@@ -11,11 +11,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.ClientCommandHandler;
 import org.lwjgl.input.Keyboard;
 
+import static me.towdium.jecalculation.gui.JecaGui.keyOpenGuiCraft;
+import static me.towdium.jecalculation.gui.JecaGui.keyOpenGuiMath;
 import static org.lwjgl.input.Keyboard.KEY_NONE;
 
 public class ClientHandler {
-    public static final KeyBinding keyOpenGuiCraft = new KeyBinding("jecalculation.key.gui_craft", KEY_NONE, "jecalculation.key.category");
-    public static final KeyBinding keyOpenGuiMath = new KeyBinding("jecalculation.key.gui_math", KEY_NONE, "jecalculation.key.category");
 
     public void initPre() {
         Handlers.register();

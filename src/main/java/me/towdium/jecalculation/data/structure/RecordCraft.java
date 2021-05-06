@@ -20,16 +20,15 @@ public class RecordCraft implements IRecord {
     public static final String KEY_AMOUNT = "amount";
     public static final String KEY_INVENTORY = "inventory";
 
-    Utilities.Recent<ILabel> record = new Utilities.Recent<>((a, b) ->
-            a == ILabel.EMPTY || a.equals(b), 9);
+    Utilities.Recent<ILabel> record = new Utilities.Recent<>((a, b) -> a == ILabel.EMPTY || a.equals(b), 9);
     public String amount;
     public boolean inventory;
 
     public RecordCraft(NBTTagCompound nbt) {
         List<ILabel> ls = StreamSupport.stream(NBTHelper.spliterator(nbt.getTagList(KEY_RECENTS, 10)), false)
-                .filter(n -> n instanceof NBTTagCompound)
-                .map(n -> ILabel.SERIALIZER.deserialize((NBTTagCompound) n))
-                .collect(Collectors.toList());
+                                       .filter(n -> n instanceof NBTTagCompound)
+                                       .map(n -> ILabel.SERIALIZER.deserialize((NBTTagCompound) n))
+                                       .collect(Collectors.toList());
         new Utilities.ReversedIterator<>(ls).forEachRemaining(l -> record.push(l, false));
         amount = nbt.getString(KEY_AMOUNT);
         inventory = nbt.getBoolean(KEY_INVENTORY);

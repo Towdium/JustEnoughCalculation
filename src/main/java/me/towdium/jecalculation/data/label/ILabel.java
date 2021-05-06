@@ -232,6 +232,12 @@ public interface ILabel {
     class Converter {
         static EnumMap<Priority, ArrayList<ConverterFunction>> handlers;
 
+        /**
+         * Suggest: the suggested type is a very reasonable representation
+         * Fallback: the suggestion is related, like suggest to tag label
+         * while input does not contain all entries recorded in tag
+         * Fallback is also used with one input label to guess possible conventions
+         */
         public enum Priority {SUGGEST, FALLBACK}
 
         static {
@@ -323,6 +329,10 @@ public interface ILabel {
             return l == this;
         }
 
+        @Override
+        public void drawLabel(JecaGui gui, int xPos, int yPos, boolean center) {
+        }
+
         private LEmpty() {
         }
 
@@ -401,9 +411,9 @@ public interface ILabel {
             return IDENTIFIER;
         }
 
-        @Override
-        public void drawLabel(JecaGui gui, int xPos, int yPos, boolean center) {
-        }
+//        @Override
+//        public void drawLabel(JecaGui gui, int xPos, int yPos, boolean center) {
+//        }
     }
 
     abstract class Impl implements ILabel {
@@ -443,6 +453,8 @@ public interface ILabel {
             drawLabel(gui);
             GlStateManager.popMatrix();
         }
+
+        abstract protected void drawLabel(JecaGui gui);
 
         @Override
         public ILabel increaseAmount() {
@@ -572,6 +584,8 @@ public interface ILabel {
             return l instanceof Impl && percent == ((Impl) l).percent;
         }
 
-        abstract protected void drawLabel(JecaGui gui);
+        //abstract protected void drawLabel(JecaGui gui);
+
+
     }
 }

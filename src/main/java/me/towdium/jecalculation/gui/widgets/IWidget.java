@@ -1,12 +1,15 @@
 package me.towdium.jecalculation.gui.widgets;
 
-import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
+/**
+ * Author: towdium
+ * Date:   8/14/17.
+ */
 @ParametersAreNonnullByDefault
 public interface IWidget {
     void onDraw(JecaGui gui, int xMouse, int yMouse);
@@ -19,6 +22,10 @@ public interface IWidget {
         return false;
     }
 
+    default boolean onMouseReleased(JecaGui gui, int xMouse, int yMouse, int button) {
+        return false;
+    }
+
     default boolean onKeyPressed(JecaGui gui, char ch, int code) {
         return false;
     }
@@ -28,7 +35,7 @@ public interface IWidget {
     }
 
     @Nullable
-    default ILabel getLabelUnderMouse(int xMouse, int yMouse) {
+    default WLabel getLabelUnderMouse(int xMouse, int yMouse) {
         return null;
     }
 

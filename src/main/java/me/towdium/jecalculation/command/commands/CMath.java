@@ -1,15 +1,10 @@
 package me.towdium.jecalculation.command.commands;
 
 import me.towdium.jecalculation.command.ISubCommand;
-import me.towdium.jecalculation.data.Controller;
-import net.minecraft.command.CommandException;
+import me.towdium.jecalculation.gui.JecaGui;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChatComponentText;
-import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Arrays;
 
 /**
  * Author: Towdium
@@ -29,6 +24,6 @@ public class CMath implements ISubCommand {
 
     @Override
     public void execute(ICommandSender sender, String[] args) {
-        Controller.openGuiMath(true);
+        JecaGui.openGuiMath(true);
     }
 }

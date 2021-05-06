@@ -1,6 +1,7 @@
 package me.towdium.jecalculation.gui.widgets;
 
 import me.towdium.jecalculation.gui.JecaGui;
+import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 import org.lwjgl.input.Keyboard;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -9,6 +10,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * Author: Towdium
  * Date: 16/02/19
  */
+@MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class WOverlay extends WContainer {
     @Override

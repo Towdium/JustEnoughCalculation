@@ -2,11 +2,11 @@ package me.towdium.jecalculation.data.structure;
 
 import me.towdium.jecalculation.JecaConfig;
 import me.towdium.jecalculation.JustEnoughCalculation;
-import me.towdium.jecalculation.data.label.ILabel;
+import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.polyfill.NBTHelper;
 import me.towdium.jecalculation.utils.Utilities;
+import me.towdium.jecalculation.utils.Utilities.ReversedIterator;
 import me.towdium.jecalculation.utils.wrappers.Pair;
-import me.towdium.jecalculation.utils.wrappers.Trio;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
@@ -16,10 +16,15 @@ import java.io.File;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+/**
+ * Author: towdium
+ * Date:   18-8-28.
+ */
+
+@MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class Recipes {
     HashMap<String, List<Recipe>> records = new HashMap<>();
@@ -27,7 +32,8 @@ public class Recipes {
     public Recipes() {
         File file = JecaConfig.defaultFile;
         NBTTagCompound nbt = Utilities.Json.read(file);
-        if (nbt == null) JustEnoughCalculation.logger.info("Failed to load default records at " + file + ".");
+        if (nbt == null)
+            JustEnoughCalculation.logger.info("Failed to load default records at " + file + ".");
         else {
             JustEnoughCalculation.logger.info("Loading default records at " + file + ".");
             deserialize(nbt);
@@ -39,11 +45,12 @@ public class Recipes {
     }
 
     protected void deserialize(NBTTagCompound nbt) {
+        //noinspection unchecked
         Set<String> keySet = (Set<String>) nbt.func_150296_c();
         keySet.stream().sorted().forEach(i -> {
             NBTTagList group = nbt.getTagList(i, 10);
             StreamSupport.stream(NBTHelper.spliterator(group), false)
-                         .filter(r -> r instanceof  NBTTagCompound)
+                         .filter(r -> r instanceof NBTTagCompound)
                          .forEach(r -> {
                              try {
                                  add(i, new Recipe((NBTTagCompound) r));
@@ -66,13 +73,19 @@ public class Recipes {
 
     public void modify(String neu, @Nullable String old, int index, @Nullable Recipe recipe) {
         if (index == -1) {
-            if (recipe != null) add(neu, recipe);
-            else if (old != null) renameGroup(old, neu);
-            else remove(neu);
+            if (recipe != null)
+                add(neu, recipe);
+            else if (old != null)
+                renameGroup(old, neu);
+            else
+                remove(neu);
         } else {
-            if (recipe == null) remove(neu, index);
-            else if (old == null || old.equals(neu)) set(neu, index, recipe);
-            else set(neu, old, index, recipe);
+            if (recipe == null)
+                remove(neu, index);
+            else if (old == null || old.equals(neu))
+                set(neu, index, recipe);
+            else
+                set(neu, old, index, recipe);
         }
     }
 
@@ -96,7 +109,8 @@ public class Recipes {
     public void remove(String group, int index) {
         List<Recipe> l = records.get(group);
         l.remove(index);
-        if (l.isEmpty()) records.remove(group);
+        if (l.isEmpty())
+            records.remove(group);
     }
 
     public void remove(String group) {
@@ -176,8 +190,9 @@ public class Recipes {
                     group = i.next();
                     List<Recipe> rs = records.get(group);
                     index = rs.size();
-                    j = new Utilities.ReversedIterator<>(rs);
-                } else return false;
+                    j = new ReversedIterator<>(rs);
+                } else
+                    return false;
             }
             return true;
         }

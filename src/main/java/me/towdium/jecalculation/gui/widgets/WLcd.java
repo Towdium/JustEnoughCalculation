@@ -3,6 +3,7 @@ package me.towdium.jecalculation.gui.widgets;
 import me.towdium.jecalculation.data.structure.RecordMath.Operator;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
+import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.math.BigDecimal;
@@ -18,6 +19,7 @@ import static me.towdium.jecalculation.data.structure.RecordMath.DOT_NONE;
  * Author: Towdium
  * Date: 19-1-16
  */
+@MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class WLcd implements IWidget {
     static HashMap<Character, boolean[]> PATTERN = new HashMap<>();

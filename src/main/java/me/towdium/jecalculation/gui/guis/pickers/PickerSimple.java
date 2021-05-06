@@ -10,6 +10,7 @@ import me.towdium.jecalculation.gui.widgets.WIcon;
 import me.towdium.jecalculation.gui.widgets.WLabel;
 import me.towdium.jecalculation.gui.widgets.WLabelScroll;
 import me.towdium.jecalculation.gui.widgets.WSearch;
+import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -25,15 +26,15 @@ import static me.towdium.jecalculation.gui.Resource.ICN_TEXT;
  * Date:   17-9-28.
  */
 @ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class PickerSimple extends IPicker.Impl implements IGui {
     /**
      * @param labels label to be displayed for selection
      */
     public PickerSimple(List<ILabel> labels) {
-        WLabelScroll ls = new WLabelScroll(7, 33, 8, 7, WLabel.Mode.PICKER, true).setLabels(labels)
-                                                                                 .setListener((i, v) -> notifyLsnr(
-                                                                                         i.get(v)));
+        WLabelScroll ls = new WLabelScroll(7, 33, 8, 7, false, true, false, true).setLabels(labels)
+                .setListener((i, v) -> notifyLsnr(i.get(v).getLabel()));
         add(new WSearch(26, 7, 90, ls));
         add(new WIcon(7, 7, 20, 20, ICN_TEXT, "common.search"));
         add(ls);

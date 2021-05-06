@@ -1,6 +1,6 @@
 # suppress inspection "UnusedProperty" for whole file
-item.item_calculator_crafting.name=Crafting Calculator
-item.item_calculator_math.name=Math Calculator
+item.item_calculator_crafting.name=Crafting calculator
+item.item_calculator_math.name=Math calculator
 jecalculation.key.category=Just Enough Calculation
 jecalculation.key.gui_craft=Open crafting calculator
 jecalculation.key.gui_math=Open math calculator
@@ -10,6 +10,7 @@ jecalculation.command.state.inactive=Server inactive.
 jecalculation.chat.max_loop=Sorry, it seems the calculation does not converge in 1000 iterations. Please contact the developer if you think this process should have a result.
 jecalculation.chat.server_mode=The mod is not working in client mode, so you cannot open the interface without an calculator item
 jecalculation.chat.export=Selected recipes has been exported to "%s".
+jecalculation.chat.help=/jeca craft - open crafting calculator\n/jeca math - open math calculator
 jecalculation.gui.craft.inventory_enabled=Inventory detection enabled
 jecalculation.gui.craft.inventory_disabled=Inventory detection disabled
 jecalculation.gui.craft.recipe=New recipe
@@ -18,6 +19,7 @@ jecalculation.gui.craft.help=Welcome to the main interface of the mod. The first
 jecalculation.gui.craft.title=Crafting Calculator
 jecalculation.gui.craft.label=Add label
 jecalculation.gui.craft.step=Steps
+jecalculation.gui.craft.output=Extra outputs
 jecalculation.gui.craft.search=Search recipe
 jecalculation.gui.craft.suggest=Suggestions
 jecalculation.gui.math.title=Math Calculator

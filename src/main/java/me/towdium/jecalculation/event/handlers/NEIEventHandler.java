@@ -32,7 +32,7 @@ public class NEIEventHandler implements IContainerInputHandler {
 
     @Override
     public void onMouseUp(GuiContainer guiContainer, int i, int i1, int i2) {
-
+        JecaGui.onMouseReleased();
     }
 
     @Override

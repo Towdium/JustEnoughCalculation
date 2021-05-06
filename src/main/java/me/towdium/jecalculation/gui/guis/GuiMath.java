@@ -6,6 +6,7 @@ import me.towdium.jecalculation.data.structure.RecordMath.Operator;
 import me.towdium.jecalculation.data.structure.RecordMath.State;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.gui.widgets.*;
+import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.utils.Utilities;
 import org.lwjgl.input.Keyboard;
 
@@ -22,6 +23,7 @@ import static me.towdium.jecalculation.data.structure.RecordMath.context;
  * Date: 19-1-3
  */
 @ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class GuiMath extends WContainer implements IGui {
     WLcd lcd = new WLcd(7);
     LinkedList<BigDecimal> numbers;

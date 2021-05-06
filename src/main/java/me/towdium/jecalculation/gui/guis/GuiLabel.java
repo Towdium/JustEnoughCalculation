@@ -6,8 +6,9 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.cache.Weigher;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import me.towdium.jecalculation.gui.widgets.*;
 import me.towdium.jecalculation.data.label.ILabel;
+import me.towdium.jecalculation.gui.widgets.*;
+import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.utils.wrappers.Wrapper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -17,20 +18,25 @@ import java.util.function.Consumer;
  * Author: towdium
  * Date:   17-9-14.
  */
+@SuppressWarnings("UnstableApiUsage")
 @ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class GuiLabel extends WContainer implements IGui {
     WContainer container = new WContainer();
     Consumer<ILabel> callback;
-    LoadingCache<Integer, IWidget> cache = CacheBuilder.newBuilder().concurrencyLevel(1)
-                                                       .maximumWeight(16).weigher((Weigher<Integer, IWidget>) (key, value) -> 1)
+    LoadingCache<Integer, IWidget> cache = CacheBuilder.newBuilder()
+                                                       .concurrencyLevel(1)
+                                                       .maximumWeight(16)
+                                                       .weigher((Weigher<Integer, IWidget>) (key, value) -> 1)
                                                        .build(new CacheLoader<Integer, IWidget>() {
-                @Override
-                public IWidget load(Integer i) {
-                    ILabel.RegistryEditor.Record record = ILabel.EDITOR.getRecords().get(i);
-                    return record.editor.get().setCallback(callback);
-                }
-            });
+                                                           @Override
+                                                           public IWidget load(Integer i) {
+                                                               ILabel.RegistryEditor.Record record = ILabel.EDITOR.getRecords()
+                                                                                                                  .get(i);
+                                                               return record.editor.get().setCallback(callback);
+                                                           }
+                                                       });
 
     public GuiLabel(Consumer<ILabel> callback) {
         this.callback = callback;

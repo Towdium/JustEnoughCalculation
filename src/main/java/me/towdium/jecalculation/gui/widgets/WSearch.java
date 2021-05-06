@@ -2,11 +2,10 @@ package me.towdium.jecalculation.gui.widgets;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import me.towdium.jecalculation.gui.JecaGui;
-import me.towdium.jecalculation.data.label.ILabel;
+import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.function.Consumer;
+
 import static me.towdium.jecalculation.gui.JecaGui.COLOR_TEXT_RED;
 import static me.towdium.jecalculation.gui.JecaGui.COLOR_TEXT_WHITE;
 
@@ -15,6 +14,7 @@ import static me.towdium.jecalculation.gui.JecaGui.COLOR_TEXT_WHITE;
  * Date:   17-9-28.
  */
 @ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class WSearch extends WTextField {
     ISearchable[] lss;
@@ -32,7 +32,9 @@ public class WSearch extends WTextField {
 
     public void refresh() {
         boolean b = false;
-        for (ISearchable i : lss) if (i.setFilter(textField.getText())) b = true;
+        for (ISearchable i : lss)
+            if (i.setFilter(textField.getText()))
+                b = true;
         setColor(b ? COLOR_TEXT_WHITE : COLOR_TEXT_RED);
     }
 }

@@ -4,6 +4,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
+import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.utils.Utilities.Circulator;
 
 import javax.annotation.Nullable;
@@ -24,6 +25,7 @@ import static me.towdium.jecalculation.gui.Resource.WGT_ARR_R;
  * Widget to select page with button for left and right
  */
 @ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class WSwitcher extends WContainer {
     public static final int SIZE = 13;

@@ -1,6 +1,7 @@
 package me.towdium.jecalculation.gui.widgets;
 
 import me.towdium.jecalculation.gui.JecaGui;
+import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.utils.Utilities.I18n;
 import org.lwjgl.input.Keyboard;
 
@@ -16,6 +17,7 @@ import static me.towdium.jecalculation.gui.Resource.*;
  * Author: Towdium
  * Date: 18-9-23
  */
+@MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class WHelp extends WContainer {
     protected String key;

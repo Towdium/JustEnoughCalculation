@@ -2,6 +2,7 @@ package me.towdium.jecalculation.data.structure;
 
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
+import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import net.minecraft.client.Minecraft;
@@ -11,13 +12,13 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static me.towdium.jecalculation.data.structure.Recipe.IO.INPUT;
 import static me.towdium.jecalculation.data.structure.Recipe.IO.OUTPUT;
 import static me.towdium.jecalculation.utils.Utilities.stream;
 
 // positive => generate; negative => require
+@MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class CostList {
     List<ILabel> labels;
@@ -121,17 +122,22 @@ public class CostList {
             int count = 0;
             while (next != null) {
                 CostList original = getCurrent();
-                List<ILabel> outL = Arrays.stream(next.one.getLabel(OUTPUT))
-                                          .filter(i -> i != ILabel.EMPTY).collect(Collectors.toList());
+                List<ILabel> outL = next.one.getLabel(OUTPUT)
+                                            .stream()
+                                            .filter(i -> i != ILabel.EMPTY)
+                                            .collect(Collectors.toList());
                 CostList outC = new CostList(outL);
                 outC.multiply(-next.two);
-                List<ILabel> inL = Arrays.stream(next.one.getLabel(INPUT))
-                                         .filter(i -> i != ILabel.EMPTY).collect(Collectors.toList());
+                List<ILabel> inL = next.one.getLabel(INPUT)
+                                           .stream()
+                                           .filter(i -> i != ILabel.EMPTY)
+                                           .collect(Collectors.toList());
                 CostList inC = new CostList(inL);
                 inC.multiply(next.two);
                 CostList result = original.merge(outC, false, false);
                 result.merge(inC, false, true);
-                if (set.contains(result)) next = find(false);
+                if (set.contains(result))
+                    next = find(false);
                 else {
                     set.add(result);
                     procedure.add(new Pair<>(result, outC));
@@ -139,8 +145,8 @@ public class CostList {
                     next = find(true);
                 }
                 if (count++ > 1000) {
-                    Minecraft
-                            .getMinecraft().thePlayer.addChatMessage(new ChatComponentTranslation("jecalculation.chat.max_loop"));
+                    Minecraft.getMinecraft().thePlayer.addChatMessage(
+                            new ChatComponentTranslation("jecalculation.chat.max_loop"));
                     break;
                 }
             }
@@ -155,21 +161,24 @@ public class CostList {
             List<ILabel> labels = getCurrent().labels;
             for (; index < labels.size(); index++) {
                 ILabel label = labels.get(index);
-                if (label.getAmount() >= 0) continue;
+                if (label.getAmount() >= 0)
+                    continue;
                 while (iterator.hasNext()) {
                     Recipe r = iterator.next();
-                    if (r.matches(label).isPresent()) return new Pair<>(r, r.multiplier(label));
+                    if (r.matches(label).isPresent())
+                        return new Pair<>(r, r.multiplier(label));
                 }
                 iterator = Controller.recipeIterator();
             }
             return null;
         }
 
-        private void addCatalyst(ILabel[] labels) {
-            Arrays.stream(labels)
+        private void addCatalyst(List<ILabel> labels) {
+            labels.stream()
                   .filter(i -> i != ILabel.EMPTY)
                   .forEach(i -> catalysts.stream()
-                                         .filter(j -> j.matches(i)).findAny()
+                                         .filter(j -> j.matches(i))
+                                         .findAny()
                                          .map(j -> j.setAmount(Math.max(i.getAmount(), j.getAmount())))
                                          .orElseGet(Utilities.fake(() -> catalysts.add(i))));
         }
@@ -183,23 +192,26 @@ public class CostList {
         }
 
         public List<ILabel> getInputs() {
-            return getCurrent().labels.stream().filter(i -> i.getAmount() < 0).map(i -> i.copy().multiply(-1))
+            return getCurrent().labels.stream()
+                                      .filter(i -> i.getAmount() < 0)
+                                      .map(i -> i.copy().multiply(-1))
                                       .collect(Collectors.toList());
         }
 
-        public List<ILabel> getOutputs(List<ILabel> ignore) {  // TODO check logic
+        public List<ILabel> getOutputs(List<ILabel> ignore) {
             return getCurrent().labels.stream()
                                       .map(i -> i.copy().multiply(-1))
-                                      .map(i -> ignore.stream().flatMap(j -> stream(ILabel.MERGER.merge(i, j))).findFirst().orElse(i))
+                                      .map(i -> ignore.stream()
+                                                      .flatMap(j -> stream(ILabel.MERGER.merge(i, j)))
+                                                      .findFirst()
+                                                      .orElse(i))
                                       .filter(i -> i != ILabel.EMPTY && i.getAmount() < 0)
                                       .map(i -> i.multiply(-1))
                                       .collect(Collectors.toList());
         }
 
         public List<ILabel> getSteps() {
-            List<ILabel> ret = procedure.stream()
-                                        .map(i -> i.two.labels.get(0))
-                                        .collect(Collectors.toList());
+            List<ILabel> ret = procedure.stream().map(i -> i.two.labels.get(0)).collect(Collectors.toList());
             Collections.reverse(ret);
             CostList cl = new CostList(ret).multiply(-1);
             return new CostList().merge(cl, false, true).labels;

@@ -2,10 +2,10 @@ package me.towdium.jecalculation.gui.guis.pickers;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import me.towdium.jecalculation.gui.guis.IGui;
-import me.towdium.jecalculation.gui.widgets.IWidget;
-import me.towdium.jecalculation.gui.widgets.WContainer;
 import me.towdium.jecalculation.data.label.ILabel;
+import me.towdium.jecalculation.gui.guis.IGui;
+import me.towdium.jecalculation.gui.widgets.WContainer;
+import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.Consumer;
@@ -15,6 +15,7 @@ import java.util.function.Consumer;
  * Date:   17-9-28.
  */
 @ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
 public interface IPicker extends IGui {
     IPicker setCallback(Consumer<ILabel> callback);
@@ -29,7 +30,8 @@ public interface IPicker extends IGui {
         }
 
         protected void notifyLsnr(ILabel l) {
-            if (callback != null) callback.accept(l);
+            if (callback != null && l != ILabel.EMPTY)
+                callback.accept(l);
         }
     }
 }

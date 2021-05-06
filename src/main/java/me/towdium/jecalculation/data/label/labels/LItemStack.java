@@ -40,7 +40,7 @@ public class LItemStack extends ILabel.Impl {
     NBTTagCompound nbt;
     boolean fMeta;
     boolean fNbt;
-    transient ItemStack temp;
+    transient ItemStack rep;
 
     // Convert from itemStack
     public LItemStack(ItemStack is) {
@@ -71,7 +71,7 @@ public class LItemStack extends ILabel.Impl {
         nbt = lis.nbt;
         fMeta = lis.fMeta;
         fNbt = lis.fNbt;
-        temp = lis.temp;
+        rep = lis.rep;
     }
 
     private void init(@Nullable Item item, int meta, @Nullable NBTTagCompound nbt, boolean fMeta, boolean fNbt) {
@@ -81,8 +81,8 @@ public class LItemStack extends ILabel.Impl {
         this.nbt = fNbt ? null : nbt;
         this.fMeta = fMeta;
         this.fNbt = fNbt;
-        temp = new ItemStack(item, 1, this.meta);
-        temp.setTagCompound(this.nbt);
+        rep = new ItemStack(item, 1, this.meta);
+        rep.setTagCompound(this.nbt);
     }
 
 
@@ -150,8 +150,8 @@ public class LItemStack extends ILabel.Impl {
         fMeta = f;
         if (f)
             meta = 0;
-        temp = new ItemStack(item, 1, meta);
-        temp.setTagCompound(nbt);
+        rep = new ItemStack(item, 1, meta);
+        rep.setTagCompound(nbt);
         return this;
     }
 
@@ -159,13 +159,13 @@ public class LItemStack extends ILabel.Impl {
         fNbt = f;
         if (f)
             nbt = null;
-        temp = new ItemStack(item, 1, meta);
-        temp.setTagCompound(nbt);
+        rep = new ItemStack(item, 1, meta);
+        rep.setTagCompound(nbt);
         return this;
     }
 
     public ItemStack getRep() {
-        return temp;
+        return rep;
     }
 
     @Override
@@ -181,13 +181,13 @@ public class LItemStack extends ILabel.Impl {
 
     @Override
     public ItemStack getRepresentation() {
-        return temp;
+        return rep;
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public String getDisplayName() {
-        return temp.getItem() == null ? "" : temp.getDisplayName();
+        return rep.getItem() == null ? "" : rep.getDisplayName();
     }
 
     @Override
@@ -231,7 +231,7 @@ public class LItemStack extends ILabel.Impl {
     @Override
     @SideOnly(Side.CLIENT)
     public void drawLabel(JecaGui gui) {
-        gui.drawItemStack(0, 0, temp, false);
+        gui.drawItemStack(0, 0, rep, false);
         // TODO some item won't render correctly with overlay
         //        if (fNbt || fMeta)
         //            gui.drawResource(Resource.LBL_FRAME, 0, 0);

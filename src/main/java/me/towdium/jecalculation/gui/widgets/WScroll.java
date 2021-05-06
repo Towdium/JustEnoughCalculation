@@ -4,11 +4,11 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
+import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 import org.lwjgl.input.Mouse;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.function.Consumer;
 
 /**
  * Author: towdium
@@ -16,6 +16,7 @@ import java.util.function.Consumer;
  * Scroll bar
  */
 @ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class WScroll implements IWidget {
     public int xPos, yPos, ySize, current;
@@ -30,8 +31,10 @@ public class WScroll implements IWidget {
 
     @Override
     public void onDraw(JecaGui gui, int xMouse, int yMouse) {
-        if (Mouse.isButtonDown(0) && drag) setCurrent(yMouse - yPos - 9, true);
-        else drag = false;
+        if (Mouse.isButtonDown(0) && drag)
+            setCurrent(yMouse - yPos - 9, true);
+        else
+            drag = false;
 
         gui.drawResourceContinuous(Resource.WGT_SLOT, xPos, yPos, 14, ySize, 3, 3, 3, 3);
         gui.drawResource(Resource.WGT_SCROLL, xPos, yPos + current);
@@ -40,15 +43,19 @@ public class WScroll implements IWidget {
     @Override
     public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
         drag = mouseIn(xMouse, yMouse);
-        if (drag) setCurrent(yMouse - yPos - 9, true);
+        if (drag)
+            setCurrent(yMouse - yPos - 9, true);
         return drag;
     }
 
     private void setCurrent(int pos, boolean notify) {
         current = pos;
-        if (current < 0) current = 0;
-        if (current > ySize - 17) current = ySize - 17;
-        if (notify && listener != null) listener.invoke(this);
+        if (current < 0)
+            current = 0;
+        if (current > ySize - 17)
+            current = ySize - 17;
+        if (notify && listener != null)
+            listener.invoke(this);
     }
 
     public float getCurrent() {

@@ -2,8 +2,8 @@ package me.towdium.jecalculation.gui.widgets;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
+import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.utils.Utilities;
 
 import javax.annotation.Nullable;
@@ -18,6 +18,7 @@ import java.util.Objects;
  * Date:   17-9-14.
  */
 @ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class WContainer implements IContainer {
     protected List<IWidget> widgets = new ArrayList<>();
@@ -27,13 +28,17 @@ public class WContainer implements IContainer {
     }
 
     public void add(IWidget... w) {
-        if (w.length == 1) widgets.add(w[0]);
-        else widgets.addAll(Arrays.asList(w));
+        if (w.length == 1)
+            widgets.add(w[0]);
+        else
+            widgets.addAll(Arrays.asList(w));
     }
 
     public void remove(IWidget... w) {
-        if (w.length == 1) widgets.remove(w[0]);
-        else widgets.removeAll(Arrays.asList(w));
+        if (w.length == 1)
+            widgets.remove(w[0]);
+        else
+            widgets.removeAll(Arrays.asList(w));
     }
 
     public void clear() {
@@ -57,8 +62,13 @@ public class WContainer implements IContainer {
 
     @Override
     public boolean onKeyPressed(JecaGui gui, char ch, int code) {
+        return new Utilities.ReversedIterator<>(widgets).stream().anyMatch(i -> i.onKeyPressed(gui, ch, code));
+    }
+
+    @Override
+    public boolean onMouseReleased(JecaGui gui, int xMouse, int yMouse, int button) {
         return new Utilities.ReversedIterator<>(widgets).stream()
-                                                        .anyMatch(i -> i.onKeyPressed(gui, ch, code));
+                                                        .anyMatch(i -> i.onMouseReleased(gui, xMouse, yMouse, button));
     }
 
     @Override
@@ -75,10 +85,11 @@ public class WContainer implements IContainer {
 
     @Nullable
     @Override
-    public ILabel getLabelUnderMouse(int xMouse, int yMouse) {
+    public WLabel getLabelUnderMouse(int xMouse, int yMouse) {
         return new Utilities.ReversedIterator<>(widgets).stream()
                                                         .map(i -> i.getLabelUnderMouse(xMouse, yMouse))
                                                         .filter(Objects::nonNull)
-                                                        .findFirst().orElse(null);
+                                                        .findFirst()
+                                                        .orElse(null);
     }
 }

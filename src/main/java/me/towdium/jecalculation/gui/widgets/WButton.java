@@ -3,10 +3,8 @@ package me.towdium.jecalculation.gui.widgets;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.gui.JecaGui;
-import me.towdium.jecalculation.gui.Resource;
+import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.utils.ClientUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nullable;
@@ -21,6 +19,7 @@ import static me.towdium.jecalculation.gui.Resource.*;
  * Date:   17-8-17.
  */
 @ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
 public abstract class WButton extends WTooltip {
     protected int xPos, yPos, xSize, ySize;
@@ -45,18 +44,22 @@ public abstract class WButton extends WTooltip {
     public void onDraw(JecaGui gui, int xMouse, int yMouse) {
         super.onDraw(gui, xMouse, yMouse);
         boolean hovered = JecaGui.mouseIn(xPos + 1, yPos + 1, xSize - 2, ySize - 2, xMouse, yMouse);
-        if (keys != null) for (int i : keys) if (Keyboard.isKeyDown(i)) hovered = true;
-        gui.drawResourceContinuous(disabled ? WGT_BUTTON_D : (hovered ? WGT_BUTTON_F : WGT_BUTTON_N)
-                , xPos, yPos, xSize, ySize, 5, 5, 5, 5);
+        if (keys != null)
+            for (int i : keys)
+                if (Keyboard.isKeyDown(i))
+                    hovered = true;
+        gui.drawResourceContinuous(disabled ? WGT_BUTTON_D : (hovered ? WGT_BUTTON_F : WGT_BUTTON_N), xPos, yPos, xSize,
+                                   ySize, 5, 5, 5, 5);
     }
 
     @Override
     public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
-        if (JecaGui.mouseIn(xPos + 1, yPos + 1, xSize - 2, ySize - 2, xMouse, yMouse) &&
-            !disabled && button == 0 && listener != null) {
+        if (JecaGui.mouseIn(xPos + 1, yPos + 1, xSize - 2, ySize - 2, xMouse, yMouse) && !disabled && button == 0 &&
+            listener != null) {
             trigger();
             return true;
-        } else return false;
+        } else
+            return false;
     }
 
     private void trigger() {
@@ -66,13 +69,13 @@ public abstract class WButton extends WTooltip {
 
     @Override
     public boolean onKeyPressed(JecaGui gui, char ch, int code) {
-        // JustEnoughCalculation.logger.info(code);
-        if (keys != null) for (int i : keys) {
-            if (i == code) {
-                trigger();
-                return true;
+        if (keys != null)
+            for (int i : keys) {
+                if (i == code) {
+                    trigger();
+                    return true;
+                }
             }
-        }
         return false;
     }
 

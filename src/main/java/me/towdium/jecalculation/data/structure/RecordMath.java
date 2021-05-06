@@ -1,6 +1,5 @@
 package me.towdium.jecalculation.data.structure;
 
-import me.towdium.jecalculation.utils.IllegalPositionException;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.math.BigDecimal;
@@ -33,25 +32,37 @@ public class RecordMath implements IRecord {
 
         public BigDecimal operate(BigDecimal a, BigDecimal b) {
             switch (this) {
-                case PLUS: return a.add(b);
-                case MINUS: return a.subtract(b);
-                case TIMES: return a.multiply(b);
-                case DIVIDE: return a.divide(b, context);
-                case EQUALS: return b;
-                default: throw new IllegalPositionException();
+                case PLUS:
+                    return a.add(b);
+                case MINUS:
+                    return a.subtract(b);
+                case TIMES:
+                    return a.multiply(b);
+                case DIVIDE:
+                    return a.divide(b, context);
+                case EQUALS:
+                    return b;
+                default:
+                    throw new RuntimeException("Internal Error");
             }
         }
     }
 
-    public RecordMath(State state, Operator operator, BigDecimal last,
-                      boolean sign, int dot, List<BigDecimal> numbers) {
+    public RecordMath(State state,
+                      Operator operator,
+                      BigDecimal last,
+                      boolean sign,
+                      int dot,
+                      List<BigDecimal> numbers) {
         this.state = state;
         this.operator = operator;
         this.last = last;
         StringBuilder sb = new StringBuilder();
-        if (!sign) sb.append('-');
+        if (!sign)
+            sb.append('-');
         numbers.forEach(i -> sb.append(i.toString()));
-        if (dot != DOT_NONE) sb.insert(sb.length() - dot, '.');
+        if (dot != DOT_NONE)
+            sb.insert(sb.length() - dot, '.');
         current = sb.toString();
     }
 
@@ -78,16 +89,19 @@ public class RecordMath implements IRecord {
 
     public LinkedList<BigDecimal> getNumbers() {
         LinkedList<BigDecimal> ret = new LinkedList<>();
-        if (current == null) return ret;
+        if (current == null)
+            return ret;
         for (int i = 0; i < current.length(); i++) {
             char ch = current.charAt(i);
-            if (ch != '-' && ch != '.') ret.add(new BigDecimal(ch - '0'));
+            if (ch != '-' && ch != '.')
+                ret.add(new BigDecimal(ch - '0'));
         }
         return ret;
     }
 
     public int getDot() {
-        if (current == null) return DOT_NONE;
+        if (current == null)
+            return DOT_NONE;
         int index = current.indexOf('.');
         return index == -1 ? DOT_NONE : current.length() - index - 1;
     }

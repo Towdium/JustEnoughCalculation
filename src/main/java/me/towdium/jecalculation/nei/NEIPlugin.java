@@ -1,12 +1,11 @@
 package me.towdium.jecalculation.nei;
 
 import codechicken.nei.guihook.GuiContainerManager;
-import codechicken.nei.recipe.GuiRecipeTab;
-import codechicken.nei.recipe.HandlerInfo;
-import codechicken.nei.recipe.IRecipeHandler;
-import codechicken.nei.recipe.TemplateRecipeHandler;
+import codechicken.nei.recipe.*;
+import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.label.ILabel;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
 import scala.tools.cmd.Opt;
 
 import javax.annotation.Nonnull;
@@ -44,5 +43,21 @@ public class NEIPlugin {
         }
         ItemStack itemStack = info.getItemStack();
         return Optional.ofNullable(itemStack);
+    }
+
+    public static void openRecipeGui(Object rep, int button) {
+        if ((rep instanceof ItemStack || rep instanceof FluidStack)) {
+            String id = rep instanceof ItemStack ? "item" : "liquid";
+            if (button == 0) {
+                GuiCraftingRecipe.openRecipeGui(id, rep);
+            } else if (button == 1) {
+                GuiUsageRecipe.openRecipeGui(id, rep);
+            } else {
+                // TODO check
+                JustEnoughCalculation.logger.warn("unknown button " + button);
+            }
+        } else if (rep != null) {
+            JustEnoughCalculation.logger.warn("unknown label representation " + rep);
+        }
     }
 }

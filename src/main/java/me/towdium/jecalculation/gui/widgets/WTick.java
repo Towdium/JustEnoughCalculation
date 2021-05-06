@@ -1,14 +1,12 @@
 package me.towdium.jecalculation.gui.widgets;
 
 import me.towdium.jecalculation.gui.JecaGui;
-import me.towdium.jecalculation.gui.Resource;
+import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Consumer;
 
 import static me.towdium.jecalculation.gui.Resource.*;
 
@@ -17,6 +15,7 @@ import static me.towdium.jecalculation.gui.Resource.*;
  * Date: 18-12-7
  */
 @ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class WTick extends WContainer {
     WButton button;
     int xPos, yPos, xSize, ySize;
@@ -44,15 +43,19 @@ public class WTick extends WContainer {
         this.listener = listener;
         return this;
     }
+
     public boolean selected() {
         return !(button instanceof Normal);
     }
 
     public WTick setSelected(boolean selected) {
-        if (selected == selected()) return this;
+        if (selected == selected())
+            return this;
         remove(button);
-        if (selected) button = new Selected(xPos, yPos, xSize, ySize, name);
-        else button = new Normal(xPos, yPos, xSize, ySize, name);
+        if (selected)
+            button = new Selected(xPos, yPos, xSize, ySize, name);
+        else
+            button = new Normal(xPos, yPos, xSize, ySize, name);
         add(button);
         return this;
     }
@@ -92,8 +95,8 @@ public class WTick extends WContainer {
         public void onDraw(JecaGui gui, int xMouse, int yMouse) {
             super.onDraw(gui, xMouse, yMouse);
             boolean hovered = JecaGui.mouseIn(xPos + 1, yPos + 1, xSize - 2, ySize - 2, xMouse, yMouse);
-            gui.drawResourceContinuous(disabled ? WGT_BUTTON_S_D : (hovered ? WGT_BUTTON_S_F : WGT_BUTTON_S_N)
-                    , xPos, yPos, xSize, ySize, 5, 5, 5, 5);
+            gui.drawResourceContinuous(disabled ? WGT_BUTTON_S_D : (hovered ? WGT_BUTTON_S_F : WGT_BUTTON_S_N), xPos,
+                                       yPos, xSize, ySize, 5, 5, 5, 5);
         }
     }
 }

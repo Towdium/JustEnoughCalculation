@@ -2,6 +2,7 @@ package me.towdium.jecalculation.command.commands;
 
 import me.towdium.jecalculation.command.ISubCommand;
 import me.towdium.jecalculation.data.Controller;
+import me.towdium.jecalculation.gui.JecaGui;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
@@ -28,6 +29,6 @@ public class CCraft implements ISubCommand {
 
     @Override
     public void execute(ICommandSender sender, String[] args) {
-        Controller.openGuiCraft(true);
+        JecaGui.openGuiCraft(true);
     }
 }
