@@ -50,21 +50,21 @@ public class WContainer implements IContainer {
     }
 
     @Override
-    public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
+    public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
         return new Utilities.ReversedIterator<>(widgets).stream()
-                                                        .anyMatch(i -> i.onClicked(gui, xMouse, yMouse, button));
+                                                        .anyMatch(i -> i.onMouseClicked(gui, xMouse, yMouse, button));
     }
 
     @Override
-    public boolean onKey(JecaGui gui, char ch, int code) {
+    public boolean onKeyPressed(JecaGui gui, char ch, int code) {
         return new Utilities.ReversedIterator<>(widgets).stream()
-                                                        .anyMatch(i -> i.onKey(gui, ch, code));
+                                                        .anyMatch(i -> i.onKeyPressed(gui, ch, code));
     }
 
     @Override
-    public boolean onScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
+    public boolean onMouseScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
         return new Utilities.ReversedIterator<>(widgets).stream()
-                                                        .anyMatch(i -> i.onScroll(gui, xMouse, yMouse, diff));
+                                                        .anyMatch(i -> i.onMouseScroll(gui, xMouse, yMouse, diff));
     }
 
     @Override

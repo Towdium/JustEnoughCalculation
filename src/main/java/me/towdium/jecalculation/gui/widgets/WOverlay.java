@@ -12,8 +12,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class WOverlay extends WContainer {
     @Override
-    public boolean onKey(JecaGui gui, char ch, int code) {
-        if (super.onKey(gui, ch, code)) return true;
+    public boolean onKeyPressed(JecaGui gui, char ch, int code) {
+        if (super.onKeyPressed(gui, ch, code)) return true;
         if (code == Keyboard.KEY_ESCAPE) {
             gui.root.remove(this);
             return true;
@@ -21,14 +21,14 @@ public class WOverlay extends WContainer {
     }
 
     @Override
-    public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
-        if (!super.onClicked(gui, xMouse, yMouse, button)) gui.root.remove(this);
+    public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
+        if (!super.onMouseClicked(gui, xMouse, yMouse, button)) gui.root.remove(this);
         return true;
     }
 
     @Override
-    public boolean onScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
-        if (!super.onScroll(gui, xMouse, yMouse, diff)) gui.root.remove(this);
+    public boolean onMouseScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
+        if (!super.onMouseScroll(gui, xMouse, yMouse, diff)) gui.root.remove(this);
         return true;
     }
 }

@@ -51,7 +51,7 @@ public abstract class WButton extends WTooltip {
     }
 
     @Override
-    public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
+    public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
         if (JecaGui.mouseIn(xPos + 1, yPos + 1, xSize - 2, ySize - 2, xMouse, yMouse) &&
             !disabled && button == 0 && listener != null) {
             trigger();
@@ -65,7 +65,7 @@ public abstract class WButton extends WTooltip {
     }
 
     @Override
-    public boolean onKey(JecaGui gui, char ch, int code) {
+    public boolean onKeyPressed(JecaGui gui, char ch, int code) {
         // JustEnoughCalculation.logger.info(code);
         if (keys != null) for (int i : keys) {
             if (i == code) {

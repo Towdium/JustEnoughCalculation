@@ -38,7 +38,7 @@ public class WScroll implements IWidget {
     }
 
     @Override
-    public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
+    public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
         drag = mouseIn(xMouse, yMouse);
         if (drag) setCurrent(yMouse - yPos - 9, true);
         return drag;

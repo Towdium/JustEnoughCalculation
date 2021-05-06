@@ -46,7 +46,7 @@ public class WHelp extends WContainer {
         }
 
         @Override
-        public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
+        public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
             boolean ret = mouseIn(xMouse, yMouse);
             if (ret)
                 gui.root.add(new Doc());
@@ -65,17 +65,17 @@ public class WHelp extends WContainer {
 
 
         @Override
-        public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
-            if (!super.onClicked(gui, xMouse, yMouse, button))
+        public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
+            if (!super.onMouseClicked(gui, xMouse, yMouse, button))
                 gui.root.remove(this);
             return true;
         }
 
         @Override
-        public boolean onScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
+        public boolean onMouseScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
             switcher.move(-diff);
             text.setPage(switcher.getIndex());
-            return super.onScroll(gui, xMouse, yMouse, diff);
+            return super.onMouseScroll(gui, xMouse, yMouse, diff);
         }
 
         public class Text implements IWidget {
@@ -138,7 +138,7 @@ public class WHelp extends WContainer {
             }
 
             @Override
-            public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
+            public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
                 boolean ret = mouseIn(xMouse, yMouse);
                 if (ret)
                     gui.root.remove(Doc.this);
@@ -151,8 +151,8 @@ public class WHelp extends WContainer {
             }
 
             @Override
-            public boolean onKey(JecaGui gui, char ch, int code) {
-                if (super.onKey(gui, ch, code))
+            public boolean onKeyPressed(JecaGui gui, char ch, int code) {
+                if (super.onKeyPressed(gui, ch, code))
                     return true;
                 if (code == Keyboard.KEY_ESCAPE) {
                     gui.root.remove(Doc.this);

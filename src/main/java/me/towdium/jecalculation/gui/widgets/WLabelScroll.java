@@ -51,7 +51,7 @@ public class WLabelScroll extends WContainer implements ISearchable {
     }
 
     @Override
-    public boolean onScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
+    public boolean onMouseScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
         boolean in = JecaGui.mouseIn(xPos, yPos, column * 18, row * 18, xMouse, yMouse);
         if (in) {
             float pos = getPos(current - diff);

@@ -25,13 +25,13 @@ the [release page](https://minecraft.curseforge.com/projects/just-enough-calcula
   - [ ] Others
 - [x] Item from NEI item panel
 - [ ] Fluid from NEI item panel (Need to get fluid from labels)
-- [x] OreDictionary recognize'
+- [x] OreDictionary recognize
 
 ## TODO
 
 - Backport the 1.16 feature
   - [ ] Disambiguation in picker
-  - [ ] Infinite recipe inputs, outputs and catalysts)
+  - [ ] Infinite recipe inputs, outputs and catalysts
 
 ## Known Issues
 - [ ] Client Only

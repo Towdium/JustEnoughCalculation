@@ -42,7 +42,7 @@ public class WPanel implements IWidget {
     }
 
     @Override
-    public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
+    public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
         boolean ret = mouseIn(xMouse, yMouse);
         if (ret) gui.hand = ILabel.EMPTY;
         return ret;

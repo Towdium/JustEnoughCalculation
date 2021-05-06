@@ -86,7 +86,7 @@ public class WLabel implements IWidget {
     }
 
     @Override
-    public boolean onScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
+    public boolean onMouseScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
         if (mouseIn(xMouse, yMouse)) {
             if (mode == Mode.EDITOR && label != ILabel.EMPTY) {
                 for (int i = 0; i < Math.abs(diff); i++)
@@ -105,7 +105,7 @@ public class WLabel implements IWidget {
     }
 
     @Override
-    public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
+    public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
         if (!mouseIn(xMouse, yMouse) || (button == 1 && mode != Mode.RESULT))
             return false;
         switch (mode) {

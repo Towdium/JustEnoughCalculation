@@ -1,6 +1,5 @@
 package me.towdium.jecalculation.gui.guis;
 
-import codechicken.nei.PositionedStack;
 import codechicken.nei.recipe.IRecipeHandler;
 import me.towdium.jecalculation.nei.Adapter;
 import me.towdium.jecalculation.data.Controller;
@@ -113,12 +112,12 @@ public class GuiRecipe extends WContainer implements IGui {
     }
 
     @Override
-    public boolean onKey(JecaGui gui, char ch, int code) {
+    public boolean onKeyPressed(JecaGui gui, char ch, int code) {
         if (code == Keyboard.KEY_ESCAPE && contains(text)) {
             setNewGroup(false);
             return true;
         }
-        return super.onKey(gui, ch, code);
+        return super.onKeyPressed(gui, ch, code);
     }
 
     public void setNewGroup(boolean b) {

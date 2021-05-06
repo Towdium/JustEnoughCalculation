@@ -93,9 +93,9 @@ public class JecaGui extends GuiContainer {
         if (button == -1) {
             int diff = Mouse.getEventDWheel() / 120;
             if (diff != 0)
-                gui.root.onScroll(gui, mouseX, mouseY, diff);
+                gui.root.onMouseScroll(gui, mouseX, mouseY, diff);
         } else if (Mouse.getEventButtonState()) {
-            if (gui.root.onClicked(gui, mouseX, mouseY, button)) {
+            if (gui.root.onMouseClicked(gui, mouseX, mouseY, button)) {
                 return true;
             } else if (gui.hand != ILabel.EMPTY) {
                 gui.hand = button == 0 ? NEIPlugin.getLabelUnderMouse() : ILabel.EMPTY;
@@ -459,7 +459,7 @@ public class JecaGui extends GuiContainer {
     protected void keyTyped(char typedChar, int keyCode) {
         if (keyCode == Keyboard.KEY_ESCAPE && hand != ILabel.EMPTY)
             hand = ILabel.EMPTY;
-        else if (!root.onKey(this, typedChar, keyCode)) {
+        else if (!root.onKeyPressed(this, typedChar, keyCode)) {
             if (keyCode == Keyboard.KEY_ESCAPE && parent != null)
                 displayParent();
             else

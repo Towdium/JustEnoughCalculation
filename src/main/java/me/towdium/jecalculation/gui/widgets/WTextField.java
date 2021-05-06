@@ -29,7 +29,7 @@ public class WTextField implements IWidget {
     }
 
     @Override
-    public boolean onClicked(JecaGui gui, int xMouse, int yMouse, int button) {
+    public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
         textField.mouseClicked(xMouse, yMouse, button);
         if (textField.isFocused() && button == 1) {
             textField.setText("");
@@ -44,7 +44,7 @@ public class WTextField implements IWidget {
     }
 
     @Override
-    public boolean onKey(JecaGui gui, char ch, int code) {
+    public boolean onKeyPressed(JecaGui gui, char ch, int code) {
         boolean ret = textField.textboxKeyTyped(ch, code);
         if (ret) notifyLsnr();
         return ret;

@@ -85,12 +85,12 @@ public class GuiSearch extends WContainer implements IGui {
     }
 
     @Override
-    public boolean onKey(JecaGui gui, char ch, int code) {
+    public boolean onKeyPressed(JecaGui gui, char ch, int code) {
         if (code == Keyboard.KEY_ESCAPE && contains(text)) {
             setRename(false);
             return true;
         }
-        return super.onKey(gui, ch, code);
+        return super.onKeyPressed(gui, ch, code);
     }
 
     public void refreshDisplay() {
