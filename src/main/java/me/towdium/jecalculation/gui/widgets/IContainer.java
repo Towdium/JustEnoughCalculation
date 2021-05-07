@@ -11,5 +11,5 @@ public interface IContainer extends IWidget {
 
     void clear();
 
-    void setOverlay(IWidget w);
+    void setOverlay(WOverlay w);
 }

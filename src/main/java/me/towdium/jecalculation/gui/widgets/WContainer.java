@@ -22,7 +22,7 @@ import java.util.Objects;
 @SideOnly(Side.CLIENT)
 public class WContainer implements IContainer {
     protected List<IWidget> widgets = new ArrayList<>();
-    protected IWidget overlay = null;
+    protected WOverlay overlay = null;
 
     public void add(IWidget w) {
         widgets.add(w);
@@ -42,7 +42,7 @@ public class WContainer implements IContainer {
             widgets.removeAll(Arrays.asList(w));
     }
 
-    public void setOverlay(@Nullable IWidget overlay) {
+    public void setOverlay(@Nullable WOverlay overlay) {
         this.overlay = overlay;
     }
 
@@ -107,10 +107,14 @@ public class WContainer implements IContainer {
     @Nullable
     @Override
     public WLabel getLabelUnderMouse(int xMouse, int yMouse) {
-        return new Utilities.ReversedIterator<>(widgets).stream()
-                                                        .map(i -> i.getLabelUnderMouse(xMouse, yMouse))
-                                                        .filter(Objects::nonNull)
-                                                        .findFirst()
-                                                        .orElse(null);
+        if(overlay != null && overlay.mouseIn(xMouse, yMouse)) {
+            return overlay.getLabelUnderMouse(xMouse, yMouse);
+        } else {
+            return new Utilities.ReversedIterator<>(widgets).stream()
+                                                            .map(i -> i.getLabelUnderMouse(xMouse, yMouse))
+                                                            .filter(Objects::nonNull)
+                                                            .findFirst()
+                                                            .orElse(null);
+        }
     }
 }

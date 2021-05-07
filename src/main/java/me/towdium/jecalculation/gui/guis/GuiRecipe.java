@@ -250,7 +250,7 @@ public class GuiRecipe extends WContainer implements IGui {
             });
             temp = new WLabel(x - 1, y - 1, 20, 20, true).setLsnrUpdate((i, v) -> update());
             temp.setLabel(ref.getLabel().copy());
-            add(new WPanel(x - 7, y - 30, 111, 55));
+            addPanel(new WPanel(x - 7, y - 30, 111, 55));
             add(new WText(x + 21, y + 5, PLAIN, "x"));
             text = new WTextField(x + 28, y + 9 - WTextField.HEIGHT / 2, 50);
             pick = new WButtonIcon(x + 21, y - 24, 20, 20, BTN_PICK, "recipe.pick").setListener(i -> {
@@ -317,7 +317,7 @@ public class GuiRecipe extends WContainer implements IGui {
             ref = getWidget(type).get(idx);
             int x = ref.xPos;
             int y = ref.yPos;
-            add(new WPanel(x - 7, y - 46, 111, 71));
+            addPanel(new WPanel(x - 7, y - 46, 111, 71));
             temp = new WLabel(x - 1, y - 1, 20, 20, false);
             temp.setLabel(ref.getLabel().copy());
             content = new WLabelScroll(x + 8, y - 40, 4, 2, false).setLabels(disamb.get(type).get(idx))

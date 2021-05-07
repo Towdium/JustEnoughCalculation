@@ -86,21 +86,6 @@ public class WLabel implements IWidget {
         return false;
     }
 
-    // TODO
-
-    //    @Override
-    //    public boolean onMouseScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
-    //        if (mouseIn(xMouse, yMouse)) {
-    //            if (mode == Mode.EDITOR && label != ILabel.EMPTY) {
-    //                for (int i = 0; i < Math.abs(diff); i++)
-    //                    label = diff > 0 ? label.increaseAmount() : label.decreaseAmount();
-    //                notifyLsnr();
-    //            }
-    //            return true;
-    //        } else
-    //            return false;
-    //    }
-
     @Nullable
     @Override
     public WLabel getLabelUnderMouse(int xMouse, int yMouse) {
@@ -122,50 +107,6 @@ public class WLabel implements IWidget {
         } else
             notifyClick();
         return true;
-        //        if (!mouseIn(xMouse, yMouse) || (button == 1 && mode != Mode.RESULT))
-        //            return false;
-        //        switch (mode) {
-        //            case EDITOR:
-        //                if (gui.hand != label.EMPTY) {
-        //                    label = gui.hand;
-        //                    gui.hand = label.EMPTY;
-        //                    notifyLsnr();
-        //                    return true;
-        //                } else if (label != label.EMPTY) {
-        //                    gui.root.add(new WAmount());
-        //                    return true;
-        //                } else
-        //                    return false;
-        //            case RESULT:
-        //                // open NEI recipe gui
-        //                Object item = label.getRepresentation();
-        //                if ((item instanceof ItemStack || item instanceof FluidStack)) {
-        //                    String id = item instanceof ItemStack ? "item" : "liquid";
-        //                    if (button == 0) {
-        //                        GuiCraftingRecipe.openRecipeGui(id, item);
-        //                        return true;
-        //                    } else if (button == 1) {
-        //                        GuiUsageRecipe.openRecipeGui(id, item);
-        //                        return true;
-        //                    }
-        //                } else if (item != null) {
-        //                    JustEnoughCalculation.logger.warn("unknown label representation " + item);
-        //                }
-        //                return false;
-        //            case PICKER:
-        //                if (label != label.EMPTY) {
-        //                    notifyLsnr();
-        //                    return true;
-        //                } else
-        //                    return false;
-        //            case SELECTOR:
-        //                label = gui.hand;
-        //                gui.hand = label.EMPTY;
-        //                notifyLsnr();
-        //                return true;
-        //            default:
-        //                throw new IllegalPositionException();
-        //        }
     }
 
     public WLabel setLsnrUpdate(ListenerValue<? super WLabel, ILabel> listener) {
@@ -203,70 +144,4 @@ public class WLabel implements IWidget {
         if (update != null)
             update.invoke(this, label);
     }
-
-
-    //    class WAmount extends WOverlay {
-    //        WLabel temp = new WLabel(xPos, yPos, xSize, ySize, Mode.PICKER).setListener((i, v) -> update());
-    //        WButton number = new WButtonText(xPos + xSize + 60, yPos, 20, 20, "#", "general.to_percent").setListener(i -> {
-    //            temp.label.setPercent(true);
-    //            update();
-    //        });
-    //        WTextField text = new WTextField(xPos + xSize + 10, yPos + ySize / 2 - WTextField.HEIGHT / 2, 50);
-    //        WButton percent = new WButtonText(xPos + xSize + 60, yPos, 20, 20, "%", "general.to_percent").setListener(i -> {
-    //            temp.label.setPercent(false);
-    //            update();
-    //        });
-    //        WButton pick = new WButtonIcon(xPos + xSize + 83, yPos, 20, 20, BTN_PICK, "label.pick").setListener(i -> {
-    //            JecaGui.getCurrent().hand = temp.label;
-    //            setLabel(ILabel.EMPTY);
-    //            notifyLsnr();
-    //            JecaGui.getCurrent().root.remove(this);
-    //        });
-    //        WButton yes = new WButtonIcon(xPos + xSize + 102, yPos, 20, 20, BTN_YES, "label.confirm").setListener(i -> {
-    //            setLabel(temp.label);
-    //            notifyLsnr();
-    //            JecaGui.getCurrent().root.remove(this);
-    //        });
-    //        WButton no = new WButtonIcon(xPos + xSize + 121, yPos, 20, 20, BTN_NO, "label.delete").setListener(i -> {
-    //            setLabel(ILabel.EMPTY);
-    //            notifyLsnr();
-    //            JecaGui.getCurrent().root.remove(this);
-    //        });
-    //
-    //        public WAmount() {
-    //            temp.setLabel(label.copy());
-    //            add(new WPanel(xPos - 5, yPos - 5, xSize + 152, ySize + 10));
-    //            add(new WText(xPos + xSize + 3, yPos + 5, PLAIN, "x"));
-    //            add(temp, text, pick, yes, no);
-    //            text.setListener(i -> {
-    //                boolean acceptable;
-    //                long amount;
-    //                try {
-    //                    amount = Long.parseLong(text.getText());
-    //                    acceptable = amount > 0;
-    //                    if (!acceptable)
-    //                        amount = 1;
-    //                } catch (NumberFormatException e) {
-    //                    acceptable = text.getText().isEmpty();
-    //                    amount = 1;
-    //                }
-    //                text.setColor(acceptable ? COLOR_TEXT_WHITE : COLOR_TEXT_RED);
-    //                yes.setDisabled(!acceptable);
-    //                temp.label = temp.label.setAmount(amount);
-    //            });
-    //            update();
-    //        }
-    //
-    //        private void update() {
-    //            number.setDisabled(!temp.label.acceptPercent());
-    //            if (temp.label.isPercent()) {
-    //                remove(number);
-    //                add(percent);
-    //            } else {
-    //                remove(percent);
-    //                add(number);
-    //            }
-    //            text.setText(Long.toString(temp.label.getAmount()));
-    //        }
-    //    }
 }

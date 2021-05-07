@@ -36,7 +36,6 @@ import static me.towdium.jecalculation.data.structure.RecordCraft.Mode.*;
 @MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class GuiCraft extends WContainer implements IGui {
-    ItemStack itemStack;
     Calculator calculator = null;
     RecordCraft record;
     WLabel label = new WLabel(31, 7, 20, 20, true).setLsnrUpdate((i, v) -> refreshLabel(v, false, true));
@@ -208,7 +207,7 @@ public class GuiCraft extends WContainer implements IGui {
         public Suggest(List<ILabel> labels, boolean replace) {
             this.replace = replace;
             int width = labels.size() * 20;
-            add(new WPanel(-width, 2, 56 + width, 30));
+            addPanel(new WPanel(-width, 2, 56 + width, 30));
             add(new WLabel(31, 7, 20, 20, false).setLabel(label.getLabel()).setLsnrUpdate((i, v) -> refresh(v)));
             add(new WIcon(5 - width, 7, 18, 20, Resource.ICN_HELP, "craft.suggest"));
             add(new WLine(26, 7, 20, false));

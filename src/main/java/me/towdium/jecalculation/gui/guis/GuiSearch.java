@@ -144,7 +144,7 @@ public class GuiSearch extends WContainer implements IGui {
             Trio<Recipe, String, Integer> recipe = recipes.get(l.getLabel());
             int x = l.xPos - 1;
             int y = l.yPos - 1;
-            add(new WPanel(x - 5, y - 5, 72, 30));
+            addPanel(new WPanel(x - 5, y - 5, 72, 30));
             add(new WLabel(x, y, 20, 20, false).setLabel(l.getLabel()));
             add(new WButtonIcon(x + 23, y, 20, 20, BTN_EDIT, "search.edit").setListener(i -> {
                 JecaGui.displayGui(true, true, new GuiRecipe(recipe.two, recipe.three));

@@ -13,7 +13,12 @@ import javax.annotation.ParametersAreNonnullByDefault;
  */
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class WOverlay extends WContainer {
+public abstract class WOverlay extends WContainer {
+    /**
+     * For checking whether the mouse in the overlay
+     */
+    protected WPanel panel;
+
     @Override
     public boolean onKeyPressed(JecaGui gui, char ch, int code) {
         if (super.onKeyPressed(gui, ch, code)) return true;
@@ -42,5 +47,15 @@ public class WOverlay extends WContainer {
         super.onDraw(gui, mouseX, mouseY);
         GlStateManager.popMatrix();
         return false;
+    }
+
+    protected void addPanel(WPanel panel) {
+        this.panel = panel;
+        add(panel);
+    }
+
+    protected boolean mouseIn(int x, int y) {
+        if(panel == null) return false;
+        return panel.mouseIn(x, y);
     }
 }

@@ -50,6 +50,20 @@ public class WPanel implements IWidget {
         if (ret) gui.hand = ILabel.EMPTY;
         return ret;
     }
+
+    /**
+     * Assuming Panel will be the first widget in the container's widgets.
+     * @param gui gui
+     * @param xMouse mouse x
+     * @param yMouse mouse y
+     * @param diff different
+     * @return true to stop the event
+     */
+    @Override
+    public boolean onMouseScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
+        return mouseIn(xMouse, yMouse);
+    }
+
     public boolean mouseIn(int x, int y) {
         int xx = x - xPos;
         int yy = y - yPos;
