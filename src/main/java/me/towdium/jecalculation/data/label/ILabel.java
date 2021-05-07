@@ -124,7 +124,7 @@ public interface ILabel {
      * For registering, see {@link Serializer}.
      */
     class Merger {
-        private Utilities.Relation<String, MergerFunction> functions = new Utilities.Relation<>();
+        private final Utilities.Relation<String, MergerFunction> functions = new Utilities.Relation<>();
 
         private Merger() {
         }
@@ -173,7 +173,7 @@ public interface ILabel {
         public static final String KEY_IDENTIFIER = "type";
         public static final String KEY_CONTENT = "content";
 
-        private HashMap<String, Function<NBTTagCompound, ILabel>> idToData = new HashMap<>();
+        private final HashMap<String, Function<NBTTagCompound, ILabel>> idToData = new HashMap<>();
 
         private Serializer() {
         }
@@ -272,6 +272,7 @@ public interface ILabel {
             return guess.isEmpty() ? labels.get(0) : guess.get(0);
         }
 
+        // to test if the labels can be converted to other labels (like oreDict)
         public Pair<List<ILabel>, List<ILabel>> guess(List<ILabel> labels, @Nullable Class<?> context) {
             List<ILabel> suggest = new ReversedIterator<>(handlers.get(Priority.SUGGEST)).stream()
                                                                                          .flatMap(h -> h.convert(labels,
@@ -295,7 +296,7 @@ public interface ILabel {
 
     class RegistryEditor {
 
-        private ArrayList<Record> records = new ArrayList<>();
+        private final ArrayList<Record> records = new ArrayList<>();
 
         private RegistryEditor() {
         }

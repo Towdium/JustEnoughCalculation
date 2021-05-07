@@ -13,4 +13,8 @@ import me.towdium.jecalculation.gui.widgets.IContainer;
 public interface IGui extends IContainer {
     default void onVisible(JecaGui gui) {
     }
+
+    default boolean acceptsTransfer() {
+        return false;
+    }
 }

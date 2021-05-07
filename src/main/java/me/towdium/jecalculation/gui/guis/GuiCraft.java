@@ -102,6 +102,11 @@ public class GuiCraft extends WContainer implements IGui {
         refreshCalculator();
     }
 
+    @Override
+    public boolean acceptsTransfer() {
+        return true;
+    }
+
     void setMode(RecordCraft.Mode mode) {
         record.mode = mode;
         Controller.setRCraft(record);
@@ -193,6 +198,7 @@ public class GuiCraft extends WContainer implements IGui {
                          .map(i -> i.matches(l))
                          .filter(Optional::isPresent)
                          .map(Optional::get)
+                         .map(ILabel::copy)
                          .collect(Collectors.toList());
     }
 

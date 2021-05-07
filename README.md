@@ -34,7 +34,9 @@ the [release page](https://minecraft.curseforge.com/projects/just-enough-calcula
   - [ ] Infinite recipe inputs, outputs and catalysts
 
 ## Known Issues
-- [ ] Client Only
+
+- [ ] **May crash** if you open the gui immediately after entering the world
+- [ ] Client only
 - [ ] Fluid from NEI ItemPanel will be recognized as item
 - [ ] Some OreDict items renders wrong with overlay (Now removed the overlay)
 - [ ] GUI will cover the NEI's GUI like tooltip on item panel

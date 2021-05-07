@@ -145,7 +145,6 @@ public class JecaGui extends GuiContainer {
         return s;
     }
 
-
     public static boolean mouseIn(int xPos, int yPos, int xSize, int ySize, int xMouse, int yMouse) {
         return xMouse > xPos && yMouse > yPos && xMouse <= xPos + xSize && yMouse <= yPos + ySize;
     }

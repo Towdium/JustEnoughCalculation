@@ -9,7 +9,7 @@ import me.towdium.jecalculation.data.structure.*;
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentTranslation;
@@ -72,10 +72,13 @@ public class Controller {
     }
 
     private static void export(String s, Function<Recipes, NBTTagCompound> r) {
+        EntityClientPlayerMP player = Utilities.getPlayer();
+        if (player == null)
+            return;
+
         File f = JecaConfig.getDataFile(s);
         Utilities.Json.write(r.apply(getRecipes()), f);
-        Minecraft.getMinecraft().thePlayer.addChatMessage(
-                new ChatComponentTranslation("jecalculation.chat.export", f.getAbsolutePath()));
+        player.addChatMessage(new ChatComponentTranslation("jecalculation.chat.export", f.getAbsolutePath()));
     }
 
     public static void export(String group) {

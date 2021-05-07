@@ -6,6 +6,7 @@ import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.util.ChatComponentTranslation;
 
 import javax.annotation.Nullable;
@@ -116,6 +117,8 @@ public class CostList {
         private int index;
 
         public Calculator() throws ArithmeticException {
+            EntityClientPlayerMP player = Utilities.getPlayer();
+
             HashSet<CostList> set = new HashSet<>();
             set.add(CostList.this);
             Pair<Recipe, Long> next = find(true);
@@ -144,8 +147,8 @@ public class CostList {
                     addCatalyst(next.one.getLabel(Recipe.IO.CATALYST));
                     next = find(true);
                 }
-                if (count++ > 1000) {
-                    Minecraft.getMinecraft().thePlayer.addChatMessage(
+                if (count++ > 1000 && player != null) {
+                    player.addChatMessage(
                             new ChatComponentTranslation("jecalculation.chat.max_loop"));
                     break;
                 }

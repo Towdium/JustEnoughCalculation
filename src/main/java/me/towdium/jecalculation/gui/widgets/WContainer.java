@@ -58,9 +58,13 @@ public class WContainer implements IContainer {
     public boolean onDraw(JecaGui gui, int mouseX, int mouseY) {
         IWidget[] w = new IWidget[1];
         widgets.forEach(widget -> {
-            if(widget.onDraw(gui, mouseX, mouseY)) w[0] = widget;
+            if (widget.onDraw(gui, mouseX, mouseY))
+                w[0] = widget;
         });
-        if(w[0] != null) w[0].onDraw(gui, mouseX, mouseY);
+        if (w[0] != null)
+            w[0].onDraw(gui, mouseX, mouseY);
+        if (overlay != null)
+            overlay.onDraw(gui, mouseX, mouseY);
         return false;
     }
 
@@ -68,7 +72,8 @@ public class WContainer implements IContainer {
     public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
         boolean b = overlay != null && overlay.onMouseClicked(gui, xMouse, yMouse, button);
         return b || new Utilities.ReversedIterator<>(widgets).stream()
-                                                        .anyMatch(i -> i.onMouseClicked(gui, xMouse, yMouse, button));
+                                                             .anyMatch(i -> i.onMouseClicked(gui, xMouse, yMouse,
+                                                                                             button));
     }
 
     @Override
@@ -81,21 +86,22 @@ public class WContainer implements IContainer {
     public boolean onMouseReleased(JecaGui gui, int xMouse, int yMouse, int button) {
         boolean b = overlay != null && overlay.onMouseReleased(gui, xMouse, yMouse, button);
         return b || new Utilities.ReversedIterator<>(widgets).stream()
-                                                        .anyMatch(i -> i.onMouseReleased(gui, xMouse, yMouse, button));
+                                                             .anyMatch(i -> i.onMouseReleased(gui, xMouse, yMouse,
+                                                                                              button));
     }
 
     @Override
     public boolean onMouseScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
         boolean b = overlay != null && overlay.onMouseScroll(gui, xMouse, yMouse, diff);
         return b || new Utilities.ReversedIterator<>(widgets).stream()
-                                                        .anyMatch(i -> i.onMouseScroll(gui, xMouse, yMouse, diff));
+                                                             .anyMatch(i -> i.onMouseScroll(gui, xMouse, yMouse, diff));
     }
 
     @Override
     public boolean onTooltip(JecaGui gui, int xMouse, int yMouse, List<String> tooltip) {
         boolean b = overlay != null && overlay.onTooltip(gui, xMouse, yMouse, tooltip);
         return b || new Utilities.ReversedIterator<>(widgets).stream()
-                                                        .anyMatch(i -> i.onTooltip(gui, xMouse, yMouse, tooltip));
+                                                             .anyMatch(i -> i.onTooltip(gui, xMouse, yMouse, tooltip));
     }
 
     @Nullable
