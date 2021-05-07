@@ -108,7 +108,7 @@ public class WContainer implements IContainer {
     @Override
     public WLabel getLabelUnderMouse(int xMouse, int yMouse) {
         if(overlay != null && overlay.mouseIn(xMouse, yMouse)) {
-            return overlay.getLabelUnderMouse(xMouse, yMouse);
+            return null;
         } else {
             return new Utilities.ReversedIterator<>(widgets).stream()
                                                             .map(i -> i.getLabelUnderMouse(xMouse, yMouse))

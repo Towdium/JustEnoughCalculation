@@ -63,17 +63,6 @@ public class WLabelScroll extends WContainer implements ISearchable {
         scroll.setRatio(Math.min(row / (float) getAmountRows(), 1f)).setCurrent(f).setStep(step);
     }
 
-    //    @Override
-    //    public boolean onMouseScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
-    //        boolean in = JecaGui.mouseIn(xPos, yPos, column * 18, row * 18, xMouse, yMouse);
-    //        if (in) {
-    //            float pos = getPos(current - diff);
-    //            scroll.setCurrent(pos);
-    //            update(pos);
-    //        }
-    //        return in;
-    //    }
-
     public WLabel get(int index) {
         return labelGroup.get(index - column * current);
     }

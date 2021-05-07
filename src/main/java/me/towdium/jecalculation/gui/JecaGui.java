@@ -296,7 +296,7 @@ public class JecaGui extends GuiContainer {
             int i = 0;
             int separators = 0;
             for (String s : textLines) {
-                int j = this.fontRendererObj.getStringWidth(s);
+                int j = font.getStringWidth(s);
                 if (j > i)
                     i = j;
                 //noinspection StringEquality
@@ -560,7 +560,7 @@ public class JecaGui extends GuiContainer {
     }
 
     public void drawHoveringText(List<String> textLines, int x, int y) {
-        super.drawHoveringText(textLines, x, y, fontRendererObj);
+        this.drawHoveringText(textLines, x, y, fontRendererObj);
     }
 
 }
