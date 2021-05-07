@@ -1,6 +1,5 @@
 package me.towdium.jecalculation.data.label.labels;
 
-import codechicken.nei.recipe.IRecipeHandler;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -105,7 +104,7 @@ public class LItemStack extends ILabel.Impl {
         return false;
     }
 
-    public static List<ILabel> suggest(List<ILabel> iss, @Nullable IRecipeHandler rl) {
+    public static List<ILabel> suggest(List<ILabel> iss, @Nullable Class<?> context) {
         if (iss.size() == 0)
             return new ArrayList<>();
         for (ILabel i : iss)
@@ -130,7 +129,7 @@ public class LItemStack extends ILabel.Impl {
     }
 
 
-    public static List<ILabel> fallback(List<ILabel> iss, @Nullable IRecipeHandler rl) {
+    public static List<ILabel> fallback(List<ILabel> iss, @Nullable Class<?> context) {
         List<ILabel> ret = new ArrayList<>();
         if (iss.size() == 1) {
             ILabel label = iss.get(0);

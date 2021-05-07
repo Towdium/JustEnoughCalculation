@@ -42,11 +42,12 @@ public class WIcon extends WTooltip {
     }
 
     @Override
-    public void onDraw(JecaGui gui, int xMouse, int yMouse) {
+    public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
         super.onDraw(gui, xMouse, yMouse);
         gui.drawRectangle(xPos, yPos, xSize, ySize, COLOR_GUI_GREY);
         Resource r = mouseIn(xMouse, yMouse) ? focused : normal;
         gui.drawResource(r, (xSize - r.getXSize()) / 2 + xPos, (ySize - r.getYSize()) / 2 + yPos);
+        return false;
     }
 
     @Override

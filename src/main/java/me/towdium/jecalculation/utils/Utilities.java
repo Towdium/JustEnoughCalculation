@@ -12,6 +12,7 @@ import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.polyfill.NBTHelper;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -141,6 +142,11 @@ public class Utilities {
     public static NBTTagCompound getTag(ItemStack is) {
         return NBTHelper.getOrCreateSubCompound(is, JustEnoughCalculation.Reference.MODID);
     }
+
+    public static EntityClientPlayerMP getPlayer() {
+        return Objects.requireNonNull(Minecraft.getMinecraft().thePlayer);
+    }
+
 
     public static class Relation<K, V> {
         public HashMap<Pair<K, K>, V> data = new HashMap<>();
@@ -367,8 +373,7 @@ public class Utilities {
         }
 
         public List<T> toList() {
-            //noinspection unchecked
-            return (List<T>) data.clone();
+            return new ArrayList<>(data);
         }
 
         public void clear() {

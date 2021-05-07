@@ -40,8 +40,9 @@ public class WTextField implements IWidget {
     }
 
     @Override
-    public void onDraw(JecaGui gui, int xMouse, int yMouse) {
+    public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
         textField.drawTextBox();
+        return false;
     }
 
     @Override

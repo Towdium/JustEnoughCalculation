@@ -58,7 +58,7 @@ public class WLabel implements IWidget {
     }
 
     @Override
-    public void onDraw(JecaGui gui, int xMouse, int yMouse) {
+    public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
         gui.drawResourceContinuous(WGT_SLOT, xPos, yPos, xSize, ySize, 3, 3, 3, 3);
         label.drawLabel(gui, xPos + xSize / 2, yPos + ySize / 2, true);
         String s = fmtAmount.apply(label);
@@ -71,6 +71,7 @@ public class WLabel implements IWidget {
         }
         if (mouseIn(xMouse, yMouse))
             GuiDraw.drawRect(xPos + 1, yPos + 1, xSize - 2, ySize - 2, 0x80FFFFFF);
+        return false;
     }
 
     @Override

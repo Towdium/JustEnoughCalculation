@@ -1,6 +1,5 @@
 package me.towdium.jecalculation.gui.guis;
 
-import codechicken.nei.recipe.IRecipeHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.data.Controller;
@@ -10,13 +9,10 @@ import me.towdium.jecalculation.data.structure.Recipe;
 import me.towdium.jecalculation.data.structure.Recipe.IO;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.widgets.*;
-import me.towdium.jecalculation.nei.Adapter;
-import me.towdium.jecalculation.nei.NEIPlugin;
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import me.towdium.jecalculation.utils.wrappers.Trio;
-import net.minecraft.item.ItemStack;
 import org.lwjgl.input.Keyboard;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -38,7 +34,7 @@ import static me.towdium.jecalculation.gui.Resource.*;
 public class GuiRecipe extends WContainer implements IGui {
     Pair<String, Integer> dest;
     WSwitcher group = new WSwitcher(7, 7, 162, Controller.getGroups()).setListener(i -> refresh());
-    WTextField text = new WTextField(49, 32, 119);
+    WTextField text = new WTextField(49, 25, 119);
     WLabelScroll catalyst = new WLabelScroll(25, 101, 7, 1, true);
     WLabelScroll input = new WLabelScroll(25, 123, 7, 2, true);
     WLabelScroll output = new WLabelScroll(25, 61, 7, 2, true);
@@ -93,7 +89,7 @@ public class GuiRecipe extends WContainer implements IGui {
                         .setLsnrClick((i, v) -> {
                             ILabel l = i.get(v).getLabel();
                             if (l != ILabel.EMPTY)
-                                add(new WAmount(j, v));
+                                setOverlay(new WAmount(j, v));
                         })
                         .setLsnrUpdate((i, v) -> {
                             refresh();
@@ -163,68 +159,22 @@ public class GuiRecipe extends WContainer implements IGui {
         refresh();
     }
 
-    public void transfer(IRecipeHandler recipe, int recipeIndex) {
-        // item disamb raw
-        EnumMap<IO, List<Trio<ILabel, CostList, CostList>>> merged = new EnumMap<>(IO.class);
+    public void transfer(EnumMap<IO, List<Trio<ILabel, CostList, CostList>>> recipe, Class<?> context) {
         disamb.clear();
-
-        // merge recipe input, output and catalysts
-        List<Object[]> recipeInputs = new ArrayList<>();
-        List<Object[]> recipeOutputs = new ArrayList<>();
-        Adapter.handleRecipe(recipe, recipeIndex, recipeInputs, recipeOutputs);
-
-        // input
-        recipeInputs.forEach(i -> merge(merged, Arrays.asList(i), recipe, IO.INPUT));
-        // output
-        recipeOutputs.forEach(o -> merge(merged, Arrays.asList(o), recipe, IO.OUTPUT));
-
-        // catalyst. Ignore multiple catalyst
-        NEIPlugin.getCatalyst(recipe).ifPresent(catalyst -> {
-            List<ItemStack> catalysts = Collections.singletonList(catalyst);
-            merge(merged, catalysts, recipe, IO.CATALYST);
-        });
-
-        // other. Unused. For example fuel in furnaces.
-        //        recipe.getOtherStacks(recipeIndex).stream();
 
         // generate disamb and fill slots
         for (IO i : IO.values())
-            getWidget(i).setLabels(extract(merged, i, recipe));
+            getWidget(i).setLabels(extract(recipe, i, context));
         refresh();
-    }
-
-    private void merge(EnumMap<IO, List<Trio<ILabel, CostList, CostList>>> dst,
-                       List<?> objs,
-                       IRecipeHandler context,
-                       IO type) {
-        List<ILabel> list = objs.stream().map(ILabel.Converter::from).collect(Collectors.toList());
-        if (list.isEmpty())
-            return;
-        ILabel rep = list.get(0).copy();
-        if (type == IO.INPUT && list.size() != 1)
-            rep = ILabel.CONVERTER.first(list, context);
-        ILabel fin = rep;
-
-        dst.computeIfAbsent(type, i -> new ArrayList<>()).stream().filter(p -> {
-            CostList cl = new CostList(list);
-            if (p.three.equals(cl)) {
-                ILabel.MERGER.merge(p.one, fin).ifPresent(i -> p.one = i);
-                p.two = p.two.merge(cl, true, false);
-                return true;
-            } else
-                return false;
-        }).findAny().orElseGet(() -> {
-            Trio<ILabel, CostList, CostList> ret = new Trio<>(fin, new CostList(list), new CostList(list));
-            dst.get(type).add(ret);
-            return ret;
-        });
     }
 
     private ArrayList<ILabel> extract(EnumMap<IO, List<Trio<ILabel, CostList, CostList>>> src,
                                       IO type,
-                                      IRecipeHandler context) {
+                                      Class<?> context) {
         List<Trio<ILabel, CostList, CostList>> l = src.get(type);
         ArrayList<ILabel> ret = new ArrayList<>();
+        if (l == null)
+            return ret;
         for (int i = 0; i < l.size(); i++) {
             Trio<ILabel, CostList, CostList> p = l.get(i);
             ret.add(p.one);
@@ -309,10 +259,7 @@ public class GuiRecipe extends WContainer implements IGui {
             disamb = new WButtonIcon(x + 40, y - 24, 20, 20, BTN_DISAMB, "recipe.disamb");
             Map<Integer, List<ILabel>> entry = GuiRecipe.this.disamb.get(type);
             if (entry != null && entry.containsKey(idx)) {
-                disamb.setListener(i -> {
-                    GuiRecipe.this.remove(this);
-                    GuiRecipe.this.add(new WDisamb(type, idx));
-                });
+                disamb.setListener(i -> GuiRecipe.this.setOverlay(new WDisamb(type, idx)));
             } else
                 disamb.setDisabled(true);
             add(temp, text, pick, yes, no, disamb);
@@ -339,7 +286,7 @@ public class GuiRecipe extends WContainer implements IGui {
         private void set(ILabel l, IO type, int idx) {
             ref.setLabel(l, true);
             removeDisamb(type, idx);
-            GuiRecipe.this.remove(this);
+            GuiRecipe.this.setOverlay(null);
         }
 
         private void update() {
@@ -373,7 +320,7 @@ public class GuiRecipe extends WContainer implements IGui {
                                                                       ref.setLabel(
                                                                               i.get(v).getLabel().copy().multiply(-1),
                                                                               false);
-                                                                      GuiRecipe.this.remove(this);
+                                                                      GuiRecipe.this.setOverlay(null);
                                                                       refresh();
                                                                   });
             add(new WIcon(x + 22, y - 1, 20, 20, ICN_TEXT, "common.search"));

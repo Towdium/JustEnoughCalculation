@@ -55,12 +55,13 @@ public class WLcd implements IWidget {
     }
 
     @Override
-    public void onDraw(JecaGui gui, int xMouse, int yMouse) {
+    public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
         drawBackground(gui);
         drawStr(gui, text);
         if (dot != DOT_NONE)
             drawDot(gui, 6 - dot);
         drawOperator(gui, operator);
+        return false;
     }
 
     protected void drawBackground(JecaGui gui) {

@@ -13,6 +13,7 @@ import me.towdium.jecalculation.gui.widgets.*;
 import me.towdium.jecalculation.nei.NEIPlugin;
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.utils.ItemStackHelper;
+import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -132,7 +133,7 @@ public class GuiCraft extends WContainer implements IGui {
     }
 
     List<ILabel> getInventory() {
-        InventoryPlayer inv = Minecraft.getMinecraft().thePlayer.inventory;
+        InventoryPlayer inv = Utilities.getPlayer().inventory;
         ArrayList<ILabel> labels = new ArrayList<>();
         Consumer<ItemStack[]> add = i -> Arrays.stream(i)
                                                .filter(j -> !ItemStackHelper.isEmpty(j))
@@ -182,7 +183,7 @@ public class GuiCraft extends WContainer implements IGui {
             match.addAll(fuzzy);
             List<ILabel> list = new ArrayList<>(match);
             if (!match.isEmpty())
-                add(new Suggest(list.size() > 3 ? list.subList(0, 3) : list, !dup));
+                setOverlay(new Suggest(list.size() > 3 ? list.subList(0, 3) : list, !dup));
         }
     }
 
@@ -212,7 +213,7 @@ public class GuiCraft extends WContainer implements IGui {
         }
 
         public void refresh(ILabel l) {
-            GuiCraft.this.remove(this);
+            GuiCraft.this.setOverlay(null);
             refreshLabel(l, replace, false);
         }
     }

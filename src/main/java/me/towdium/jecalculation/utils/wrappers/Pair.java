@@ -27,19 +27,6 @@ public class Pair<K, V> {
         return false;
     }
 
-    public boolean swap(Class<? extends K> ke, Class<? extends V> ve) {
-        if (ke.isInstance(one) && ve.isInstance(two)) return true;
-        else if (!(ke.isInstance(two) && ve.isInstance(one))) return false;
-        else {
-            //noinspection unchecked
-            K o = (K) two;
-            //noinspection unchecked
-            two = (V) one;
-            one = o;
-            return true;
-        }
-    }
-
     public Pair<K, V> setOne(K one) {
         this.one = one;
         return this;

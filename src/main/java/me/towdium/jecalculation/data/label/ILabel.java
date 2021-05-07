@@ -1,6 +1,5 @@
 package me.towdium.jecalculation.data.label;
 
-import codechicken.nei.recipe.IRecipeHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.JustEnoughCalculation;
@@ -259,7 +258,7 @@ public interface ILabel {
                 return new LItemStack(itemStack);
             } else {
                 JustEnoughCalculation.logger.warn("Unrecognized ingredient type: " + o.getClass());
-                return ILabel.EMPTY;
+                return LPlaceholder.Converter.from(o);
             }
         }
 
@@ -268,27 +267,29 @@ public interface ILabel {
         }
 
         // get most possible guess from labels
-        public ILabel first(List<ILabel> labels, @Nullable IRecipeHandler context) {
+        public ILabel first(List<ILabel> labels, @Nullable Class<?> context) {
             List<ILabel> guess = guess(labels, context).one;
             return guess.isEmpty() ? labels.get(0) : guess.get(0);
         }
 
-        // to test if the labels can be converted to other labels (like oreDict)
-        public Pair<List<ILabel>, List<ILabel>> guess(List<ILabel> labels) {
-            return guess(labels, null);
-        }
-
-        public Pair<List<ILabel>, List<ILabel>> guess(List<ILabel> labels, @Nullable IRecipeHandler context) {
-            List<ILabel> suggest = new ReversedIterator<>(handlers.get(Priority.SUGGEST)).stream().flatMap(
-                    h -> h.convert(labels, context).stream()).collect(Collectors.toList());
-            List<ILabel> fallback = new ReversedIterator<>(handlers.get(Priority.FALLBACK)).stream().flatMap(
-                    h -> h.convert(labels, context).stream()).collect(Collectors.toList());
+        public Pair<List<ILabel>, List<ILabel>> guess(List<ILabel> labels, @Nullable Class<?> context) {
+            List<ILabel> suggest = new ReversedIterator<>(handlers.get(Priority.SUGGEST)).stream()
+                                                                                         .flatMap(h -> h.convert(labels,
+                                                                                                                 context)
+                                                                                                        .stream())
+                                                                                         .collect(Collectors.toList());
+            List<ILabel> fallback = new ReversedIterator<>(handlers.get(Priority.FALLBACK)).stream()
+                                                                                           .flatMap(h -> h.convert(
+                                                                                                   labels, context)
+                                                                                                          .stream())
+                                                                                           .collect(
+                                                                                                   Collectors.toList());
             return new Pair<>(suggest, fallback);
         }
 
         @FunctionalInterface
         public interface ConverterFunction {
-            List<ILabel> convert(List<ILabel> a, @Nullable IRecipeHandler context);
+            List<ILabel> convert(List<ILabel> a, @Nullable Class<?> context);
         }
     }
 
@@ -498,15 +499,29 @@ public interface ILabel {
         @Override
         public ILabel multiply(float i) {
             float amount = i * getAmount();
-            if (amount > Long.MAX_VALUE) throw new ArithmeticException("Multiply overflow");
+            if (amount > Long.MAX_VALUE)
+                throw new ArithmeticException("Multiply overflow");
             return setAmount((long) amount);
         }
 
         @Override
         @SideOnly(Side.CLIENT)
         public void getToolTip(List<String> existing, boolean detailed) {
-            if (detailed)
-                existing.add(FORMAT_GREY + Utilities.I18n.get("label.common.amount", getAmountString(false)));
+            if (detailed) {
+                long amount = percent ? (getAmount() + 99) / 100 : getAmount();
+                long stack = amount / 64;
+                long remainder = amount % 64;
+                boolean showStack = stack != 0;
+                boolean showReminder = stack < 1000 && remainder != 0;
+                String tip = "";
+                if (showStack)
+                    tip += Utilities.cutNumber(stack, 5) + "x64";
+                if (showStack && showReminder)
+                    tip += "+";
+                if (showReminder)
+                    tip += Long.toString(remainder);
+                existing.add(FORMAT_GREY + Utilities.I18n.get("label.common.amount", tip));
+            }
         }
 
         @Override
@@ -580,9 +595,5 @@ public interface ILabel {
         public boolean matches(Object l) {
             return l instanceof Impl && percent == ((Impl) l).percent;
         }
-
-        //abstract protected void drawLabel(JecaGui gui);
-
-
     }
 }

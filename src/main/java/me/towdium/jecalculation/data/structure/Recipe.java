@@ -148,6 +148,10 @@ public class Recipe {
     }
 
     public enum IO {
-        INPUT, OUTPUT, CATALYST
+        INPUT, OUTPUT, CATALYST;
+
+        public static IO isInput(boolean b) {
+            return b ? INPUT : OUTPUT;
+        }
     }
 }

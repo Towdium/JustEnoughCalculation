@@ -1,12 +1,10 @@
 package me.towdium.jecalculation.data.label.labels;
 
-import codechicken.nei.recipe.IRecipeHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
-import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.polyfill.mc.util.NonNullList;
 import me.towdium.jecalculation.utils.ItemStackHelper;
 import me.towdium.jecalculation.utils.Utilities;
@@ -81,7 +79,7 @@ public class LOreDict extends ILabel.Impl {
         return false;
     }
 
-    public static List<ILabel> suggest(List<ILabel> iss, @Nullable IRecipeHandler rl) {
+    public static List<ILabel> suggest(List<ILabel> iss, @Nullable Class<?> context) {
         ILabel l = iss.get(0);
         if (!(l instanceof LItemStack))
             return new ArrayList<>();
@@ -94,7 +92,7 @@ public class LOreDict extends ILabel.Impl {
         return ids.stream().map(i -> new LOreDict(OreDictionary.getOreName(i), amount)).collect(Collectors.toList());
     }
 
-    public static List<ILabel> fallback(List<ILabel> iss, @Nullable IRecipeHandler rl) {
+    public static List<ILabel> fallback(List<ILabel> iss, @Nullable Class<?> context) {
         ILabel l = iss.get(0);
         if (!(l instanceof LItemStack))
             return new ArrayList<>();

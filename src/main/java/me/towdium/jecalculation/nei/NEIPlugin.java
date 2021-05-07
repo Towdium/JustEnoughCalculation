@@ -4,12 +4,19 @@ import codechicken.nei.guihook.GuiContainerManager;
 import codechicken.nei.recipe.*;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.label.ILabel;
+import me.towdium.jecalculation.data.structure.CostList;
+import me.towdium.jecalculation.data.structure.Recipe;
+import me.towdium.jecalculation.utils.wrappers.Trio;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import scala.tools.cmd.Opt;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class NEIPlugin {
 
@@ -60,4 +67,8 @@ public class NEIPlugin {
             JustEnoughCalculation.logger.warn("unknown label representation " + rep);
         }
     }
+
+
+
+
 }

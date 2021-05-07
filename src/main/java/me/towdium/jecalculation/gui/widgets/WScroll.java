@@ -36,7 +36,7 @@ public class WScroll implements IWidget {
     }
 
     @Override
-    public void onDraw(JecaGui gui, int xMouse, int yMouse) {
+    public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
         if (Mouse.isButtonDown(0) && active)
             setCurrent(yMouse - yPos - height / 2, true);
         else
@@ -48,6 +48,7 @@ public class WScroll implements IWidget {
 
         gui.drawResourceContinuous(WGT_SLOT, xPos, yPos, 14, ySize, 3, 3, 3, 3);
         gui.drawResourceContinuous(r, xPos, yPos + offset, 14, height, 3);
+        return false;
     }
 
     @Override

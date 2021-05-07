@@ -1,11 +1,10 @@
 package me.towdium.jecalculation.data.label.labels;
 
-import codechicken.nei.recipe.IRecipeHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
-import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.Fluid;
@@ -15,7 +14,6 @@ import net.minecraftforge.fluids.FluidStack;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -60,7 +58,8 @@ public class LFluidStack extends ILabel.Impl {
         super(nbt);
         String id = nbt.getString(KEY_FLUID);
         Fluid f = FluidRegistry.getFluid(id);
-        if (f == null) throw new Serializer.SerializationException("Fluid " + id + " cannot be resolved, ignoring");
+        if (f == null)
+            throw new Serializer.SerializationException("Fluid " + id + " cannot be resolved, ignoring");
         init(f, nbt.hasKey(KEY_NBT) ? nbt.getCompoundTag(KEY_NBT) : null);
     }
 
@@ -84,8 +83,7 @@ public class LFluidStack extends ILabel.Impl {
 
     @Override
     public String getAmountString(boolean round) {
-        return amount >= 1000 ? Utilities.cutNumber(amount / 1000f, 4) + "B"
-                              : amount + "mB";
+        return amount >= 1000 ? Utilities.cutNumber(amount / 1000f, 4) + "B" : amount + "mB";
     }
 
 
@@ -105,7 +103,8 @@ public class LFluidStack extends ILabel.Impl {
         if (l instanceof LFluidStack) {
             LFluidStack lfs = (LFluidStack) l;
             return (Objects.equals(nbt, lfs.nbt)) && fluid == lfs.fluid;
-        } else return false;
+        } else
+            return false;
     }
 
     @Override
@@ -117,15 +116,16 @@ public class LFluidStack extends ILabel.Impl {
     public NBTTagCompound toNbt() {
         NBTTagCompound ret = super.toNbt();
         ret.setString(KEY_FLUID, FluidRegistry.getFluidName(fluid));
-        if (nbt != null) ret.setTag(KEY_NBT, nbt);
+        if (nbt != null)
+            ret.setTag(KEY_NBT, nbt);
         return ret;
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void getToolTip(List<String> existing, boolean detailed) {
-        if (detailed) existing.add(FORMAT_GREY +
-                                   Utilities.I18n.get("label.common.amount", Long.toString(getAmount())) + "mB");
+        if (detailed)
+            existing.add(FORMAT_GREY + Utilities.I18n.get("label.common.amount", Long.toString(getAmount())) + "mB");
         existing.add(FORMAT_BLUE + FORMAT_ITALIC + Utilities.getModName(fluid));
     }
 
@@ -142,12 +142,14 @@ public class LFluidStack extends ILabel.Impl {
         return super.hashCode() ^ fluid.getUnlocalizedName().hashCode() ^ (nbt == null ? 0 : nbt.hashCode());
     }
 
-    public static List<ILabel> suggest(List<ILabel> iss, @Nullable IRecipeHandler rl) {
+    public static List<ILabel> suggest(List<ILabel> iss, @Nullable Class<?> context) {
         return new ArrayList<>();
     }
 
     public static boolean merge(ILabel a, ILabel b) {
-        if (a instanceof LFluidStack && b instanceof LFluidStack) return a.matches(b);
-        else return false;
+        if (a instanceof LFluidStack && b instanceof LFluidStack)
+            return a.matches(b);
+        else
+            return false;
     }
 }

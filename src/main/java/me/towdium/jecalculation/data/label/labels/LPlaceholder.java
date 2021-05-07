@@ -7,11 +7,17 @@ import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.utils.Utilities;
+import me.towdium.jecalculation.utils.wrappers.Pair;
 import net.minecraft.nbt.NBTTagCompound;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -45,7 +51,8 @@ public class LPlaceholder extends ILabel.Impl {
     public LPlaceholder(String name, long amount, boolean silent) {
         super(amount, false);
         this.name = name;
-        if (!silent) getActive().push(new LPlaceholder(name, 1, true), false);
+        if (!silent)
+            getActive().push(new LPlaceholder(name, 1, true), false);
     }
 
     public LPlaceholder(LPlaceholder label) {
@@ -120,6 +127,33 @@ public class LPlaceholder extends ILabel.Impl {
             LPlaceholder lpA = (LPlaceholder) a;
             LPlaceholder lpB = (LPlaceholder) b;
             return lpA.name.equals(lpB.name);
-        } else return false;
+        } else
+            return false;
+    }
+
+    public static class Converter {
+        @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
+        static List<Pair<Pattern, Function<Matcher, LPlaceholder>>> converters = Arrays.asList(
+                new Pair<>(Pattern.compile("\\[\\[Gas: mekanism:(.+)], (\\d+)]"),
+                           i -> new LPlaceholder("Gas - " + capitalize(i.group(1)), Integer.parseInt(i.group(2)))));
+
+        public static String capitalize(String s) {
+            String[] arr = s.replace('_', ' ').split(" ");
+            StringBuilder sb = new StringBuilder();
+
+            for (String value : arr) {
+                sb.append(Character.toUpperCase(value.charAt(0)));
+                sb.append(value.substring(1)).append(" ");
+            }
+            return sb.toString().trim();
+        }
+
+        public static LPlaceholder from(Object o) {
+            String s = o.toString();
+            return converters.stream().map(i -> {
+                Matcher m = i.one.matcher(s);
+                return m.matches() ? i.two.apply(m) : null;
+            }).filter(Objects::nonNull).findFirst().orElseGet(() -> new LPlaceholder(s, 1));
+        }
     }
 }
