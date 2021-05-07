@@ -17,6 +17,7 @@ the [release page](https://minecraft.curseforge.com/projects/just-enough-calcula
 
 ## Features
 
+- Infinite inputs, outputs and catalysts of recipe
 - Recipe from NEI recipe handler (recipe gui)
   - [x] vanilla
   - [x] gregtech
@@ -29,14 +30,12 @@ the [release page](https://minecraft.curseforge.com/projects/just-enough-calcula
 
 ## TODO
 
-- Backport the 1.16 feature
-  - [ ] Disambiguation in picker
-  - [ ] Infinite recipe inputs, outputs and catalysts
+- Handle nei key binding (`R` to open recipe and `U` to open usage)
 
 ## Known Issues
 
 - [ ] **May crash** if you open the gui immediately after entering the world
-- [ ] Client only
+- [ ] **Client only**
 - [ ] Fluid from NEI ItemPanel will be recognized as item
 - [ ] Some OreDict items renders wrong with overlay (Now removed the overlay)
 - [ ] GUI will cover the NEI's GUI like tooltip on item panel

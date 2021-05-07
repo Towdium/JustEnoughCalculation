@@ -29,7 +29,7 @@ public class WLabel implements IWidget {
     ILabel label = ILabel.EMPTY;
     public boolean accept;
     public ListenerValue<? super WLabel, ILabel> update;
-    public ListenerAction<? super WLabel> click;
+    public ListenerAction<? super WLabel> leftClick, rightClick;
     Function<ILabel, String> fmtAmount = i -> "";
     BiConsumer<ILabel, List<String>> fmtTooltip = (i, j) -> i.getToolTip(j, false);
     protected Timer timer = new Timer();
@@ -94,18 +94,22 @@ public class WLabel implements IWidget {
 
     @Override
     public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
-        if (!mouseIn(xMouse, yMouse) || button == 1)
+        if (!mouseIn(xMouse, yMouse))
             return false;
+        if(button == 1) {
+            notifyRightClick();
+            return true;
+        }
         if (accept) {
-            if (gui.hand == ILabel.EMPTY && click != null)
-                notifyClick();
+            if (gui.hand == ILabel.EMPTY && leftClick != null)
+                notifyLeftClick();
             else {
                 label = gui.hand;
                 gui.hand = label.EMPTY;
                 notifyUpdate();
             }
         } else
-            notifyClick();
+            notifyLeftClick();
         return true;
     }
 
@@ -114,8 +118,13 @@ public class WLabel implements IWidget {
         return this;
     }
 
-    public WLabel setLsnrClick(ListenerAction<? super WLabel> listener) {
-        click = listener;
+    public WLabel setLsnrLeftClick(ListenerAction<? super WLabel> listener) {
+        leftClick = listener;
+        return this;
+    }
+
+    public WLabel setLsnrRightClick(ListenerAction<? super WLabel> listener) {
+        rightClick = listener;
         return this;
     }
 
@@ -135,9 +144,14 @@ public class WLabel implements IWidget {
         return xx >= 0 && xx < xSize && yy >= 0 && yy < ySize;
     }
 
-    private void notifyClick() {
-        if (click != null)
-            click.invoke(this);
+    private void notifyLeftClick() {
+        if (leftClick != null)
+            leftClick.invoke(this);
+    }
+
+    private void notifyRightClick() {
+        if (rightClick != null)
+            rightClick.invoke(this);
     }
 
     private void notifyUpdate() {

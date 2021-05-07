@@ -15,7 +15,6 @@ import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.utils.ItemStackHelper;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import org.lwjgl.input.Mouse;
@@ -39,9 +38,9 @@ public class GuiCraft extends WContainer implements IGui {
     Calculator calculator = null;
     RecordCraft record;
     WLabel label = new WLabel(31, 7, 20, 20, true).setLsnrUpdate((i, v) -> refreshLabel(v, false, true));
-    WLabelGroup recent = new WLabelGroup(7, 31, 8, 1, false).setLsnrClick(
+    WLabelGroup recent = new WLabelGroup(7, 31, 8, 1, false).setLsnrLeftClick(
             (i, v) -> label.setLabel(i.get(v).getLabel().copy(), true));
-    WLabelScroll result = new WLabelScroll(7, 87, 8, 4, false).setLsnrClick((i, v) -> {
+    WLabelScroll result = new WLabelScroll(7, 87, 8, 4, false).setLsnrLeftClick((i, v) -> {
         Object rep = i.get(v).getLabel().getRepresentation();
         NEIPlugin.openRecipeGui(rep, Mouse.getEventButton());
     }).setFmtAmount(i -> i.getAmountString(true)).setFmtTooltip((i, j) -> i.getToolTip(j, true));

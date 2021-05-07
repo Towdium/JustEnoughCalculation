@@ -86,10 +86,15 @@ public class GuiRecipe extends WContainer implements IGui {
         for (IO j : IO.values()) {
             getWidget(j).setFmtAmount(i -> i.getAmountString(false))
                         .setFmtTooltip((i, k) -> i.getToolTip(k, true))
-                        .setLsnrClick((i, v) -> {
+                        .setLsnrLeftClick((i, v) -> {
                             ILabel l = i.get(v).getLabel();
                             if (l != ILabel.EMPTY)
                                 setOverlay(new WAmount(j, v));
+                        })
+                        .setLsnrRightClick((widget, value) ->  {
+                            ILabel l = widget.get(value).getLabel();
+                            if (l != ILabel.EMPTY)
+                                widget.get(value).setLabel(ILabel.EMPTY, true);
                         })
                         .setLsnrUpdate((i, v) -> {
                             refresh();
@@ -321,7 +326,7 @@ public class GuiRecipe extends WContainer implements IGui {
             temp = new WLabel(x - 1, y - 1, 20, 20, false);
             temp.setLabel(ref.getLabel().copy());
             content = new WLabelScroll(x + 8, y - 40, 4, 2, false).setLabels(disamb.get(type).get(idx))
-                                                                  .setLsnrClick((i, v) -> {
+                                                                  .setLsnrLeftClick((i, v) -> {
                                                                       ref.setLabel(
                                                                               i.get(v).getLabel().copy().multiply(-1),
                                                                               false);

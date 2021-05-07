@@ -23,7 +23,7 @@ import java.util.stream.IntStream;
 public class WLabelGroup extends WContainer {
     ArrayList<WLabel> labels = new ArrayList<>();
     ListenerValue<? super WLabelGroup, Integer> lsnrUpdate;
-    ListenerValue<? super WLabelGroup, Integer> lsnrClick;
+    ListenerValue<? super WLabelGroup, Integer> lsnrLeftClick, lsnrRightClick;
 
     public WLabelGroup(int xPos, int yPos, int column, int row, boolean accept) {
         this(xPos, yPos, column, row, 18, 18, accept);
@@ -37,9 +37,12 @@ public class WLabelGroup extends WContainer {
                         (i, v) -> {
                             if (lsnrUpdate != null)
                                 lsnrUpdate.invoke(this, r * column + c);
-                        }).setLsnrClick(i -> {
-                    if (lsnrClick != null)
-                        lsnrClick.invoke(this, r * column + c);
+                        }).setLsnrLeftClick(i -> {
+                    if (lsnrLeftClick != null)
+                        lsnrLeftClick.invoke(this, r * column + c);
+                }).setLsnrRightClick(i -> {
+                    if (lsnrRightClick != null)
+                        lsnrRightClick.invoke(this, r * column + c);
                 });
                 labels.add(l);
                 add(l);
@@ -69,8 +72,13 @@ public class WLabelGroup extends WContainer {
         return this;
     }
 
-    public WLabelGroup setLsnrClick(ListenerValue<? super WLabelGroup, Integer> listener) {
-        lsnrClick = listener;
+    public WLabelGroup setLsnrLeftClick(ListenerValue<? super WLabelGroup, Integer> listener) {
+        lsnrLeftClick = listener;
+        return this;
+    }
+
+    public WLabelGroup setLsnrRightClick(ListenerValue<? super WLabelGroup, Integer> listener) {
+        lsnrRightClick = listener;
         return this;
     }
 

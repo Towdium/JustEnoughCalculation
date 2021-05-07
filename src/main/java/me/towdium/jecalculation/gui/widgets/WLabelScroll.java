@@ -29,7 +29,7 @@ public class WLabelScroll extends WContainer implements ISearchable {
     protected String filter = "";
     protected int xPos, yPos, column, row, current;
     private ListenerValue<? super WLabelScroll, Integer> lsnrUpdate;
-    private ListenerValue<? super WLabelScroll, Integer> lsnrClick;
+    private ListenerValue<? super WLabelScroll, Integer> lsnrLeftClick, lsnrRightClick;
     protected final boolean accept;
 
     public WLabelScroll(int xPos, int yPos, int column, int row, boolean accept) {
@@ -39,7 +39,8 @@ public class WLabelScroll extends WContainer implements ISearchable {
         this.column = column;
         this.row = row;
         labelGroup = new WLabelGroup(xPos, yPos, column, row, accept).setLsnrUpdate(this::onUpdate)
-                                                                     .setLsnrClick(this::onClick);
+                                                                     .setLsnrLeftClick(this::onLeftClick)
+                                                                     .setLsnrRightClick(this::onRightClick);
         scroll = new WScroll(xPos + column * 18 + 4, yPos, row * 18).setListener(i -> update(i.getCurrent()))
                                                                     .setStep(Float.POSITIVE_INFINITY)
                                                                     .setRatio(1);
@@ -91,8 +92,13 @@ public class WLabelScroll extends WContainer implements ISearchable {
         return this;
     }
 
-    public WLabelScroll setLsnrClick(ListenerValue<? super WLabelScroll, Integer> lsnrClick) {
-        this.lsnrClick = lsnrClick;
+    public WLabelScroll setLsnrLeftClick(ListenerValue<? super WLabelScroll, Integer> lsnrLeftClick) {
+        this.lsnrLeftClick = lsnrLeftClick;
+        return this;
+    }
+
+    public WLabelScroll setLsnrRightClick(ListenerValue<? super WLabelScroll, Integer> lsnrRightClick) {
+        this.lsnrRightClick = lsnrRightClick;
         return this;
     }
 
@@ -117,9 +123,14 @@ public class WLabelScroll extends WContainer implements ISearchable {
         }
     }
 
-    protected void onClick(WLabelGroup w, int index) {
-        if (lsnrClick != null)
-            lsnrClick.invoke(this, column * current + index);
+    protected void onLeftClick(WLabelGroup w, int index) {
+        if (lsnrLeftClick != null)
+            lsnrLeftClick.invoke(this, column * current + index);
+    }
+
+    protected void onRightClick(WLabelGroup w, int index) {
+        if (lsnrRightClick != null)
+            lsnrRightClick.invoke(this, column * current + index);
     }
 
     public WLabelScroll setFmtAmount(Function<ILabel, String> f) {

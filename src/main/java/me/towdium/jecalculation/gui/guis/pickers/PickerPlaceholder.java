@@ -24,7 +24,7 @@ import static me.towdium.jecalculation.gui.Resource.ICN_TEXT;
 public class PickerPlaceholder extends IPicker.Impl implements IGui {
     public PickerPlaceholder() {
         WLabelScroll scroll = new WLabelScroll(7, 69, 8, 5, false)
-                .setLabels(LPlaceholder.getRecent()).setLsnrClick((i, v) -> notifyLsnr(i.get(v).getLabel()));
+                .setLabels(LPlaceholder.getRecent()).setLsnrLeftClick((i, v) -> notifyLsnr(i.get(v).getLabel()));
         WTextField create = new WTextField(26, 7, 69).setListener(
                 i -> i.setColor(i.getText().equals("") ? COLOR_TEXT_RED : COLOR_TEXT_WHITE));
         add(new WSearch(26, 45, 90, scroll));

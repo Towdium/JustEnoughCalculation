@@ -462,9 +462,11 @@ public interface ILabel {
 
         @Override
         public ILabel decreaseAmount() {
-            if (getAmount() <= getMultiplier())
+            if (getAmount() <= 0) {
                 return ILabel.EMPTY;
-            else {
+            } if (getAmount() <= getMultiplier()) {
+                return this;
+            } else {
                 return setAmount(getAmount() - getMultiplier());
             }
         }

@@ -7,7 +7,6 @@ import me.towdium.jecalculation.data.label.labels.LFluidStack;
 import me.towdium.jecalculation.data.label.labels.LOreDict;
 import me.towdium.jecalculation.gui.guis.IGui;
 import me.towdium.jecalculation.gui.widgets.WIcon;
-import me.towdium.jecalculation.gui.widgets.WLabel;
 import me.towdium.jecalculation.gui.widgets.WLabelScroll;
 import me.towdium.jecalculation.gui.widgets.WSearch;
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
@@ -34,7 +33,7 @@ public class PickerSimple extends IPicker.Impl implements IGui {
      */
     public PickerSimple(List<ILabel> labels) {
         WLabelScroll ls = new WLabelScroll(7, 33, 8, 7, false).setLabels(labels)
-                .setLsnrClick((i, v) -> notifyLsnr(i.get(v).getLabel()));
+                .setLsnrLeftClick((i, v) -> notifyLsnr(i.get(v).getLabel()));
         add(new WSearch(26, 7, 90, ls));
         add(new WIcon(7, 7, 20, 20, ICN_TEXT, "common.search"));
         add(ls);
