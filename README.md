@@ -1,26 +1,60 @@
-## Just Enough Calculation Mod
+[![][1]][3] [![][2]][3] [![][4]][5]
 
-Hey, this is a small add on to JEI (Just Enough Items), in order to help you
-calculate the amount of resources to craft
-a specific amount of item. This might be a little confusing, here's a example: 
-you want to know how many wood log do you need to craft 40 stairs, simply
-choose the recipe you want to use and hit "Calculate!". It will tell you 13 
-logs should be enough, that's all. This mod is focused on calculation so
-you might find it powerful and high - performance in some complicated 
-cases. Have fun!
+[中文](README_CN.md)
 
-#### Achieved features
+# Just Enough Calculation Mod
 
-* Recursive calculation
-* Repeated recipe support
-* Shift - left click for quick input of recipe
-* Personal preference record
-* Support for percentage in recipes
-* Check Player's inventory for missed gradients
-* View the crafting procedure
-* Recent records
+Hey, this is a small add-on to **NEI** (Not Enough Items), in
+order to help you calculate the amount of resources to craft a specific amount of item. .
 
-#### Planed features
+This might be a little confusing, here's an example:
 
-* Liquid support
+- you want to know how many wood logs do you need to craft 40 stairs, simply load the recipe you want to use, and it will
+tell you 13 logs should be enough, that's all. 
+
+This mod is focused on calculation, so you might find it powerful and high performance in some complicated cases. Have fun!
+
+For all the release files, description or videos, refer to
+the [release page](https://minecraft.curseforge.com/projects/just-enough-calculation).
+
+## Features
+
+- **Client only, no default keybinding. Set it up according to yourself.**
+- Support get catalyst in [NEI-GTNH-2.1](https://github.com/GTNewHorizons/NotEnoughItems)
+- Infinite inputs, outputs and catalysts of recipe
+- Recipe can transferred from NEI recipe handler (recipe gui)
+  - [x] vanilla
+  - [x] gregtech
+  - [x] Forestry
+  - [ ] AE2
+  - [ ] Others
+- [x] Item from NEI item panel
+- [ ] Fluid from NEI item panel (Now need to get fluid from labels picker)
+- [x] OreDictionary recognize
+
+## TODO
+
+- Handle nei key binding (`R` to open recipe and `U` to open usage)
+
+## Known Issues
+
+- [ ] **May crash** if you open the gui immediately after entering the world
+- [ ] Fluid from NEI ItemPanel will be recognized as item
+- [ ] Some OreDict items renders wrong with overlay (Now removed the overlay)
+- [ ] GUI will cover the NEI's GUI like tooltip on item panel
+- [ ] Fluid from recipe needs lots of adapters, see [Adapter](./src/main/java/me/towdium/jecalculation/nei/Adapter.java).
+
+## Development
+
+For run `gradle runClient`, you need copy the mods from `dev-mods/` to `run/mods`.
+
+[1]: http://cf.way2muchnoise.eu/full_just-enough-calculation_downloads.svg
+
+[2]: http://cf.way2muchnoise.eu/versions/just-enough-calculation.svg
+
+[3]: https://minecraft.curseforge.com/projects/just-enough-calculation
+
+[4]: https://img.shields.io/discord/517485644163973120.svg?logo=discord
+
+[5]: https://discord.gg/M3fNfTW
 
