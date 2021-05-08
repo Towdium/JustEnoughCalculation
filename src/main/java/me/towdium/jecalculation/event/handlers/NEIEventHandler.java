@@ -13,13 +13,11 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 public class NEIEventHandler implements IContainerInputHandler {
     @Override
     public boolean keyTyped(GuiContainer guiContainer, char c, int i) {
-        JustEnoughCalculation.logger.info("nei key typed");
         return false;
     }
 
     @Override
     public void onKeyTyped(GuiContainer guiContainer, char c, int i) {
-        JustEnoughCalculation.logger.info("nei on key typed");
     }
 
     @Override

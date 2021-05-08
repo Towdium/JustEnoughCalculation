@@ -22,7 +22,7 @@ public class NEIPlugin {
         String neiVersion = Loader.instance().getIndexedModList().get("NotEnoughItems").getVersion();
         JustEnoughCalculation.logger.info("NEI version: " + neiVersion);
         Version version = new Version(neiVersion);
-        if (version.isSuccess() && version.compareTo(CATALYST_NEI_VERSION) > 0) {
+        if (version.isSuccess() && version.compareTo(CATALYST_NEI_VERSION) >= 0) {
             NEIPlugin.catalystEnabled = true;
             JustEnoughCalculation.logger.info("catalyst enabled");
         } else {
