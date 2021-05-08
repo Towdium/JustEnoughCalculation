@@ -2,7 +2,7 @@
 
 # Just Enough Calculation Mod
 
-Hey, this is a small add-on to [NEI-GTNH-2.1](https://github.com/GTNewHorizons/NotEnoughItems) (Not Enough Items), in
+Hey, this is a small add-on to **NEI** (Not Enough Items), in
 order to help you calculate the amount of resources to craft a specific amount of item. .
 
 This might be a little confusing, here's an example:
@@ -17,6 +17,7 @@ the [release page](https://minecraft.curseforge.com/projects/just-enough-calcula
 
 ## Features
 
+- Support get catalyst in [NEI-GTNH-2.1](https://github.com/GTNewHorizons/NotEnoughItems)
 - Infinite inputs, outputs and catalysts of recipe
 - Recipe from NEI recipe handler (recipe gui)
   - [x] vanilla
@@ -25,7 +26,7 @@ the [release page](https://minecraft.curseforge.com/projects/just-enough-calcula
   - [ ] AE2
   - [ ] Others
 - [x] Item from NEI item panel
-- [ ] Fluid from NEI item panel (Need to get fluid from labels)
+- [ ] Fluid from NEI item panel (Now need to get fluid from labels picker)
 - [x] OreDictionary recognize
 
 ## TODO
@@ -39,9 +40,12 @@ the [release page](https://minecraft.curseforge.com/projects/just-enough-calcula
 - [ ] Fluid from NEI ItemPanel will be recognized as item
 - [ ] Some OreDict items renders wrong with overlay (Now removed the overlay)
 - [ ] GUI will cover the NEI's GUI like tooltip on item panel
-- [ ] Check the nei version and adapter the old version.
 - [ ] Fluid from recipe needs lots of adapters, see [Adapter](./src/main/java/me/towdium/jecalculation/nei/Adapter.java).
 
+
+## Development
+
+For run `gradle runClient`, you need copy the mods from `dev-mods/` to `run/mods`.
 
 [1]: http://cf.way2muchnoise.eu/full_just-enough-calculation_downloads.svg
 

@@ -17,14 +17,14 @@ public class Adapter {
 
     public static void init() {
         if (Loader.isModLoaded("Forestry")) {
-            JustEnoughCalculation.logger.info("Forestry is installed");
+            JustEnoughCalculation.logger.info("Forestry installed");
             adapters.add(new Forestry());
         }
         if (Loader.isModLoaded("appliedenergistics2")) {
             JustEnoughCalculation.logger.info("ae2 installed");
             adapters.add(new AE2());
         }
-        if( Loader.isModLoaded("gregtech")) {
+        if (Loader.isModLoaded("gregtech")) {
             JustEnoughCalculation.logger.info("gregtech installed");
             adapters.add(new GregTech());
         }

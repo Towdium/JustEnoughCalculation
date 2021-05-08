@@ -2,22 +2,39 @@ package me.towdium.jecalculation.nei;
 
 import codechicken.nei.guihook.GuiContainerManager;
 import codechicken.nei.recipe.*;
+import cpw.mods.fml.common.Loader;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.label.ILabel;
+import me.towdium.jecalculation.utils.Version;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nonnull;
-import java.util.Optional;
-
 public class NEIPlugin {
+
+    private static boolean catalystEnabled = false;
+
+    private static final Version CATALYST_NEI_VERSION = new Version("2.1.0-GTNH");
 
     public static void init() {
         GuiContainerManager.addTooltipHandler(new JecaTooltipHandler());
         Adapter.init();
+        // nei version check
+        String neiVersion = Loader.instance().getIndexedModList().get("NotEnoughItems").getVersion();
+        JustEnoughCalculation.logger.info("NEI version: " + neiVersion);
+        Version version = new Version(neiVersion);
+        if (version.isSuccess() && version.compareTo(CATALYST_NEI_VERSION) > 0) {
+            NEIPlugin.catalystEnabled = true;
+            JustEnoughCalculation.logger.info("catalyst enabled");
+        } else {
+            JustEnoughCalculation.logger.info("catalyst disabled");
+        }
     }
 
     private static ItemStack currentItemStack;
+
+    public static boolean isCatalystEnabled() {
+        return catalystEnabled;
+    }
 
     public static ILabel getLabelUnderMouse() {
         if (NEIPlugin.currentItemStack == null)
@@ -27,23 +44,6 @@ public class NEIPlugin {
 
     public static void setLabelUnderMouse(ItemStack itemStack) {
         NEIPlugin.currentItemStack = itemStack;
-    }
-
-    public static Optional<ItemStack> getCatalyst(@Nonnull IRecipeHandler handler) {
-        final String handlerName = handler.toString().split("@")[0];
-        final String handlerID;
-        if (handler instanceof TemplateRecipeHandler) {
-            handlerID = (((TemplateRecipeHandler) handler).getOverlayIdentifier());
-        } else {
-            handlerID = null;
-        }
-        HandlerInfo info = GuiRecipeTab.getHandlerInfo(handlerName, handlerID);
-
-        if (info == null) {
-            return Optional.empty();
-        }
-        ItemStack itemStack = info.getItemStack();
-        return Optional.ofNullable(itemStack);
     }
 
     public static void openRecipeGui(Object rep, int button) {
@@ -61,6 +61,4 @@ public class NEIPlugin {
             JustEnoughCalculation.logger.warn("unknown label representation " + rep);
         }
     }
-
-
 }

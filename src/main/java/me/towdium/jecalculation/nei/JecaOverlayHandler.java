@@ -1,7 +1,10 @@
 package me.towdium.jecalculation.nei;
 
 import codechicken.nei.api.IOverlayHandler;
+import codechicken.nei.recipe.GuiRecipeTab;
+import codechicken.nei.recipe.HandlerInfo;
 import codechicken.nei.recipe.IRecipeHandler;
+import codechicken.nei.recipe.TemplateRecipeHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.data.label.ILabel;
@@ -13,6 +16,7 @@ import me.towdium.jecalculation.utils.wrappers.Trio;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.item.ItemStack;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -49,7 +53,7 @@ public class JecaOverlayHandler implements IOverlayHandler {
         // output
         recipeOutputs.forEach(o -> merge(merged, Arrays.asList(o), context, Recipe.IO.OUTPUT));
 
-        NEIPlugin.getCatalyst(recipe).ifPresent(catalyst -> {
+        JecaOverlayHandler.getCatalyst(recipe).ifPresent(catalyst -> {
             List<ItemStack> catalysts = Collections.singletonList(catalyst);
             merge(merged, catalysts, context, Recipe.IO.CATALYST);
         });
@@ -82,6 +86,26 @@ public class JecaOverlayHandler implements IOverlayHandler {
             dst.get(type).add(ret);
             return ret;
         });
+    }
+
+    private static Optional<ItemStack> getCatalyst(@Nonnull IRecipeHandler handler) {
+        if (!NEIPlugin.isCatalystEnabled()) {
+            return Optional.empty();
+        }
+        final String handlerName = handler.toString().split("@")[0];
+        final String handlerID;
+        if (handler instanceof TemplateRecipeHandler) {
+            handlerID = (((TemplateRecipeHandler) handler).getOverlayIdentifier());
+        } else {
+            handlerID = null;
+        }
+        HandlerInfo info = GuiRecipeTab.getHandlerInfo(handlerName, handlerID);
+
+        if (info == null) {
+            return Optional.empty();
+        }
+        ItemStack itemStack = info.getItemStack();
+        return Optional.ofNullable(itemStack);
     }
 
 }
