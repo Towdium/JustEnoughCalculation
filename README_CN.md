@@ -18,6 +18,7 @@ This mod is focused on calculation, so you might find it powerful and high perfo
 
 ## 功能
 
+- **仅客户端（大概），无默认按键绑定， 请根据个人喜好设置**
 - 支持 [NEI-GTNH-2.1](https://github.com/GTNewHorizons/NotEnoughItems) 的催化剂（不消耗的合成参与者，如工作台，各种机器之类的）
 - 合成表的输入、输出和催化剂 无数量限制
 - 可以从 NEI 合成表 gui 页面直接获取合成表
@@ -33,9 +34,8 @@ This mod is focused on calculation, so you might find it powerful and high perfo
 ## 已知问题
 
 - [ ] 如果在进入是世界后立刻打开计算器 gui，游戏可能会 **崩溃 (强烈建议进入世界后等 3~4 秒）**
-- [ ] **仅客户端（大概）**
 - [ ] 从 NEI 物品列表抓取的 流体 会被识别为 物体
-- [ ] 矿物词典标签的渲染存在问题，目前暂时不显示覆盖的标识
+- [ ] 由于矿物词典标签的渲染存在问题，目前暂时不显示覆盖的标识
 - [ ] 计算器 gui 会覆盖 NEI 的 tooltip
 - [ ] 流体需要针对 mod 进行适配, 开发人员可以查看 [Adapter](./src/main/java/me/towdium/jecalculation/nei/Adapter.java).
 

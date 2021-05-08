@@ -19,6 +19,7 @@ the [release page](https://minecraft.curseforge.com/projects/just-enough-calcula
 
 ## Features
 
+- **Client only, no default keybinding. Set it up according to yourself.**
 - Support get catalyst in [NEI-GTNH-2.1](https://github.com/GTNewHorizons/NotEnoughItems)
 - Infinite inputs, outputs and catalysts of recipe
 - Recipe can transferred from NEI recipe handler (recipe gui)
@@ -38,7 +39,6 @@ the [release page](https://minecraft.curseforge.com/projects/just-enough-calcula
 ## Known Issues
 
 - [ ] **May crash** if you open the gui immediately after entering the world
-- [ ] **Client only**
 - [ ] Fluid from NEI ItemPanel will be recognized as item
 - [ ] Some OreDict items renders wrong with overlay (Now removed the overlay)
 - [ ] GUI will cover the NEI's GUI like tooltip on item panel
