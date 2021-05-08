@@ -1,5 +1,7 @@
 [![][1]][3] [![][2]][3] [![][4]][5]
 
+[中文](README_CN.md)
+
 # Just Enough Calculation Mod
 
 Hey, this is a small add-on to **NEI** (Not Enough Items), in
@@ -19,7 +21,7 @@ the [release page](https://minecraft.curseforge.com/projects/just-enough-calcula
 
 - Support get catalyst in [NEI-GTNH-2.1](https://github.com/GTNewHorizons/NotEnoughItems)
 - Infinite inputs, outputs and catalysts of recipe
-- Recipe from NEI recipe handler (recipe gui)
+- Recipe can transferred from NEI recipe handler (recipe gui)
   - [x] vanilla
   - [x] gregtech
   - [x] Forestry
@@ -41,7 +43,6 @@ the [release page](https://minecraft.curseforge.com/projects/just-enough-calcula
 - [ ] Some OreDict items renders wrong with overlay (Now removed the overlay)
 - [ ] GUI will cover the NEI's GUI like tooltip on item panel
 - [ ] Fluid from recipe needs lots of adapters, see [Adapter](./src/main/java/me/towdium/jecalculation/nei/Adapter.java).
-
 
 ## Development
 

@@ -120,7 +120,7 @@ public class JecaGui extends GuiContainer {
         }
         return false;
     }
-    
+
     public static void onMouseReleased() {
         Optional<JecaGui> optionalJecaGui = currentJecaGui();
         if (!optionalJecaGui.isPresent())
@@ -133,15 +133,14 @@ public class JecaGui extends GuiContainer {
     }
 
 
-
-
     @Nullable
     public Slot getSlotUnderMouse() {
         IInventory i = new InventoryBasic("", false, 1);
         Slot s = new Slot(i, 0, 0, 0);
         ILabel l = getLabelUnderMouse();
         Object rep = l == null ? null : l.getRepresentation();
-        if (rep instanceof ItemStack) s.putStack((ItemStack) rep);
+        if (rep instanceof ItemStack)
+            s.putStack((ItemStack) rep);
         return s;
     }
 
@@ -221,7 +220,10 @@ public class JecaGui extends GuiContainer {
     }
 
     /**
-     * called by {@link me.towdium.jecalculation.event.handlers.FMLBusEventHandler}
+     * Called by {@link me.towdium.jecalculation.event.handlers.FMLBusEventHandler}.
+     * This event happened only when not in gui.
+     * For nei keybinding event, see {@link me.towdium.jecalculation.event.handlers.NEIEventHandler#lastKeyTyped(GuiContainer, char, int)}
+     * I think they won't conflict
      */
     public static void onKey() {
         if (keyOpenGuiCraft.isPressed())
@@ -300,10 +302,12 @@ public class JecaGui extends GuiContainer {
                 if (j > i)
                     i = j;
                 //noinspection StringEquality
-                if (s == JecaGui.SEPARATOR) separators++;
+                if (s == JecaGui.SEPARATOR)
+                    separators++;
             }
             //noinspection StringEquality
-            if (textLines.get(textLines.size() - 1) == SEPARATOR) separators--;
+            if (textLines.get(textLines.size() - 1) == SEPARATOR)
+                separators--;
             int l1 = x + 12;
             int i2 = y - 12;
             int k = 8 + (textLines.size() - separators - 1) * 10 + 2 * separators;
@@ -324,7 +328,8 @@ public class JecaGui extends GuiContainer {
             drawGradientRect(l1 - 3, i2 + k + 2, l1 + i + 3, i2 + k + 3, 1344798847, 1344798847);
             for (String s1 : textLines) {
                 //noinspection StringEquality
-                if (s1 == SEPARATOR) i2 += 2;
+                if (s1 == SEPARATOR)
+                    i2 += 2;
                 else {
                     font.drawStringWithShadow(s1, l1, i2, -1);
                     i2 += 10;

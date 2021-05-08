@@ -7,7 +7,7 @@
   "mcversion": "${mcversion}",
   "url": "https://github.com/Towdium/JustEnoughCalculation",
   "updateUrl": "http://minecratft.curseforge.com/projects/just-enough-calculation",
-  "authorList": ["Towdium"],
+  "authorList": ["Towdium", "Discreater"],
   "logoFile": "",
   "screenshots": [],
   "dependencies": ["NotEnoughItems"],

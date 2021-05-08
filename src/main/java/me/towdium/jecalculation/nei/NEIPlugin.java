@@ -46,19 +46,17 @@ public class NEIPlugin {
         NEIPlugin.currentItemStack = itemStack;
     }
 
-    public static void openRecipeGui(Object rep, int button) {
+    public static boolean openRecipeGui(Object rep, boolean usage) {
         if ((rep instanceof ItemStack || rep instanceof FluidStack)) {
             String id = rep instanceof ItemStack ? "item" : "liquid";
-            if (button == 0) {
-                GuiCraftingRecipe.openRecipeGui(id, rep);
-            } else if (button == 1) {
-                GuiUsageRecipe.openRecipeGui(id, rep);
+            if (!usage) {
+                return GuiCraftingRecipe.openRecipeGui(id, rep);
             } else {
-                // TODO check
-                JustEnoughCalculation.logger.warn("unknown button " + button);
+                return GuiUsageRecipe.openRecipeGui(id, rep);
             }
         } else if (rep != null) {
             JustEnoughCalculation.logger.warn("unknown label representation " + rep);
         }
+        return false;
     }
 }

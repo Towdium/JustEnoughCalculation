@@ -17,7 +17,6 @@ import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
-import org.lwjgl.input.Mouse;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
@@ -42,7 +41,10 @@ public class GuiCraft extends WContainer implements IGui {
             (i, v) -> label.setLabel(i.get(v).getLabel().copy(), true));
     WLabelScroll result = new WLabelScroll(7, 87, 8, 4, false).setLsnrLeftClick((i, v) -> {
         Object rep = i.get(v).getLabel().getRepresentation();
-        NEIPlugin.openRecipeGui(rep, Mouse.getEventButton());
+        NEIPlugin.openRecipeGui(rep, false);
+    }).setLsnrRightClick((widget, value) -> {
+        Object rep = widget.get(value).getLabel().getRepresentation();
+        NEIPlugin.openRecipeGui(rep, true);
     }).setFmtAmount(i -> i.getAmountString(true)).setFmtTooltip((i, j) -> i.getToolTip(j, true));
     WButton steps = new WButtonIcon(64, 62, 20, 20, Resource.BTN_LIST, "craft.step").setListener(i -> setMode(STEPS));
     WButton catalyst = new WButtonIcon(45, 62, 20, 20, Resource.BTN_CAT, "common.catalyst").setListener(
