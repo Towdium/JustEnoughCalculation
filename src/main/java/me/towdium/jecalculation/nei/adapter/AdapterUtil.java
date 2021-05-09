@@ -1,10 +1,6 @@
 package me.towdium.jecalculation.nei.adapter;
 
-import codechicken.nei.recipe.IRecipeHandler;
-
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @SuppressWarnings("rawtypes")

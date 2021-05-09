@@ -1,6 +1,5 @@
 package me.towdium.jecalculation;
 
-import codechicken.core.CommonUtils;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.common.config.Configuration;
@@ -15,6 +14,7 @@ public class JecaConfig {
     public static final File defaultFile = new File(configDir, "default.json");
 
     public static final File dataDir = new File(configDir, "data/");
+
     public static File getDataFile(String group) {
         return new File(dataDir, group + ".json");
     }

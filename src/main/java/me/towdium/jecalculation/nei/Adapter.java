@@ -4,10 +4,7 @@ import codechicken.nei.PositionedStack;
 import codechicken.nei.recipe.IRecipeHandler;
 import cpw.mods.fml.common.Loader;
 import me.towdium.jecalculation.JustEnoughCalculation;
-import me.towdium.jecalculation.nei.adapter.AE2;
-import me.towdium.jecalculation.nei.adapter.Forestry;
-import me.towdium.jecalculation.nei.adapter.GregTech;
-import me.towdium.jecalculation.nei.adapter.IAdapter;
+import me.towdium.jecalculation.nei.adapter.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,12 +18,20 @@ public class Adapter {
             adapters.add(new Forestry());
         }
         if (Loader.isModLoaded("appliedenergistics2")) {
-            JustEnoughCalculation.logger.info("ae2 installed");
+            JustEnoughCalculation.logger.info("ae2 not supported");
             adapters.add(new AE2());
         }
         if (Loader.isModLoaded("gregtech")) {
             JustEnoughCalculation.logger.info("gregtech installed");
             adapters.add(new GregTech());
+        }
+        if (Loader.isModLoaded("miscutils")) {
+            JustEnoughCalculation.logger.info("gt++ not supported");
+            adapters.add(new GTPP());
+        }
+        if (Loader.isModLoaded("Avaritia")) {
+            JustEnoughCalculation.logger.info("Avaritia installed");
+            adapters.add(new Avaritia());
         }
     }
 

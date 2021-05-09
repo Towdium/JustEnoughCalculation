@@ -28,19 +28,23 @@ public class GregTech implements IAdapter {
     @Override
     public void handleRecipe(IRecipeHandler recipe, int index, List<Object[]> inputs, List<Object[]> outputs) {
         if (recipe instanceof GT_NEI_DefaultHandler || recipe instanceof GT_NEI_AssLineHandler) {
-            for (int i = 0; i < inputs.size(); i++) {
-                Object[] objects = Arrays.stream(inputs.get(i)).map(o -> this.convertFluid((ItemStack) o)).toArray();
-                inputs.set(i, objects);
-            }
-            List<PositionedStack> otherStacks = recipe.getOtherStacks(index);
-            outputs.addAll(otherStacks.stream()
-                                      .map(positionedStack -> positionedStack.items)
-                                      .map(itemStacks -> Arrays.stream(itemStacks).map(this::convertFluid).toArray())
-                                      .collect(Collectors.toList()));
+            handleDefault(recipe, index, inputs, outputs);
         }
     }
 
-    private Object convertFluid(ItemStack itemStack) {
+    protected void handleDefault(IRecipeHandler recipe, int index, List<Object[]> inputs, List<Object[]> outputs) {
+        for (int i = 0; i < inputs.size(); i++) {
+            Object[] objects = Arrays.stream(inputs.get(i)).map(o -> this.convertFluid((ItemStack) o)).toArray();
+            inputs.set(i, objects);
+        }
+        List<PositionedStack> otherStacks = recipe.getOtherStacks(index);
+        outputs.addAll(otherStacks.stream()
+                                  .map(positionedStack -> positionedStack.items)
+                                  .map(itemStacks -> Arrays.stream(itemStacks).map(this::convertFluid).toArray())
+                                  .collect(Collectors.toList()));
+    }
+
+    protected Object convertFluid(ItemStack itemStack) {
         FluidStack fluidStack = GT_Utility.getFluidFromDisplayStack(itemStack);
         return fluidStack == null ? itemStack : fluidStack;
     }

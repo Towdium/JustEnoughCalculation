@@ -25,11 +25,17 @@ This mod is focused on calculation, so you might find it powerful and high perfo
   - [x] 原生MC
   - [x] gregtech
   - [x] Forestry
+  - [x] Avaritia (转移按钮不容易找到)
   - [ ] AE2（目前没办法，需要 AE2 作者支持
+  - [ ] GT++
   - [ ] 其它
 - [x] 从 NEI 物品列表抓取物品
 - [ ] 从 NEI 物品列表抓取流体 (暂未实现，目前请从 计算器内部流体标签 抓取流体)
 - [x] 矿物词典支持
+
+## TODO
+
+- NEI 合成表界面添加新按钮转移合成表
 
 ## 已知问题
 

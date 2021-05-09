@@ -26,7 +26,9 @@ the [release page](https://minecraft.curseforge.com/projects/just-enough-calcula
   - [x] vanilla
   - [x] gregtech
   - [x] Forestry
+  - [x] Avaritia (hard to find the transfer button)
   - [ ] AE2
+  - [ ] GT++
   - [ ] Others
 - [x] Item from NEI item panel
 - [ ] Fluid from NEI item panel (Now need to get fluid from labels picker)
@@ -34,7 +36,7 @@ the [release page](https://minecraft.curseforge.com/projects/just-enough-calcula
 
 ## TODO
 
-- Handle nei key binding (`R` to open recipe and `U` to open usage)
+- add new button to transfer the recipe. 
 
 ## Known Issues
 

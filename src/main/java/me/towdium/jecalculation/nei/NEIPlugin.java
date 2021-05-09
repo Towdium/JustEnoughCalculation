@@ -1,7 +1,8 @@
 package me.towdium.jecalculation.nei;
 
 import codechicken.nei.guihook.GuiContainerManager;
-import codechicken.nei.recipe.*;
+import codechicken.nei.recipe.GuiCraftingRecipe;
+import codechicken.nei.recipe.GuiUsageRecipe;
 import cpw.mods.fml.common.Loader;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.label.ILabel;
