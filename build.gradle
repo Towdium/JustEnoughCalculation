@@ -93,7 +93,6 @@ dependencies {
     // soft dependencies
     compile 'forestry:forestry_1.7.10-4.3.1.44'
     compile 'gregtech:gregtech-5.09.34.16'
-    compile 'gtPlusPlus:GT-PlusPlus-1.7.05.68'
     compile 'fox.spiteful.avaritia:Avaritia-1.18'
 }
 

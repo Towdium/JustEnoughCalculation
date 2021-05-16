@@ -25,10 +25,10 @@ public class Adapter {
             JustEnoughCalculation.logger.info("gregtech installed");
             adapters.add(new GregTech());
         }
-        if (Loader.isModLoaded("miscutils")) {
-            JustEnoughCalculation.logger.info("gt++ not supported");
-            adapters.add(new GTPP());
-        }
+//        if (Loader.isModLoaded("miscutils")) {
+//            JustEnoughCalculation.logger.info("gt++ not supported");
+//            adapters.add(new GTPP());
+//        }
         if (Loader.isModLoaded("Avaritia")) {
             JustEnoughCalculation.logger.info("Avaritia installed");
             adapters.add(new Avaritia());
