@@ -22,17 +22,28 @@ the [release page](https://minecraft.curseforge.com/projects/just-enough-calcula
 - **Client only, no default keybinding. Set it up according to yourself.**
 - Support get catalyst in [NEI-GTNH-2.1](https://github.com/GTNewHorizons/NotEnoughItems)
 - Infinite inputs, outputs and catalysts of recipe
+- Math calculation
 - Recipe can transferred from NEI recipe handler (recipe gui)
   - [x] vanilla
   - [x] gregtech
   - [x] Forestry
   - [x] Avaritia (hard to find the transfer button)
   - [ ] AE2
-  - [ ] GT++
   - [ ] Others
 - [x] Item from NEI item panel
 - [ ] Fluid from NEI item panel (Now need to get fluid from labels picker)
 - [x] OreDictionary recognize
+
+
+## Usage
+
+- **Setup keybinding**
+  ![setup keybinding](docs/setup_keybinding.png)
+
+- Main page
+  ![main page](docs/main_page.png)
+  
+- General usage: see [here](https://github.com/Towdium/JustEnoughCalculation/issues/85)
 
 ## TODO
 

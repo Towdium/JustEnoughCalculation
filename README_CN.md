@@ -21,17 +21,28 @@ This mod is focused on calculation, so you might find it powerful and high perfo
 - **仅客户端（大概），无默认按键绑定， 请根据个人喜好设置**
 - 支持 [NEI-GTNH-2.1](https://github.com/GTNewHorizons/NotEnoughItems) 的催化剂（不消耗的合成参与者，如工作台，各种机器之类的）
 - 合成表的输入、输出和催化剂 无数量限制
+- 数学计算器
 - 可以从 NEI 合成表 gui 页面直接获取合成表
   - [x] 原生MC
   - [x] gregtech
   - [x] Forestry
   - [x] Avaritia (转移按钮不容易找到)
   - [ ] AE2（目前没办法，需要 AE2 作者支持
-  - [ ] GT++
   - [ ] 其它
 - [x] 从 NEI 物品列表抓取物品
 - [ ] 从 NEI 物品列表抓取流体 (暂未实现，目前请从 计算器内部流体标签 抓取流体)
 - [x] 矿物词典支持
+
+## 使用方法
+
+- **设置按键绑定**
+  ![setup keybinding](docs/setup_keybinding.png)
+
+- 主页面
+  ![main page](docs/main_page.png)
+
+- 一般用法: 看 [这儿](https://github.com/Towdium/JustEnoughCalculation/issues/85)
+
 
 ## TODO
 
@@ -59,3 +70,4 @@ This mod is focused on calculation, so you might find it powerful and high perfo
 
 [5]: https://discord.gg/M3fNfTW
 
+[6]: https://github.com/GTNewHorizons/NotEnoughItems
