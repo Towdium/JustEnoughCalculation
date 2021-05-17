@@ -37,13 +37,14 @@ the [release page](https://minecraft.curseforge.com/projects/just-enough-calcula
 
 ## Usage
 
-- **Setup keybinding**
+### **Setup keybinding**
   ![setup keybinding](docs/setup_keybinding.png)
 
-- Main page
+### Main page
   ![main page](docs/main_page.png)
   
-- General usage: see [here](https://github.com/Towdium/JustEnoughCalculation/issues/85)
+### General usage
+see [here](https://github.com/Towdium/JustEnoughCalculation/issues/85)
 
 ## TODO
 

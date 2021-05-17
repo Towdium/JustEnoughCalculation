@@ -35,13 +35,14 @@ This mod is focused on calculation, so you might find it powerful and high perfo
 
 ## 使用方法
 
-- **设置按键绑定**
+### **设置按键绑定**
   ![setup keybinding](docs/setup_keybinding.png)
 
-- 主页面
+### 主页面 
   ![main page](docs/main_page.png)
 
-- 一般用法: 看 [这儿](https://github.com/Towdium/JustEnoughCalculation/issues/85)
+### 一般用法
+看 [这儿](https://github.com/Towdium/JustEnoughCalculation/issues/85)
 
 
 ## TODO
