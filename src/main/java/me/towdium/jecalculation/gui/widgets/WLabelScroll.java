@@ -11,6 +11,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -113,6 +114,11 @@ public class WLabelScroll extends WContainer implements ISearchable {
 
     protected void onClick(WLabelGroup w, int index) {
         if (lsnrClick != null) lsnrClick.invoke(this, column * current + index);
+    }
+
+    public WLabelScroll setHdlrScroll(BiFunction<? super WLabel, Integer, Boolean> hdlr) {
+        labelGroup.setHdlrScroll(hdlr);
+        return this;
     }
 
     public WLabelScroll setFmtAmount(Function<ILabel, String> f) {

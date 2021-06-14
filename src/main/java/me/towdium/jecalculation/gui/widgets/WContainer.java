@@ -1,17 +1,17 @@
 package me.towdium.jecalculation.gui.widgets;
 
 import mcp.MethodsReturnNonnullByDefault;
+import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.utils.Utilities;
+import me.towdium.jecalculation.utils.wrappers.Wrapper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Author: towdium
@@ -117,12 +117,10 @@ public class WContainer implements IContainer {
                 .anyMatch(i -> i.onTooltip(gui, xMouse, yMouse, tooltip));
     }
 
-    @Nullable
     @Override
-    public WLabel getLabelUnderMouse(int xMouse, int yMouse) {
-        return new Utilities.ReversedIterator<>(widgets).stream()
-                .map(i -> i.getLabelUnderMouse(xMouse, yMouse))
-                .filter(Objects::nonNull)
-                .findFirst().orElse(null);
+    public boolean getLabelUnderMouse(int xMouse, int yMouse, Wrapper<ILabel> label) {
+        boolean b = overlay != null && overlay.getLabelUnderMouse(xMouse, yMouse, label);
+        return b || new Utilities.ReversedIterator<>(widgets).stream()
+                .anyMatch(i -> i.getLabelUnderMouse(xMouse, yMouse, label));
     }
 }

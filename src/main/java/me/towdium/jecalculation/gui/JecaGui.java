@@ -8,9 +8,9 @@ import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.guis.GuiCraft;
 import me.towdium.jecalculation.gui.guis.GuiMath;
 import me.towdium.jecalculation.gui.guis.IGui;
-import me.towdium.jecalculation.gui.widgets.WLabel;
 import me.towdium.jecalculation.jei.JecaPlugin;
 import me.towdium.jecalculation.utils.Utilities;
+import me.towdium.jecalculation.utils.wrappers.Wrapper;
 import mezz.jei.api.runtime.IRecipesGui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -216,8 +216,9 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
 
     @Nullable
     public ILabel getLabelUnderMouse() {
-        WLabel w = root.getLabelUnderMouse(getMouseX(), getMouseY());
-        return w == null ? null : w.getLabel();
+        Wrapper<ILabel> l = new Wrapper<>(null);
+        root.getLabelUnderMouse(getMouseX(), getMouseY(), l);
+        return l.value;
     }
 
     @SubscribeEvent
@@ -301,7 +302,7 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
             RenderSystem.disableRescaleNormal();
             RenderSystem.disableDepthTest();
             RenderSystem.pushMatrix();
-            RenderSystem.translatef(0, 0, 300);
+            RenderSystem.translatef(0, 0, 400);
             int i = 0;
             int separators = 0;
             for (String s : textLines) {

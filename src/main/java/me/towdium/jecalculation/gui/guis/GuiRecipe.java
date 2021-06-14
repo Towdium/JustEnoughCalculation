@@ -35,9 +35,9 @@ public class GuiRecipe extends WContainer implements IGui {
     Pair<String, Integer> dest;
     WSwitcher group = new WSwitcher(7, 7, 162, Controller.getGroups()).setListener(i -> refresh());
     WTextField text = new WTextField(49, 25, 119);
-    WLabelScroll catalyst = new WLabelScroll(25, 101, 7, 1, true);
-    WLabelScroll input = new WLabelScroll(25, 123, 7, 2, true);
-    WLabelScroll output = new WLabelScroll(25, 61, 7, 2, true);
+    WLabelScroll catalyst = new WLabelScroll(25, 101, 7, 1, true).setHdlrScroll(GuiRecipe::handleLabelScroll);
+    WLabelScroll input = new WLabelScroll(25, 123, 7, 2, true).setHdlrScroll(GuiRecipe::handleLabelScroll);
+    WLabelScroll output = new WLabelScroll(25, 61, 7, 2, true).setHdlrScroll(GuiRecipe::handleLabelScroll);
     WButton clear = new WButtonIcon(64, 25, 20, 20, BTN_DEL, "recipe.clear").setListener(i -> reset());
     // check duplicate and valid
     WButton copy = new WButtonIcon(83, 25, 20, 20, BTN_COPY, "recipe.copy").setListener(i -> {
@@ -124,17 +124,6 @@ public class GuiRecipe extends WContainer implements IGui {
     }
 
     @Override
-    public boolean onMouseScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
-        WLabel w = getLabelUnderMouse(xMouse, yMouse);
-        if (w == null) return super.onMouseScroll(gui, xMouse, yMouse, diff);
-        ILabel l = w.getLabel();
-        for (int i = 0; i < Math.abs(diff); i++)
-            l = diff > 0 ? l.increaseAmount() : l.decreaseAmount();
-        w.setLabel(l, true);
-        return true;
-    }
-
-    @Override
     public boolean acceptsTransfer() {
         return true;
     }
@@ -210,6 +199,14 @@ public class GuiRecipe extends WContainer implements IGui {
     private void removeDisamb(IO type, int index) {
         Map<Integer, List<ILabel>> entry = disamb.get(type);
         if (entry != null) entry.remove(index);
+    }
+
+    static boolean handleLabelScroll(WLabel w, int diff) {
+        ILabel l = w.getLabel();
+        for (int i = 0; i < Math.abs(diff); i++)
+            l = diff > 0 ? l.increaseAmount() : l.decreaseAmount();
+        w.setLabel(l, true);
+        return true;
     }
 
     class WAmount extends WOverlay {
