@@ -46,8 +46,7 @@ public abstract class WButton extends WTooltip {
     @Override
     public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
         super.onDraw(gui, xMouse, yMouse);
-        boolean hovered = JecaGui.mouseIn(xPos + 1, yPos + 1, xSize - 2, ySize - 2, xMouse, yMouse);
-        hovered = hovered || keys.entrySet().stream().anyMatch(Map.Entry::getValue);
+        boolean hovered = mouseIn(xMouse, yMouse) || keys.entrySet().stream().anyMatch(Map.Entry::getValue);
         gui.drawResourceContinuous(disabled ? WGT_BUTTON_D : (hovered ? WGT_BUTTON_F : WGT_BUTTON_N)
                 , xPos, yPos, xSize, ySize, 5, 5, 5, 5);
         return hovered;
@@ -55,8 +54,7 @@ public abstract class WButton extends WTooltip {
 
     @Override
     public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
-        if (JecaGui.mouseIn(xPos + 1, yPos + 1, xSize - 2, ySize - 2, xMouse, yMouse) &&
-                !disabled && button == 0 && listener != null) {
+        if (mouseIn(xMouse, yMouse) && !disabled && button == 0 && listener != null) {
             trigger();
             return true;
         } else return false;
@@ -89,7 +87,7 @@ public abstract class WButton extends WTooltip {
 
     @Override
     public boolean mouseIn(int xMouse, int yMouse) {
-        return JecaGui.mouseIn(xPos + 1, yPos + 1, xSize - 2, ySize - 2, xMouse, yMouse);
+        return JecaGui.mouseIn(xPos, yPos, xSize - 2, ySize - 2, xMouse, yMouse);
     }
 
     @SuppressWarnings("UnusedReturnValue")
