@@ -21,7 +21,7 @@ import java.util.function.Consumer;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 @OnlyIn(Dist.CLIENT)
-public class GuiLabel extends WContainer implements IGui {
+public class GuiLabel extends Gui {
     WContainer container = new WContainer();
     Consumer<ILabel> callback;
     LoadingCache<Integer, IWidget> cache = CacheBuilder.newBuilder().concurrencyLevel(1)

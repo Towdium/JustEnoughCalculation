@@ -2,6 +2,7 @@ package me.towdium.jecalculation.gui.guis;
 
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.widgets.IContainer;
+import me.towdium.jecalculation.gui.widgets.IWidget;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -17,4 +18,6 @@ public interface IGui extends IContainer {
     default boolean acceptsTransfer() {
         return false;
     }
+
+    void setOverlay(IWidget w);
 }

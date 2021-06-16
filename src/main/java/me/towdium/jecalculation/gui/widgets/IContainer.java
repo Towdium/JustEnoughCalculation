@@ -10,6 +10,4 @@ public interface IContainer extends IWidget {
     void remove(IWidget... w);
 
     void clear();
-
-    void setOverlay(IWidget w);
 }

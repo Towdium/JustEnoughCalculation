@@ -31,7 +31,7 @@ import static me.towdium.jecalculation.gui.Resource.*;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 @OnlyIn(Dist.CLIENT)
-public class GuiRecipe extends WContainer implements IGui {
+public class GuiRecipe extends Gui {
     Pair<String, Integer> dest;
     WSwitcher group = new WSwitcher(7, 7, 162, Controller.getGroups()).setListener(i -> refresh());
     WTextField text = new WTextField(49, 25, 119);

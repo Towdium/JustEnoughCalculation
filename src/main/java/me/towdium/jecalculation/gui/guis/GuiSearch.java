@@ -24,7 +24,7 @@ import static me.towdium.jecalculation.gui.Resource.*;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 @OnlyIn(Dist.CLIENT)
-public class GuiSearch extends WContainer implements IGui {
+public class GuiSearch extends Gui {
     IdentityHashMap<ILabel, Trio<Recipe, String, Integer>> recipes;
     WLabelScroll labels = new WLabelScroll(7, 51, 8, 6, false)
             .setLsnrClick((i, v) -> {

@@ -34,7 +34,7 @@ import static me.towdium.jecalculation.utils.Utilities.getPlayer;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 @OnlyIn(Dist.CLIENT)
-public class GuiCraft extends WContainer implements IGui {
+public class GuiCraft extends Gui {
     ItemStack itemStack;
     Calculator calculator = null;
     RecordCraft record;
@@ -45,8 +45,9 @@ public class GuiCraft extends WContainer implements IGui {
     WLabelScroll result = new WLabelScroll(7, 87, 8, 4, false)
             .setLsnrClick((i, v) -> {
                 Object rep = i.get(v).getLabel().getRepresentation();
-                if (rep != null) runtime.getRecipesGui().show(runtime.getRecipeManager()
-                        .createFocus(IFocus.Mode.OUTPUT, rep));
+                if (rep != null) {
+                    runtime.getRecipesGui().show(runtime.getRecipeManager().createFocus(IFocus.Mode.OUTPUT, rep));
+                }
             }).setFmtAmount(i -> i.getAmountString(true))
             .setFmtTooltip((i, j) -> i.getToolTip(j, true));
     WButton steps = new WButtonIcon(64, 62, 20, 20, Resource.BTN_LIST, "craft.step")

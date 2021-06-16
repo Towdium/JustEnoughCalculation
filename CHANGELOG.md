@@ -172,3 +172,16 @@ Fixed recipe export not working
 #### 3.6.4
 
 Fixed 1 tick pause when transferring into calculator GUI
+
+#### 3.6.5
+
+Fixed #73: Suggestion set amount of label in recipes to 1
+
+#### 3.6.6
+
+Fixed #73: Client mode not work
+
+#### 3.7.0
+
+Changed Label will not be removed by mouse scroll down  
+Fixed #83: wrong mouse scroll behavior in disamb overlay
