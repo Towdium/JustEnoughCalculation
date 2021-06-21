@@ -50,4 +50,10 @@ class VersionTest {
     void compareTo_withPreReleaseName_isGreaterThan() {
         assertEquals(new Version("2.1.2-GTNH").compareTo(new Version("2.0.1-GTHN")), 1);
     }
+
+    @Test
+    void fix_not_number() {
+        Version version = new Version("1.0.6c");
+        assert !version.isSuccess();
+    }
 }

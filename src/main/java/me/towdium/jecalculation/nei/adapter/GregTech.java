@@ -3,11 +3,13 @@ package me.towdium.jecalculation.nei.adapter;
 import codechicken.nei.NEIServerUtils;
 import codechicken.nei.PositionedStack;
 import codechicken.nei.recipe.IRecipeHandler;
+import gregtech.api.enums.ItemList;
 import gregtech.api.util.GT_Recipe;
-import gregtech.api.util.GT_Utility;
 import gregtech.nei.GT_NEI_AssLineHandler;
 import gregtech.nei.GT_NEI_DefaultHandler;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -45,8 +47,25 @@ public class GregTech implements IAdapter {
     }
 
     protected Object convertFluid(ItemStack itemStack) {
-        FluidStack fluidStack = GT_Utility.getFluidFromDisplayStack(itemStack);
+        FluidStack fluidStack = getFluidFromDisplayStack(itemStack);
         return fluidStack == null ? itemStack : fluidStack;
+    }
+
+    /**
+     * For resolving version compatibility issues.
+     * Copied from GTNewHorizons/GT5-Unofficial.
+     */
+    private static FluidStack getFluidFromDisplayStack(ItemStack aDisplayStack) {
+        if (!isStackValid(aDisplayStack) ||
+            aDisplayStack.getItem() != ItemList.Display_Fluid.getItem() ||
+            !aDisplayStack.hasTagCompound())
+            return null;
+        Fluid tFluid = FluidRegistry.getFluid(ItemList.Display_Fluid.getItem().getDamage(aDisplayStack));
+        return new FluidStack(tFluid, (int) aDisplayStack.getTagCompound().getLong("mFluidDisplayAmount"));
+    }
+
+    private static boolean isStackValid(Object aStack) {
+        return (aStack instanceof ItemStack) && ((ItemStack) aStack).getItem() != null && ((ItemStack) aStack).stackSize >= 0;
     }
 
     /**

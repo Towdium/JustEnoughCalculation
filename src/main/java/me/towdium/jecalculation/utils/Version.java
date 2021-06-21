@@ -23,21 +23,27 @@ public class Version implements Comparable<Version> {
     }
 
     public Version(String version) {
+        boolean success1;
         String[] split = version.split(PRE_RELEASE_PREFIX);
         if (split.length == 0) {
-            success = false;
+            success1 = false;
         } else {
             String[] versions = split[0].split("\\.");
             if (versions.length != 3)
-                success = false;
+                success1 = false;
             else {
-                major = Integer.parseInt(versions[0]);
-                minor = Integer.parseInt(versions[1]);
-                patch = Integer.parseInt(versions[2]);
-                success = true;
+                try {
+                    major = Integer.parseInt(versions[0]);
+                    minor = Integer.parseInt(versions[1]);
+                    patch = Integer.parseInt(versions[2]);
+                    success1 = true;
+                } catch (NumberFormatException e) {
+                    success1 = false;
+                }
             }
         }
 
+        success = success1;
         if (split.length > 1) {
             preRelease = split[1];
         }
