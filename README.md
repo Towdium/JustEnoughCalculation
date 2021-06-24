@@ -10,7 +10,7 @@ order to help you calculate the amount of resources to craft a specific amount o
 This might be a little confusing, here's an example:
 
 - you want to know how many wood logs do you need to craft 40 stairs, simply load the recipe you want to use, and it will
-tell you 13 logs should be enough, that's all. 
+  tell you 13 logs should be enough, that's all.
 
 This mod is focused on calculation, so you might find it powerful and high performance in some complicated cases. Have fun!
 
@@ -23,7 +23,7 @@ the [release page](https://minecraft.curseforge.com/projects/just-enough-calcula
 - Support get catalyst in [NEI-GTNH-2.1](https://github.com/GTNewHorizons/NotEnoughItems)
 - Infinite inputs, outputs and catalysts of recipe
 - Math calculation
-- Recipe can transferred from NEI recipe handler (recipe gui)
+- Recipe can be transferred from NEI recipe overlay gui (`shift` + click `?` button)
   - [x] vanilla
   - [x] gregtech
   - [x] Forestry
@@ -37,22 +37,24 @@ the [release page](https://minecraft.curseforge.com/projects/just-enough-calcula
 
 ## Usage
 
+Tutorial links:
+- [mcmod.cn](https://www.mcmod.cn/post/1650.html) [Chinese] by @全麦
+- general usage: #85
+
 ### **Setup keybinding**
-  ![setup keybinding](docs/setup_keybinding.png)
+![setup keybinding](docs/setup_keybinding.png)
 
 ### Main page
-  ![main page](docs/main_page.png)
-  
-### General usage
-see [here](https://github.com/Towdium/JustEnoughCalculation/issues/85)
+![main page](docs/main_page.png)
+
 
 ## TODO
 
-- add new button to transfer the recipe. 
+- add new button to transfer the recipe.
 
 ## Known Issues
 
-- [ ] **May crash** if you open the gui immediately after entering the world
+- [ ] **May crash** if you open the gui immediately after entering the world. Please wait for the NEI to load completely.
 - [ ] Fluid from NEI ItemPanel will be recognized as item
 - [ ] Some OreDict items renders wrong with overlay (Now removed the overlay)
 - [ ] GUI will cover the NEI's GUI like tooltip on item panel

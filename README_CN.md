@@ -8,7 +8,7 @@ order to help you calculate the amount of resources to craft a specific amount o
 This might be a little confusing, here's an example:
 
 - you want to know how many wood logs do you need to craft 40 stairs, simply load the recipe you want to use, and it will
-tell you 13 logs should be enough, that's all. 
+  tell you 13 logs should be enough, that's all.
 
 This mod is focused on calculation, so you might find it powerful and high performance in some complicated cases. Have fun!
 
@@ -22,7 +22,7 @@ This mod is focused on calculation, so you might find it powerful and high perfo
 - 支持 [NEI-GTNH-2.1](https://github.com/GTNewHorizons/NotEnoughItems) 的催化剂（不消耗的合成参与者，如工作台，各种机器之类的）
 - 合成表的输入、输出和催化剂 无数量限制
 - 数学计算器
-- 可以从 NEI 合成表 gui 页面直接获取合成表
+- 可以从 NEI 合成表 gui 页面直接获取合成表 (`shift` + 单击 `?` 按钮)
   - [x] 原生MC
   - [x] gregtech
   - [x] Forestry
@@ -35,14 +35,16 @@ This mod is focused on calculation, so you might find it powerful and high perfo
 
 ## 使用方法
 
+教程链接:
+- [mcmod.cn](https://www.mcmod.cn/post/1650.html) by @全麦
+- [一般用法](https://github.com/Towdium/JustEnoughCalculation/issues/85)
+
+
 ### **设置按键绑定**
-  ![setup keybinding](docs/setup_keybinding.png)
+![setup keybinding](docs/setup_keybinding.png)
 
-### 主页面 
-  ![main page](docs/main_page.png)
-
-### 一般用法
-看 [这儿](https://github.com/Towdium/JustEnoughCalculation/issues/85)
+### 主页面
+![main page](docs/main_page.png)
 
 
 ## TODO
@@ -51,11 +53,11 @@ This mod is focused on calculation, so you might find it powerful and high perfo
 
 ## 已知问题
 
-- [ ] 如果在进入是世界后立刻打开计算器 gui，游戏可能会 **崩溃 (强烈建议进入世界后等 3~4 秒）**
+- [ ] 如果在进入世界后立刻打开计算器 gui，游戏可能会 **崩溃**，请等待NEI完全加载完成
 - [ ] 从 NEI 物品列表抓取的 流体 会被识别为 物体
 - [ ] 由于矿物词典标签的渲染存在问题，目前暂时不显示覆盖的标识
 - [ ] 计算器 gui 会覆盖 NEI 的 tooltip
-- [ ] 流体需要针对 mod 进行适配, 开发人员可以查看 [Adapter](./src/main/java/me/towdium/jecalculation/nei/Adapter.java).
+- [ ] 流体需要针对 mod 进行适配, 开发人员可以查看 [Adapter](./src/main/java/me/towdium/jecalculation/nei/Adapter.java)
 
 ## 开发
 
