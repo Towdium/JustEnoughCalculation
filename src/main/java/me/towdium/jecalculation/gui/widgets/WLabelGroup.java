@@ -9,7 +9,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -72,8 +71,8 @@ public class WLabelGroup extends WContainer {
         return this;
     }
 
-    public WLabelGroup setHdlrScroll(BiFunction<? super WLabel, Integer, Boolean> hdlr) {
-        labels.forEach(i -> i.setHdlrScroll(hdlr));
+    public WLabelGroup setLsnrScroll(ListenerValue<? super WLabel, Integer> hdlr) {
+        labels.forEach(i -> i.setLsnrScroll(hdlr));
         return this;
     }
 

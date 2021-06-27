@@ -11,7 +11,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static me.towdium.jecalculation.gui.JecaGui.Font.HALF;
@@ -30,7 +29,7 @@ public class WLabel implements IWidget {  // TODO clean up tooltip and amount fo
     public boolean accept;
     public ListenerValue<? super WLabel, ILabel> update;
     public ListenerAction<? super WLabel> click;
-    public BiFunction<? super WLabel, Integer, Boolean> scroll;
+    public ListenerValue<? super WLabel, Integer> scroll;
     Function<ILabel, String> fmtAmount = i -> "";
     BiConsumer<ILabel, List<String>> fmtTooltip = (i, j) -> i.getToolTip(j, false);
     protected Timer timer = new Timer();
@@ -95,13 +94,10 @@ public class WLabel implements IWidget {  // TODO clean up tooltip and amount fo
     @Override
     public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
         if (!mouseIn(xMouse, yMouse) || button == 1) return false;
-        if (accept) {
-            if (gui.hand == ILabel.EMPTY && click != null) notifyClick();
-            else {
-                label = gui.hand;
-                gui.hand = label.EMPTY;
-                notifyUpdate();
-            }
+        if (accept && gui.hand != ILabel.EMPTY) {
+            label = gui.hand;
+            gui.hand = label.EMPTY;
+            notifyUpdate();
         } else notifyClick();
         return true;
     }
@@ -109,8 +105,10 @@ public class WLabel implements IWidget {  // TODO clean up tooltip and amount fo
     @Override
     public boolean onMouseScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
         if (scroll == null) return false;
-        else if (mouseIn(xMouse, yMouse)) return scroll.apply(this, diff);
-        else return false;
+        else if (mouseIn(xMouse, yMouse)) {
+            scroll.invoke(this, diff);
+            return true;
+        } else return false;
     }
 
     public WLabel setLsnrUpdate(ListenerValue<? super WLabel, ILabel> listener) {
@@ -123,8 +121,8 @@ public class WLabel implements IWidget {  // TODO clean up tooltip and amount fo
         return this;
     }
 
-    public WLabel setHdlrScroll(BiFunction<? super WLabel, Integer, Boolean> hdlr) {
-        scroll = hdlr;
+    public WLabel setLsnrScroll(ListenerValue<? super WLabel, Integer> listener) {
+        scroll = listener;
         return this;
     }
 

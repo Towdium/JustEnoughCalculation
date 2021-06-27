@@ -38,6 +38,11 @@ public class PickerItemStack extends IPicker.Impl implements IGui {
         update(ILabel.EMPTY);
     }
 
+    @Override
+    public boolean acceptsLabel() {
+        return true;
+    }
+
     public void update(ILabel l) {
         raw = l;
         setFCap(false);

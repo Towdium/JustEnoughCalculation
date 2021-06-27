@@ -121,11 +121,12 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
             if (diff != 0) gui.root.onMouseScroll(gui, xMouse, yMouse, (int) diff);
         } else if (event instanceof MouseClickedEvent.Pre) {
             int button = ((MouseClickedEvent) event).getButton();
+            gui.root.onMouseFocused(gui, xMouse, yMouse, button);
             if (gui.root.onMouseClicked(gui, xMouse, yMouse, button)) event.setCanceled(true);
             else if (gui.hand != ILabel.EMPTY) {
                 gui.hand = ILabel.EMPTY;
                 event.setCanceled(true);
-            } else {
+            } else if (gui.root.acceptsLabel()) {
                 ILabel e = JecaPlugin.getLabelUnderMouse();
                 if (e != ILabel.EMPTY) {
                     gui.hand = e;

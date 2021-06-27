@@ -35,9 +35,9 @@ public class GuiRecipe extends Gui {
     Pair<String, Integer> dest;
     WSwitcher group = new WSwitcher(7, 7, 162, Controller.getGroups()).setListener(i -> refresh());
     WTextField text = new WTextField(49, 25, 119);
-    WLabelScroll catalyst = new WLabelScroll(25, 101, 7, 1, true).setHdlrScroll(GuiRecipe::handleLabelScroll);
-    WLabelScroll input = new WLabelScroll(25, 123, 7, 2, true).setHdlrScroll(GuiRecipe::handleLabelScroll);
-    WLabelScroll output = new WLabelScroll(25, 61, 7, 2, true).setHdlrScroll(GuiRecipe::handleLabelScroll);
+    WLabelScroll catalyst = new WLabelScroll(25, 101, 7, 1, true).setLsnrScroll(GuiRecipe::handleLabelScroll);
+    WLabelScroll input = new WLabelScroll(25, 123, 7, 2, true).setLsnrScroll(GuiRecipe::handleLabelScroll);
+    WLabelScroll output = new WLabelScroll(25, 61, 7, 2, true).setLsnrScroll(GuiRecipe::handleLabelScroll);
     WButton clear = new WButtonIcon(64, 25, 20, 20, BTN_DEL, "recipe.clear").setListener(i -> reset());
     // check duplicate and valid
     WButton copy = new WButtonIcon(83, 25, 20, 20, BTN_COPY, "recipe.copy").setListener(i -> {
@@ -125,6 +125,11 @@ public class GuiRecipe extends Gui {
 
     @Override
     public boolean acceptsTransfer() {
+        return true;
+    }
+
+    @Override
+    public boolean acceptsLabel() {
         return true;
     }
 

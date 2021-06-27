@@ -49,9 +49,10 @@ public class WPage extends WTooltip {
 
     @Override
     public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
-        boolean ret = JecaGui.mouseIn(index * 24, -21, 24, 21, xMouse, yMouse) && listener != null && !focused;
-        if (ret) listener.invoke(this);
-        return ret;
+        if (mouseIn(xMouse, yMouse) && listener != null && !focused) {
+            listener.invoke(this);
+            return true;
+        } else return false;
     }
 
     @Override

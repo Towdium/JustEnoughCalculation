@@ -1,6 +1,5 @@
 package me.towdium.jecalculation.gui.widgets;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.structure.RecordMath.Operator;
 import me.towdium.jecalculation.gui.JecaGui;

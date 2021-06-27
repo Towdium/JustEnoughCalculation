@@ -2,6 +2,7 @@ package me.towdium.jecalculation.gui.widgets;
 
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
+import me.towdium.jecalculation.gui.Resource;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.util.SoundEvents;
@@ -46,9 +47,13 @@ public abstract class WButton extends WTooltip {
     @Override
     public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
         super.onDraw(gui, xMouse, yMouse);
-        boolean hovered = mouseIn(xMouse, yMouse) || keys.entrySet().stream().anyMatch(Map.Entry::getValue);
-        gui.drawResourceContinuous(disabled ? WGT_BUTTON_D : (hovered ? WGT_BUTTON_F : WGT_BUTTON_N)
-                , xPos, yPos, xSize, ySize, 5, 5, 5, 5);
+        boolean hovered = hovered(xMouse, yMouse);
+        Resource res;
+        if (disabled) res = WGT_BUTTON_D;
+        else if (hovered(xMouse, yMouse)) res = WGT_BUTTON_F;
+        else res = WGT_BUTTON_N;
+
+        gui.drawResourceContinuous(res, xPos, yPos, xSize, ySize, 5, 5, 5, 5);
         return hovered;
     }
 
@@ -58,6 +63,10 @@ public abstract class WButton extends WTooltip {
             trigger();
             return true;
         } else return false;
+    }
+
+    protected boolean hovered(int xMouse, int yMouse) {
+        return mouseIn(xMouse, yMouse) || keys.entrySet().stream().anyMatch(Map.Entry::getValue);
     }
 
     private void trigger() {

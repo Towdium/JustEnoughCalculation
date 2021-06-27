@@ -37,8 +37,8 @@ public class PickerSimple extends IPicker.Impl implements IGui {
     public PickerSimple(List<ILabel> labels) {
         WLabelScroll ls = new WLabelScroll(7, 33, 8, 7, false).setLabels(labels)
                 .setLsnrClick((i, v) -> notifyLsnr(i.get(v).getLabel()));
-        add(new WSearch(26, 7, 90, ls));
         add(new WIcon(7, 7, 20, 20, ICN_TEXT, "common.search"));
+        add(new WSearch(26, 7, 90, ls));
         add(ls);
     }
 

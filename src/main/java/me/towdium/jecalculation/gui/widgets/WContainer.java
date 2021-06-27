@@ -23,18 +23,12 @@ import java.util.List;
 public class WContainer implements IContainer {
     protected List<IWidget> widgets = new ArrayList<>();
 
-    public void add(IWidget w) {
-        widgets.add(w);
-    }
-
     public void add(IWidget... w) {
-        if (w.length == 1) widgets.add(w[0]);
-        else widgets.addAll(Arrays.asList(w));
+        widgets.addAll(Arrays.asList(w));
     }
 
     public void remove(IWidget... w) {
-        if (w.length == 1) widgets.remove(w[0]);
-        else widgets.removeAll(Arrays.asList(w));
+        widgets.removeAll(Arrays.asList(w));
     }
 
     public void clear() {
@@ -59,6 +53,11 @@ public class WContainer implements IContainer {
     public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
         return new Utilities.ReversedIterator<>(widgets).stream()
                 .anyMatch(i -> i.onMouseClicked(gui, xMouse, yMouse, button));
+    }
+
+    @Override
+    public void onMouseFocused(JecaGui gui, int xMouse, int yMouse, int button) {
+        widgets.forEach(i -> i.onMouseFocused(gui, xMouse, yMouse, button));
     }
 
     @Override

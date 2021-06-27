@@ -19,5 +19,9 @@ public interface IGui extends IContainer {
         return false;
     }
 
+    default boolean acceptsLabel() {
+        return false;
+    }
+
     void setOverlay(IWidget w);
 }

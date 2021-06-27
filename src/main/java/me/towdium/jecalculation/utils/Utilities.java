@@ -170,7 +170,7 @@ public class Utilities {
 
         public Circulator move(int steps) {
             current += steps;
-            if (current < 0) current += (-current) / total * total + total;
+            if (current < 0) current += (total - current - 1) / total * total;
             else current = current % total;
             return this;
         }

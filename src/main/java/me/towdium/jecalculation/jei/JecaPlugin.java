@@ -13,6 +13,7 @@ import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredientType;
+import mezz.jei.api.recipe.IFocus;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mezz.jei.api.registration.IRecipeTransferRegistration;
@@ -42,6 +43,14 @@ public class JecaPlugin implements IModPlugin {
         o.push(runtime.getIngredientListOverlay().getIngredientUnderMouse());
         o.push(runtime.getBookmarkOverlay().getIngredientUnderMouse());
         return ILabel.Converter.from(o.value);
+    }
+
+    public static boolean showRecipe(ILabel l) {
+        Object rep = l.getRepresentation();
+        if (rep != null) {
+            runtime.getRecipesGui().show(runtime.getRecipeManager().createFocus(IFocus.Mode.OUTPUT, rep));
+            return true;
+        } else return false;
     }
 
     @Override

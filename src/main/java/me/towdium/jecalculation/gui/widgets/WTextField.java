@@ -32,13 +32,17 @@ public class WTextField implements IWidget {
     }
 
     @Override
-    public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
+    public void onMouseFocused(JecaGui gui, int xMouse, int yMouse, int button) {
         textField.mouseClicked(xMouse, yMouse, button);
+    }
+
+    @Override
+    public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
         if (textField.isFocused() && button == 1) {
             textField.setText("");
             notifyLsnr();
-        }
-        return false;
+            return true;
+        } else return false;
     }
 
     @Override

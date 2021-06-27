@@ -9,8 +9,8 @@ import me.towdium.jecalculation.data.structure.RecordCraft;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.gui.widgets.*;
+import me.towdium.jecalculation.jei.JecaPlugin;
 import me.towdium.jecalculation.utils.wrappers.Pair;
-import mezz.jei.api.recipe.IFocus;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static me.towdium.jecalculation.data.structure.RecordCraft.Mode.*;
-import static me.towdium.jecalculation.jei.JecaPlugin.runtime;
 import static me.towdium.jecalculation.utils.Utilities.getPlayer;
 
 /**
@@ -41,14 +40,15 @@ public class GuiCraft extends Gui {
     WLabel label = new WLabel(31, 7, 20, 20, true)
             .setLsnrUpdate((i, v) -> refreshLabel(v, false, true));
     WLabelGroup recent = new WLabelGroup(7, 31, 8, 1, false)
-            .setLsnrClick((i, v) -> label.setLabel(i.get(v).getLabel().copy(), true));
-    WLabelScroll result = new WLabelScroll(7, 87, 8, 4, false)
             .setLsnrClick((i, v) -> {
-                Object rep = i.get(v).getLabel().getRepresentation();
-                if (rep != null) {
-                    runtime.getRecipesGui().show(runtime.getRecipeManager().createFocus(IFocus.Mode.OUTPUT, rep));
+                ILabel l = i.get(v).getLabel();
+                if (l != ILabel.EMPTY) {
+                    label.setLabel(i.get(v).getLabel().copy(), true);
                 }
-            }).setFmtAmount(i -> i.getAmountString(true))
+            });
+    WLabelScroll result = new WLabelScroll(7, 87, 8, 4, false)
+            .setLsnrClick((i, v) -> JecaPlugin.showRecipe(i.get(v).getLabel()))
+            .setFmtAmount(i -> i.getAmountString(true))
             .setFmtTooltip((i, j) -> i.getToolTip(j, true));
     WButton steps = new WButtonIcon(64, 62, 20, 20, Resource.BTN_LIST, "craft.step")
             .setListener(i -> setMode(STEPS));
@@ -110,6 +110,11 @@ public class GuiCraft extends Gui {
 
     @Override
     public boolean acceptsTransfer() {
+        return true;
+    }
+
+    @Override
+    public boolean acceptsLabel() {
         return true;
     }
 
