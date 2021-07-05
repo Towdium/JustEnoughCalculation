@@ -17,6 +17,7 @@ public class NEICalculatorConfig implements IConfigureNEI {
 
     @Override
     public void loadConfig() {
+        Adapter.init();
         /* null For the recipeHandlers which extend `TemplateRecipeHandler` without override the `getOverlayIdentifier` function */
         Set<String> baseOverlayIdentifiers = new HashSet<>(
                 Arrays.asList("crafting", "crafting2x2", "smelting", "fuel", "brewing", null));

@@ -25,8 +25,9 @@ This mod is focused on calculation, so you might find it powerful and high perfo
 - 可以从 NEI 合成表 gui 页面直接获取合成表 (`shift` + 单击 `?` 按钮)
   - [x] 原生MC
   - [x] gregtech
-  - [x] Forestry
-  - [x] Avaritia (转移按钮不容易找到)
+  - [x] Forestry (`?` 按钮可能与流体重叠，不是很好点到)
+  - [x] Avaritia (`?` 按钮可能会被NEI搜索栏遮盖)
+  - [x] GT++ (支持 GT++ 1.7.05.68 版本(GTNH 2.1.0.0)，老版本没有测试过)
   - [ ] AE2（目前没办法，需要 AE2 作者支持
   - [ ] 其它
 - [x] 从 NEI 物品列表抓取物品

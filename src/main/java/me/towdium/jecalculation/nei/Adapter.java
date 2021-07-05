@@ -13,6 +13,7 @@ public class Adapter {
     public static List<IAdapter> adapters = new ArrayList<>();
 
     public static void init() {
+        JustEnoughCalculation.logger.info("=====Just Enough Calculation Init Start=====");
         if (Loader.isModLoaded("Forestry")) {
             JustEnoughCalculation.logger.info("Forestry installed");
             adapters.add(new Forestry());
@@ -25,14 +26,20 @@ public class Adapter {
             JustEnoughCalculation.logger.info("gregtech installed");
             adapters.add(new GregTech());
         }
-//        if (Loader.isModLoaded("miscutils")) {
-//            JustEnoughCalculation.logger.info("gt++ not supported");
-//            adapters.add(new GTPP());
-//        }
+        try {
+            if (Loader.isModLoaded("miscutils")) {
+                adapters.add(new GTPP());
+                JustEnoughCalculation.logger.info("gt++ installed");
+            }
+        } catch (Exception e) {
+            JustEnoughCalculation.logger.info("exception when installing gt++");
+            e.printStackTrace();
+        }
         if (Loader.isModLoaded("Avaritia")) {
             JustEnoughCalculation.logger.info("Avaritia installed");
             adapters.add(new Avaritia());
         }
+        JustEnoughCalculation.logger.info("=====Just Enough Calculation Init Finish=====");
     }
 
     public static void handleRecipe(IRecipeHandler recipe, int index, List<Object[]> inputs, List<Object[]> outputs) {

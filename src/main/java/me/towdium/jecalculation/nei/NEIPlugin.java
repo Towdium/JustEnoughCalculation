@@ -18,7 +18,6 @@ public class NEIPlugin {
 
     public static void init() {
         GuiContainerManager.addTooltipHandler(new JecaTooltipHandler());
-        Adapter.init();
         // nei version check
         String neiVersion = Loader.instance().getIndexedModList().get("NotEnoughItems").getVersion();
         JustEnoughCalculation.logger.info("NEI version: " + neiVersion);
