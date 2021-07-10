@@ -102,7 +102,9 @@ public class Utilities {
         FluidStack fs = new FluidStack(fluid, 1000);
         String name = fs.getDisplayName().getString(); //.getFormattedText();
         if (name.equals("lava") || name.equals("water")) return "Minecraft";
-        else return getModName(fluid.getAttributes().getStillTexture(fs).getNamespace());
+        ResourceLocation texture = fluid.getAttributes().getStillTexture(fs);
+        if (texture == null) return "Unknown";
+        else return getModName(texture.getNamespace());
     }
 
     public static CompoundNBT getTag(ItemStack is) {
