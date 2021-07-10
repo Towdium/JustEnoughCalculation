@@ -10,11 +10,13 @@ import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
@@ -49,9 +51,19 @@ public class JustEnoughCalculation {
     }
 
     @SubscribeEvent
+    public static void onConstruct(FMLConstructModEvent event) {
+        if (ModList.get().isLoaded("i18nupdatemod") || ModList.get().isLoaded("touhou_little_maid")) {
+            logger.info("Good to see you, TartaricAcid.");
+        }
+        if (ModList.get().isLoaded("kiwi")) {
+            logger.info("Good to see you, Snownee.");
+        }
+    }
+
+    @SubscribeEvent
     public static void setupCommon(FMLCommonSetupEvent event) {
         network = NetworkRegistry.newSimpleChannel(
-            new ResourceLocation(MODID, "main"), () -> PROTOCOL,
+                new ResourceLocation(MODID, "main"), () -> PROTOCOL,
                 v -> v.equals(PROTOCOL) || v.equals(ABSENT),
                 v -> v.equals(PROTOCOL) || v.equals(ABSENT)
         );
