@@ -41,6 +41,8 @@ import net.minecraftforge.client.event.GuiScreenEvent.MouseReleasedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent.MouseScrollEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderTooltipEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
@@ -109,6 +111,17 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
         return (int) mc.mouseHelper.getMouseY() * mc.getMainWindow().getScaledHeight() / mc.getMainWindow().getHeight() - gui.guiTop;
     }
 
+    private static void finishEvent(GuiScreenEvent.MouseClickedEvent event) {
+        // if event handled by jeca, then send a dummy mouse event to jei to clear input focus
+        event.setCanceled(true);
+        JecaGui gui = getCurrent();
+        Minecraft mc = Objects.requireNonNull(gui.minecraft, "Internal error");
+        int x = (88 + gui.guiLeft) * mc.getMainWindow().getWidth() / mc.getMainWindow().getScaledWidth();
+        int y = (83 + gui.guiLeft) * mc.getMainWindow().getHeight() / mc.getMainWindow().getScaledHeight();
+        Event dummy = new DummyEvent(event.getGui(), x, y, event.getButton());
+        MinecraftForge.EVENT_BUS.post(dummy);
+    }
+
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onMouse(GuiScreenEvent.MouseInputEvent event) {
         if (!(event.getGui() instanceof JecaGui)) return;
@@ -116,21 +129,25 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
         int xMouse = getMouseX();
         int yMouse = getMouseY();
 
+        if (event instanceof DummyEvent) {
+            return;
+        }
         if (event instanceof MouseScrollEvent.Pre) {
             double diff = ((MouseScrollEvent) event).getScrollDelta();
             if (diff != 0) gui.root.onMouseScroll(gui, xMouse, yMouse, (int) diff);
         } else if (event instanceof MouseClickedEvent.Pre) {
-            int button = ((MouseClickedEvent) event).getButton();
+            MouseClickedEvent mouseEvent = ((MouseClickedEvent) event);
+            int button = mouseEvent.getButton();
             gui.root.onMouseFocused(gui, xMouse, yMouse, button);
-            if (gui.root.onMouseClicked(gui, xMouse, yMouse, button)) event.setCanceled(true);
+            if (gui.root.onMouseClicked(gui, xMouse, yMouse, button)) finishEvent(mouseEvent);
             else if (gui.hand != ILabel.EMPTY) {
                 gui.hand = ILabel.EMPTY;
-                event.setCanceled(true);
+                finishEvent(mouseEvent);
             } else if (gui.root.acceptsLabel()) {
                 ILabel e = JecaPlugin.getLabelUnderMouse();
                 if (e != ILabel.EMPTY) {
                     gui.hand = e;
-                    event.setCanceled(true);
+                    finishEvent(mouseEvent);
                 }
             }
         } else if (event instanceof MouseDragEvent.Pre) {
@@ -530,5 +547,11 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
 
     @OnlyIn(Dist.CLIENT)
     public static class ContainerNonTransfer extends JecaContainer {
+    }
+
+    public static class DummyEvent extends MouseClickedEvent.Pre {
+        public DummyEvent(Screen gui, double mouseX, double mouseY, int button) {
+            super(gui, mouseX, mouseY, button);
+        }
     }
 }
