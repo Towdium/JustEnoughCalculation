@@ -36,8 +36,8 @@ public class WPage extends WTooltip {
     @Override
     public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
         Resource resource = focused ? WGT_PAGER_F : WGT_PANEL_N;
-        gui.drawResourceContinuous(resource, index * 24 + 3, -21, 24, 25, 4, 4, 4, 4);
-        record.representation.drawLabel(gui, index * 24 + 7, -17, false);
+        gui.drawResourceContinuous(resource, index * 29, getTop(), 28, getHeight(), 4, 4, 4, 4);
+        record.representation.drawLabel(gui, index * 29 + 6, -19, false);
         super.onDraw(gui, xMouse, yMouse);
         return false;
     }
@@ -57,7 +57,15 @@ public class WPage extends WTooltip {
 
     @Override
     public boolean mouseIn(int xMouse, int yMouse) {
-        return JecaGui.mouseIn(index * 24, -21, 24, 21, xMouse, yMouse);
+        return JecaGui.mouseIn(index * 29, getTop(), 28, getHeight(), xMouse, yMouse);
+    }
+
+    public int getTop() {
+        return focused ? -28 : -26;
+    }
+
+    public int getHeight() {
+        return focused ? 32 : 30;
     }
 
     public WPage setListener(ListenerAction<? super WPage> r) {

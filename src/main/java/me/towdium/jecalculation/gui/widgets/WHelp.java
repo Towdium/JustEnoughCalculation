@@ -38,14 +38,14 @@ public class WHelp extends WContainer {
         @Override
         public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
             super.onDraw(gui, xMouse, yMouse);
-            gui.drawResourceContinuous(WGT_PANEL_N, -21, 0, 25, 24, 4);
-            gui.drawResource(WGT_HELP_N, -19, 2);
+            gui.drawResourceContinuous(WGT_PANEL_N, 150, 162, 26, 26, 4);
+            gui.drawResource(WGT_HELP_N, 152, 165);
             return false;
         }
 
         @Override
         public boolean mouseIn(int xMouse, int yMouse) {
-            return JecaGui.mouseIn(-21, 0, 24, 24, xMouse, yMouse);
+            return JecaGui.mouseIn(150, 166, 26, 22, xMouse, yMouse);
         }
 
         @Override
@@ -128,8 +128,8 @@ public class WHelp extends WContainer {
             @Override
             public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
                 super.onDraw(gui, xMouse, yMouse);
-                gui.drawResourceContinuous(WGT_HELP_B, -21, 0, 25, 24, 4);
-                gui.drawResource(WGT_HELP_F, -19, 2);
+                gui.drawResourceContinuous(WGT_HELP_B, 150, 162, 26, 26, 4);
+                gui.drawResource(WGT_HELP_F, 152, 165);
                 return false;
             }
 
@@ -148,7 +148,7 @@ public class WHelp extends WContainer {
 
             @Override
             public boolean mouseIn(int xMouse, int yMouse) {
-                return JecaGui.mouseIn(-21, 0, 24, 24, xMouse, yMouse);
+                return JecaGui.mouseIn(150, 166, 26, 22, xMouse, yMouse);
             }
 
             @Override
