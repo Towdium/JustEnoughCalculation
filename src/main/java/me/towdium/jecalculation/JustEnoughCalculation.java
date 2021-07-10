@@ -10,7 +10,6 @@ import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -52,12 +51,7 @@ public class JustEnoughCalculation {
 
     @SubscribeEvent
     public static void onConstruct(FMLConstructModEvent event) {
-        if (ModList.get().isLoaded("i18nupdatemod") || ModList.get().isLoaded("touhou_little_maid")) {
-            logger.info("Good to see you, TartaricAcid.");
-        }
-        if (ModList.get().isLoaded("kiwi")) {
-            logger.info("Good to see you, Snownee.");
-        }
+        Utilities.Greetings.send(logger, MODID);
     }
 
     @SubscribeEvent
