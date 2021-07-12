@@ -1,7 +1,6 @@
 package me.towdium.jecalculation.nei.adapter;
 
 import codechicken.nei.recipe.IRecipeHandler;
-import gregtech.api.util.GTPP_Recipe;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.HashSet;
@@ -28,14 +27,14 @@ public class GTPP extends GregTech {
                 "GT_NEI_DefaultHandler", "GT_NEI_Dehydrator", "GT_NEI_MultiBlockHandler", "GTPP_NEI_CustomMapHandler",
                 "GTPP_NEI_DefaultHandlerEx"
 
-                ).map(name -> "gtPlusPlus.nei." + name).collect(Collectors.toList());
+        ).map(name -> "gtPlusPlus.nei." + name).collect(Collectors.toList());
 
         defaultHandlers = new HashSet<>();
         for (String handler : handlers) {
             try {
                 defaultHandlers.add(Class.forName(handler));
             } catch (ClassNotFoundException e) {
-//                e.printStackTrace();
+                //                e.printStackTrace();
             }
         }
     }
@@ -45,13 +44,12 @@ public class GTPP extends GregTech {
         Set<String> recipeNames = new HashSet<>();
         try {
             // add as many recipe as possible
+
             recipeNames.addAll(
-                    GTPP_Recipe.GT_Recipe_Map.sMappings.stream().map(rm -> rm.mNEIName).collect(Collectors.toSet()));
-            recipeNames.addAll(
-                    GTPP_Recipe.GTPP_Recipe_Map.sMappings.stream().map(rm -> rm.mNEIName).collect(Collectors.toSet()));
-            recipeNames.addAll(GTPP_Recipe.GTPP_Recipe_Map_Internal.sMappingsEx.stream()
-                                                                               .map(rm -> rm.mNEIName)
-                                                                               .collect(Collectors.toSet()));
+                    this.reflectGetRecipeMapNEIName("gregtech.api.util.GTPP_Recipe$GTPP_Recipe_Map", "sMappings"));
+
+            recipeNames.addAll(this.reflectGetRecipeMapNEIName("gregtech.api.util.GTPP_Recipe$GTPP_Recipe_Map_Internal",
+                                                               "sMappingsEx"));
         } catch (Exception e) {
             e.printStackTrace();
         }
