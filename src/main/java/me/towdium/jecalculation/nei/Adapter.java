@@ -39,6 +39,10 @@ public class Adapter {
             JustEnoughCalculation.logger.info("Avaritia installed");
             adapters.add(new Avaritia());
         }
+        if (Loader.isModLoaded("EnderIO")) {
+            JustEnoughCalculation.logger.info("EnderIO installed");
+            adapters.add(new EnderIO());
+        }
         JustEnoughCalculation.logger.info("=====Just Enough Calculation Init Finish=====");
     }
 

@@ -28,12 +28,14 @@ public class GTPP extends GregTech {
                 "GT_NEI_DefaultHandler", "GT_NEI_Dehydrator", "GT_NEI_MultiBlockHandler", "GTPP_NEI_CustomMapHandler",
                 "GTPP_NEI_DefaultHandlerEx"
 
-                ).map(name -> "gtPlusPlus.nei." + name).collect(Collectors.toList()); defaultHandlers = new HashSet<>();
+                ).map(name -> "gtPlusPlus.nei." + name).collect(Collectors.toList());
+
+        defaultHandlers = new HashSet<>();
         for (String handler : handlers) {
             try {
                 defaultHandlers.add(Class.forName(handler));
             } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+//                e.printStackTrace();
             }
         }
     }

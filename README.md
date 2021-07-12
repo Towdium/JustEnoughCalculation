@@ -53,7 +53,7 @@ Tutorial links:
 
 - add new button to transfer the recipe.
 - [ ] convert GT item fluid to fluid
-- [ ] EnderIO
+- [ ] TC
 
 ## Known Issues
 
