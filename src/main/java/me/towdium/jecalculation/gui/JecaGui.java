@@ -114,12 +114,10 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
     private static void finishEvent(GuiScreenEvent.MouseClickedEvent event) {
         // if event handled by jeca, then send a dummy mouse event to jei to clear input focus
         event.setCanceled(true);
-        JecaGui gui = getCurrent();
-        Minecraft mc = Objects.requireNonNull(gui.minecraft, "Internal error");
-        int x = (88 + gui.guiLeft) * mc.getMainWindow().getWidth() / mc.getMainWindow().getScaledWidth();
-        int y = (83 + gui.guiLeft) * mc.getMainWindow().getHeight() / mc.getMainWindow().getScaledHeight();
-        Event dummy = new DummyEvent(event.getGui(), x, y, event.getButton());
-        MinecraftForge.EVENT_BUS.post(dummy);
+        if (JecaPlugin.isFocused()) {
+            Event dummy = new DummyEvent();
+            MinecraftForge.EVENT_BUS.post(dummy);
+        }
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
@@ -129,9 +127,6 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
         int xMouse = getMouseX();
         int yMouse = getMouseY();
 
-        if (event instanceof DummyEvent) {
-            return;
-        }
         if (event instanceof MouseScrollEvent.Pre) {
             double diff = ((MouseScrollEvent) event).getScrollDelta();
             if (diff != 0) gui.root.onMouseScroll(gui, xMouse, yMouse, (int) diff);
@@ -157,6 +152,24 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
             int button = ((MouseReleasedEvent) event).getButton();
             gui.root.onMouseReleased(gui, xMouse, yMouse, button);
         }
+    }
+
+    @SubscribeEvent
+    public static void onKeyPressed(GuiScreenEvent.KeyboardKeyPressedEvent.Pre event) {
+        if (event instanceof DummyEvent) return;
+        if (!(event.getGui() instanceof JecaGui)) return;
+        JecaGui gui = getCurrent();
+
+        int key = event.getKeyCode();
+        int modifier = event.getModifiers();
+        int scan = event.getScanCode();
+        if (key == GLFW.GLFW_KEY_ESCAPE && gui.hand != ILabel.EMPTY) {
+            gui.hand = ILabel.EMPTY;
+        } else if (!gui.root.onKeyPressed(gui, key, modifier) &&
+                key == GLFW.GLFW_KEY_ESCAPE && gui.parent != null) {
+            displayParent();
+        } else if (!gui.keyPressed(key, scan, modifier)) return;
+        event.setCanceled(true);
     }
 
     @Nullable
@@ -473,16 +486,6 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
     }
 
     @Override
-    public boolean keyPressed(int key, int scan, int modifier) {
-        if (key == GLFW.GLFW_KEY_ESCAPE && hand != ILabel.EMPTY) hand = ILabel.EMPTY;
-        else if (!root.onKeyPressed(this, key, modifier)) {
-            if (key == GLFW.GLFW_KEY_ESCAPE && parent != null) displayParent();
-            else return super.keyPressed(key, scan, modifier);
-        }
-        return true;
-    }
-
-    @Override
     public boolean keyReleased(int key, int scan, int modifier) {
         return root.onKeyReleased(this, key, modifier)
                 || super.keyReleased(key, scan, modifier);
@@ -549,9 +552,10 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
     public static class ContainerNonTransfer extends JecaContainer {
     }
 
-    public static class DummyEvent extends MouseClickedEvent.Pre {
-        public DummyEvent(Screen gui, double mouseX, double mouseY, int button) {
-            super(gui, mouseX, mouseY, button);
+    public static class DummyEvent extends GuiScreenEvent.KeyboardKeyPressedEvent.Pre {
+        public DummyEvent() {
+            super(Minecraft.getInstance().currentScreen, GLFW.GLFW_KEY_ESCAPE,
+                    GLFW.glfwGetKeyScancode(GLFW.GLFW_KEY_ESCAPE), 0);
         }
     }
 }

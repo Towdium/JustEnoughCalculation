@@ -45,12 +45,15 @@ public class JecaPlugin implements IModPlugin {
         return ILabel.Converter.from(o.value);
     }
 
-    public static boolean showRecipe(ILabel l) {
+    public static boolean isFocused() {
+        return runtime.getIngredientListOverlay().hasKeyboardFocus();
+    }
+
+    public static void showRecipe(ILabel l) {
         Object rep = l.getRepresentation();
         if (rep != null) {
             runtime.getRecipesGui().show(runtime.getRecipeManager().createFocus(IFocus.Mode.OUTPUT, rep));
-            return true;
-        } else return false;
+        }
     }
 
     @Override
