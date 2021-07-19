@@ -11,7 +11,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.polyfill.NBTHelper;
 import me.towdium.jecalculation.utils.wrappers.Pair;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.Item;
@@ -21,7 +20,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.text.WordUtils;
@@ -144,7 +142,7 @@ public class Utilities {
     }
 
     public static EntityClientPlayerMP getPlayer() {
-        return Objects.requireNonNull(Minecraft.getMinecraft().thePlayer);
+        return Objects.requireNonNull(ClientUtils.mc().thePlayer);
     }
 
 
@@ -281,12 +279,12 @@ public class Utilities {
 
         public static List<String> wrap(String s, int width) {
             return new TextWrapper()
-                    .wrap(s, Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode(),
+                    .wrap(s, ClientUtils.mc().getLanguageManager().getCurrentLanguage().getLanguageCode(),
                           i -> TextWrapper.renderer.getCharWidth(i), width);
         }
 
         static class TextWrapper {
-            static FontRenderer renderer = Minecraft.getMinecraft().fontRenderer;
+            static FontRenderer renderer = ClientUtils.mc().fontRenderer;
 
             String str;
             BreakIterator it;

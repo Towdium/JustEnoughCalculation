@@ -43,6 +43,10 @@ public class Adapter {
             JustEnoughCalculation.logger.info("EnderIO installed");
             adapters.add(new EnderIO());
         }
+        if (Loader.isModLoaded("thaumcraftneiplugin")) {
+            adapters.add(new Thaum());
+            JustEnoughCalculation.logger.info("Thaumcraft installed");
+        }
         JustEnoughCalculation.logger.info("=====Just Enough Calculation Init Finish=====");
     }
 

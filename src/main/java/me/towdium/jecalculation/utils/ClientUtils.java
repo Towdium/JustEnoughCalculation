@@ -10,7 +10,11 @@ public class ClientUtils {
     }
 
     public static void playClickSound(float pitchIn) {
-        mc().getSoundHandler().playSound(
-                PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), pitchIn));
+        try {
+            mc().getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), pitchIn));
+        } catch (Exception e) {
+            // why may crash ??
+            e.printStackTrace();
+        }
     }
 }

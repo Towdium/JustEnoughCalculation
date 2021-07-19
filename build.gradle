@@ -42,7 +42,7 @@ java {
 
 version = "${mc_version}-${proj_version}"
 group = "me.towdium.jecalculation"
-archivesBaseName = "jecalculation"
+archivesBaseName = "JustEnoughCalculation"
 
 minecraft {
     version = '1.7.10-10.13.4.1614-1.7.10'

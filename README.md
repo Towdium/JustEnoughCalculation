@@ -29,6 +29,7 @@ the [release page](https://minecraft.curseforge.com/projects/just-enough-calcula
   - [x] Forestry (`?` button may overlap with the fluid tank. Click carefully)
   - [x] Avaritia (`?` button may be covered by the NEI search bar)
   - [x] GT++ (support GT++ 1.7.05.68 (GTNH 2.1.0.0), have not tested old versions)
+  - [x] Thaumcraft (no aspect)
   - [ ] AE2
   - [ ] Others
 - [x] Item from NEI item panel
@@ -51,9 +52,8 @@ Tutorial links:
 
 ## TODO
 
-- add new button to transfer the recipe.
+- ~~add new button to transfer the recipe.~~
 - [ ] convert GT item fluid to fluid
-- [ ] TC
 
 ## Known Issues
 
