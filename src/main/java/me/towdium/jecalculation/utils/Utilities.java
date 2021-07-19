@@ -88,9 +88,17 @@ public class Utilities {
     // MOD NAME
     @Nullable
     public static String getModName(Item item) {
-        String name = GameData.getItemRegistry().getNameForObject(item);
+        String name = getName(item);
         String id = name.substring(0, name.indexOf(":"));
         return id.equals("minecraft") ? "Minecraft" : Loader.instance().getIndexedModList().get(id).getName();
+    }
+
+    public static String getName(Item item) {
+        return GameData.getItemRegistry().getNameForObject(item);
+    }
+
+    public static String getName(ItemStack itemStack) {
+        return getName(itemStack.getItem());
     }
 
     /**

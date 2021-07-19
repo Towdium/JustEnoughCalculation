@@ -65,7 +65,7 @@ Tutorial links:
 
 ## Development
 
-For run `gradle runClient`, you need copy the mods from `dev-mods/` to `run/mods`.
+~~For run `gradle runClient`, you need copy the mods from `dev-mods/` to `run/mods`.~~
 
 [1]: http://cf.way2muchnoise.eu/full_just-enough-calculation_downloads.svg
 

@@ -5,12 +5,24 @@ import codechicken.nei.recipe.IRecipeHandler;
 import cpw.mods.fml.common.Loader;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.nei.adapter.*;
+import me.towdium.jecalculation.utils.Utilities;
+import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Adapter {
     public static List<IAdapter> adapters = new ArrayList<>();
+
+    public static Object convertFluid(ItemStack itemStack) {
+        String name = Utilities.getName(itemStack);
+        String modId = name.substring(0, name.indexOf(":"));
+        String itemId = name.substring(name.indexOf(":") + 1);
+        if (Loader.isModLoaded("gregtech")) {
+            return GregTech.convertFluid(itemStack);
+        }
+        return itemStack;
+    }
 
     public static void init() {
         JustEnoughCalculation.logger.info("=====Just Enough Calculation Init Start=====");

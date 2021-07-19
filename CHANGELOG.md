@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.6.3
+
+- Feat: add support of `GT++`, `EnderIO`, `Thaumcraft`
+- Feat: convert gt fluid item into Fluid which picked from NEI item panel
+
 ## 3.6.2
 
 - Fix: crash when nei version is not number. 

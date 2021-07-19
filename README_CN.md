@@ -27,7 +27,7 @@ This mod is focused on calculation, so you might find it powerful and high perfo
   - [x] gregtech
   - [x] Forestry (`?` 按钮可能与流体重叠，不是很好点到)
   - [x] Avaritia (`?` 按钮可能会被NEI搜索栏遮盖)
-  - [x] GT++ (支持 GT++ 1.7.05.68 版本(GTNH 2.1.0.0)，老版本没有测试过)
+  - [x] GT++ (支持 GT++ 1.7.05.68 (GTNH 2.1.0.0)，老版本没有测试过)
   - [x] Thaumcraft (不包括要素)
   - [ ] AE2（目前没办法，需要 AE2 作者支持
   - [ ] 其它
@@ -63,7 +63,7 @@ This mod is focused on calculation, so you might find it powerful and high perfo
 
 ## 开发
 
-如果要运行 `gradle runClient`, 需要将 `dev-mods/` 文件夹中的全部模组复制到 `run/mods`（运行一次 `runClient` 后生成）文件夹中.
+~~如果要运行 `gradle runClient`, 需要将 `dev-mods/` 文件夹中的全部模组复制到 `run/mods`（运行一次 `runClient` 后生成）文件夹中.~~
 
 [1]: http://cf.way2muchnoise.eu/full_just-enough-calculation_downloads.svg
 

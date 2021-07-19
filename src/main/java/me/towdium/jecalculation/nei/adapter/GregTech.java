@@ -67,17 +67,17 @@ public class GregTech implements IAdapter {
 
     protected void handleDefault(IRecipeHandler recipe, int index, List<Object[]> inputs, List<Object[]> outputs) {
         for (int i = 0; i < inputs.size(); i++) {
-            Object[] objects = Arrays.stream(inputs.get(i)).map(o -> this.convertFluid((ItemStack) o)).toArray();
+            Object[] objects = Arrays.stream(inputs.get(i)).map(o -> GregTech.convertFluid((ItemStack) o)).toArray();
             inputs.set(i, objects);
         }
         List<PositionedStack> otherStacks = recipe.getOtherStacks(index);
         outputs.addAll(otherStacks.stream()
                                   .map(positionedStack -> positionedStack.items)
-                                  .map(itemStacks -> Arrays.stream(itemStacks).map(this::convertFluid).toArray())
+                                  .map(itemStacks -> Arrays.stream(itemStacks).map(GregTech::convertFluid).toArray())
                                   .collect(Collectors.toList()));
     }
 
-    protected Object convertFluid(ItemStack itemStack) {
+    public static Object convertFluid(ItemStack itemStack) {
         FluidStack fluidStack = getFluidFromDisplayStack(itemStack);
         return fluidStack == null ? itemStack : fluidStack;
     }
