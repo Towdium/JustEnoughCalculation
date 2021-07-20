@@ -4,6 +4,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.widgets.IContainer;
+import me.towdium.jecalculation.gui.widgets.IWidget;
 
 /**
  * Author: Towdium
@@ -17,4 +18,10 @@ public interface IGui extends IContainer {
     default boolean acceptsTransfer() {
         return false;
     }
+
+    default boolean acceptsLabel() {
+        return false;
+    }
+
+    void setOverlay(IWidget w);
 }

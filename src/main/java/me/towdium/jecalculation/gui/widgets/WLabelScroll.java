@@ -29,7 +29,7 @@ public class WLabelScroll extends WContainer implements ISearchable {
     protected String filter = "";
     protected int xPos, yPos, column, row, current;
     private ListenerValue<? super WLabelScroll, Integer> lsnrUpdate;
-    private ListenerValue<? super WLabelScroll, Integer> lsnrLeftClick, lsnrRightClick;
+    private ListenerValue<? super WLabelScroll, Integer> hdlrLeftClick, hdlrRightClick;
     protected final boolean accept;
 
     public WLabelScroll(int xPos, int yPos, int column, int row, boolean accept) {
@@ -92,13 +92,13 @@ public class WLabelScroll extends WContainer implements ISearchable {
         return this;
     }
 
-    public WLabelScroll setLsnrLeftClick(ListenerValue<? super WLabelScroll, Integer> lsnrLeftClick) {
-        this.lsnrLeftClick = lsnrLeftClick;
+    public WLabelScroll setLsnrLeftClick(ListenerValue<? super WLabelScroll, Integer> hdlrLeftClick) {
+        this.hdlrLeftClick = hdlrLeftClick;
         return this;
     }
 
-    public WLabelScroll setLsnrRightClick(ListenerValue<? super WLabelScroll, Integer> lsnrRightClick) {
-        this.lsnrRightClick = lsnrRightClick;
+    public WLabelScroll setLsnrRightClick(ListenerValue<? super WLabelScroll, Integer> hdlrRightClick) {
+        this.hdlrRightClick = hdlrRightClick;
         return this;
     }
 
@@ -124,13 +124,18 @@ public class WLabelScroll extends WContainer implements ISearchable {
     }
 
     protected void onLeftClick(WLabelGroup w, int index) {
-        if (lsnrLeftClick != null)
-            lsnrLeftClick.invoke(this, column * current + index);
+        if (hdlrLeftClick != null)
+            hdlrLeftClick.invoke(this, column * current + index);
     }
 
     protected void onRightClick(WLabelGroup w, int index) {
-        if (lsnrRightClick != null)
-            lsnrRightClick.invoke(this, column * current + index);
+        if (hdlrRightClick != null)
+            hdlrRightClick.invoke(this, column * current + index);
+    }
+
+    public WLabelScroll setLsnrScroll(ListenerValue<? super WLabel, Integer> hdlr) {
+        labelGroup.setLsnrScroll(hdlr);
+        return this;
     }
 
     public WLabelScroll setFmtAmount(Function<ILabel, String> f) {

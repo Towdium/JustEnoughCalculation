@@ -12,6 +12,7 @@ import me.towdium.jecalculation.nei.NEIPlugin;
 import me.towdium.jecalculation.polyfill.mc.client.renderer.GlStateManager;
 import me.towdium.jecalculation.utils.ItemStackHelper;
 import me.towdium.jecalculation.utils.Utilities;
+import me.towdium.jecalculation.utils.wrappers.Wrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
@@ -105,12 +106,13 @@ public class JecaGui extends GuiContainer {
             if (diff != 0)
                 gui.root.onMouseScroll(gui, xMouse, yMouse, diff);
         } else if (Mouse.getEventButtonState()) {
+            gui.root.onMouseFocused(gui, xMouse, yMouse, button);
             if (gui.root.onMouseClicked(gui, xMouse, yMouse, button)) {
                 return true;
             } else if (gui.hand != ILabel.EMPTY) {
                 gui.hand = button == 0 ? NEIPlugin.getLabelUnderMouse() : ILabel.EMPTY;
                 return true;
-            } else if (button == 0) {
+            } else if (button == 0 && gui.root.acceptsLabel()) {
                 ILabel e = NEIPlugin.getLabelUnderMouse();
                 if (e != ILabel.EMPTY) {
                     gui.hand = e;
@@ -215,8 +217,9 @@ public class JecaGui extends GuiContainer {
 
     @Nullable
     public ILabel getLabelUnderMouse() {
-        WLabel w = root.getLabelUnderMouse(getMouseX(), getMouseY());
-        return w == null ? null : w.getLabel();
+        Wrapper<ILabel> l = new Wrapper<>(null);
+        root.getLabelUnderMouse(getMouseX(), getMouseY(), l);
+        return l.value;
     }
 
     /**

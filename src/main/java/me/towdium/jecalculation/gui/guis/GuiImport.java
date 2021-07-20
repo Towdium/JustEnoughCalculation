@@ -24,7 +24,7 @@ import static me.towdium.jecalculation.gui.Resource.ICN_TEXT;
  */
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class GuiImport extends WContainer implements IGui, ISearchable {
+public class GuiImport extends Gui implements ISearchable {
     List<Quad<Boolean, String, String, Recipes>> data;  // selected, file, group, recipes
     List<Quad<Boolean, String, String, Recipes>> filtered;
     WSearch search = new WSearch(26, 25, 90, this);

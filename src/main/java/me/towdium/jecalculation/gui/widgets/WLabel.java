@@ -7,11 +7,12 @@ import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.utils.Utilities.Timer;
+import me.towdium.jecalculation.utils.wrappers.Wrapper;
 
-import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static me.towdium.jecalculation.gui.JecaGui.Font.HALF;
@@ -30,6 +31,7 @@ public class WLabel implements IWidget {
     public boolean accept;
     public ListenerValue<? super WLabel, ILabel> update;
     public ListenerAction<? super WLabel> leftClick, rightClick;
+    public ListenerValue<? super WLabel, Integer> scroll;
     Function<ILabel, String> fmtAmount = i -> "";
     BiConsumer<ILabel, List<String>> fmtTooltip = (i, j) -> i.getToolTip(j, false);
     protected Timer timer = new Timer();
@@ -86,31 +88,42 @@ public class WLabel implements IWidget {
         return false;
     }
 
-    @Nullable
     @Override
-    public WLabel getLabelUnderMouse(int xMouse, int yMouse) {
-        return mouseIn(xMouse, yMouse) ? this : null;
+    public boolean getLabelUnderMouse(int xMouse, int yMouse, Wrapper<ILabel> label) {
+        if (mouseIn(xMouse, yMouse) && this.label != ILabel.EMPTY) {
+            label.value = this.label;
+            return true;
+        } else
+            return false;
     }
 
     @Override
     public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
         if (!mouseIn(xMouse, yMouse))
             return false;
-        if(button == 1) {
+        if (button == 1) {
             notifyRightClick();
             return true;
         }
-        if (accept) {
-            if (gui.hand == ILabel.EMPTY && leftClick != null)
-                notifyLeftClick();
-            else {
+        if (accept && gui.hand != ILabel.EMPTY) {
                 label = gui.hand;
                 gui.hand = label.EMPTY;
                 notifyUpdate();
-            }
         } else
             notifyLeftClick();
         return true;
+    }
+
+    @Override
+    public boolean onMouseScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
+        if (scroll == null)
+            return false;
+        else if (mouseIn(xMouse, yMouse)) {
+            scroll.invoke(this, diff);
+            return true;
+        }
+        else
+            return false;
     }
 
     public WLabel setLsnrUpdate(ListenerValue<? super WLabel, ILabel> listener) {
@@ -125,6 +138,11 @@ public class WLabel implements IWidget {
 
     public WLabel setLsnrRightClick(ListenerAction<? super WLabel> listener) {
         rightClick = listener;
+        return this;
+    }
+
+    public WLabel setLsnrScroll(ListenerValue<? super WLabel, Integer> listener) {
+        scroll = listener;
         return this;
     }
 

@@ -52,7 +52,7 @@ public class WHelp extends WContainer {
         public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
             boolean ret = mouseIn(xMouse, yMouse);
             if (ret)
-                gui.root.add(new Doc());
+                gui.root.setOverlay(new Doc());
             return ret;
         }
     }
@@ -146,7 +146,7 @@ public class WHelp extends WContainer {
             public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
                 boolean ret = mouseIn(xMouse, yMouse);
                 if (ret)
-                    gui.root.remove(Doc.this);
+                    gui.root.setOverlay(null);
                 return ret;
             }
 
@@ -160,7 +160,7 @@ public class WHelp extends WContainer {
                 if (super.onKeyPressed(gui, ch, code))
                     return true;
                 if (code == Keyboard.KEY_ESCAPE) {
-                    gui.root.remove(Doc.this);
+                    gui.root.setOverlay(null);
                     return true;
                 } else
                     return false;

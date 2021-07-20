@@ -21,7 +21,7 @@ import static me.towdium.jecalculation.gui.Resource.*;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class GuiSearch extends WContainer implements IGui {
+public class GuiSearch extends Gui {
     IdentityHashMap<ILabel, Trio<Recipe, String, Integer>> recipes;
     WLabelScroll labels = new WLabelScroll(7, 51, 8, 6, false)
             .setLsnrLeftClick((i, v) -> {
@@ -144,7 +144,7 @@ public class GuiSearch extends WContainer implements IGui {
             Trio<Recipe, String, Integer> recipe = recipes.get(l.getLabel());
             int x = l.xPos - 1;
             int y = l.yPos - 1;
-            addPanel(new WPanel(x - 5, y - 5, 72, 30));
+            add(new WPanel(x - 5, y - 5, 72, 30));
             add(new WLabel(x, y, 20, 20, false).setLabel(l.getLabel()));
             add(new WButtonIcon(x + 23, y, 20, 20, BTN_EDIT, "search.edit").setListener(i -> {
                 JecaGui.displayGui(true, true, new GuiRecipe(recipe.two, recipe.three));

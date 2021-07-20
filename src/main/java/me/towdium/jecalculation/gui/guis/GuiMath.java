@@ -24,7 +24,7 @@ import static me.towdium.jecalculation.data.structure.RecordMath.context;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class GuiMath extends WContainer implements IGui {
+public class GuiMath extends Gui {
     WLcd lcd = new WLcd(7);
     LinkedList<BigDecimal> numbers;
     BigDecimal last;

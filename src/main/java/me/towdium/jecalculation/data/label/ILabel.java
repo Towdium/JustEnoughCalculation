@@ -457,7 +457,9 @@ public interface ILabel {
 
         @Override
         public ILabel increaseAmount() {
-            return setAmount(getAmount() + getMultiplier());
+            int mul = getMultiplier();
+            if (getAmount() == 1 && mul != 1) return setAmount(mul);
+            else return setAmount(getAmount() + mul);
         }
 
         @Override
@@ -465,7 +467,7 @@ public interface ILabel {
             if (getAmount() <= 0) {
                 return ILabel.EMPTY;
             } if (getAmount() <= getMultiplier()) {
-                return this;
+                return setAmount(1);
             } else {
                 return setAmount(getAmount() - getMultiplier());
             }

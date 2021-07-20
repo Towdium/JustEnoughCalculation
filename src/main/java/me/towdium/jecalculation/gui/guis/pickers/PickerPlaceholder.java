@@ -27,9 +27,9 @@ public class PickerPlaceholder extends IPicker.Impl implements IGui {
                 .setLabels(LPlaceholder.getRecent()).setLsnrLeftClick((i, v) -> notifyLsnr(i.get(v).getLabel()));
         WTextField create = new WTextField(26, 7, 69).setListener(
                 i -> i.setColor(i.getText().equals("") ? COLOR_TEXT_RED : COLOR_TEXT_WHITE));
-        add(new WSearch(26, 45, 90, scroll));
         add(new WIcon(7, 45, 20, 20, ICN_TEXT, "common.search"));
         add(new WIcon(7, 7, 20, 20, ICN_TEXT, "placeholder.create"));
+        add(new WSearch(26, 45, 90, scroll));
         add(new WLine(36));
         add(new WButtonIcon(95, 7, 20, 20, BTN_YES, "common.confirm").setListener(i -> {
             if (!create.getText().equals(""))

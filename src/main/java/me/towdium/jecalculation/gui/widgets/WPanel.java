@@ -6,6 +6,7 @@ import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
+import me.towdium.jecalculation.utils.wrappers.Wrapper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -44,13 +45,6 @@ public class WPanel implements IWidget {
         return mouseIn(xMouse, yMouse);
     }
 
-    @Override
-    public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
-        boolean ret = mouseIn(xMouse, yMouse);
-        if (ret) gui.hand = ILabel.EMPTY;
-        return ret;
-    }
-
     /**
      * Assuming Panel will be the first widget in the container's widgets.
      * @param gui gui
@@ -62,6 +56,18 @@ public class WPanel implements IWidget {
     @Override
     public boolean onMouseScroll(JecaGui gui, int xMouse, int yMouse, int diff) {
         return mouseIn(xMouse, yMouse);
+    }
+
+    @Override
+    public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
+        boolean ret = mouseIn(xMouse, yMouse);
+        if (ret) gui.hand = ILabel.EMPTY;
+        return ret;
+    }
+
+    @Override
+    public boolean getLabelUnderMouse(int xMouse, int yMouse, Wrapper<ILabel> label) {
+        return false;
     }
 
     public boolean mouseIn(int x, int y) {

@@ -3,8 +3,8 @@ package me.towdium.jecalculation.gui.guis.pickers;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.data.label.ILabel;
+import me.towdium.jecalculation.gui.guis.Gui;
 import me.towdium.jecalculation.gui.guis.IGui;
-import me.towdium.jecalculation.gui.widgets.WContainer;
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -20,7 +20,7 @@ import java.util.function.Consumer;
 public interface IPicker extends IGui {
     IPicker setCallback(Consumer<ILabel> callback);
 
-    class Impl extends WContainer implements IPicker {
+    class Impl extends Gui implements IPicker {
         protected Consumer<ILabel> callback;
 
         @Override

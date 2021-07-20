@@ -33,12 +33,17 @@ import static me.towdium.jecalculation.data.structure.RecordCraft.Mode.*;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
-public class GuiCraft extends WContainer implements IGui {
+public class GuiCraft extends Gui {
     Calculator calculator = null;
     RecordCraft record;
     WLabel label = new WLabel(31, 7, 20, 20, true).setLsnrUpdate((i, v) -> refreshLabel(v, false, true));
     WLabelGroup recent = new WLabelGroup(7, 31, 8, 1, false).setLsnrLeftClick(
-            (i, v) -> label.setLabel(i.get(v).getLabel().copy(), true));
+            (i, v) -> {
+                ILabel l = i.get(v).getLabel();
+                if (l != ILabel.EMPTY) {
+                    label.setLabel(i.get(v).getLabel().copy(), true);
+                }
+            });
     WLabelScroll result = new WLabelScroll(7, 87, 8, 4, false).setLsnrLeftClick((i, v) -> {
         Object rep = i.get(v).getLabel().getRepresentation();
         NEIPlugin.openRecipeGui(rep, false);
@@ -104,6 +109,11 @@ public class GuiCraft extends WContainer implements IGui {
 
     @Override
     public boolean acceptsTransfer() {
+        return true;
+    }
+
+    @Override
+    public boolean acceptsLabel() {
         return true;
     }
 
@@ -208,7 +218,7 @@ public class GuiCraft extends WContainer implements IGui {
         public Suggest(List<ILabel> labels, boolean replace) {
             this.replace = replace;
             int width = labels.size() * 20;
-            addPanel(new WPanel(-width, 2, 56 + width, 30));
+            add(new WPanel(-width, 2, 56 + width, 30));
             add(new WLabel(31, 7, 20, 20, false).setLabel(label.getLabel()).setLsnrUpdate((i, v) -> refresh(v)));
             add(new WIcon(5 - width, 7, 18, 20, Resource.ICN_HELP, "craft.suggest"));
             add(new WLine(26, 7, 20, false));
