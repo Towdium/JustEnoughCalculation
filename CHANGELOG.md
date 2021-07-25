@@ -1,5 +1,11 @@
 # Changelog
 
+To be consistent with the main branch,  it may miss some versions
+
+## 3.8.0
+
+- Fixed: disamb select no effect
+
 ## 3.6.3
 
 - Feat: add support of `GT++`, `EnderIO`, `Thaumcraft`
