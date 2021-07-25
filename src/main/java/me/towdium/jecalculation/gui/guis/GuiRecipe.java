@@ -298,12 +298,12 @@ public class GuiRecipe extends Gui {
 
     class WDisamb extends WOverlay {
         WLabel temp;
-        WLabel ref;
         WLabelScroll content;
         WTextField search;
 
         public WDisamb(IO type, int idx) {
-            ref = getWidget(type).get(idx);
+            WLabelScroll list = getWidget(type);
+            WLabel ref = list.get(idx);
             int x = ref.xPos;
             int y = ref.yPos;
             add(new WPanel(x - 7, y - 46, 111, 71));
@@ -312,7 +312,7 @@ public class GuiRecipe extends Gui {
             content = new WLabelScroll(x + 8, y - 40, 4, 2, false)
                     .setLabels(disamb.get(type).get(idx))
                     .setLsnrClick((i, v) -> {
-                        ref.setLabel(i.get(v).getLabel().copy().multiply(-1), false);
+                        list.setLabel(idx, i.get(v).getLabel().copy().multiply(-1));
                         GuiRecipe.this.setOverlay(null);
                         refresh();
                     });

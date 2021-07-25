@@ -73,6 +73,11 @@ public class WLabelScroll extends WContainer implements ISearchable {
         return this;
     }
 
+    public WLabelScroll setLabel(int idx, ILabel label) {
+        labels.set(idx, label);
+        return setLabels(labels);
+    }
+
     public boolean setFilter(String str) {
         if (accept) throw new RuntimeException("Filtering not allowed when editing");
         filtered = labels.stream().filter(l -> I18n.contains(l.getDisplayName().toLowerCase(), str.toLowerCase()))
