@@ -165,11 +165,15 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
         int scan = event.getScanCode();
         if (key == GLFW.GLFW_KEY_ESCAPE && gui.hand != ILabel.EMPTY) {
             gui.hand = ILabel.EMPTY;
-        } else if (!gui.root.onKeyPressed(gui, key, modifier) &&
-                key == GLFW.GLFW_KEY_ESCAPE && gui.parent != null) {
+            event.setCanceled(true);
+        } else if (gui.root.onKeyPressed(gui, key, modifier)) {
+            event.setCanceled(true);
+        } else if (key == GLFW.GLFW_KEY_ESCAPE && gui.parent != null) {
             displayParent();
-        } else if (!gui.keyPressed(key, scan, modifier)) return;
-        event.setCanceled(true);
+            event.setCanceled(true);
+        } else if (gui.keyPressed(key, scan, modifier)) {
+            event.setCanceled(true);
+        }
     }
 
     @Nullable
