@@ -41,8 +41,6 @@ import net.minecraftforge.client.event.GuiScreenEvent.MouseReleasedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent.MouseScrollEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderTooltipEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
@@ -99,6 +97,19 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
         if (container != null) container.setGui(this);
     }
 
+    @Override
+    public void init(Minecraft minecraft, int width, int height) {
+        super.init(minecraft, width, height);
+        minecraft.keyboardListener.enableRepeatEvents(true);
+    }
+
+    @Override
+    public void onClose() {
+        super.onClose();
+        Objects.requireNonNull(this.minecraft);
+        this.minecraft.keyboardListener.enableRepeatEvents(false);
+    }
+
     public static int getMouseX() {
         JecaGui gui = getCurrent();
         Minecraft mc = Objects.requireNonNull(gui.minecraft, "Internal error");
@@ -111,16 +122,18 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
         return (int) mc.mouseHelper.getMouseY() * mc.getMainWindow().getScaledHeight() / mc.getMainWindow().getHeight() - gui.guiTop;
     }
 
-    private static void finishEvent(GuiScreenEvent.MouseClickedEvent event) {
-        // if event handled by jeca, then send a dummy mouse event to jei to clear input focus
-        event.setCanceled(true);
-        if (JecaPlugin.isFocused()) {
-            Event dummy = new DummyEvent();
-            MinecraftForge.EVENT_BUS.post(dummy);
-        }
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public static void onFocus(MouseClickedEvent.Pre event) {
+        if (!(event.getGui() instanceof JecaGui)) return;
+        JecaGui gui = getCurrent();
+        int xMouse = getMouseX();
+        int yMouse = getMouseY();
+        int button = event.getButton();
+        gui.root.onMouseFocused(gui, xMouse, yMouse, button);
     }
 
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    // TODO No need to keep events merged
+    @SubscribeEvent(priority = EventPriority.LOW)
     public static void onMouse(GuiScreenEvent.MouseInputEvent event) {
         if (!(event.getGui() instanceof JecaGui)) return;
         JecaGui gui = getCurrent();
@@ -131,18 +144,16 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
             double diff = ((MouseScrollEvent) event).getScrollDelta();
             if (diff != 0) gui.root.onMouseScroll(gui, xMouse, yMouse, (int) diff);
         } else if (event instanceof MouseClickedEvent.Pre) {
-            MouseClickedEvent mouseEvent = ((MouseClickedEvent) event);
-            int button = mouseEvent.getButton();
-            gui.root.onMouseFocused(gui, xMouse, yMouse, button);
-            if (gui.root.onMouseClicked(gui, xMouse, yMouse, button)) finishEvent(mouseEvent);
+            int button = ((MouseClickedEvent) event).getButton();
+            if (gui.root.onMouseClicked(gui, xMouse, yMouse, button)) event.setCanceled(true);
             else if (gui.hand != ILabel.EMPTY) {
                 gui.hand = ILabel.EMPTY;
-                finishEvent(mouseEvent);
-            } else if (gui.root.acceptsLabel()) {
+                event.setCanceled(true);
+            } else {
                 ILabel e = JecaPlugin.getLabelUnderMouse();
                 if (e != ILabel.EMPTY) {
                     gui.hand = e;
-                    finishEvent(mouseEvent);
+                    event.setCanceled(true);
                 }
             }
         } else if (event instanceof MouseDragEvent.Pre) {
@@ -154,26 +165,10 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
         }
     }
 
-    @SubscribeEvent
-    public static void onKeyPressed(GuiScreenEvent.KeyboardKeyPressedEvent.Pre event) {
-        if (event instanceof DummyEvent) return;
-        if (!(event.getGui() instanceof JecaGui)) return;
-        JecaGui gui = getCurrent();
-
-        int key = event.getKeyCode();
-        int modifier = event.getModifiers();
-        int scan = event.getScanCode();
-        if (key == GLFW.GLFW_KEY_ESCAPE && gui.hand != ILabel.EMPTY) {
-            gui.hand = ILabel.EMPTY;
-            event.setCanceled(true);
-        } else if (gui.root.onKeyPressed(gui, key, modifier)) {
-            event.setCanceled(true);
-        } else if (key == GLFW.GLFW_KEY_ESCAPE && gui.parent != null) {
-            displayParent();
-            event.setCanceled(true);
-        } else if (gui.keyPressed(key, scan, modifier)) {
-            event.setCanceled(true);
-        }
+    @Override
+    public void tick() {
+        super.tick();
+        root.onTick(this);
     }
 
     @Nullable
@@ -490,6 +485,16 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
     }
 
     @Override
+    public boolean keyPressed(int key, int scan, int modifier) {
+        if (key == GLFW.GLFW_KEY_ESCAPE && hand != ILabel.EMPTY) hand = ILabel.EMPTY;
+        else if (!root.onKeyPressed(this, key, modifier)) {
+            if (key == GLFW.GLFW_KEY_ESCAPE && parent != null) displayParent();
+            else return super.keyPressed(key, scan, modifier);
+        }
+        return true;
+    }
+
+    @Override
     public boolean keyReleased(int key, int scan, int modifier) {
         return root.onKeyReleased(this, key, modifier)
                 || super.keyReleased(key, scan, modifier);
@@ -554,12 +559,5 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
 
     @OnlyIn(Dist.CLIENT)
     public static class ContainerNonTransfer extends JecaContainer {
-    }
-
-    public static class DummyEvent extends GuiScreenEvent.KeyboardKeyPressedEvent.Pre {
-        public DummyEvent() {
-            super(Minecraft.getInstance().currentScreen, GLFW.GLFW_KEY_ESCAPE,
-                    GLFW.glfwGetKeyScancode(GLFW.GLFW_KEY_ESCAPE), 0);
-        }
     }
 }

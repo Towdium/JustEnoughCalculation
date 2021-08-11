@@ -107,4 +107,9 @@ public class WContainer implements IContainer {
         return new Utilities.ReversedIterator<>(widgets).stream()
                 .anyMatch(i -> i.getLabelUnderMouse(xMouse, yMouse, label));
     }
+
+    @Override
+    public void onTick(JecaGui gui) {
+        widgets.forEach(i -> i.onTick(gui));
+    }
 }

@@ -37,6 +37,11 @@ public class WTextField implements IWidget {
     }
 
     @Override
+    public void onTick(JecaGui gui) {
+        textField.tick();
+    }
+
+    @Override
     public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
         if (textField.isFocused() && button == 1) {
             textField.setText("");

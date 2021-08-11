@@ -27,6 +27,10 @@ public interface IWidget {
         return false;
     }
 
+    /**
+     * This function is basically an not cancellable mouse click event before real mouse click event,
+     * when widgets check if it should be focused, if mouse not in, then give up focus
+     */
     default void onMouseFocused(JecaGui gui, int xMouse, int yMouse, int button) {
     }
 
@@ -56,6 +60,9 @@ public interface IWidget {
 
     default boolean getLabelUnderMouse(int xMouse, int yMouse, Wrapper<ILabel> label) {
         return false;
+    }
+
+    default void onTick(JecaGui gui) {
     }
 
     @FunctionalInterface
