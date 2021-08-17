@@ -130,6 +130,11 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
         int yMouse = getMouseY();
         int button = event.getButton();
         gui.root.onMouseFocused(gui, xMouse, yMouse, button);
+        ILabel e = JecaPlugin.getLabelUnderMouse();
+        if (e != ILabel.EMPTY) {
+            gui.hand = e;
+            event.setCanceled(true);
+        }
     }
 
     // TODO No need to keep events merged
@@ -149,12 +154,6 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
             else if (gui.hand != ILabel.EMPTY) {
                 gui.hand = ILabel.EMPTY;
                 event.setCanceled(true);
-            } else {
-                ILabel e = JecaPlugin.getLabelUnderMouse();
-                if (e != ILabel.EMPTY) {
-                    gui.hand = e;
-                    event.setCanceled(true);
-                }
             }
         } else if (event instanceof MouseDragEvent.Pre) {
             MouseDragEvent mde = (MouseDragEvent) event;
