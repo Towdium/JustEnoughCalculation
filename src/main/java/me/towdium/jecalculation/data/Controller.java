@@ -55,8 +55,12 @@ public class Controller {
             return new ArrayList<>();
         Function<File, Recipes> read = f -> {
             NBTTagCompound nbt = Utilities.Json.read(f);
-            JustEnoughCalculation.logger.warn("File " + f.getAbsolutePath() + " contains invalid records.");
-            return nbt == null ? null : new Recipes(nbt);
+            if (nbt == null) {
+                JustEnoughCalculation.logger.warn("File " + f.getAbsolutePath() + " contains invalid records.");
+                return null;
+            } else {
+                return new Recipes(nbt);
+            }
         };
         return Arrays.stream(fs)
                      .map(i -> new Pair<>(i.getName(), read.apply(i)))

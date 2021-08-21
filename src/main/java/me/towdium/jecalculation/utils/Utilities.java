@@ -107,6 +107,7 @@ public class Utilities {
      * The icon name should be similar to 'modId:fluidId', then get the modId.
      * Use the mod id to find in mod list, if not found, use the capitalized mod id to find in mod list;
      * If still not found, return the capitalized mod id
+     *
      * @param fluid fluid
      * @return mod name
      */
@@ -124,10 +125,10 @@ public class Utilities {
 
             Map<String, ModContainer> indexedModList = Loader.instance().getIndexedModList();
             ModContainer modContainer = indexedModList.get(modId);
-            if(modContainer == null) {
-                String capitalizedModId =WordUtils.capitalize(modId);
+            if (modContainer == null) {
+                String capitalizedModId = WordUtils.capitalize(modId);
                 modContainer = indexedModList.get(capitalizedModId);
-                if(modContainer == null) {
+                if (modContainer == null) {
                     return capitalizedModId;
                 }
             }
@@ -136,10 +137,9 @@ public class Utilities {
     }
 
 
-
     private static IIcon getFluidIcon(Fluid fluid) {
         IIcon icon = fluid.getFlowingIcon();
-        if(icon == null) {
+        if (icon == null) {
             icon = fluid.getStillIcon();
         }
         return icon;
@@ -286,9 +286,9 @@ public class Utilities {
         }
 
         public static List<String> wrap(String s, int width) {
-            return new TextWrapper()
-                    .wrap(s, ClientUtils.mc().getLanguageManager().getCurrentLanguage().getLanguageCode(),
-                          i -> TextWrapper.renderer.getCharWidth(i), width);
+            return new TextWrapper().wrap(s,
+                                          ClientUtils.mc().getLanguageManager().getCurrentLanguage().getLanguageCode(),
+                                          i -> TextWrapper.renderer.getCharWidth(i), width);
         }
 
         static class TextWrapper {
@@ -435,79 +435,7 @@ public class Utilities {
         }
 
         public static String write(NBTTagCompound nbt) {
-            Writer w = new Writer();
-            write(nbt, w);
-            w.enter();
-            return w.build();
-        }
-
-        private static void write(NBTBase nbt, Writer w) {
-            if (nbt instanceof NBTTagCompound) {
-                NBTTagCompound tags = (NBTTagCompound) nbt;
-                //noinspection unchecked
-                Set<String> keySet = tags.func_150296_c();
-                boolean wrap = keySet.size() > 1;
-                boolean first = true;
-                w.sb.append('{');
-                if (wrap)
-                    w.indent++;
-                for (String i : keySet) {
-                    if (first)
-                        first = false;
-                    else
-                        w.sb.append(',');
-                    if (wrap)
-                        w.enter();
-                    w.sb.append('"');
-                    w.sb.append(i);
-                    w.sb.append("\": ");
-                    write(tags.getTag(i), w);
-                }
-                if (wrap) {
-                    w.indent--;
-                    w.enter();
-                }
-                w.sb.append('}');
-            } else if (nbt instanceof NBTTagList) {
-                NBTTagList tags = (NBTTagList) nbt;
-                boolean wrap = tags.tagCount() > 1;
-                boolean first = true;
-                w.sb.append('[');
-                if (wrap)
-                    w.indent++;
-                //noinspection unchecked
-                for (NBTBase i : (List<NBTBase>) tags.tagList) {
-                    if (first)
-                        first = false;
-                    else
-                        w.sb.append(',');
-                    if (wrap)
-                        w.enter();
-                    write(i, w);
-                }
-                if (wrap) {
-                    w.indent--;
-                    w.enter();
-                }
-                w.sb.append(']');
-            } else
-                w.sb.append(nbt);
-        }
-
-        private static class Writer {
-            public int indent = 0;
-            StringBuilder sb = new StringBuilder();
-
-            public void enter() {
-                sb.append('\n');
-                char[] tmp = new char[4 * indent];
-                Arrays.fill(tmp, ' ');
-                sb.append(tmp);
-            }
-
-            public String build() {
-                return sb.toString();
-            }
+            return NBTJson.toJson(nbt);
         }
     }
 
@@ -521,9 +449,7 @@ public class Utilities {
             return new Locale(parts[0], parts[1], parts[2]);
     }
 
-    public static String[] mergeStringArrays(String[] ...arrays){
-        return Stream.of(arrays)
-                .flatMap(Stream::of)
-                .toArray(String[]::new);
+    public static String[] mergeStringArrays(String[]... arrays) {
+        return Stream.of(arrays).flatMap(Stream::of).toArray(String[]::new);
     }
 }
