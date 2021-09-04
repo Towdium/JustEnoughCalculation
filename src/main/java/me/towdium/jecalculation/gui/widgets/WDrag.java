@@ -3,6 +3,7 @@ package me.towdium.jecalculation.gui.widgets;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
+import me.towdium.jecalculation.gui.widgets.models.DragOffset;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -16,13 +17,17 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 @OnlyIn(Dist.CLIENT)
 public class WDrag implements IWidget {
+
     public int xPos, yPos, xSize, ySize;
+
     protected int dragOffsetX = 0;
     protected int dragOffsetY = 0;
-    protected int dragLastX = 0;
-    protected int dragLastY = 0;
+    protected int dragConsumerX = 0;
+    protected int dragConsumerY = 0;
     protected boolean isDragging = false;
-    protected ListenerValue<? super WDrag, DragDelta> deltaListener = null;
+
+    protected ListenerAction<? super WDrag> dragStartListener = null;
+    protected ListenerValue<? super WDrag, DragOffset> dragMoveListener = null;
     protected ListenerAction<? super WDrag> dragStopListener = null;
 
     public WDrag(int xPos, int yPos, int xSize, int ySize) {
@@ -41,12 +46,18 @@ public class WDrag implements IWidget {
         boolean isHovering = mouseIn(xMouse, yMouse);
         Resource texture = getResource(isHovering, isDragging);
         gui.drawResourceContinuous(texture, xPos, yPos, xSize, ySize, 0);
-        if (isDragging && deltaListener != null && (dragLastX != xMouse || dragLastY != yMouse)) {
-            int deltaX = xMouse - this.dragLastX;
-            int deltaY = yMouse - this.dragLastY;
-            deltaListener.invoke(this, new DragDelta(deltaX, deltaY));
-            this.dragLastX = xMouse;
-            this.dragLastY = yMouse;
+
+        int newMouseX = JecaGui.getMouseX();
+        int newMouseY = JecaGui.getMouseY();
+        if (isDragging && dragMoveListener != null && (dragOffsetX != newMouseX || dragOffsetY != newMouseY)) {
+            int deltaX = newMouseX - dragOffsetX;
+            int deltaY = newMouseY - dragOffsetY;
+            System.out.println("cx: " + dragConsumerX + ", cy: " + dragConsumerY);
+            System.out.println("nx: " + newMouseX + ", ny: " + newMouseX);
+            System.out.println("dox: " + dragOffsetX + ", doy: " + dragOffsetY);
+            System.out.println("dx: " + deltaX + ", dy: " + newMouseY);
+            System.out.println("x: " + dragConsumerX + deltaX + ", y: " + dragConsumerY + deltaY);
+            dragMoveListener.invoke(this, new DragOffset(dragConsumerX + deltaX, dragConsumerY + deltaY));
         }
         return false;
     }
@@ -61,8 +72,13 @@ public class WDrag implements IWidget {
         return Resource.WGT_DRAG_N;
     }
 
-    public WDrag setDeltaListener(ListenerValue<? super WDrag, DragDelta> listener) {
-        deltaListener = listener;
+    public WDrag setDragStartListener(ListenerAction<? super WDrag> listener) {
+        dragStartListener = listener;
+        return this;
+    }
+
+    public WDrag setDragMoveListener(ListenerValue<? super WDrag, DragOffset> listener) {
+        dragMoveListener = listener;
         return this;
     }
 
@@ -71,12 +87,17 @@ public class WDrag implements IWidget {
         return this;
     }
 
+    public void setConsumerOffset(int x, int y) {
+        this.dragConsumerX = x;
+        this.dragConsumerY = y;
+    }
+
     @Override
     public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
         if (!mouseIn(xMouse, yMouse)) {
             return false;
         }
-        startDragging(xMouse, yMouse);
+        startDragging();
         return true;
     }
 
@@ -89,12 +110,14 @@ public class WDrag implements IWidget {
         return true;
     }
 
-    protected void startDragging(int xMouse, int yMouse) {
-        this.dragOffsetX = xMouse - this.xPos;
-        this.dragOffsetY = yMouse - this.yPos;
-        this.dragLastX = xMouse;
-        this.dragLastY = yMouse;
+    protected void startDragging() {
+        this.dragOffsetX = JecaGui.getMouseX();
+        this.dragOffsetY = JecaGui.getMouseY();
         this.isDragging = true;
+
+        if (dragStartListener != null) {
+            dragStartListener.invoke(this);
+        }
     }
 
     protected void stopDragging() {
@@ -110,15 +133,5 @@ public class WDrag implements IWidget {
 
     protected boolean mouseIn(int xMouse, int yMouse) {
         return JecaGui.mouseIn(xPos, yPos, xSize, ySize, xMouse, yMouse);
-    }
-
-    static class DragDelta {
-        public int deltaX;
-        public int deltaY;
-
-        public DragDelta(int deltaX, int deltaY) {
-            this.deltaX = deltaX;
-            this.deltaY = deltaY;
-        }
     }
 }

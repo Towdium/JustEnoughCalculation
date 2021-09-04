@@ -35,6 +35,9 @@ public class GuiCraftMini extends WContainer {
     Calculator calculator = null;
     RecordCraft record;
 
+    WDrag drag = new WDrag(4, 4, 78, 11);
+    WButtonText close = new WButtonText(83, 4, 11, 11, "x");
+
     WLabel label = new WLabel(4, 16, 20, 20, true)
             .setLsnrUpdate((i, v) -> refreshLabel(v));
 
@@ -70,11 +73,20 @@ public class GuiCraftMini extends WContainer {
         amount.setText(record.amount);
 
         add(new WPanel(0, 0, 98, 98));
-        add(new WDrag(4, 4, 78, 11));
-        add(new WButtonText(83, 4, 11, 11, "x"));
-
         add(new WText(25, 21, JecaGui.Font.RAW, "x"));
-        add(label, input, output, catalyst, steps, result, amount, record.inventory ? invE : invD);
+        add(drag, close, label, input, output, catalyst, steps, result, amount, record.inventory ? invE : invD);
+
+        drag.setDragStartListener((widget) -> {
+                System.out.println("offsetX: " + offsetX + ", offsetY: " + offsetY);
+                widget.setConsumerOffset(offsetX, offsetY);
+            })
+            .setDragMoveListener((widget, value) -> {
+                this.offsetX = value.getNewX();
+                this.offsetY = value.getNewY();
+            })
+            .setDragStopListener((widget) -> {
+                // TODO: save position to record
+            });
 
         invE.setListener(i -> {
             record.inventory = false;
