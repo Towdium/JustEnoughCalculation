@@ -38,8 +38,7 @@ public class GuiCraftMini extends WContainer {
     WDrag drag = new WDrag(4, 4, 78, 11);
     WButtonText close = new WButtonText(83, 4, 11, 11, "x");
 
-    WLabel label = new WLabel(4, 16, 20, 20, true)
-            .setLsnrUpdate((i, v) -> refreshLabel(v));
+    WLabel label = new WLabel(4, 16, 20, 20, false);
 
     WTextField amount = new WTextField(31, 16, 35).setListener(i -> {
         record.amount = i.getText();

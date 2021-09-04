@@ -1,6 +1,5 @@
 package me.towdium.jecalculation.events;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
@@ -9,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.GuiOpenEvent;
@@ -24,6 +24,7 @@ public class GuiScreenEventHandler {
 
     protected GuiScreenOverlayHandler overlayHandler = null;
     protected JecaGui gui = null;
+    protected PlayerInventory cachedInventory;
 
     @SubscribeEvent
     public void onGuiOpen(GuiOpenEvent event) {
@@ -47,11 +48,17 @@ public class GuiScreenEventHandler {
     @SuppressWarnings("deprecation")
     public void onDrawForeground(GuiScreenEvent.DrawScreenEvent.Post event) {
         Screen screen = event.getGui();
-        if (overlayHandler == null || !isScreenValidForOverlay(screen)) {
+        ClientPlayerEntity player = Minecraft.getInstance().player;
+        if (player == null || overlayHandler == null || !isScreenValidForOverlay(screen)) {
             return;
         }
 
-        if (screen.width != gui.width || screen.height != gui.height) {
+        PlayerInventory inventory = player.inventory;
+        if (didInventoryChange(inventory)) {
+            overlayHandler = new GuiScreenOverlayHandler(inventory);
+            gui = new JecaGui(null, false, overlayHandler);
+            gui.init(Minecraft.getInstance(), screen.width, screen.height);
+        } else if (screen.width != gui.width || screen.height != gui.height) {
             gui.init(screen.getMinecraft(), screen.width, screen.height);
         }
 
@@ -130,5 +137,34 @@ public class GuiScreenEventHandler {
             int button = ((GuiScreenEvent.MouseReleasedEvent) event).getButton();
             overlayHandler.onMouseReleased(gui, xMouse, yMouse, button);
         }
+    }
+
+    private boolean didInventoryChange(PlayerInventory inventory) {
+        if (cachedInventory == null) {
+            cacheInventory(inventory);
+            return false;
+        }
+
+        if (!cachedInventory.mainInventory.equals(inventory.mainInventory)) {
+            cacheInventory(inventory);
+            return true;
+        }
+
+        if (!cachedInventory.offHandInventory.equals(inventory.offHandInventory)) {
+            cacheInventory(inventory);
+            return true;
+        }
+
+        if (!cachedInventory.armorInventory.equals(inventory.armorInventory)) {
+            cacheInventory(inventory);
+            return true;
+        }
+
+        return false;
+    }
+
+    private void cacheInventory(PlayerInventory inventory) {
+        cachedInventory = new PlayerInventory(inventory.player);
+        cachedInventory.copyInventory(inventory);
     }
 }
