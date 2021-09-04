@@ -31,9 +31,10 @@ import static me.towdium.jecalculation.utils.Utilities.getPlayer;
 @MethodsReturnNonnullByDefault
 @OnlyIn(Dist.CLIENT)
 public class GuiCraftMini extends WContainer {
-    ItemStack itemStack;
-    Calculator calculator = null;
-    RecordCraft record;
+    protected int slot = 0;
+    protected ItemStack itemStack;
+    protected Calculator calculator = null;
+    public RecordCraft record;
 
     WDrag drag = new WDrag(4, 4, 78, 11);
     WButtonText close = new WButtonText(83, 4, 11, 11, "x");
@@ -42,7 +43,7 @@ public class GuiCraftMini extends WContainer {
 
     WTextField amount = new WTextField(31, 16, 35).setListener(i -> {
         record.amount = i.getText();
-        Controller.setRCraft(record, itemStack);
+        Controller.setRCraft(record, itemStack, slot);
         refreshCalculator();
     });
 
@@ -66,9 +67,12 @@ public class GuiCraftMini extends WContainer {
             .setFmtAmount(i -> i.getAmountString(true))
             .setFmtTooltip((i, j) -> i.getToolTip(j, true));
 
-    public GuiCraftMini(@Nullable ItemStack is) {
+    public GuiCraftMini(@Nullable ItemStack is, int slot) {
         itemStack = is;
         record = Controller.getRCraft(is);
+        this.slot = slot;
+        this.offsetX = record.overlayPositionX;
+        this.offsetY = record.overlayPositionY;
         amount.setText(record.amount);
 
         add(new WPanel(0, 0, 98, 98));
@@ -76,7 +80,6 @@ public class GuiCraftMini extends WContainer {
         add(drag, close, label, input, output, catalyst, steps, result, amount, record.inventory ? invE : invD);
 
         drag.setDragStartListener((widget) -> {
-                System.out.println("offsetX: " + offsetX + ", offsetY: " + offsetY);
                 widget.setConsumerOffset(offsetX, offsetY);
             })
             .setDragMoveListener((widget, value) -> {
@@ -84,12 +87,14 @@ public class GuiCraftMini extends WContainer {
                 this.offsetY = value.getNewY();
             })
             .setDragStopListener((widget) -> {
-                // TODO: save position to record
+                record.overlayPositionX = this.offsetX;
+                record.overlayPositionY = this.offsetY;
+                Controller.setRCraft(record, itemStack, slot);
             });
 
         invE.setListener(i -> {
             record.inventory = false;
-            Controller.setRCraft(record, itemStack);
+            Controller.setRCraft(record, itemStack, slot);
             remove(invE);
             add(invD);
             refreshCalculator();
@@ -97,7 +102,7 @@ public class GuiCraftMini extends WContainer {
 
         invD.setListener(i -> {
             record.inventory = true;
-            Controller.setRCraft(record, itemStack);
+            Controller.setRCraft(record, itemStack, slot);
             remove(invD);
             add(invE);
             refreshCalculator();
@@ -110,7 +115,7 @@ public class GuiCraftMini extends WContainer {
 
     void setMode(RecordCraft.Mode mode) {
         record.mode = mode;
-        Controller.setRCraft(record, itemStack);
+        Controller.setRCraft(record, itemStack, slot);
         input.setDisabled(mode == INPUT);
         output.setDisabled(mode == OUTPUT);
         catalyst.setDisabled(mode == CATALYST);
@@ -173,7 +178,7 @@ public class GuiCraftMini extends WContainer {
 
     private void refreshLabel(ILabel l) {
         record.push(l, false);
-        Controller.setRCraft(record, itemStack);
+        Controller.setRCraft(record, itemStack, slot);
         refreshCalculator();
     }
 }

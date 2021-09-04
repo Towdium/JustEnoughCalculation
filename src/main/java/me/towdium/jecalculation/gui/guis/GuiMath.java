@@ -35,11 +35,12 @@ public class GuiMath extends Gui {
     BigDecimal last;
     ItemStack itemStack;
     int dot;
+    int slot;
     boolean sign;
     Operator operator;
     State state;
 
-    public GuiMath(@Nullable ItemStack is) {
+    public GuiMath(@Nullable ItemStack is, int slot) {
         itemStack = is;
         add(new WHelp("math"));
         add(new WPanel(), lcd);
@@ -73,6 +74,7 @@ public class GuiMath extends Gui {
         dot = recordMath.getDot();
         sign = recordMath.getSign();
         numbers = recordMath.getNumbers();
+        this.slot = slot;
         print();
     }
 
@@ -102,7 +104,7 @@ public class GuiMath extends Gui {
     }
 
     private void sync() {
-        Controller.setRMath(new RecordMath(state, operator, last, sign, dot, numbers), itemStack);
+        Controller.setRMath(new RecordMath(state, operator, last, sign, dot, numbers), itemStack, slot);
     }
 
     private void operate(Operator operator) {

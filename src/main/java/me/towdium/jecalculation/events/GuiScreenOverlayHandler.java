@@ -12,9 +12,13 @@ public class GuiScreenOverlayHandler extends Gui {
 
     public GuiScreenOverlayHandler(PlayerInventory inventory) {
         this.inventory = inventory;
-        for (ItemStack itemStack : inventory.mainInventory) {
+        for (int i = 0; i < inventory.mainInventory.size(); i++) {
+            ItemStack itemStack = inventory.mainInventory.get(i);
             if (itemStack.getItem() == JecaItem.CRAFT) {
-                add(new GuiCraftMini(itemStack));
+                GuiCraftMini widget = new GuiCraftMini(itemStack, i);
+                if (widget.record.overlayOpen) {
+                    add(widget);
+                }
             }
         }
     }

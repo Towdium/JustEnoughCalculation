@@ -264,8 +264,8 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
 
     @SubscribeEvent
     public static void onKey(InputEvent.KeyInputEvent event) {
-        if (keyOpenGuiCraft.isKeyDown()) JecaGui.openGuiCraft(null);
-        if (keyOpenGuiMath.isKeyDown()) JecaGui.openGuiMath(null);
+        if (keyOpenGuiCraft.isKeyDown()) JecaGui.openGuiCraft(null, 0);
+        if (keyOpenGuiMath.isKeyDown()) JecaGui.openGuiMath(null, 0);
     }
 
     @SubscribeEvent
@@ -289,20 +289,20 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static int openGuiMath(@Nullable ItemStack is) {
+    public static int openGuiMath(@Nullable ItemStack is, int slot) {
         boolean ret = is == null && Controller.isServerActive();
         String s = "jecalculation.chat.server_mode";
         if (ret) getPlayer().sendStatusMessage(new TranslationTextComponent(s), false);
-        else JecaGui.displayGui(new GuiMath(is));
+        else JecaGui.displayGui(new GuiMath(is, slot));
         return ret ? 1 : 0;
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static int openGuiCraft(@Nullable ItemStack is) {
+    public static int openGuiCraft(@Nullable ItemStack is, int slot) {
         boolean ret = is == null && Controller.isServerActive();
         String s = "jecalculation.chat.server_mode";
         if (ret) getPlayer().sendStatusMessage(new TranslationTextComponent(s), false);
-        else JecaGui.displayGui(new GuiCraft(is));
+        else JecaGui.displayGui(new GuiCraft(is, slot));
         return ret ? 1 : 0;
     }
 

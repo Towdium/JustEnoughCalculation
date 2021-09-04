@@ -34,9 +34,11 @@ import static me.towdium.jecalculation.utils.Utilities.getPlayer;
 @MethodsReturnNonnullByDefault
 @OnlyIn(Dist.CLIENT)
 public class GuiCraft extends Gui {
+    int slot;
     ItemStack itemStack;
     Calculator calculator = null;
     RecordCraft record;
+
     WLabel label = new WLabel(31, 7, 20, 20, true)
             .setLsnrUpdate((i, v) -> refreshLabel(v, false, true));
     WLabelGroup recent = new WLabelGroup(7, 31, 8, 1, false)
@@ -62,12 +64,13 @@ public class GuiCraft extends Gui {
     WButton invD = new WButtonIcon(149, 62, 20, 20, Resource.BTN_INV_D, "craft.inventory_disabled");
     WTextField amount = new WTextField(60, 7, 65).setListener(i -> {
         record.amount = i.getText();
-        Controller.setRCraft(record, itemStack);
+        Controller.setRCraft(record, itemStack, slot);
         refreshCalculator();
     });
 
-    public GuiCraft(@Nullable ItemStack is) {
+    public GuiCraft(@Nullable ItemStack is, int slot) {
         itemStack = is;
+        this.slot = slot;
         record = Controller.getRCraft(is);
         amount.setText(record.amount);
         add(new WHelp("craft"));
@@ -87,14 +90,14 @@ public class GuiCraft extends Gui {
         add(recent, label, input, output, catalyst, steps, result, amount, record.inventory ? invE : invD);
         invE.setListener(i -> {
             record.inventory = false;
-            Controller.setRCraft(record, itemStack);
+            Controller.setRCraft(record, itemStack, slot);
             remove(invE);
             add(invD);
             refreshCalculator();
         });
         invD.setListener(i -> {
             record.inventory = true;
-            Controller.setRCraft(record, itemStack);
+            Controller.setRCraft(record, itemStack, slot);
             remove(invD);
             add(invE);
             refreshCalculator();
@@ -120,7 +123,7 @@ public class GuiCraft extends Gui {
 
     void setMode(RecordCraft.Mode mode) {
         record.mode = mode;
-        Controller.setRCraft(record, itemStack);
+        Controller.setRCraft(record, itemStack, slot);
         input.setDisabled(mode == INPUT);
         output.setDisabled(mode == OUTPUT);
         catalyst.setDisabled(mode == CATALYST);
@@ -184,7 +187,7 @@ public class GuiCraft extends Gui {
 
     private void refreshLabel(ILabel l, boolean replace, boolean suggest) {
         boolean dup = record.push(l, replace);
-        Controller.setRCraft(record, itemStack);
+        Controller.setRCraft(record, itemStack, slot);
         refreshRecent();
         refreshCalculator();
         if (suggest && findRecipe(l).isEmpty()) {
