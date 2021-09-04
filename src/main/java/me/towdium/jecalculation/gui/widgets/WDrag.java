@@ -47,16 +47,11 @@ public class WDrag implements IWidget {
         Resource texture = getResource(isHovering, isDragging);
         gui.drawResourceContinuous(texture, xPos, yPos, xSize, ySize, 0);
 
-        int newMouseX = JecaGui.getMouseX();
-        int newMouseY = JecaGui.getMouseY();
+        int newMouseX = gui.getGlobalMouseX();
+        int newMouseY = gui.getGlobalMouseY();
         if (isDragging && dragMoveListener != null && (dragOffsetX != newMouseX || dragOffsetY != newMouseY)) {
             int deltaX = newMouseX - dragOffsetX;
             int deltaY = newMouseY - dragOffsetY;
-            System.out.println("cx: " + dragConsumerX + ", cy: " + dragConsumerY);
-            System.out.println("nx: " + newMouseX + ", ny: " + newMouseX);
-            System.out.println("dox: " + dragOffsetX + ", doy: " + dragOffsetY);
-            System.out.println("dx: " + deltaX + ", dy: " + newMouseY);
-            System.out.println("x: " + dragConsumerX + deltaX + ", y: " + dragConsumerY + deltaY);
             dragMoveListener.invoke(this, new DragOffset(dragConsumerX + deltaX, dragConsumerY + deltaY));
         }
         return false;
@@ -97,7 +92,7 @@ public class WDrag implements IWidget {
         if (!mouseIn(xMouse, yMouse)) {
             return false;
         }
-        startDragging();
+        startDragging(gui);
         return true;
     }
 
@@ -110,9 +105,9 @@ public class WDrag implements IWidget {
         return true;
     }
 
-    protected void startDragging() {
-        this.dragOffsetX = JecaGui.getMouseX();
-        this.dragOffsetY = JecaGui.getMouseY();
+    protected void startDragging(JecaGui gui) {
+        this.dragOffsetX = gui.getGlobalMouseX();
+        this.dragOffsetY = gui.getGlobalMouseY();
         this.isDragging = true;
 
         if (dragStartListener != null) {

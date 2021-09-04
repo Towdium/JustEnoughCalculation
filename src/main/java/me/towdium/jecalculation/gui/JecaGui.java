@@ -5,9 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
-import me.towdium.jecalculation.gui.guis.GuiCraft;
-import me.towdium.jecalculation.gui.guis.GuiMath;
-import me.towdium.jecalculation.gui.guis.IGui;
+import me.towdium.jecalculation.gui.guis.*;
 import me.towdium.jecalculation.jei.JecaPlugin;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Wrapper;
@@ -122,6 +120,16 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
         return (int) mc.mouseHelper.getMouseY() * mc.getMainWindow().getScaledHeight() / mc.getMainWindow().getHeight() - gui.guiTop;
     }
 
+    public int getGlobalMouseX() {
+        Minecraft mc = Objects.requireNonNull(Minecraft.getInstance(), "Internal error");
+        return (int) mc.mouseHelper.getMouseX() * mc.getMainWindow().getScaledWidth() / mc.getMainWindow().getWidth() - this.guiLeft;
+    }
+
+    public int getGlobalMouseY() {
+        Minecraft mc = Objects.requireNonNull(Minecraft.getInstance(), "Internal error");
+        return (int) mc.mouseHelper.getMouseY() * mc.getMainWindow().getScaledHeight() / mc.getMainWindow().getHeight() - this.guiTop;
+    }
+
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onFocus(MouseClickedEvent.Pre event) {
         if (!(event.getGui() instanceof JecaGui)) return;
@@ -220,6 +228,10 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
         return matrix;
     }
 
+    public void setMatrix(MatrixStack matrix) {
+        this.matrix = matrix;
+    }
+
     /**
      * @return The currently displayed {@link JecaGui}
      * Make sure the method is called when a {@link JecaGui} is displayed!
@@ -246,7 +258,7 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
     @Nullable
     public ILabel getLabelUnderMouse() {
         Wrapper<ILabel> l = new Wrapper<>(null);
-        root.getLabelUnderMouse(getMouseX(), getMouseY(), l);
+        root.getLabelUnderMouse(getGlobalMouseX(), getGlobalMouseY(), l);
         return l.value;
     }
 
@@ -508,6 +520,7 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
 
         public int color;
         public boolean shadow, half, raw;
+        private final FontRenderer font = Minecraft.getInstance().fontRenderer;
 
         public Font(int color, boolean shadow, boolean half, boolean raw) {
             this.color = color;
@@ -517,15 +530,15 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
         }
 
         public int getTextWidth(String s) {
-            return (int) Math.ceil(getCurrent().font.getStringWidth(s) * (half ? 0.5f : 1));
+            return (int) Math.ceil(font.getStringWidth(s) * (half ? 0.5f : 1));
         }
 
         public int getTextHeight() {
-            return (int) Math.ceil(getCurrent().font.FONT_HEIGHT * (half ? 0.5f : 1));
+            return (int) Math.ceil(font.FONT_HEIGHT * (half ? 0.5f : 1));
         }
 
         public String trimToWidth(String s, int i) {
-            return getCurrent().font.func_238412_a_(s, i * (half ? 2 : 1));
+            return font.func_238412_a_(s, i * (half ? 2 : 1));
         }
     }
 
