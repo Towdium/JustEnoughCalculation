@@ -109,6 +109,7 @@ public class GuiScreenEventHandler implements IGlobalGuiHandler {
             }
         } else if (event instanceof GuiScreenEvent.MouseClickedEvent.Pre) {
             int button = ((GuiScreenEvent.MouseClickedEvent) event).getButton();
+            overlayHandler.onMouseFocused(gui, xMouse, yMouse, button);
             if (overlayHandler.onMouseClicked(gui, xMouse, yMouse, button)) {
                 event.setCanceled(true);
             }
@@ -118,6 +119,36 @@ public class GuiScreenEventHandler implements IGlobalGuiHandler {
         } else if (event instanceof GuiScreenEvent.MouseReleasedEvent.Pre) {
             int button = ((GuiScreenEvent.MouseReleasedEvent) event).getButton();
             overlayHandler.onMouseReleased(gui, xMouse, yMouse, button);
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public void onKeyboardKey(GuiScreenEvent.KeyboardKeyEvent event) {
+        Screen screen = event.getGui();
+        if (overlayHandler == null || !isScreenValidForOverlay(screen)) {
+            return;
+        }
+
+        if (event instanceof GuiScreenEvent.KeyboardKeyPressedEvent.Pre) {
+            if (overlayHandler.onKeyPressed(gui, event.getKeyCode(), event.getModifiers())) {
+                event.setCanceled(true);
+            }
+        } else if (event instanceof GuiScreenEvent.KeyboardKeyReleasedEvent.Pre) {
+            if (overlayHandler.onKeyReleased(gui, event.getKeyCode(), event.getModifiers())) {
+                event.setCanceled(true);
+            }
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public void onCharTyped(GuiScreenEvent.KeyboardCharTypedEvent event) {
+        Screen screen = event.getGui();
+        if (overlayHandler == null || !isScreenValidForOverlay(screen)) {
+            return;
+        }
+
+        if (overlayHandler.onChar(gui, event.getCodePoint(), event.getModifiers())) {
+            event.setCanceled(true);
         }
     }
 
