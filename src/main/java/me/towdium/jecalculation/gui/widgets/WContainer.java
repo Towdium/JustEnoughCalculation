@@ -41,8 +41,16 @@ public class WContainer implements IContainer {
         widgets.addAll(Arrays.asList(w));
     }
 
+    public void addAll(List<? extends IWidget> w) {
+        widgets.addAll(w);
+    }
+
     public void remove(IWidget... w) {
         widgets.removeAll(Arrays.asList(w));
+    }
+
+    public void removeAll(List<? extends IWidget> w) {
+        widgets.removeAll(w);
     }
 
     public void clear() {
@@ -51,6 +59,10 @@ public class WContainer implements IContainer {
 
     public boolean contains(IWidget w) {
         return widgets.contains(w);
+    }
+
+    public List<IWidget> getWidgets() {
+        return widgets;
     }
 
     @Override

@@ -14,6 +14,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.lwjgl.system.CallbackI;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -31,12 +32,17 @@ import static me.towdium.jecalculation.utils.Utilities.getPlayer;
 @MethodsReturnNonnullByDefault
 @OnlyIn(Dist.CLIENT)
 public class GuiCraftMini extends WContainer {
+    public final int WINDOW_WIDTH = 98;
+    public final int WINDOW_HEIGHT = 98;
+
     protected int slot = 0;
     protected ItemStack itemStack;
     protected Calculator calculator = null;
     public RecordCraft record;
+    protected ListenerAction<? super GuiCraftMini> windowFocusListener = null;
 
     WDrag drag = new WDrag(4, 4, 78, 11);
+
     WButton close = new WButtonText(83, 4, 11, 11, "x")
         .setListener((widget) -> {
             record.overlayOpen = false;
@@ -151,8 +157,8 @@ public class GuiCraftMini extends WContainer {
         PlayerInventory inv = getPlayer().inventory;
         ArrayList<ILabel> labels = new ArrayList<>();
         Consumer<List<ItemStack>> add = i -> i.stream()
-                .filter(j -> !j.isEmpty())
-                .forEach(j -> labels.add(ILabel.Converter.from(j)));
+            .filter(j -> !j.isEmpty())
+            .forEach(j -> labels.add(ILabel.Converter.from(j)));
 
         add.accept(inv.armorInventory);
         add.accept(inv.mainInventory);
@@ -185,5 +191,45 @@ public class GuiCraftMini extends WContainer {
         record.push(l, false);
         Controller.setRCraft(record, itemStack, slot);
         refreshCalculator();
+    }
+
+    @Override
+    public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
+        if (!mouseIn(xMouse, yMouse)) {
+            return false;
+        }
+
+        if (windowFocusListener != null) {
+            windowFocusListener.invoke(this);
+        }
+
+        super.onMouseClicked(gui, xMouse, yMouse, button);
+        return true;
+    }
+
+    protected boolean mouseIn(int xMouse, int yMouse) {
+        return JecaGui.mouseIn(offsetX, offsetY, WINDOW_WIDTH, WINDOW_HEIGHT, xMouse, yMouse);
+    }
+
+    public GuiCraftMini setOnFocusListener(ListenerAction<? super GuiCraftMini> windowFocusListener) {
+        this.windowFocusListener = windowFocusListener;
+        return this;
+    }
+
+    public void setDepth(int depth, boolean save) {
+        if (this.record.overlayDepth != depth) {
+            record.overlayDepth = depth;
+            if (save) {
+                Controller.setRCraft(record, itemStack, slot);
+            }
+        }
+    }
+
+    public void setDepth(int depth) {
+        setDepth(depth, false);
+    }
+
+    public int getDepth() {
+        return record.overlayDepth;
     }
 }

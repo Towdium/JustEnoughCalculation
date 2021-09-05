@@ -44,7 +44,7 @@ public class GuiScreenEventHandler {
             && !(screen instanceof JecaGui);
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     @SuppressWarnings("deprecation")
     public void onDrawForeground(GuiScreenEvent.DrawScreenEvent.Post event) {
         Screen screen = event.getGui();
@@ -79,7 +79,7 @@ public class GuiScreenEventHandler {
 //        drawHoveringText(matrixStack, tooltip, mouseX + guiLeft, mouseY + guiTop, font);
     }
 
-    @SubscribeEvent(priority = EventPriority.HIGH)
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onFocus(GuiScreenEvent.MouseClickedEvent.Pre event) {
         Screen screen = event.getGui();
         if (overlayHandler == null || !isScreenValidForOverlay(screen)) {
@@ -98,7 +98,7 @@ public class GuiScreenEventHandler {
         }
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onTooltip(RenderTooltipEvent.Pre event) {
         if (overlayHandler == null) {
             return;
@@ -110,7 +110,7 @@ public class GuiScreenEventHandler {
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.LOW)
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onMouse(GuiScreenEvent.MouseInputEvent event) {
         Screen screen = event.getGui();
         if (overlayHandler == null || !isScreenValidForOverlay(screen)) {

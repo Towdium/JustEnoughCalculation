@@ -22,6 +22,7 @@ public class RecordCraft implements IRecord {
     public static final String KEY_OVERLAY_OPEN = "overlayOpen";
     public static final String KEY_OVERLAY_X = "overlayPositionX";
     public static final String KEY_OVERLAY_Y = "overlayPositionY";
+    public static final String KEY_OVERLAY_DEPTH = "overlayDepth";
 
     Utilities.Recent<ILabel> record = new Utilities.Recent<>((a, b) ->
             a == ILabel.EMPTY || a.equals(b), 9);
@@ -31,6 +32,7 @@ public class RecordCraft implements IRecord {
     public boolean overlayOpen;
     public int overlayPositionX;
     public int overlayPositionY;
+    public int overlayDepth;
 
     public RecordCraft(CompoundNBT nbt) {
         List<ILabel> ls = nbt.getList(KEY_RECENTS, 10).stream()
@@ -49,6 +51,7 @@ public class RecordCraft implements IRecord {
         overlayOpen = nbt.getBoolean(KEY_OVERLAY_OPEN);
         overlayPositionX = nbt.getInt(KEY_OVERLAY_X);
         overlayPositionY = nbt.getInt(KEY_OVERLAY_Y);
+        overlayDepth = nbt.getInt(KEY_OVERLAY_DEPTH);
     }
 
     // return true if any existing matches
@@ -75,6 +78,7 @@ public class RecordCraft implements IRecord {
         ret.putBoolean(KEY_OVERLAY_OPEN, overlayOpen);
         ret.putInt(KEY_OVERLAY_X, overlayPositionX);
         ret.putInt(KEY_OVERLAY_Y, overlayPositionY);
+        ret.putInt(KEY_OVERLAY_DEPTH, overlayDepth);
         return ret;
     }
 
