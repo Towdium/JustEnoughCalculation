@@ -25,7 +25,6 @@ public class GuiScreenOverlayHandler extends WContainer implements IGui {
     }
 
     public void setupOverlay(PlayerInventory inventory) {
-        System.out.println("setup");
 
         // Sort widgets by depth
         List<GuiCraftMini> widgets = inventoryToWidgets(inventory).stream()

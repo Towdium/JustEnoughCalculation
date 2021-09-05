@@ -27,7 +27,7 @@ public class GuiScreenEventHandler implements IGlobalGuiHandler {
 
     protected GuiScreenOverlayHandler overlayHandler = null;
     protected JecaGui gui = null;
-    protected PlayerInventory cachedInventory;
+    protected InventorySummary cachedInventory;
 
     @SubscribeEvent
     public void onGuiOpen(GuiOpenEvent event) {
@@ -154,31 +154,17 @@ public class GuiScreenEventHandler implements IGlobalGuiHandler {
 
     private boolean didInventoryChange(PlayerInventory inventory) {
         if (cachedInventory == null) {
-            cacheInventory(inventory);
+            cachedInventory = new InventorySummary(inventory);
             return false;
         }
 
-        if (!cachedInventory.mainInventory.equals(inventory.mainInventory)) {
-            cacheInventory(inventory);
-            return true;
+        InventorySummary newSummery = new InventorySummary(inventory);
+        if (newSummery.equals(cachedInventory)) {
+            return false;
         }
 
-        if (!cachedInventory.offHandInventory.equals(inventory.offHandInventory)) {
-            cacheInventory(inventory);
-            return true;
-        }
-
-        if (!cachedInventory.armorInventory.equals(inventory.armorInventory)) {
-            cacheInventory(inventory);
-            return true;
-        }
-
-        return false;
-    }
-
-    private void cacheInventory(PlayerInventory inventory) {
-        cachedInventory = new PlayerInventory(inventory.player);
-        cachedInventory.copyInventory(inventory);
+        cachedInventory = newSummery;
+        return true;
     }
 
     @Override
