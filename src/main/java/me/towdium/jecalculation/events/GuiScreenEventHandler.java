@@ -40,6 +40,7 @@ public class GuiScreenEventHandler implements IGlobalGuiHandler {
         overlayHandler = new GuiScreenOverlayHandler(player.inventory);
         gui = new JecaGui(null, false, overlayHandler);
         gui.init(Minecraft.getInstance(), screen.width, screen.height);
+        overlayHandler.setGui(gui);
     }
 
     protected boolean isScreenValidForOverlay(Screen screen) {
@@ -62,6 +63,7 @@ public class GuiScreenEventHandler implements IGlobalGuiHandler {
             overlayHandler = new GuiScreenOverlayHandler(inventory);
             gui = new JecaGui(null, false, overlayHandler);
             gui.init(Minecraft.getInstance(), screen.width, screen.height);
+            overlayHandler.setGui(gui);
         } else if (screen.width != gui.width || screen.height != gui.height) {
             gui.init(screen.getMinecraft(), screen.width, screen.height);
         }

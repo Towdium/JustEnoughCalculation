@@ -18,13 +18,19 @@ import java.util.stream.Collectors;
 public class GuiScreenOverlayHandler extends WContainer implements IGui {
 
     protected PlayerInventory inventory;
+    protected JecaGui gui;
 
     public GuiScreenOverlayHandler(PlayerInventory inventory) {
         this.inventory = inventory;
+    }
+
+    public void setGui(JecaGui gui) {
+        this.gui = gui;
         setupOverlay(inventory);
     }
 
     public void setupOverlay(PlayerInventory inventory) {
+        clear();
 
         // Sort widgets by depth
         List<GuiCraftMini> widgets = inventoryToWidgets(inventory).stream()
@@ -32,8 +38,13 @@ public class GuiScreenOverlayHandler extends WContainer implements IGui {
             .collect(Collectors.toList());
 
         // Normalize depth
+        int numWidgetsInDefaultPosition = 0;
         for (int i = 0; i < widgets.size(); i++) {
             GuiCraftMini widget = widgets.get(i);
+            if (widget.getOffsetX() == 0 && widget.getOffsetY() == 0) {
+                moveToDefaultPosition(widget, numWidgetsInDefaultPosition);
+                numWidgetsInDefaultPosition++;
+            }
             widget.setDepth(i, true);
             widget.setOnFocusListener((w) -> {
                 Optional<GuiCraftMini> topWidget = widgets.stream().max(Comparator.comparingInt(GuiCraftMini::getDepth));
@@ -41,8 +52,16 @@ public class GuiScreenOverlayHandler extends WContainer implements IGui {
                     w.setDepth(topWidget.get().getDepth() + 1);
                 }
             });
+            widget.setWindowCloseListener((w) -> {
+                setupOverlay(inventory);
+            });
             add(widget);
         }
+    }
+
+    protected void moveToDefaultPosition(GuiCraftMini widget, int offset) {
+        widget.setOffsetX(-widget.getWidth() - 10);
+        widget.setOffsetY(gui.getYSize()/2 - widget.getHeight()/2 + offset*20);
     }
 
     public List<GuiCraftMini> inventoryToWidgets(PlayerInventory inventory) {
@@ -74,9 +93,32 @@ public class GuiScreenOverlayHandler extends WContainer implements IGui {
 
             removeAll(windows);
             addAll(orderedWindows);
+            windows = orderedWindows;
         }
 
-        return super.onDraw(gui, mouseX, mouseY);
+        windows.forEach(this::ensureWindowIsOnScreen);
+        boolean result = super.onDraw(gui, mouseX, mouseY);
+        windows.forEach(this::ensureWindowIsOnScreen);
+        return result;
+    }
+
+    public void ensureWindowIsOnScreen(GuiCraftMini widget) {
+        int topOffset = -gui.getGuiTop();
+        int bottomOffset = gui.height - gui.getGuiTop();
+        int leftOffset = -gui.getGuiLeft();
+        int rightOffset = gui.width - gui.getGuiLeft();
+
+        if (widget.getOffsetX() < leftOffset) {
+            widget.setOffsetX(leftOffset);
+        } else if (widget.getOffsetX() + widget.getWidth() > rightOffset) {
+            widget.setOffsetX(rightOffset - widget.getWidth());
+        }
+
+        if (widget.getOffsetY() < topOffset) {
+            widget.setOffsetY(topOffset);
+        } else if (widget.getOffsetY() + widget.getHeight() > bottomOffset) {
+            widget.setOffsetY(bottomOffset - widget.getHeight());
+        }
     }
 
     public Collection<Rectangle2d> getGuiExtraAreas(int offsetX, int offsetY) {

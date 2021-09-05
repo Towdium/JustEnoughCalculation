@@ -40,6 +40,7 @@ public class GuiCraftMini extends WContainer {
     protected Calculator calculator = null;
     public RecordCraft record;
     protected ListenerAction<? super GuiCraftMini> windowFocusListener = null;
+    protected ListenerAction<? super GuiCraftMini> windowCloseListener = null;
 
     WDrag drag = new WDrag(4, 4, 78, 11);
 
@@ -47,6 +48,10 @@ public class GuiCraftMini extends WContainer {
         .setListener((widget) -> {
             record.overlayOpen = false;
             Controller.setRCraft(record, itemStack, slot);
+
+            if (windowCloseListener != null) {
+                windowCloseListener.invoke(this);
+            }
         });
 
     WLabel label = new WLabel(4, 16, 20, 20, false);
@@ -216,6 +221,11 @@ public class GuiCraftMini extends WContainer {
         return this;
     }
 
+    public GuiCraftMini setWindowCloseListener(ListenerAction<? super GuiCraftMini> windowCloseListener) {
+        this.windowCloseListener = windowCloseListener;
+        return this;
+    }
+
     public void setDepth(int depth, boolean save) {
         if (this.record.overlayDepth != depth) {
             record.overlayDepth = depth;
@@ -237,8 +247,16 @@ public class GuiCraftMini extends WContainer {
         return this.offsetX;
     }
 
+    public void setOffsetX(int offsetX) {
+        this.offsetX = offsetX;
+    }
+
     public int getOffsetY() {
         return this.offsetY;
+    }
+
+    public void setOffsetY(int offsetY) {
+        this.offsetY = offsetY;
     }
 
     public int getWidth() {
