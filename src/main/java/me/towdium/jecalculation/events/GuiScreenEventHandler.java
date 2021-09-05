@@ -20,6 +20,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
 public class GuiScreenEventHandler implements IGlobalGuiHandler {
@@ -50,7 +51,8 @@ public class GuiScreenEventHandler implements IGlobalGuiHandler {
     @SuppressWarnings("deprecation")
     public void onDrawForeground(GuiScreenEvent.DrawScreenEvent.Post event) {
         Screen screen = event.getGui();
-        ClientPlayerEntity player = Minecraft.getInstance().player;
+        Minecraft minecraft = Minecraft.getInstance();
+        ClientPlayerEntity player = minecraft.player;
         if (player == null || overlayHandler == null || !isScreenValidForOverlay(screen)) {
             return;
         }
@@ -72,13 +74,10 @@ public class GuiScreenEventHandler implements IGlobalGuiHandler {
         RenderSystem.translatef(gui.getGuiLeft(), gui.getGuiTop(), 0);
         overlayHandler.onDraw(gui, mouseX, mouseY);
         RenderSystem.popMatrix();
-//        RenderSystem.pushMatrix();
-//        RenderSystem.translatef(0, 0, 80);
-//        gui.hand.drawLabel(this, mouseX + guiLeft, mouseY + guiTop, true);
-//        RenderSystem.popMatrix();
-//        List<String> tooltip = new ArrayList<>();
-//        root.onTooltip(this, mouseX, mouseY, tooltip);
-//        drawHoveringText(matrixStack, tooltip, mouseX + guiLeft, mouseY + guiTop, font);
+
+        List<String> tooltip = new ArrayList<>();
+        overlayHandler.onTooltip(gui, mouseX, mouseY, tooltip);
+        gui.drawHoveringText(event.getMatrixStack(), tooltip, mouseX + gui.getGuiLeft(), mouseY + gui.getGuiTop(), minecraft.fontRenderer);
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)
