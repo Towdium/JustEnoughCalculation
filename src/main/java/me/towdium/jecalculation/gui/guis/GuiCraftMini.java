@@ -37,15 +37,20 @@ public class GuiCraftMini extends WContainer {
     public RecordCraft record;
 
     WDrag drag = new WDrag(4, 4, 78, 11);
-    WButtonText close = new WButtonText(83, 4, 11, 11, "x");
+    WButton close = new WButtonText(83, 4, 11, 11, "x")
+        .setListener((widget) -> {
+            record.overlayOpen = false;
+            Controller.setRCraft(record, itemStack, slot);
+        });
 
     WLabel label = new WLabel(4, 16, 20, 20, false);
 
-    WTextField amount = new WTextField(31, 16, 35).setListener(i -> {
-        record.amount = i.getText();
-        Controller.setRCraft(record, itemStack, slot);
-        refreshCalculator();
-    });
+    WTextField amount = new WTextField(31, 16, 35)
+        .setListener(i -> {
+            record.amount = i.getText();
+            Controller.setRCraft(record, itemStack, slot);
+            refreshCalculator();
+        });
 
     WButton invE = new WButtonIcon(67, 16, 20, 20, Resource.BTN_INV_E, "craft.inventory_enabled");
     WButton invD = new WButtonIcon(67, 16, 20, 20, Resource.BTN_INV_D, "craft.inventory_disabled");
