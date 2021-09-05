@@ -122,12 +122,20 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
 
     public int getGlobalMouseX() {
         Minecraft mc = Objects.requireNonNull(Minecraft.getInstance(), "Internal error");
-        return (int) mc.mouseHelper.getMouseX() * mc.getMainWindow().getScaledWidth() / mc.getMainWindow().getWidth() - this.guiLeft;
+        int width = mc.getMainWindow().getWidth();
+        if (width == 0) {
+            return 0;
+        }
+        return (int) mc.mouseHelper.getMouseX() * mc.getMainWindow().getScaledWidth() / width - this.guiLeft;
     }
 
     public int getGlobalMouseY() {
         Minecraft mc = Objects.requireNonNull(Minecraft.getInstance(), "Internal error");
-        return (int) mc.mouseHelper.getMouseY() * mc.getMainWindow().getScaledHeight() / mc.getMainWindow().getHeight() - this.guiTop;
+        int height = mc.getMainWindow().getHeight();
+        if (height == 0) {
+            return 0;
+        }
+        return (int) mc.mouseHelper.getMouseY() * mc.getMainWindow().getScaledHeight() / height - this.guiTop;
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)

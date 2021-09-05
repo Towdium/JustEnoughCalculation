@@ -1,13 +1,13 @@
 package me.towdium.jecalculation.events;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
-import me.towdium.jecalculation.jei.JecaPlugin;
+import mezz.jei.api.gui.handlers.IGlobalGuiHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.renderer.Rectangle2d;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -18,9 +18,11 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 @OnlyIn(Dist.CLIENT)
-public class GuiScreenEventHandler {
+public class GuiScreenEventHandler implements IGlobalGuiHandler {
 
     protected GuiScreenOverlayHandler overlayHandler = null;
     protected JecaGui gui = null;
@@ -44,7 +46,7 @@ public class GuiScreenEventHandler {
             && !(screen instanceof JecaGui);
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
+    @SubscribeEvent(priority = EventPriority.LOW)
     @SuppressWarnings("deprecation")
     public void onDrawForeground(GuiScreenEvent.DrawScreenEvent.Post event) {
         Screen screen = event.getGui();
@@ -79,26 +81,7 @@ public class GuiScreenEventHandler {
 //        drawHoveringText(matrixStack, tooltip, mouseX + guiLeft, mouseY + guiTop, font);
     }
 
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public void onFocus(GuiScreenEvent.MouseClickedEvent.Pre event) {
-        Screen screen = event.getGui();
-        if (overlayHandler == null || !isScreenValidForOverlay(screen)) {
-            return;
-        }
-
-        int xMouse = gui.getGlobalMouseX();
-        int yMouse = gui.getGlobalMouseY();
-        int button = event.getButton();
-
-        overlayHandler.onMouseFocused(gui, xMouse, yMouse, button);
-        ILabel e = JecaPlugin.getLabelUnderMouse();
-        if (e != ILabel.EMPTY) {
-            gui.hand = e;
-            event.setCanceled(true);
-        }
-    }
-
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public void onTooltip(RenderTooltipEvent.Pre event) {
         if (overlayHandler == null) {
             return;
@@ -110,7 +93,7 @@ public class GuiScreenEventHandler {
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public void onMouse(GuiScreenEvent.MouseInputEvent event) {
         Screen screen = event.getGui();
         if (overlayHandler == null || !isScreenValidForOverlay(screen)) {
@@ -166,5 +149,13 @@ public class GuiScreenEventHandler {
     private void cacheInventory(PlayerInventory inventory) {
         cachedInventory = new PlayerInventory(inventory.player);
         cachedInventory.copyInventory(inventory);
+    }
+
+    @Override
+    public Collection<Rectangle2d> getGuiExtraAreas() {
+        if (overlayHandler != null && gui != null) {
+            return overlayHandler.getGuiExtraAreas(gui.getGuiLeft(), gui.getGuiTop());
+        }
+        return Collections.emptyList();
     }
 }

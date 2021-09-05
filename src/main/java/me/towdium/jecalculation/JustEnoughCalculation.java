@@ -8,6 +8,8 @@ import me.towdium.jecalculation.network.packets.PCalculator;
 import me.towdium.jecalculation.network.packets.PEdit;
 import me.towdium.jecalculation.network.packets.PRecord;
 import me.towdium.jecalculation.utils.Utilities;
+import mezz.jei.api.gui.handlers.IScreenHandler;
+import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -43,6 +45,7 @@ public class JustEnoughCalculation {
     public static final String PROTOCOL = "1";
     public static SimpleChannel network;
     public static Logger logger = LogManager.getLogger(MODID);
+    public static GuiScreenEventHandler GUI_HANDLER = new GuiScreenEventHandler();
 
     public JustEnoughCalculation() {
         //noinspection ResultOfMethodCallIgnored
@@ -76,6 +79,6 @@ public class JustEnoughCalculation {
         Controller.loadFromLocal();
         ClientRegistry.registerKeyBinding(keyOpenGuiCraft);
         ClientRegistry.registerKeyBinding(keyOpenGuiMath);
-        MinecraftForge.EVENT_BUS.register(new GuiScreenEventHandler());
+        MinecraftForge.EVENT_BUS.register(GUI_HANDLER);
     }
 }

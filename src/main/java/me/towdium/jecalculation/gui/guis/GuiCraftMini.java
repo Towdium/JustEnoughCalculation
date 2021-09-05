@@ -232,4 +232,20 @@ public class GuiCraftMini extends WContainer {
     public int getDepth() {
         return record.overlayDepth;
     }
+
+    public int getOffsetX() {
+        return this.offsetX;
+    }
+
+    public int getOffsetY() {
+        return this.offsetY;
+    }
+
+    public int getWidth() {
+        return this.WINDOW_WIDTH;
+    }
+
+    public int getHeight() {
+        return this.WINDOW_HEIGHT;
+    }
 }

@@ -8,13 +8,11 @@ import me.towdium.jecalculation.gui.guis.GuiCraftMini;
 import me.towdium.jecalculation.gui.guis.IGui;
 import me.towdium.jecalculation.gui.widgets.IWidget;
 import me.towdium.jecalculation.gui.widgets.WContainer;
+import net.minecraft.client.renderer.Rectangle2d;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class GuiScreenOverlayHandler extends WContainer implements IGui {
@@ -80,6 +78,14 @@ public class GuiScreenOverlayHandler extends WContainer implements IGui {
         }
 
         return super.onDraw(gui, mouseX, mouseY);
+    }
+
+    public Collection<Rectangle2d> getGuiExtraAreas(int offsetX, int offsetY) {
+        return getWidgets().stream()
+            .filter((w) -> w instanceof GuiCraftMini)
+            .map(GuiCraftMini.class::cast)
+            .map(w -> new Rectangle2d(w.getOffsetX() + offsetX, w.getOffsetY() + offsetY, w.getWidth(), w.getHeight()))
+            .collect(Collectors.toList());
     }
 
     @Override
