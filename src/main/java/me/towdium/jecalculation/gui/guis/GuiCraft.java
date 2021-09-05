@@ -10,6 +10,7 @@ import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.gui.widgets.*;
 import me.towdium.jecalculation.jei.JecaPlugin;
+import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -60,6 +61,11 @@ public class GuiCraft extends Gui {
             .setListener(i -> setMode(OUTPUT));
     WButton input = new WButtonIcon(7, 62, 20, 20, Resource.BTN_IN, "common.input")
             .setListener(i -> setMode(INPUT));
+    WTick open = new WTick(90, 67, 10, 10, Utilities.I18n.get("gui.craft.widget"), true, JecaGui.Font.RAW)
+            .setListener(i -> {
+                record.overlayOpen = i.selected();
+                Controller.setRCraft(record, itemStack, slot);
+            });
     WButton invE = new WButtonIcon(149, 62, 20, 20, Resource.BTN_INV_E, "craft.inventory_enabled");
     WButton invD = new WButtonIcon(149, 62, 20, 20, Resource.BTN_INV_D, "craft.inventory_disabled");
     WTextField amount = new WTextField(60, 7, 65).setListener(i -> {
@@ -73,6 +79,7 @@ public class GuiCraft extends Gui {
         this.slot = slot;
         record = Controller.getRCraft(is);
         amount.setText(record.amount);
+        open.setSelected(record.overlayOpen);
         add(new WHelp("craft"));
         add(new WPanel());
         add(new WButtonIcon(7, 7, 20, 20, Resource.BTN_LABEL, "craft.label")
@@ -87,7 +94,7 @@ public class GuiCraft extends Gui {
         add(new WText(53, 13, JecaGui.Font.RAW, "x"));
         add(new WLine(55));
         add(new WIcon(151, 31, 18, 18, Resource.ICN_RECENT, "craft.history"));
-        add(recent, label, input, output, catalyst, steps, result, amount, record.inventory ? invE : invD);
+        add(recent, label, input, output, catalyst, steps, open, result, amount, record.inventory ? invE : invD);
         invE.setListener(i -> {
             record.inventory = false;
             Controller.setRCraft(record, itemStack, slot);

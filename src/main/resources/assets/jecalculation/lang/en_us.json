@@ -22,6 +22,7 @@
   "jecalculation.gui.craft.output": "Extra outputs",
   "jecalculation.gui.craft.search": "Search recipe",
   "jecalculation.gui.craft.suggest": "Suggestions",
+  "jecalculation.gui.craft.widget": "Widget",
   "jecalculation.gui.math.title": "Math Calculator",
   "jecalculation.gui.math.help": "You can use both buttons and keyboard (numpad or main keyboard) to use it. For main keyboard, the buttons are mapped to these keys:\n- plus: ",
   "jecalculation.gui.disamb.list": "Raw types",
