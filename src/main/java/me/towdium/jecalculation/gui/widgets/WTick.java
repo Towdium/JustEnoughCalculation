@@ -22,14 +22,22 @@ public class WTick extends WContainer {
     int xPos, yPos, xSize, ySize;
     String name;
     boolean disabled;
+    JecaGui.Font font;
+    boolean displayLabel;
     ListenerAction<? super WTick> listener;
 
     public WTick(int xPos, int yPos, int xSize, int ySize, @Nullable String name) {
+        this(xPos, yPos, xSize, ySize, name, false, null);
+    }
+
+    public WTick(int xPos, int yPos, int xSize, int ySize, @Nullable String name, boolean displayLabel, JecaGui.Font font) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.xSize = xSize;
         this.ySize = ySize;
         this.name = name;
+        this.displayLabel = displayLabel;
+        this.font = font == null ? JecaGui.Font.PLAIN : font;
         setSelected(false);
     }
 
@@ -68,6 +76,15 @@ public class WTick extends WContainer {
         }
 
         @Override
+        public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
+            boolean result = super.onDraw(gui, xMouse, yMouse);
+            if (displayLabel) {
+                gui.drawText(xPos + xSize + 4, yPos + ySize/2 - font.getTextHeight()/2 + 1, 999, font, name);
+            }
+            return result;
+        }
+
+        @Override
         protected List<String> getSuffix() {
             return Collections.singletonList("unselected");
         }
@@ -96,6 +113,9 @@ public class WTick extends WContainer {
             else if (hovered) res = WGT_BUTTON_S_F;
             else res = WGT_BUTTON_S_N;
             gui.drawResourceContinuous(res, xPos, yPos, xSize, ySize, 5, 5, 5, 5);
+            if (displayLabel) {
+                gui.drawText(xPos + xSize + 4, yPos + ySize/2 - font.getTextHeight()/2 + 1, 999, font, name);
+            }
             return hovered;
         }
     }
