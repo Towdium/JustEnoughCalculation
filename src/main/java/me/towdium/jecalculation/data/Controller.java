@@ -174,12 +174,12 @@ public class Controller {
         return getRecipes().recipeIterator(group);
     }
 
-    public static void setRMath(RecordMath math, @Nullable ItemStack is) {
-        setR(math, i -> rMathClient = i, KEY_MATH, is);
+    public static void setRMath(RecordMath math, @Nullable ItemStack is, int slot) {
+        setR(math, i -> rMathClient = i, KEY_MATH, is, slot);
     }
 
-    public static void setRCraft(RecordCraft rc, @Nullable ItemStack is) {
-        setR(rc, i -> rCraftClient = i, KEY_CRAFT, is);
+    public static void setRCraft(RecordCraft rc, @Nullable ItemStack is, int slot) {
+        setR(rc, i -> rCraftClient = i, KEY_CRAFT, is, slot);
     }
 
     public static RecordCraft getRCraft(@Nullable ItemStack is) {
@@ -190,11 +190,11 @@ public class Controller {
         return getR(rMathClient, KEY_MATH, RecordMath::new, is);
     }
 
-    private static <T extends IRecord> void setR(T t, Consumer<T> c, String s, @Nullable ItemStack is) {
+    private static <T extends IRecord> void setR(T t, Consumer<T> c, String s, @Nullable ItemStack is, int slot) {
         if (!isServerActive()) c.accept(t);
         else if (is != null) {
             Utilities.getTag(is).put(s, t.serialize());
-            network.sendToServer(new PCalculator(is));
+            network.sendToServer(new PCalculator(is, slot));
         }
     }
 

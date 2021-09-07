@@ -5,6 +5,7 @@ import me.towdium.jecalculation.gui.widgets.IWidget;
 import me.towdium.jecalculation.gui.widgets.WContainer;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.List;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault

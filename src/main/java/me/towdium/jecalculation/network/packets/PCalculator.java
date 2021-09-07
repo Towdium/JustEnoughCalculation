@@ -13,25 +13,29 @@ import java.util.function.Supplier;
 public class PCalculator {
 
     ItemStack stack;
+    int slot;
 
     public PCalculator(PacketBuffer buf) {
         stack = buf.readItemStack();
+        slot = buf.readInt();
     }
 
-    public PCalculator(ItemStack stack) {
+    public PCalculator(ItemStack stack, int slot) {
         this.stack = stack;
+        this.slot = slot;
     }
 
     public void write(PacketBuffer buf) {
         buf.writeItemStack(stack);
+        buf.writeInt(slot);
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             PlayerInventory inventory = Objects.requireNonNull(ctx.get().getSender()).inventory;
-            ItemStack calculator = inventory.getCurrentItem();
+            ItemStack calculator = inventory.getStackInSlot(slot);
             if (!calculator.isEmpty() && calculator.getItem() instanceof JecaItem) {
-                inventory.setInventorySlotContents(inventory.currentItem, stack);
+                inventory.setInventorySlotContents(slot, stack);
                 return;
             }
             calculator = inventory.offHandInventory.get(0);

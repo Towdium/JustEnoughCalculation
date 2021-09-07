@@ -57,8 +57,9 @@ public class JecaItem extends Item {
             if (handIn == Hand.MAIN_HAND) inv.setInventorySlotContents(inv.currentItem, neu);
             else if (handIn == Hand.OFF_HAND) inv.offHandInventory.set(0, neu);
         } else if (worldIn.isRemote) {
-            if (is.getItem() == CRAFT) JecaGui.openGuiCraft(is);
-            else if (is.getItem() == MATH) JecaGui.openGuiMath(is);
+            PlayerInventory inv = playerIn.inventory;
+            if (is.getItem() == CRAFT) JecaGui.openGuiCraft(is, inv.currentItem);
+            else if (is.getItem() == MATH) JecaGui.openGuiMath(is, inv.currentItem);
             else throw new RuntimeException("Internal error");
         }
         return ActionResult.resultSuccess(is);

@@ -41,9 +41,9 @@ public class JecaCommand {
                         return 0;
                     })
                     .then(LiteralArgumentBuilder.<ISuggestionProvider>literal("craft")
-                            .executes((c) -> JecaGui.openGuiCraft(null)))
+                            .executes((c) -> JecaGui.openGuiCraft(null, 0)))
                     .then(LiteralArgumentBuilder.<ISuggestionProvider>literal("math")
-                            .executes((c) -> JecaGui.openGuiMath(null)));
+                            .executes((c) -> JecaGui.openGuiMath(null, 0)));
             dispatcher = new CommandDispatcher<>();
             dispatcher.register(lab);
             getPlayer().connection.getCommandDispatcher().register(lab);

@@ -5,9 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
-import me.towdium.jecalculation.gui.guis.GuiCraft;
-import me.towdium.jecalculation.gui.guis.GuiMath;
-import me.towdium.jecalculation.gui.guis.IGui;
+import me.towdium.jecalculation.gui.guis.*;
 import me.towdium.jecalculation.jei.JecaPlugin;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Wrapper;
@@ -122,6 +120,24 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
         return (int) mc.mouseHelper.getMouseY() * mc.getMainWindow().getScaledHeight() / mc.getMainWindow().getHeight() - gui.guiTop;
     }
 
+    public int getGlobalMouseX() {
+        Minecraft mc = Objects.requireNonNull(Minecraft.getInstance(), "Internal error");
+        int width = mc.getMainWindow().getWidth();
+        if (width == 0) {
+            return 0;
+        }
+        return (int) mc.mouseHelper.getMouseX() * mc.getMainWindow().getScaledWidth() / width - this.guiLeft;
+    }
+
+    public int getGlobalMouseY() {
+        Minecraft mc = Objects.requireNonNull(Minecraft.getInstance(), "Internal error");
+        int height = mc.getMainWindow().getHeight();
+        if (height == 0) {
+            return 0;
+        }
+        return (int) mc.mouseHelper.getMouseY() * mc.getMainWindow().getScaledHeight() / height - this.guiTop;
+    }
+
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onFocus(MouseClickedEvent.Pre event) {
         if (!(event.getGui() instanceof JecaGui)) return;
@@ -220,6 +236,10 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
         return matrix;
     }
 
+    public void setMatrix(MatrixStack matrix) {
+        this.matrix = matrix;
+    }
+
     /**
      * @return The currently displayed {@link JecaGui}
      * Make sure the method is called when a {@link JecaGui} is displayed!
@@ -246,14 +266,14 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
     @Nullable
     public ILabel getLabelUnderMouse() {
         Wrapper<ILabel> l = new Wrapper<>(null);
-        root.getLabelUnderMouse(getMouseX(), getMouseY(), l);
+        root.getLabelUnderMouse(getGlobalMouseX(), getGlobalMouseY(), l);
         return l.value;
     }
 
     @SubscribeEvent
     public static void onKey(InputEvent.KeyInputEvent event) {
-        if (keyOpenGuiCraft.isKeyDown()) JecaGui.openGuiCraft(null);
-        if (keyOpenGuiMath.isKeyDown()) JecaGui.openGuiMath(null);
+        if (keyOpenGuiCraft.isKeyDown()) JecaGui.openGuiCraft(null, 0);
+        if (keyOpenGuiMath.isKeyDown()) JecaGui.openGuiMath(null, 0);
     }
 
     @SubscribeEvent
@@ -277,20 +297,20 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static int openGuiMath(@Nullable ItemStack is) {
+    public static int openGuiMath(@Nullable ItemStack is, int slot) {
         boolean ret = is == null && Controller.isServerActive();
         String s = "jecalculation.chat.server_mode";
         if (ret) getPlayer().sendStatusMessage(new TranslationTextComponent(s), false);
-        else JecaGui.displayGui(new GuiMath(is));
+        else JecaGui.displayGui(new GuiMath(is, slot));
         return ret ? 1 : 0;
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static int openGuiCraft(@Nullable ItemStack is) {
+    public static int openGuiCraft(@Nullable ItemStack is, int slot) {
         boolean ret = is == null && Controller.isServerActive();
         String s = "jecalculation.chat.server_mode";
         if (ret) getPlayer().sendStatusMessage(new TranslationTextComponent(s), false);
-        else JecaGui.displayGui(new GuiCraft(is));
+        else JecaGui.displayGui(new GuiCraft(is, slot));
         return ret ? 1 : 0;
     }
 
@@ -508,6 +528,7 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
 
         public int color;
         public boolean shadow, half, raw;
+        private final FontRenderer font = Minecraft.getInstance().fontRenderer;
 
         public Font(int color, boolean shadow, boolean half, boolean raw) {
             this.color = color;
@@ -517,15 +538,15 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
         }
 
         public int getTextWidth(String s) {
-            return (int) Math.ceil(getCurrent().font.getStringWidth(s) * (half ? 0.5f : 1));
+            return (int) Math.ceil(font.getStringWidth(s) * (half ? 0.5f : 1));
         }
 
         public int getTextHeight() {
-            return (int) Math.ceil(getCurrent().font.FONT_HEIGHT * (half ? 0.5f : 1));
+            return (int) Math.ceil(font.FONT_HEIGHT * (half ? 0.5f : 1));
         }
 
         public String trimToWidth(String s, int i) {
-            return getCurrent().font.func_238412_a_(s, i * (half ? 2 : 1));
+            return font.func_238412_a_(s, i * (half ? 2 : 1));
         }
     }
 
