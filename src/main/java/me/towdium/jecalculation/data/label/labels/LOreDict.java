@@ -77,25 +77,25 @@ public class LOreDict extends ILabel.Impl {
     }
 
     public static List<ILabel> suggest(List<ILabel> iss, @Nullable IRecipeLayout rl) {
-        ILabel l = iss.get(0);
-        if (!(l instanceof LItemStack)) return new ArrayList<>();
-        LItemStack lis = (LItemStack) l;
-        HashSet<Integer> ids = new HashSet<>();
-        long amount = lis.getAmount();
-        for (int i : OreDictionary.getOreIDs(lis.getRep()))
-            if (check(i, iss, true)) ids.add(i);
-        return ids.stream().map(i -> new LOreDict(OreDictionary.getOreName(i), amount))
-                .collect(Collectors.toList());
+        return getMatchedList(iss, rl, true);
     }
 
     public static List<ILabel> fallback(List<ILabel> iss, @Nullable IRecipeLayout rl) {
+        return getMatchedList(iss, rl, false);
+    }
+
+    public static List<ILabel> getMatchedList(List<ILabel> iss, @Nullable IRecipeLayout rl, boolean biDir) {
         ILabel l = iss.get(0);
         if (!(l instanceof LItemStack)) return new ArrayList<>();
         LItemStack lis = (LItemStack) l;
         HashSet<Integer> ids = new HashSet<>();
         long amount = lis.getAmount();
-        for (int i : OreDictionary.getOreIDs(lis.getRep()))
-            if (check(i, iss, false)) ids.add(i);
+        ItemStack rep = lis.getRep();
+        if (!rep.isEmpty()) {
+            for (int i : OreDictionary.getOreIDs(lis.getRep())) {
+                if (check(i, iss, biDir)) ids.add(i);
+            }
+        }
         return ids.stream().map(i -> new LOreDict(OreDictionary.getOreName(i), amount))
                 .collect(Collectors.toList());
     }
