@@ -19,7 +19,11 @@ public class Adapter {
         String modId = name.substring(0, name.indexOf(":"));
         String itemId = name.substring(name.indexOf(":") + 1);
         if (Loader.isModLoaded("gregtech")) {
-            return GregTech.convertFluid(itemStack);
+            if(GregTech6.isGT6()) {
+                return GregTech6.convertFluid(itemStack);
+            } else {
+                return GregTech.convertFluid(itemStack);
+            }
         }
         return itemStack;
     }
@@ -35,8 +39,13 @@ public class Adapter {
             adapters.add(new AE2());
         }
         if (Loader.isModLoaded("gregtech")) {
-            JustEnoughCalculation.logger.info("gregtech installed");
-            adapters.add(new GregTech());
+            if(GregTech6.isGT6()) {
+                JustEnoughCalculation.logger.info("gregtech6 installed");
+                adapters.add(new GregTech6());
+            } else {
+                JustEnoughCalculation.logger.info("gregtech5 installed");
+                adapters.add(new GregTech());
+            }
         }
         try {
             if (Loader.isModLoaded("miscutils")) {

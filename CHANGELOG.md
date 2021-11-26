@@ -2,6 +2,10 @@
 
 To be consistent with the main branch,  it may miss some versions
 
+## 3.8.2
+
+- Feat: add support of `GregTech6`.
+
 ## 3.8.1
 
 - Fixed: unmatched JSON writer and reader

@@ -26,6 +26,7 @@ the [release page](https://minecraft.curseforge.com/projects/just-enough-calcula
 - Recipe can be transferred from NEI recipe overlay gui (`shift` + click `?` button)
   - [x] vanilla
   - [x] gregtech
+  - [x] gregtech6
   - [x] Forestry (`?` button may overlap with the fluid tank. Click carefully)
   - [x] Avaritia (`?` button may be covered by the NEI search bar)
   - [x] GT++ (support GT++ 1.7.05.68 (GTNH 2.1.0.0), have not tested old versions)

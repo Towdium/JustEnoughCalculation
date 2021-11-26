@@ -25,6 +25,7 @@ This mod is focused on calculation, so you might find it powerful and high perfo
 - 可以从 NEI 合成表 gui 页面直接获取合成表 (`shift` + 单击 `?` 按钮)
   - [x] 原生MC
   - [x] gregtech
+  - [x] gregtech6
   - [x] Forestry (`?` 按钮可能与流体重叠，不是很好点到)
   - [x] Avaritia (`?` 按钮可能会被NEI搜索栏遮盖)
   - [x] GT++ (支持 GT++ 1.7.05.68 (GTNH 2.1.0.0)，老版本没有测试过)
