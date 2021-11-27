@@ -34,7 +34,7 @@ the [release page](https://minecraft.curseforge.com/projects/just-enough-calcula
   - [ ] AE2
   - [ ] Others
 - [x] Item from NEI item panel
-- [ ] Fluid from NEI item panel (Now need to get fluid from labels picker)
+- [ ] Fluid from NEI item panel (Only support GT & GT6, others need to get from labels picker)
 - [x] OreDictionary recognize
 
 

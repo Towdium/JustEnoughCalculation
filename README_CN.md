@@ -33,7 +33,7 @@ This mod is focused on calculation, so you might find it powerful and high perfo
   - [ ] AE2（目前没办法，需要 AE2 作者支持
   - [ ] 其它
 - [x] 从 NEI 物品列表抓取物品
-- [ ] 从 NEI 物品列表抓取流体 (暂未实现，目前请从 计算器内部流体标签 抓取流体)
+- [ ] 从 NEI 物品列表抓取流体 (仅支持 GT & GT6, 其余流体请从 **计算器内部流体标签** 抓取)
 - [x] 矿物词典支持
 
 ## 使用方法
