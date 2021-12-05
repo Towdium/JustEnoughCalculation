@@ -1,6 +1,7 @@
 package me.towdium.jecalculation.events;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 import mezz.jei.api.gui.handlers.IGlobalGuiHandler;
 import net.minecraft.client.Minecraft;
@@ -16,18 +17,23 @@ import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.client.gui.GuiUtils;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class GuiScreenEventHandler implements IGlobalGuiHandler {
 
     protected GuiScreenOverlayHandler overlayHandler = null;
     protected JecaGui gui = null;
     protected InventorySummary cachedInventory;
+    protected RenderTooltipEvent.Pre cachedTooltipEvent;
 
     @SubscribeEvent
     public void onGuiOpen(GuiOpenEvent event) {
@@ -80,18 +86,24 @@ public class GuiScreenEventHandler implements IGlobalGuiHandler {
         List<String> tooltip = new ArrayList<>();
         overlayHandler.onTooltip(gui, mouseX, mouseY, tooltip);
         gui.drawHoveringText(event.getMatrixStack(), tooltip, mouseX + gui.getGuiLeft(), mouseY + gui.getGuiTop(), minecraft.fontRenderer);
+        if (cachedTooltipEvent != null) {
+            RenderTooltipEvent.Pre e = cachedTooltipEvent;
+            GuiUtils.drawHoveringText(e.getStack(), e.getMatrixStack(), e.getLines(), e.getX(), e.getY(), e.getScreenWidth(), e.getScreenHeight(), e.getMaxWidth(), e.getFontRenderer());
+            cachedTooltipEvent = null;
+        }
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onTooltip(RenderTooltipEvent.Pre event) {
-        if (overlayHandler == null) {
+        if (overlayHandler == null || cachedTooltipEvent != null) {
             return;
         }
 
         boolean overlap = overlayHandler.onTooltip(gui, event.getX() - gui.getGuiLeft(), event.getY() - gui.getGuiTop(), new ArrayList<>());
-        if (overlap && !event.getStack().isEmpty()) {
-            event.setCanceled(true);
+        if (!overlap) {
+            cachedTooltipEvent = event;
         }
+        event.setCanceled(true);
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)
