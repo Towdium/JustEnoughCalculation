@@ -69,7 +69,7 @@ public class RecordMath implements IRecord {
     public RecordMath(NBTTagCompound nbt) {
         state = State.values()[nbt.getInteger(KEY_STATE)];
         operator = Operator.values()[nbt.getInteger(KEY_OPERATOR)];
-        last = nbt.hasKey(KEY_LAST) ? new BigDecimal(nbt.getString(KEY_LAST)) : BigDecimal.ZERO;
+        last = nbt.hasKey(KEY_LAST) ? BigDecimal.valueOf(nbt.getDouble(KEY_LAST)) : BigDecimal.ZERO;
         current = nbt.getString(KEY_CURRENT);
     }
 
