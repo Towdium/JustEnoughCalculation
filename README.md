@@ -54,7 +54,6 @@ Tutorial links:
 ## TODO
 
 - ~~add new button to transfer the recipe.~~
-- [ ] convert GT item fluid to fluid
 
 ## Known Issues
 

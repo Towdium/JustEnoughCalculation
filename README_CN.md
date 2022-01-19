@@ -52,7 +52,7 @@ This mod is focused on calculation, so you might find it powerful and high perfo
 
 ## TODO
 
-- NEI 合成表界面添加新按钮转移合成表
+- ~~NEI 合成表界面添加新按钮转移合成表~~
 
 ## 已知问题
 
