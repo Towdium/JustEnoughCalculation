@@ -2,7 +2,10 @@
 
 To be consistent with the main branch,  it may miss some versions
 
-## 3.8.3
+## 3.8.4
+- Rebuild of 3.8.3
+
+## ~~3.8.3~~
 
 - Fixed: math calculator NumberFormatException
 
