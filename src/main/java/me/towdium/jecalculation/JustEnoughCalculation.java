@@ -38,7 +38,7 @@ import static net.minecraftforge.fml.network.NetworkRegistry.ABSENT;
 public class JustEnoughCalculation {
     public static final String MODID = "jecalculation";
     public static final String MODNAME = "Just Enough Calculation";
-    public static final String PROTOCOL = "1";
+    public static final String PROTOCOL = "JUST_ENOUGH_CALCULATION_1";
     public static SimpleChannel network;
     public static Logger logger = LogManager.getLogger(MODID);
 
@@ -57,9 +57,10 @@ public class JustEnoughCalculation {
     @SubscribeEvent
     public static void setupCommon(FMLCommonSetupEvent event) {
         network = NetworkRegistry.newSimpleChannel(
-                new ResourceLocation(MODID, "main"), () -> PROTOCOL,
-                v -> v.equals(PROTOCOL) || v.equals(ABSENT),
-                v -> v.equals(PROTOCOL) || v.equals(ABSENT)
+            new ResourceLocation(MODID, "main"),
+            () -> PROTOCOL,
+            v -> v.equals(PROTOCOL) || v.equals(ABSENT),
+            v -> v.equals(PROTOCOL) || v.equals(ABSENT)
         );
         network.registerMessage(0, PCalculator.class, PCalculator::write, PCalculator::new, PCalculator::handle);
         network.registerMessage(1, PEdit.class, PEdit::write, PEdit::new, PEdit::handle);
