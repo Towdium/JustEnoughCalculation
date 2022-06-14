@@ -1,6 +1,5 @@
 package me.towdium.jecalculation.gui.guis;
 
-import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.structure.RecordMath;
 import me.towdium.jecalculation.data.structure.RecordMath.Operator;
@@ -8,7 +7,8 @@ import me.towdium.jecalculation.data.structure.RecordMath.State;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.gui.widgets.*;
 import me.towdium.jecalculation.utils.Utilities;
-import net.minecraft.item.ItemStack;
+import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.glfw.GLFW;

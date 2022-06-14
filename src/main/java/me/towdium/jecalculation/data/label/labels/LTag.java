@@ -1,17 +1,20 @@
 package me.towdium.jecalculation.data.label.labels;
 
-import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.utils.wrappers.Wrapper;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tags.ITag;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraftforge.registries.tags.ITag;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -23,16 +26,16 @@ import java.util.stream.Stream;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public abstract class LTag<T> extends LContext<T> {
+public abstract class LTag<T extends IForgeRegistryEntry<T>> extends LContext<T> {
     public static final String KEY_NAME = "name";
 
-    protected ResourceLocation name;
+    protected TagKey<T> name;
 
-    public LTag(ResourceLocation name) {
+    public LTag(TagKey<T> name) {
         this(name, 1);
     }
 
-    public LTag(ResourceLocation name, long amount) {
+    public LTag(TagKey<T> name, long amount) {
         super(amount, false);
         this.name = name;
     }
@@ -42,24 +45,22 @@ public abstract class LTag<T> extends LContext<T> {
         this.name = lt.name;
     }
 
-    public LTag(CompoundNBT nbt) {
+    public LTag(CompoundTag nbt) {
         super(nbt);
-        name = new ResourceLocation(nbt.getString(KEY_NAME));
+        name = TagKey.create(getRegistry().getRegistryKey(), new ResourceLocation(nbt.getString(KEY_NAME)));
     }
 
+    protected abstract IForgeRegistry<T> getRegistry();
+
     public static boolean mergeSame(ILabel a, ILabel b) {
-        if (a instanceof LTag && b instanceof LTag) {
-            LTag<?> lodA = (LTag<?>) a;
-            LTag<?> lodB = (LTag<?>) b;
+        if (a instanceof LTag<?> lodA && b instanceof LTag<?> lodB) {
             return lodA.getName().equals(lodB.getName())
                     && lodA.getContext() == lodB.getContext();
         } else return false;
     }
 
     public static boolean mergeFuzzy(ILabel a, ILabel b) {
-        if (a instanceof LTag && b instanceof LStack) {
-            LTag<?> lt = (LTag<?>) a;
-            LStack<?> ls = (LStack<?>) b;
+        if (a instanceof LTag<?> lt && b instanceof LStack<?> ls) {
             return lt.getAmount() * ls.getAmount() < 0
                     && lt.getContext().matches(lt.name, ls);
         }
@@ -70,15 +71,15 @@ public abstract class LTag<T> extends LContext<T> {
         return convert(is, true);
     }
 
-    private static <T> List<ILabel> convert(List<ILabel> is, boolean biDir) {
+    private static <T extends IForgeRegistryEntry<T>> List<ILabel> convert(List<ILabel> is, boolean biDir) {
         @SuppressWarnings("unchecked") List<LStack<T>> iss = is.stream().filter(i -> i instanceof LStack)
                 .map(i -> (LStack<T>) i).collect(Collectors.toList());
         if (iss.isEmpty() || iss.size() != is.size()) return Collections.emptyList();
         LStack<T> lis = iss.get(0);
         if (iss.stream().anyMatch(i -> i.getContext() != iss.get(0).getContext())) return Collections.emptyList();
-        HashSet<ResourceLocation> ids = new HashSet<>();
+        HashSet<TagKey<T>> ids = new HashSet<>();
         long amount = lis.getAmount();
-        for (ResourceLocation i : lis.getContext().discover(lis))
+        for (TagKey<T> i : lis.getContext().discover(lis))
             if (check(i, iss, biDir)) ids.add(i);
         return ids.stream().map(i -> lis.getContext().create(i, amount))
                 .collect(Collectors.toList());
@@ -89,9 +90,11 @@ public abstract class LTag<T> extends LContext<T> {
     }
 
     // check labels in the list suitable for the ore id
-    private static <T> boolean check(ResourceLocation id, List<LStack<T>> labels, boolean biDir) {
+    private static <T extends IForgeRegistryEntry<T>> boolean check(TagKey<T> id, List<LStack<T>> labels, boolean biDir) {
+        if(!id.isFor(ForgeRegistries.ITEMS.getRegistryKey()))
+            return false;
         Stream<LStack<T>> ores = labels.get(0).getContext().discover(id);
-        ITag<Item> tag = ItemTags.getCollection().get(id);
+        ITag<Item> tag = ForgeRegistries.ITEMS.tags().getTag((TagKey<Item>) id);
         if (tag == null) return false;
 
         Wrapper<Boolean> acceptable = new Wrapper<>(true);
@@ -105,7 +108,7 @@ public abstract class LTag<T> extends LContext<T> {
 
     @Override
     public Object getRepresentation() {
-        List<LStack<T>> list = getContext().discover(name).collect(Collectors.toList());
+        List<LStack<T>> list = getContext().discover(name).toList();
         if (list.isEmpty()) return ItemStack.EMPTY;
         long index = System.currentTimeMillis() / 1500;
         return list.get((int) (index % list.size())).getRepresentation();
@@ -113,8 +116,7 @@ public abstract class LTag<T> extends LContext<T> {
 
     @Override
     public boolean matches(Object l) {
-        if (!(l instanceof LTag)) return false;
-        LTag<?> tag = (LTag<?>) l;
+        if (!(l instanceof LTag<?> tag)) return false;
         return tag.getContext() == getContext() && tag.name.equals(name) && super.matches(l);
     }
 
@@ -122,9 +124,9 @@ public abstract class LTag<T> extends LContext<T> {
     public abstract LTag<T> copy();
 
     @Override
-    public CompoundNBT toNbt() {
-        CompoundNBT ret = super.toNbt();
-        ret.putString(KEY_NAME, name.toString());
+    public CompoundTag toNbt() {
+        CompoundTag ret = super.toNbt();
+        ret.putString(KEY_NAME, name.location().toString());
         return ret;
     }
 
@@ -141,6 +143,6 @@ public abstract class LTag<T> extends LContext<T> {
     }
 
     public String getName() {
-        return name.toString();
+        return name.location().toString();
     }
 }

@@ -1,20 +1,28 @@
 package me.towdium.jecalculation.utils;
 
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.utils.wrappers.Pair;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.nbt.*;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.ModList;
@@ -37,8 +45,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-
-import static net.minecraft.client.resources.I18n.format;
 
 /**
  * Author: Towdium
@@ -64,7 +70,7 @@ public class Utilities {
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static <T> Stream<T> stream(Optional<T> o) {
-        return o.map(Stream::of).orElse(Stream.empty());
+        return o.stream();
     }
 
     public static <T> Supplier<T> fake(Runnable r) {
@@ -75,9 +81,7 @@ public class Utilities {
     }
 
     public static String repeat(String s, int n) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < n; i++) sb.append(s);
-        return sb.toString();
+        return s.repeat(Math.max(0, n));
     }
 
     // MOD NAME
@@ -108,12 +112,45 @@ public class Utilities {
         else return getModName(texture.getNamespace());
     }
 
-    public static CompoundNBT getTag(ItemStack is) {
-        return is.getOrCreateChildTag(JustEnoughCalculation.MODID);
+    public static CompoundTag getTag(ItemStack is) {
+        return is.getOrCreateTagElement(JustEnoughCalculation.MODID);
     }
 
-    public static ClientPlayerEntity getPlayer() {
+    public static LocalPlayer getPlayer() {
         return Objects.requireNonNull(Minecraft.getInstance().player);
+    }
+
+    public static void drawItem(PoseStack poseStack, ItemRenderer itemRenderer, ItemStack itemStack, double x, double y){
+        if(itemStack.isEmpty())
+            return;
+
+        BakedModel bakedModel = itemRenderer.getModel(itemStack, null, Minecraft.getInstance().player, 0);
+        itemRenderer.blitOffset += 50.0F;
+
+        Minecraft.getInstance().getTextureManager().getTexture(InventoryMenu.BLOCK_ATLAS).setFilter(false, false);
+        RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
+        RenderSystem.enableBlend();
+        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        poseStack.pushPose();
+        poseStack.translate(x, y, 100.0F);
+        poseStack.translate(8.0D, 8.0D, 0.0D);
+        poseStack.scale(1.0F, -1.0F, 1.0F);
+        poseStack.scale(16.0F, 16.0F, 16.0F);
+        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+        boolean flag = !bakedModel.usesBlockLight();
+        if (flag) {
+            Lighting.setupForFlatItems();
+        }
+
+        itemRenderer.render(itemStack, ItemTransforms.TransformType.GUI, false, poseStack, bufferSource, 15728880, OverlayTexture.NO_OVERLAY, bakedModel);
+        bufferSource.endBatch();
+        poseStack.popPose();
+        RenderSystem.enableDepthTest();
+        if (flag) {
+            Lighting.setupFor3DItems();
+        }
+
     }
 
     public static class Relation<K, V> {
@@ -223,7 +260,7 @@ public class Utilities {
         public static Pair<String, Boolean> search(String translateKey, Object... parameters) {
             Pair<String, Boolean> ret = new Pair<>(null, null);
             translateKey = "jecalculation." + translateKey;
-            String buffer = format(translateKey, parameters);
+            String buffer = net.minecraft.client.resources.language.I18n.get(translateKey, parameters);
             ret.two = !buffer.equals(translateKey);
             buffer = unescape(buffer);
             ret.one = buffer.replace("\t", "    ");
@@ -267,11 +304,11 @@ public class Utilities {
 
         public static List<String> wrap(String s, int width) {
             return new TextWrapper().wrap(s, MinecraftForgeClient.getLocale(),
-                    i -> TextWrapper.renderer.getStringWidth(String.valueOf(i)), width);
+                    i -> TextWrapper.renderer.width(String.valueOf(i)), width);
         }
 
         static class TextWrapper {
-            static FontRenderer renderer = Minecraft.getInstance().fontRenderer;
+            static Font renderer = Minecraft.getInstance().font;
 
             String str;
             BreakIterator it;
@@ -365,7 +402,7 @@ public class Utilities {
 
     public static class Json {
         @Nullable
-        public static CompoundNBT read(File f) {
+        public static CompoundTag read(File f) {
             try {
                 String s = FileUtils.readFileToString(f, "UTF-8");
                 return read(s);
@@ -375,16 +412,16 @@ public class Utilities {
         }
 
         @Nullable
-        public static CompoundNBT read(String s) {
+        public static CompoundTag read(String s) {
             try {
-                return JsonToNBT.getTagFromJson(s);
+                return TagParser.parseTag(s);
             } catch (CommandSyntaxException e) {
                 e.printStackTrace();
                 return null;
             }
         }
 
-        public static void write(CompoundNBT nbt, File f) {
+        public static void write(CompoundTag nbt, File f) {
             FileOutputStream fos = null;
             try {
                 fos = new FileOutputStream(f);
@@ -402,21 +439,20 @@ public class Utilities {
             }
         }
 
-        public static String write(CompoundNBT nbt) {
+        public static String write(CompoundTag nbt) {
             Writer w = new Writer();
             write(nbt, w);
             w.enter();
             return w.build();
         }
 
-        private static void write(INBT nbt, Writer w) {
-            if (nbt instanceof CompoundNBT) {
-                CompoundNBT tags = (CompoundNBT) nbt;
-                boolean wrap = tags.keySet().size() > 1;
+        private static void write(Tag nbt, Writer w) {
+            if (nbt instanceof CompoundTag tags) {
+                boolean wrap = tags.getAllKeys().size() > 1;
                 boolean first = true;
                 w.sb.append('{');
                 if (wrap) w.indent++;
-                for (String i : tags.keySet()) {
+                for (String i : tags.getAllKeys()) {
                     if (first) first = false;
                     else w.sb.append(',');
                     if (wrap) w.enter();
@@ -431,13 +467,12 @@ public class Utilities {
                     w.enter();
                 }
                 w.sb.append('}');
-            } else if (nbt instanceof ListNBT) {
-                ListNBT tags = (ListNBT) nbt;
+            } else if (nbt instanceof ListTag tags) {
                 boolean wrap = tags.size() > 1;
                 boolean first = true;
                 w.sb.append('[');
                 if (wrap) w.indent++;
-                for (INBT i : tags) {
+                for (Tag i : tags) {
                     if (first) first = false;
                     else w.sb.append(',');
                     if (wrap) w.enter();
@@ -448,7 +483,7 @@ public class Utilities {
                     w.enter();
                 }
                 w.sb.append(']');
-            } else w.sb.append(nbt.toString());
+            } else w.sb.append(nbt);
         }
 
         private static class Writer {

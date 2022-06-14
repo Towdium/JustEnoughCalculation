@@ -1,10 +1,10 @@
 package me.towdium.jecalculation.network.packets;
 
 import me.towdium.jecalculation.JecaItem;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -15,8 +15,8 @@ public class PCalculator {
     ItemStack stack;
     int slot;
 
-    public PCalculator(PacketBuffer buf) {
-        stack = buf.readItemStack();
+    public PCalculator(FriendlyByteBuf buf) {
+        stack = buf.readItem();
         slot = buf.readInt();
     }
 
@@ -25,22 +25,22 @@ public class PCalculator {
         this.slot = slot;
     }
 
-    public void write(PacketBuffer buf) {
-        buf.writeItemStack(stack);
+    public void write(FriendlyByteBuf buf) {
+        buf.writeItem(stack);
         buf.writeInt(slot);
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            PlayerInventory inventory = Objects.requireNonNull(ctx.get().getSender()).inventory;
-            ItemStack calculator = inventory.getStackInSlot(slot);
+            Inventory inventory = Objects.requireNonNull(ctx.get().getSender()).getInventory();
+            ItemStack calculator = inventory.getItem(slot);
             if (!calculator.isEmpty() && calculator.getItem() instanceof JecaItem) {
-                inventory.setInventorySlotContents(slot, stack);
+                inventory.setItem(slot, stack);
                 return;
             }
-            calculator = inventory.offHandInventory.get(0);
+            calculator = inventory.offhand.get(0);
             if (!calculator.isEmpty() && calculator.getItem() instanceof JecaItem) {
-                inventory.offHandInventory.set(0, stack);
+                inventory.offhand.set(0, stack);
             }
         });
     }

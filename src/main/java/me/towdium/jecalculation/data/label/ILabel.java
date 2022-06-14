@@ -1,7 +1,5 @@
 package me.towdium.jecalculation.data.label;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.label.labels.*;
 import me.towdium.jecalculation.gui.JecaGui;
@@ -12,12 +10,17 @@ import me.towdium.jecalculation.gui.guis.pickers.PickerSimple;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.Utilities.ReversedIterator;
 import me.towdium.jecalculation.utils.wrappers.Pair;
-import net.minecraft.enchantment.EnchantmentData;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
+import mezz.jei.api.constants.VanillaTypes;
+import mezz.jei.api.forge.ForgeTypes;
+import mezz.jei.api.ingredients.ITypedIngredient;
+import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.EnchantmentInstance;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
@@ -28,7 +31,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static net.minecraft.item.EnchantedBookItem.getEnchantedItemStack;
+import static net.minecraft.world.item.EnchantedBookItem.createForEnchantment;
 
 /**
  * Author: towdium
@@ -61,7 +64,7 @@ public interface ILabel {
         CONVERTER.register(LItemStack::fallback, Converter.Priority.FALLBACK);
         CONVERTER.register(LTag::fallback, Converter.Priority.FALLBACK);
         EDITOR.register(PickerSimple.FluidStack::new, "fluid", new LFluidStack(1000, Fluids.WATER));
-        EDITOR.register(PickerSimple.Tag::new, "tag", new LItemTag(new ResourceLocation("forge:ingots/iron")));
+        EDITOR.register(PickerSimple.Tag::new, "tag", new LItemTag(Tags.Items.INGOTS_IRON));
         EDITOR.register(PickerPlaceholder::new, "placeholder", new LPlaceholder("example", 1, true));
         EDITOR.register(PickerItemStack::new, "item", new LItemStack(new ItemStack(Items.IRON_PICKAXE)).setFMeta(true));
         MERGER.register("itemStack", "itemStack", Impl.form(LItemStack.class, LItemStack.class, LItemStack::merge));
@@ -102,7 +105,7 @@ public interface ILabel {
 
     ILabel copy();
 
-    CompoundNBT toNbt();
+    CompoundTag toNbt();
 
     String getIdentifier();
 
@@ -111,7 +114,12 @@ public interface ILabel {
     // test two labels are exactly same except amount
     boolean matches(Object l);
 
-    void drawLabel(JecaGui gui, int xPos, int yPos, boolean center);
+    default void drawLabel(JecaGui gui, int xPos, int yPos, boolean center){
+        drawLabel(gui, xPos, yPos, center, false);
+    };
+
+
+    void drawLabel(JecaGui gui, int xPos, int yPos, boolean center, boolean hand);
 
     /**
      * Since {@link ILabel} merging is bidirectional, it is redundant to
@@ -170,12 +178,12 @@ public interface ILabel {
         public static final String KEY_IDENTIFIER = "type";
         public static final String KEY_CONTENT = "content";
 
-        private final HashMap<String, Function<CompoundNBT, ILabel>> idToData = new HashMap<>();
+        private final HashMap<String, Function<CompoundTag, ILabel>> idToData = new HashMap<>();
 
         private Serializer() {
         }
 
-        public void register(String identifier, Function<CompoundNBT, ILabel> deserializer) {
+        public void register(String identifier, Function<CompoundTag, ILabel> deserializer) {
             idToData.put(identifier, deserializer);
         }
 
@@ -192,9 +200,9 @@ public interface ILabel {
          * }
          * }</pre>
          */
-        public ILabel deserialize(CompoundNBT nbt) {
+        public ILabel deserialize(CompoundTag nbt) {
             String s = nbt.getString(KEY_IDENTIFIER);
-            Function<CompoundNBT, ILabel> func = idToData.get(s);
+            Function<CompoundTag, ILabel> func = idToData.get(s);
             if (func == null) JustEnoughCalculation.logger.warn("Unrecognized identifier \"" + s + "\", abort");
             else try {
                 return func.apply(nbt.getCompound(KEY_CONTENT));
@@ -203,8 +211,8 @@ public interface ILabel {
             return EMPTY;
         }
 
-        public CompoundNBT serialize(ILabel label) {
-            CompoundNBT ret = new CompoundNBT();
+        public CompoundTag serialize(ILabel label) {
+            CompoundTag ret = new CompoundTag();
             ret.putString(KEY_IDENTIFIER, label.getIdentifier());
             ret.put(KEY_CONTENT, label.toNbt());
             return ret;
@@ -244,7 +252,7 @@ public interface ILabel {
             if (o == null) return ILabel.EMPTY;
             else if (o instanceof ItemStack) return new LItemStack((ItemStack) o);
             else if (o instanceof FluidStack) return new LFluidStack((FluidStack) o);
-            else if (o instanceof EnchantmentData) return new LItemStack(getEnchantedItemStack((EnchantmentData) o));
+            else if (o instanceof EnchantmentInstance) return new LItemStack(createForEnchantment((EnchantmentInstance) o));
             else return LPlaceholder.Converter.from(o);
         }
 
@@ -312,7 +320,7 @@ public interface ILabel {
         }
 
         @Override
-        public void drawLabel(JecaGui gui, int xPos, int yPos, boolean center) {
+        public void drawLabel(JecaGui gui, int xPos, int yPos, boolean center, boolean hand) {
         }
 
         private LEmpty() {
@@ -384,8 +392,8 @@ public interface ILabel {
         }
 
         @Override
-        public CompoundNBT toNbt() {
-            return new CompoundNBT();
+        public CompoundTag toNbt() {
+            return new CompoundTag();
         }
 
         @Override
@@ -415,7 +423,7 @@ public interface ILabel {
             percent = lsa.percent;
         }
 
-        public Impl(CompoundNBT nbt) {
+        public Impl(CompoundTag nbt) {
             amount = nbt.getLong(KEY_AMOUNT);
             percent = nbt.getBoolean(KEY_PERCENT);
         }
@@ -425,15 +433,13 @@ public interface ILabel {
         }
 
         @Override
-        @SuppressWarnings("deprecation")
-        public void drawLabel(JecaGui gui, int xPos, int yPos, boolean center) {
-            RenderSystem.pushMatrix();
-            RenderSystem.translatef(center ? xPos - 8 : xPos, center ? yPos - 8 : yPos, 0);
-            drawLabel(gui);
-            RenderSystem.popMatrix();
+        public void drawLabel(JecaGui gui, int xPos, int yPos, boolean center, boolean hand) {
+            gui.getMatrix().pushPose();
+            drawLabel(center ? xPos - 8 : xPos, center ? yPos - 8 : yPos, gui, hand);
+            gui.getMatrix().popPose();
         }
 
-        abstract protected void drawLabel(JecaGui gui);
+        abstract protected void drawLabel(int xPos, int yPos, JecaGui gui, boolean hand);
 
         @Override
         public ILabel increaseAmount() {
@@ -508,8 +514,8 @@ public interface ILabel {
         }
 
         @Override
-        public CompoundNBT toNbt() {
-            CompoundNBT nbt = new CompoundNBT();
+        public CompoundTag toNbt() {
+            CompoundTag nbt = new CompoundTag();
             nbt.putLong(KEY_AMOUNT, amount);
             if (percent) nbt.putBoolean(KEY_PERCENT, true);
             return nbt;

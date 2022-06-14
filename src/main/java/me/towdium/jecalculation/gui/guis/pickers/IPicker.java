@@ -1,9 +1,9 @@
 package me.towdium.jecalculation.gui.guis.pickers;
 
-import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.guis.Gui;
 import me.towdium.jecalculation.gui.guis.IGui;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 

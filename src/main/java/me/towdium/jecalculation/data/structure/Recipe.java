@@ -1,10 +1,10 @@
 package me.towdium.jecalculation.data.structure;
 
-import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.utils.Utilities;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
+import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ public class Recipe {
     List<ILabel> catalyst;
     List<ILabel> output;
 
-    public Recipe(CompoundNBT nbt) {
+    public Recipe(CompoundTag nbt) {
         this(readNbtList(nbt.getList(KEY_INPUT, 10)),
                 readNbtList(nbt.getList(KEY_CATALYST, 10)),
                 readNbtList(nbt.getList(KEY_OUTPUT, 10)));
@@ -48,9 +48,9 @@ public class Recipe {
         this.output = output;
     }
 
-    static private List<ILabel> readNbtList(ListNBT list) {
-        return list.stream().filter(n -> n instanceof CompoundNBT)
-                .map(n -> ILabel.SERIALIZER.deserialize((CompoundNBT) n))
+    static private List<ILabel> readNbtList(ListTag list) {
+        return list.stream().filter(n -> n instanceof CompoundTag)
+                .map(n -> ILabel.SERIALIZER.deserialize((CompoundTag) n))
                 .collect(Collectors.toList());
     }
 
@@ -101,9 +101,9 @@ public class Recipe {
         return ILabel.EMPTY;
     }
 
-    public CompoundNBT serialize() {
-        CompoundNBT ret = new CompoundNBT();
-        Function<List<ILabel>, ListNBT> convert = (ls) -> {
+    public CompoundTag serialize() {
+        CompoundTag ret = new CompoundTag();
+        Function<List<ILabel>, ListTag> convert = (ls) -> {
             ArrayList<ILabel> labels = new ArrayList<>();
             boolean start = false;
             for (int i = ls.size() - 1; i >= 0; i--) {
@@ -113,7 +113,7 @@ public class Recipe {
                 }
             }
 
-            ListNBT r = new ListNBT();
+            ListTag r = new ListTag();
             new Utilities.ReversedIterator<>(labels).stream()
                     .forEach(l -> r.add(ILabel.SERIALIZER.serialize(l)));
             return r;

@@ -1,12 +1,12 @@
 package me.towdium.jecalculation.data.structure;
 
-import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.Utilities.ReversedIterator;
 import me.towdium.jecalculation.utils.wrappers.Pair;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
+import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraftforge.fml.loading.FMLPaths;
 
 import javax.annotation.Nullable;
@@ -30,7 +30,7 @@ public class Recipes {
 
     public Recipes() {
         File file = new File(FMLPaths.CONFIGDIR.get().toFile(), JustEnoughCalculation.MODID);
-        CompoundNBT nbt = Utilities.Json.read(file);
+        CompoundTag nbt = Utilities.Json.read(file);
         if (nbt == null) JustEnoughCalculation.logger.info("Failed to load default records at " + file + ".");
         else {
             JustEnoughCalculation.logger.info("Loading default records at " + file + ".");
@@ -38,17 +38,17 @@ public class Recipes {
         }
     }
 
-    public Recipes(CompoundNBT nbt) {
+    public Recipes(CompoundTag nbt) {
         deserialize(nbt);
     }
 
-    protected void deserialize(CompoundNBT nbt) {
-        nbt.keySet().stream().sorted().forEach(i -> {
-            ListNBT group = nbt.getList(i, 10);
-            group.stream().filter(r -> r instanceof CompoundNBT)
+    protected void deserialize(CompoundTag nbt) {
+        nbt.getAllKeys().stream().sorted().forEach(i -> {
+            ListTag group = nbt.getList(i, 10);
+            group.stream().filter(r -> r instanceof CompoundTag)
                     .forEach(r -> {
                         try {
-                            add(i, new Recipe((CompoundNBT) r));
+                            add(i, new Recipe((CompoundTag) r));
                         } catch (IllegalArgumentException e) {
                             JustEnoughCalculation.logger.warn("Invalid recipe record :" + r);
                         }
@@ -131,10 +131,10 @@ public class Recipes {
         return records.get(group);
     }
 
-    public CompoundNBT serialize(Collection<String> groups) {
-        CompoundNBT ret = new CompoundNBT();
+    public CompoundTag serialize(Collection<String> groups) {
+        CompoundTag ret = new CompoundTag();
         groups.forEach(i -> {
-            ListNBT l = new ListNBT();
+            ListTag l = new ListTag();
             getGroup(i).forEach(r -> l.add(r.serialize()));
             ret.put(i, l);
         });
@@ -145,7 +145,7 @@ public class Recipes {
         return records.keySet().stream().sorted().collect(Collectors.toList());
     }
 
-    public CompoundNBT serialize() {
+    public CompoundTag serialize() {
         return serialize(getGroups());
     }
 

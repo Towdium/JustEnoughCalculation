@@ -3,9 +3,9 @@ package me.towdium.jecalculation.network.packets;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.labels.LPlaceholder;
 import me.towdium.jecalculation.data.structure.RecordPlayer;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -22,14 +22,14 @@ public class PRecord {
     public PRecord() {
     }
 
-    public PRecord(PacketBuffer buf) {
-        CompoundNBT tag = Objects.requireNonNull(buf.readCompoundTag());
+    public PRecord(FriendlyByteBuf buf) {
+        CompoundTag tag = Objects.requireNonNull(buf.readNbt());
         LPlaceholder.state = false;
         record = new RecordPlayer(tag);
     }
 
-    public void write(PacketBuffer buf) {
-        buf.writeCompoundTag(record.serialize());
+    public void write(FriendlyByteBuf buf) {
+        buf.writeNbt(record.serialize());
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {

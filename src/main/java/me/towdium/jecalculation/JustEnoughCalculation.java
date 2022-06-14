@@ -1,6 +1,5 @@
 package me.towdium.jecalculation;
 
-import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.events.GuiScreenEventHandler;
@@ -8,21 +7,19 @@ import me.towdium.jecalculation.network.packets.PCalculator;
 import me.towdium.jecalculation.network.packets.PEdit;
 import me.towdium.jecalculation.network.packets.PRecord;
 import me.towdium.jecalculation.utils.Utilities;
-import mezz.jei.api.gui.handlers.IScreenHandler;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.simple.SimpleChannel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,7 +30,7 @@ import static me.towdium.jecalculation.gui.JecaGui.keyOpenGuiCraft;
 import static me.towdium.jecalculation.gui.JecaGui.keyOpenGuiMath;
 import static net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus.MOD;
 import static net.minecraftforge.fml.config.ModConfig.Type.COMMON;
-import static net.minecraftforge.fml.network.NetworkRegistry.ABSENT;
+import static net.minecraftforge.network.NetworkRegistry.ABSENT;
 
 @Mod.EventBusSubscriber(bus = MOD)
 @MethodsReturnNonnullByDefault
@@ -69,7 +66,6 @@ public class JustEnoughCalculation {
         network.registerMessage(0, PCalculator.class, PCalculator::write, PCalculator::new, PCalculator::handle);
         network.registerMessage(1, PEdit.class, PEdit::write, PEdit::new, PEdit::handle);
         network.registerMessage(2, PRecord.class, PRecord::write, PRecord::new, PRecord::handle);
-        CapabilityManager.INSTANCE.register(JecaCapability.Container.class, new JecaCapability.Storage(), JecaCapability.Container::new);
         ILabel.initServer();
     }
 

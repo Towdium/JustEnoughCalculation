@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[34,)"
+loaderVersion="[40,)"
 issueTrackerURL="https://github.com/Towdium/JustEnoughCalculation/issues"
 license="The MIT License (MIT)"
 
@@ -14,6 +14,6 @@ description="A simple mod to help you with recipe calculation."
 [[dependencies.jecalculation]]
     modId="jei"
     mandatory=true
-    versionRange="[7.0.1.10,)"
+    versionRange="[9.7.0,)"
     ordering="AFTER"
     side="BOTH"

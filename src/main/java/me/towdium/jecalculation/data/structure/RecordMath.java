@@ -1,6 +1,7 @@
 package me.towdium.jecalculation.data.structure;
 
-import net.minecraft.nbt.CompoundNBT;
+
+import net.minecraft.nbt.CompoundTag;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -31,20 +32,14 @@ public class RecordMath implements IRecord {
         EQUALS, PLUS, MINUS, TIMES, DIVIDE;
 
         public BigDecimal operate(BigDecimal a, BigDecimal b) {
-            switch (this) {
-                case PLUS:
-                    return a.add(b);
-                case MINUS:
-                    return a.subtract(b);
-                case TIMES:
-                    return a.multiply(b);
-                case DIVIDE:
-                    return a.divide(b, context);
-                case EQUALS:
-                    return b;
-                default:
-                    throw new RuntimeException("Internal Error");
-            }
+            return switch (this) {
+                case PLUS -> a.add(b);
+                case MINUS -> a.subtract(b);
+                case TIMES -> a.multiply(b);
+                case DIVIDE -> a.divide(b, context);
+                case EQUALS -> b;
+                default -> throw new RuntimeException("Internal Error");
+            };
         }
     }
 
@@ -60,15 +55,15 @@ public class RecordMath implements IRecord {
         current = sb.toString();
     }
 
-    public RecordMath(CompoundNBT nbt) {
+    public RecordMath(CompoundTag nbt) {
         state = State.values()[nbt.getInt(KEY_STATE)];
         operator = Operator.values()[nbt.getInt(KEY_OPERATOR)];
         last = nbt.contains(KEY_LAST) ? new BigDecimal(nbt.getString(KEY_LAST)) : BigDecimal.ZERO;
         current = nbt.getString(KEY_CURRENT);
     }
 
-    public CompoundNBT serialize() {
-        CompoundNBT ret = new CompoundNBT();
+    public CompoundTag serialize() {
+        CompoundTag ret = new CompoundTag();
         ret.putString(KEY_CURRENT, current);
         ret.putString(KEY_LAST, last.toString());
         ret.putInt(KEY_OPERATOR, operator.ordinal());

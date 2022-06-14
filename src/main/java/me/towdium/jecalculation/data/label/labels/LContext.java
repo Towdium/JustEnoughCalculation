@@ -1,9 +1,11 @@
 package me.towdium.jecalculation.data.label.labels;
 
 import me.towdium.jecalculation.data.label.ILabel;
-import net.minecraft.nbt.CompoundNBT;
 
-public abstract class LContext<T> extends ILabel.Impl {
+import net.minecraft.nbt.CompoundTag;
+import net.minecraftforge.registries.IForgeRegistryEntry;
+
+public abstract class LContext<T extends IForgeRegistryEntry<T>> extends ILabel.Impl {
     public LContext(long amount, boolean percent) {
         super(amount, percent);
     }
@@ -12,7 +14,7 @@ public abstract class LContext<T> extends ILabel.Impl {
         super(lsa);
     }
 
-    public LContext(CompoundNBT nbt) {
+    public LContext(CompoundTag nbt) {
         super(nbt);
     }
 

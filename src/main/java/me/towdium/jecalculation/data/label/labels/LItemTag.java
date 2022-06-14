@@ -1,15 +1,18 @@
 package me.towdium.jecalculation.data.label.labels;
 
-import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.utils.Utilities;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.IForgeRegistry;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -22,11 +25,11 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class LItemTag extends LTag<Item> {
     public static final String IDENTIFIER = "itemTag";
 
-    public LItemTag(ResourceLocation name) {
+    public LItemTag(TagKey<Item> name) {
         super(name);
     }
 
-    public LItemTag(ResourceLocation name, long amount) {
+    public LItemTag(TagKey<Item> name, long amount) {
         super(name, amount);
     }
 
@@ -34,15 +37,20 @@ public class LItemTag extends LTag<Item> {
         super(lt);
     }
 
-    public LItemTag(CompoundNBT nbt) {
+    public LItemTag(CompoundTag nbt) {
         super(nbt);
     }
 
     @Override
-    protected void drawLabel(JecaGui gui) {
+    protected IForgeRegistry<Item> getRegistry() {
+        return ForgeRegistries.ITEMS;
+    }
+
+    @Override
+    protected void drawLabel(int xPos, int yPos, JecaGui gui, boolean hand) {
         Object o = getRepresentation();
-        if (o instanceof ItemStack) gui.drawItemStack(0, 0, (ItemStack) o, false);
-        gui.drawResource(Resource.LBL_FRAME, 0, 0);
+        if (o instanceof ItemStack) gui.drawItemStack(xPos, yPos, (ItemStack) o, false, hand);
+        gui.drawResource(Resource.LBL_FRAME, xPos, yPos);
     }
 
     @Override
@@ -63,6 +71,6 @@ public class LItemTag extends LTag<Item> {
     @Override
     @OnlyIn(Dist.CLIENT)
     public String getDisplayName() {
-        return Utilities.I18n.get("label.item_tag.name", name);
+        return Utilities.I18n.get("label.item_tag.name", name.location());
     }
 }

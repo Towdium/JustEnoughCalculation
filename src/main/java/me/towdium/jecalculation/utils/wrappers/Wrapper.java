@@ -24,6 +24,7 @@ public class Wrapper<T> {
         return this;
     }
 
+
     public Wrapper<T> or(Supplier<T> s) {
         if (value == null) value = s.get();
         return this;

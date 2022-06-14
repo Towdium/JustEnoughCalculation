@@ -1,9 +1,9 @@
 package me.towdium.jecalculation.gui.widgets;
 
-import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.structure.RecordMath.Operator;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
+import net.minecraft.MethodsReturnNonnullByDefault;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.math.BigDecimal;
@@ -103,18 +103,10 @@ public class WLcd implements IWidget {
 
     protected void drawOperator(JecaGui gui, Operator operator) {
         switch (operator) {
-            case PLUS:
-                gui.drawResource(Resource.WGT_LCD_P_F, 132, yPos + 6);
-                break;
-            case MINUS:
-                gui.drawResource(Resource.WGT_LCD_M_F, 139, yPos + 6);
-                break;
-            case TIMES:
-                gui.drawResource(Resource.WGT_LCD_T_F, 146, yPos + 6);
-                break;
-            case DIVIDE:
-                gui.drawResource(Resource.WGT_LCD_D_F, 153, yPos + 6);
-                break;
+            case PLUS -> gui.drawResource(Resource.WGT_LCD_P_F, 132, yPos + 6);
+            case MINUS -> gui.drawResource(Resource.WGT_LCD_M_F, 139, yPos + 6);
+            case TIMES -> gui.drawResource(Resource.WGT_LCD_T_F, 146, yPos + 6);
+            case DIVIDE -> gui.drawResource(Resource.WGT_LCD_D_F, 153, yPos + 6);
         }
     }
 
