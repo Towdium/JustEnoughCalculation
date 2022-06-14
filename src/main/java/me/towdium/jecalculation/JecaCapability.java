@@ -1,20 +1,18 @@
 package me.towdium.jecalculation;
 
-import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.labels.LPlaceholder;
 import me.towdium.jecalculation.data.structure.RecordPlayer;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.common.capabilities.*;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -32,17 +30,24 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class JecaCapability {
-    @CapabilityInject(Container.class)
-    public static final Capability<Container> CAPABILITY_RECORD = null;
+    public static final Capability<Container> CAPABILITY_RECORD = CapabilityManager.get(new CapabilityToken<>(){});
 
-    public static RecordPlayer getRecord(PlayerEntity player) {
+
+
+    public static RecordPlayer getRecord(Player player) {
         //noinspection ConstantConditions
         return player.getCapability(JecaCapability.CAPABILITY_RECORD, Direction.UP).orElseGet(Container::new).getRecord();
     }
 
+
+    @SubscribeEvent
+    public static void onRegisterCapability(RegisterCapabilitiesEvent event) {
+        event.register(Container.class);
+    }
+
     @SubscribeEvent
     public static void onAttachCapability(AttachCapabilitiesEvent<Entity> e) {
-        if (e.getObject() instanceof ServerPlayerEntity) {
+        if (e.getObject() instanceof ServerPlayer) {
             e.addCapability(new ResourceLocation(JustEnoughCalculation.MODID, "record"),
                     new JecaCapability.Provider());
         }
@@ -68,20 +73,7 @@ public class JecaCapability {
         }
     }
 
-    public static class Storage implements Capability.IStorage<Container> {
-        @Nullable
-        @Override
-        public INBT writeNBT(Capability<Container> capability, Container instance, Direction side) {
-            return null;
-        }
-
-        @Override
-        public void readNBT(Capability<Container> capability, Container instance, Direction side, INBT nbt) {
-
-        }
-    }
-
-    public static class Provider implements ICapabilityProvider, INBTSerializable<CompoundNBT> {
+    public static class Provider implements ICapabilityProvider, INBTSerializable<CompoundTag> {
         Container container;
 
         public Provider() {
@@ -90,12 +82,12 @@ public class JecaCapability {
 
 
         @Override
-        public CompoundNBT serializeNBT() {
+        public CompoundTag serializeNBT() {
             return container.getRecord().serialize();
         }
 
         @Override
-        public void deserializeNBT(CompoundNBT nbt) {
+        public void deserializeNBT(CompoundTag nbt) {
             boolean s = LPlaceholder.state;
             LPlaceholder.state = false;
             container.setRecord(new RecordPlayer(nbt));

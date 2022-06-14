@@ -1,12 +1,12 @@
 package me.towdium.jecalculation.gui.guis.pickers;
 
-import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.label.labels.LItemStack;
 import me.towdium.jecalculation.gui.guis.IGui;
 import me.towdium.jecalculation.gui.widgets.WButton;
 import me.towdium.jecalculation.gui.widgets.WButtonIcon;
 import me.towdium.jecalculation.gui.widgets.WLabel;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -72,8 +72,7 @@ public class PickerItemStack extends IPicker.Impl implements IGui {
         if (b) add(bd);
         else add(be);
         r.run();
-        if (raw instanceof LItemStack) {
-            LItemStack lis = (LItemStack) raw;
+        if (raw instanceof LItemStack lis) {
             label.setLabel(lis.copy().setFCap(fCap).setFMeta(fMeta).setFNbt(fNbt));
         }
     }

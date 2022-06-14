@@ -1,6 +1,6 @@
 package me.towdium.jecalculation.data.structure;
 
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
 
 /**
  * Author: Towdium
@@ -17,14 +17,14 @@ public class RecordPlayer implements IRecord {
         recipes = new Recipes();
     }
 
-    public RecordPlayer(CompoundNBT nbt) {
+    public RecordPlayer(CompoundTag nbt) {
         recipes = new Recipes(nbt.getCompound(KEY_RECIPES));
         last = nbt.getString(KEY_LAST);
     }
 
     @Override
-    public CompoundNBT serialize() {
-        CompoundNBT ret = new CompoundNBT();
+    public CompoundTag serialize() {
+        CompoundTag ret = new CompoundTag();
         if (last != null) ret.putString(KEY_LAST, last);
         ret.put(KEY_RECIPES, recipes.serialize());
         return ret;

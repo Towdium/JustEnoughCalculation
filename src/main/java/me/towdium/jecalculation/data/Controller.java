@@ -1,6 +1,5 @@
 package me.towdium.jecalculation.data;
 
-import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JecaCapability;
 import me.towdium.jecalculation.JecaConfig;
 import me.towdium.jecalculation.JustEnoughCalculation;
@@ -11,19 +10,20 @@ import me.towdium.jecalculation.network.packets.PEdit;
 import me.towdium.jecalculation.network.packets.PRecord;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -73,7 +73,7 @@ public class Controller {
         File dir = new File(FMLPaths.CONFIGDIR.get().toFile(), JustEnoughCalculation.MODID + "/data");
         File[] fs = dir.listFiles();
         Function<File, Recipes> read = f -> {
-            CompoundNBT nbt = Utilities.Json.read(f);
+            CompoundTag nbt = Utilities.Json.read(f);
             JustEnoughCalculation.logger.warn("File " + f.getAbsolutePath() + " contains invalid records.");
             return nbt == null ? null : new Recipes(nbt);
         };
@@ -90,13 +90,13 @@ public class Controller {
         for (Recipe r : buffer) addRecipe(group, r);
     }
 
-    private static void export(String s, Function<Recipes, CompoundNBT> r) {
-        ClientPlayerEntity player = Minecraft.getInstance().player;
+    private static void export(String s, Function<Recipes, CompoundTag> r) {
+        LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) return;
 
         File f = new File(FMLPaths.CONFIGDIR.get().toFile(), JustEnoughCalculation.MODID + "/data/" + s + ".json");
         Utilities.Json.write(r.apply(getRecipes()), f);
-        player.sendStatusMessage(new TranslationTextComponent(
+        player.displayClientMessage(new TranslatableComponent(
                 "jecalculation.chat.export", f.getAbsolutePath()), false);
     }
 
@@ -198,7 +198,7 @@ public class Controller {
         }
     }
 
-    public static <T> T getR(T t, String s, Function<CompoundNBT, T> f, @Nullable ItemStack is) {
+    public static <T> T getR(T t, String s, Function<CompoundTag, T> f, @Nullable ItemStack is) {
         if (!isServerActive()) return t;
         else if (is != null) return f.apply(Utilities.getTag(is).getCompound(s));
         else throw new RuntimeException("Internal error");
@@ -229,7 +229,7 @@ public class Controller {
         //noinspection ResultOfMethodCallIgnored
         new File(Utilities.config(), "/data").mkdirs();
         File file = new File(Utilities.config() + "/record.json");
-        CompoundNBT nbt = Utilities.Json.read(file);
+        CompoundTag nbt = Utilities.Json.read(file);
         boolean s = LPlaceholder.state;
         LPlaceholder.state = true;
         if (nbt != null) {
@@ -238,15 +238,15 @@ public class Controller {
             rPlayerClient = nbt.contains(KEY_PLAYER) ? new RecordPlayer(nbt.getCompound(KEY_PLAYER)) : new RecordPlayer();
         } else {
             rPlayerClient = new RecordPlayer();
-            rCraftClient = new RecordCraft(new CompoundNBT());
-            rMathClient = new RecordMath(new CompoundNBT());
+            rCraftClient = new RecordCraft(new CompoundTag());
+            rMathClient = new RecordMath(new CompoundTag());
         }
         LPlaceholder.state = s;
     }
 
     public static void writeToLocal() {
         File file = new File(Utilities.config(), "/record.json");
-        CompoundNBT nbt = new CompoundNBT();
+        CompoundTag nbt = new CompoundTag();
         nbt.put(KEY_CRAFT, rCraftClient.serialize());
         nbt.put(KEY_PLAYER, rPlayerClient.serialize());
         nbt.put(KEY_MATH, rMathClient.serialize());
@@ -268,7 +268,7 @@ public class Controller {
         @SubscribeEvent
         public static void onJoin(PlayerEvent.PlayerLoggedInEvent e) {
             if (!JecaConfig.clientMode.get())
-                network.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) e.getPlayer()),
+                network.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) e.getPlayer()),
                         new PRecord(JecaCapability.getRecord(e.getPlayer())));
         }
     }

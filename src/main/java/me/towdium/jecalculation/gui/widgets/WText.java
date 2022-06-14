@@ -1,7 +1,7 @@
 package me.towdium.jecalculation.gui.widgets;
 
-import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -19,14 +19,14 @@ public class WText implements IWidget {
 
     public int xPos, yPos, xSize;
     public boolean centred;
-    public JecaGui.Font font;
+    public JecaGui.FontType font;
     public String key;
 
-    public WText(int xPos, int yPos, JecaGui.Font font, String key) {
+    public WText(int xPos, int yPos, JecaGui.FontType font, String key) {
         this(xPos, yPos, UNDEFINED, font, key, false);
     }
 
-    public WText(int xPos, int yPos, int xSize, JecaGui.Font font, String key, boolean centred) {
+    public WText(int xPos, int yPos, int xSize, JecaGui.FontType font, String key, boolean centred) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.xSize = xSize;

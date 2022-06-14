@@ -1,16 +1,16 @@
 package me.towdium.jecalculation.gui.widgets;
 
-import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.utils.Utilities.I18n;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 
-import static me.towdium.jecalculation.gui.JecaGui.Font.PLAIN;
-import static me.towdium.jecalculation.gui.JecaGui.Font.SHADOW;
+import static me.towdium.jecalculation.gui.JecaGui.FontType.PLAIN;
+import static me.towdium.jecalculation.gui.JecaGui.FontType.SHADOW;
 import static me.towdium.jecalculation.gui.Resource.*;
 
 /**

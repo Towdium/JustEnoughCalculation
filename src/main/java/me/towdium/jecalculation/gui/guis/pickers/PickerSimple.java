@@ -1,6 +1,5 @@
 package me.towdium.jecalculation.gui.guis.pickers;
 
-import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.label.labels.LFluidStack;
 import me.towdium.jecalculation.data.label.labels.LFluidTag;
@@ -9,6 +8,7 @@ import me.towdium.jecalculation.gui.guis.IGui;
 import me.towdium.jecalculation.gui.widgets.WIcon;
 import me.towdium.jecalculation.gui.widgets.WLabelScroll;
 import me.towdium.jecalculation.gui.widgets.WSearch;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraftforge.api.distmarker.Dist;
@@ -44,7 +44,7 @@ public class PickerSimple extends IPicker.Impl implements IGui {
 
     public static class FluidStack extends PickerSimple {
         public FluidStack() {
-            super(ForgeRegistries.FLUIDS.getValues().stream().filter(i -> i.isSource(i.getDefaultState()))
+            super(ForgeRegistries.FLUIDS.getValues().stream().filter(i -> i.isSource(i.defaultFluidState()))
                     .map(i -> new LFluidStack(1000, i)).collect(Collectors.toList()));
         }
     }
@@ -55,12 +55,12 @@ public class PickerSimple extends IPicker.Impl implements IGui {
         }
 
         static List<ILabel> generate() {
-            Stream<LItemTag> items = ItemTags.getCollection().getIDTagMap().entrySet().stream()
-                    .filter(i -> !i.getValue().getAllElements().isEmpty())
+            Stream<LItemTag> items = ForgeRegistries.ITEMS.tags().stream()
+                    .filter(i -> !i.isEmpty())
                     .map(i -> new LItemTag(i.getKey()))
                     .sorted(Comparator.comparing(LItemTag::getName));
-            Stream<LFluidTag> fluids = FluidTags.getCollection().getIDTagMap().entrySet().stream()
-                    .filter(i -> !i.getValue().getAllElements().isEmpty())
+            Stream<LFluidTag> fluids = ForgeRegistries.FLUIDS.tags().stream()
+                    .filter(i -> !i.isEmpty())
                     .map(i -> new LFluidTag(i.getKey()))
                     .sorted(Comparator.comparing(LFluidTag::getName));
             return Stream.of(items, fluids).flatMap(i -> i).collect(Collectors.toList());

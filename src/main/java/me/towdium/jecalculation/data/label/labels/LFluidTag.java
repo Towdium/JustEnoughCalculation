@@ -1,15 +1,18 @@
 package me.towdium.jecalculation.data.label.labels;
 
-import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.utils.Utilities;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.IForgeRegistry;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -18,11 +21,11 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class LFluidTag extends LTag<Fluid> {
     public static final String IDENTIFIER = "fluidTag";
 
-    public LFluidTag(ResourceLocation name) {
+    public LFluidTag(TagKey<Fluid> name) {
         super(name);
     }
 
-    public LFluidTag(ResourceLocation name, long amount) {
+    public LFluidTag(TagKey<Fluid> name, long amount) {
         super(name, amount);
     }
 
@@ -30,16 +33,21 @@ public class LFluidTag extends LTag<Fluid> {
         super(lt);
     }
 
-    public LFluidTag(CompoundNBT nbt) {
+    public LFluidTag(CompoundTag nbt) {
         super(nbt);
     }
 
     @Override
-    protected void drawLabel(JecaGui gui) {
+    protected IForgeRegistry<Fluid> getRegistry() {
+        return ForgeRegistries.FLUIDS;
+    }
+
+    @Override
+    protected void drawLabel(int xPos, int yPos, JecaGui gui, boolean hand) {
         Object o = getRepresentation();
-        gui.drawResource(Resource.LBL_FLUID, 0, 0);
-        if (o instanceof FluidStack) gui.drawFluid(((FluidStack) o).getFluid(), 2, 2, 12, 12);
-        gui.drawResource(Resource.LBL_FRAME, 0, 0);
+        gui.drawResource(Resource.LBL_FLUID, xPos, yPos);
+        if (o instanceof FluidStack) gui.drawFluid(((FluidStack) o).getFluid(), xPos + 2, yPos + 2, 12, 12);
+        gui.drawResource(Resource.LBL_FRAME, xPos, yPos);
     }
 
     @Override
@@ -65,6 +73,6 @@ public class LFluidTag extends LTag<Fluid> {
     @Override
     @OnlyIn(Dist.CLIENT)
     public String getDisplayName() {
-        return Utilities.I18n.get("label.fluid_tag.name", name);
+        return Utilities.I18n.get("label.fluid_tag.name", name.location());
     }
 }

@@ -1,6 +1,6 @@
 package me.towdium.jecalculation.gui.widgets;
 
-import mcp.MethodsReturnNonnullByDefault;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -32,7 +32,7 @@ public class WSearch extends WTextField {
 
     public void refresh() {
         boolean b = false;
-        for (ISearchable i : lss) if (i.setFilter(textField.getText())) b = true;
+        for (ISearchable i : lss) if (i.setFilter(textField.getValue())) b = true;
         setColor(b ? COLOR_TEXT_WHITE : COLOR_TEXT_RED);
     }
 }

@@ -1,7 +1,7 @@
 package me.towdium.jecalculation.gui.widgets;
 
-import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.utils.Utilities.Circulator;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static me.towdium.jecalculation.gui.JecaGui.COLOR_GUI_GREY;
-import static me.towdium.jecalculation.gui.JecaGui.Font.SHADOW;
+import static me.towdium.jecalculation.gui.JecaGui.FontType.SHADOW;
 import static me.towdium.jecalculation.gui.Resource.WGT_ARR_L;
 import static me.towdium.jecalculation.gui.Resource.WGT_ARR_R;
 

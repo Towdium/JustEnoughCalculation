@@ -1,8 +1,8 @@
 package me.towdium.jecalculation.gui.guis;
 
-import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.widgets.IWidget;
 import me.towdium.jecalculation.gui.widgets.WContainer;
+import net.minecraft.MethodsReturnNonnullByDefault;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
