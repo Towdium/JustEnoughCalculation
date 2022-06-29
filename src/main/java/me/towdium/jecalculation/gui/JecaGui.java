@@ -97,7 +97,12 @@ public class JecaGui extends ContainerScreen<JecaGui.JecaContainer> {
 
     @Override
     public void init(Minecraft minecraft, int width, int height) {
-        super.init(minecraft, width, height);
+        this.minecraft = minecraft;
+        this.itemRenderer = minecraft.getItemRenderer();
+        this.font = minecraft.fontRenderer;
+        this.width = width;
+        this.height = height;
+        this.init();
         minecraft.keyboardListener.enableRepeatEvents(true);
     }
 
