@@ -33,7 +33,7 @@ import static me.towdium.jecalculation.utils.Utilities.getPlayer;
 @OnlyIn(Dist.CLIENT)
 public class GuiCraftMini extends WContainer {
     public final int WINDOW_WIDTH = 98;
-    public final int WINDOW_HEIGHT = 98;
+    public final int WINDOW_HEIGHT = 62 + 18*4;
 
     protected int slot = 0;
     protected ItemStack itemStack;
@@ -78,7 +78,7 @@ public class GuiCraftMini extends WContainer {
     WButton steps = new WButtonIcon(67, 37, 20, 20, Resource.BTN_LIST, "craft.step")
             .setListener(i -> setMode(STEPS));
 
-    WLabelScroll result = new WLabelScroll(4, 58, 4, 2, false)
+    WLabelScroll result = new WLabelScroll(4, 58, 4, 4, false)
             .setLsnrClick((i, v) -> JecaPlugin.showRecipe(i.get(v).getLabel()))
             .setFmtAmount(i -> i.getAmountString(true))
             .setFmtTooltip((i, j) -> i.getToolTip(j, true));
@@ -91,7 +91,7 @@ public class GuiCraftMini extends WContainer {
         this.offsetY = record.overlayPositionY;
         amount.setText(record.amount);
 
-        add(new WPanel(0, 0, 98, 98));
+        add(new WPanel(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT));
         add(new WText(25, 21, JecaGui.Font.RAW, "x"));
         add(drag, close, label, input, output, catalyst, steps, result, amount, record.inventory ? invE : invD);
 
