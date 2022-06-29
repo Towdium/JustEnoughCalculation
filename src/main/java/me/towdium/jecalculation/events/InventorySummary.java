@@ -38,13 +38,10 @@ public class InventorySummary {
     protected boolean isStackTypeEqual(ItemStack first, ItemStack second) {
         if (first.getItem() != second.getItem()) {
             return false;
-        } else if (first.getTag() == null && second.getTag() != null) {
-            return false;
         } else if (first.getItem() instanceof JecaItem && second.getItem() instanceof JecaItem) {
             return first.getItem() == second.getItem();
         } else {
-            return (first.getTag() == null || first.getTag().equals(second.getTag()))
-                && first.areCapsCompatible(second);
+            return first.areCapsCompatible(second);
         }
     }
 
