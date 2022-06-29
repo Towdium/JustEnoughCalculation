@@ -1,11 +1,11 @@
 package me.towdium.jecalculation.data.structure;
 
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
 
 /**
  * Author: Towdium
  * Date: 05/02/19
  */
 public interface IRecord {
-    CompoundNBT serialize();
+    CompoundTag serialize();
 }

@@ -1,13 +1,13 @@
 package me.towdium.jecalculation.data.structure;
 
-import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.TranslatableComponent;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -74,8 +74,7 @@ public class CostList {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof CostList) {
-            CostList c = (CostList) obj;
+        if (obj instanceof CostList c) {
             CostList m = c.copy().multiply(-1);
             return merge(m, true, false).labels.isEmpty();
         } else return false;
@@ -113,7 +112,7 @@ public class CostList {
         private int index;
 
         public Calculator() throws ArithmeticException {
-            ClientPlayerEntity player = Minecraft.getInstance().player;
+            LocalPlayer player = Minecraft.getInstance().player;
             HashSet<CostList> set = new HashSet<>();
             set.add(CostList.this);
             Pair<Recipe, Long> next = find(true);
@@ -138,7 +137,7 @@ public class CostList {
                     next = find(true);
                 }
                 if (count++ > 1000 && player != null) {
-                    player.sendStatusMessage(new TranslationTextComponent("jecalculation.chat.max_loop"), false);
+                    player.displayClientMessage(new TranslatableComponent("jecalculation.chat.max_loop"), false);
                     break;
                 }
             }

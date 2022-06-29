@@ -3,7 +3,6 @@ package me.towdium.jecalculation.gui.guis;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.guis.pickers.IPicker;
 import me.towdium.jecalculation.gui.widgets.WContainer;
@@ -11,6 +10,7 @@ import me.towdium.jecalculation.gui.widgets.WHelp;
 import me.towdium.jecalculation.gui.widgets.WPage;
 import me.towdium.jecalculation.gui.widgets.WPanel;
 import me.towdium.jecalculation.utils.wrappers.Wrapper;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -29,7 +29,7 @@ public class GuiLabel extends Gui {
     IPicker current;
     Consumer<ILabel> callback;
     LoadingCache<Integer, IPicker> cache = CacheBuilder.newBuilder().build(
-            new CacheLoader<Integer, IPicker>() {
+            new CacheLoader<>() {
                 @Override
                 public IPicker load(Integer i) {
                     ILabel.RegistryEditor.Record record = ILabel.EDITOR.getRecords().get(i);

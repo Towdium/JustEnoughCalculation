@@ -1,6 +1,5 @@
 package me.towdium.jecalculation.gui.guis;
 
-import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.structure.CostList;
@@ -11,8 +10,9 @@ import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.gui.widgets.*;
 import me.towdium.jecalculation.jei.JecaPlugin;
 import me.towdium.jecalculation.utils.wrappers.Pair;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
+import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -81,7 +81,7 @@ public class GuiCraft extends Gui {
                 .setListener(i -> JecaGui.displayGui(new GuiRecipe())));
         add(new WButtonIcon(149, 7, 20, 20, Resource.BTN_SEARCH, "craft.search")
                 .setListener(i -> JecaGui.displayGui(new GuiSearch())));
-        add(new WText(53, 13, JecaGui.Font.RAW, "x"));
+        add(new WText(53, 13, JecaGui.FontType.RAW, "x"));
         add(new WLine(55));
         add(new WIcon(151, 31, 18, 18, Resource.ICN_RECENT, "craft.history"));
         add(recent, label, input, output, catalyst, steps, result, amount, record.inventory ? invE : invD);
@@ -149,15 +149,15 @@ public class GuiCraft extends Gui {
     }
 
     List<ILabel> getInventory() {
-        PlayerInventory inv = getPlayer().inventory;
+        Inventory inv = getPlayer().getInventory();
         ArrayList<ILabel> labels = new ArrayList<>();
         Consumer<List<ItemStack>> add = i -> i.stream()
                 .filter(j -> !j.isEmpty())
                 .forEach(j -> labels.add(ILabel.Converter.from(j)));
 
-        add.accept(inv.armorInventory);
-        add.accept(inv.mainInventory);
-        add.accept(inv.offHandInventory);
+        add.accept(inv.armor);
+        add.accept(inv.items);
+        add.accept(inv.offhand);
         return labels;
     }
 
@@ -166,18 +166,10 @@ public class GuiCraft extends Gui {
             result.setLabels(new ArrayList<>());
         } else {
             switch (record.mode) {
-                case INPUT:
-                    result.setLabels(calculator.getInputs());
-                    break;
-                case OUTPUT:
-                    result.setLabels(calculator.getOutputs(getInventory()));
-                    break;
-                case CATALYST:
-                    result.setLabels(calculator.getCatalysts());
-                    break;
-                case STEPS:
-                    result.setLabels(calculator.getSteps());
-                    break;
+                case INPUT -> result.setLabels(calculator.getInputs());
+                case OUTPUT -> result.setLabels(calculator.getOutputs(getInventory()));
+                case CATALYST -> result.setLabels(calculator.getCatalysts());
+                case STEPS -> result.setLabels(calculator.getSteps());
             }
         }
     }

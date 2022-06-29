@@ -1,10 +1,10 @@
 package me.towdium.jecalculation.gui.widgets;
 
-import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.glfw.GLFW;
@@ -21,14 +21,14 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class WTextField implements IWidget {
     public ListenerAction<? super WTextField> listener;
     protected int xPos, yPos, xSize;
-    TextFieldWidget textField;
+    EditBox textField;
     public static final int HEIGHT = 20;
 
     public WTextField(int xPos, int yPos, int xSize) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.xSize = xSize;
-        textField = new TextFieldWidget(Minecraft.getInstance().fontRenderer, xPos + 1, yPos + 1, xSize - 2, 18, new StringTextComponent("WIP"));
+        textField = new EditBox(Minecraft.getInstance().font, xPos + 1, yPos + 1, xSize - 2, 18, new TextComponent("WIP"));
     }
 
     @Override
@@ -44,7 +44,7 @@ public class WTextField implements IWidget {
     @Override
     public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
         if (textField.isFocused() && button == 1) {
-            textField.setText("");
+            textField.setValue("");
             notifyLsnr();
             return true;
         } else return false;
@@ -60,7 +60,7 @@ public class WTextField implements IWidget {
     public boolean onKeyPressed(JecaGui gui, int key, int modifier) {
         boolean ret = textField.keyPressed(key, GLFW.glfwGetKeyScancode(key), modifier);
         if (ret) notifyLsnr();
-        return textField.isFocused() && textField.getVisible() && key != 256;
+        return textField.isFocused() && textField.isVisible() && key != 256;
     }
 
     @Override
@@ -77,11 +77,11 @@ public class WTextField implements IWidget {
     }
 
     public String getText() {
-        return textField.getText();
+        return textField.getValue();
     }
 
     public WTextField setText(String s) {
-        textField.setText(s);
+        textField.setValue(s);
         return this;
     }
 

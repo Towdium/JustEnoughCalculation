@@ -1,15 +1,15 @@
 package me.towdium.jecalculation.data.label.labels;
 
-import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.label.ILabel.Serializer.SerializationException;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.utils.Utilities;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -38,8 +38,8 @@ public class LItemStack extends LStack<Item> {
     public static final String KEY_F_NBT = "fNbt";
 
     Item item;
-    CompoundNBT nbt;
-    CompoundNBT cap;
+    CompoundTag nbt;
+    CompoundTag cap;
     boolean fMeta;
     boolean fNbt;
     boolean fCap;
@@ -51,7 +51,7 @@ public class LItemStack extends LStack<Item> {
         init(is.getItem(), getCap(is), is.getTag(), false, false, false);
     }
 
-    public LItemStack(CompoundNBT tag) {
+    public LItemStack(CompoundTag tag) {
         super(tag);
         String id = tag.getString(KEY_ITEM);
         Item i = ForgeRegistries.ITEMS.getValue(new ResourceLocation(id));
@@ -85,8 +85,8 @@ public class LItemStack extends LStack<Item> {
         rep = lis.rep;
     }
 
-    private void init(@Nullable Item item, @Nullable CompoundNBT cap,
-                      @Nullable CompoundNBT nbt, boolean fMeta, boolean fCap, boolean fNbt) {
+    private void init(@Nullable Item item, @Nullable CompoundTag cap,
+                      @Nullable CompoundTag nbt, boolean fMeta, boolean fCap, boolean fNbt) {
         Objects.requireNonNull(item);
         this.item = item;
         this.cap = cap;
@@ -99,17 +99,15 @@ public class LItemStack extends LStack<Item> {
     }
 
     @Nullable
-    private static CompoundNBT getCap(ItemStack is) {
-        CompoundNBT nbt = is.serializeNBT();
+    private static CompoundTag getCap(ItemStack is) {
+        CompoundTag nbt = is.serializeNBT();
         return nbt.contains("ForgeCaps") ? nbt.getCompound("ForgeCaps") : null;
     }
 
     public static boolean merge(ILabel a, ILabel b) {
-        if (a instanceof LItemStack && b instanceof LItemStack) {
-            LItemStack lisA = (LItemStack) a;
-            LItemStack lisB = (LItemStack) b;
+        if (a instanceof LItemStack lisA && b instanceof LItemStack lisB) {
 
-            if (lisA.rep.getDamage() != lisB.rep.getDamage()
+            if (lisA.rep.getDamageValue() != lisB.rep.getDamageValue()
                     && !lisA.fMeta && !lisB.fMeta) return false;
             if (!lisA.fNbt && !lisB.fNbt) {
                 if (lisA.nbt == null) {
@@ -136,7 +134,7 @@ public class LItemStack extends LStack<Item> {
         for (ILabel i : iss) {
             LItemStack ii = (LItemStack) i;
             if (ii.item != lis.item) return new ArrayList<>();
-            if (ii.rep.getDamage() != lis.rep.getDamage() || ii.fMeta) fMeta = true;
+            if (ii.rep.getDamageValue() != lis.rep.getDamageValue() || ii.fMeta) fMeta = true;
             if (!Objects.equals(ii.nbt, lis.nbt)) fNbt = true;
             if (!Objects.equals(ii.cap, lis.cap)) fCap = true;
         }
@@ -149,8 +147,7 @@ public class LItemStack extends LStack<Item> {
         List<ILabel> ret = new ArrayList<>();
         if (iss.size() == 1) {
             ILabel label = iss.get(0);
-            if (!(label instanceof LItemStack)) return ret;
-            LItemStack lis = (LItemStack) label;
+            if (!(label instanceof LItemStack lis)) return ret;
             if (lis.fCap || lis.fNbt || lis.fMeta) return new ArrayList<>();
             ret.add(lis.copy().setFMeta(true));
             ret.add(lis.copy().setFNbt(true));
@@ -191,7 +188,7 @@ public class LItemStack extends LStack<Item> {
 
     @Override
     public String getDisplayName() {
-        return rep.getDisplayName().getString();
+        return rep.getHoverName().getString();
     }
 
     @Override
@@ -201,8 +198,7 @@ public class LItemStack extends LStack<Item> {
 
     @Override
     public boolean matches(Object l) {
-        if (l instanceof LItemStack) {
-            LItemStack lis = (LItemStack) l;
+        if (l instanceof LItemStack lis) {
             return Objects.equals(nbt, lis.nbt)
                     && Objects.equals(cap, lis.cap)
                     && item == lis.item
@@ -211,16 +207,18 @@ public class LItemStack extends LStack<Item> {
         } else return false;
     }
 
+
+
     @Override
     public LItemStack copy() {
         return new LItemStack(this);
     }
 
     @Override
-    public CompoundNBT toNbt() {
+    public CompoundTag toNbt() {
         ResourceLocation rl = ForgeRegistries.ITEMS.getKey(item);
         if (rl == null) return ILabel.EMPTY.toNbt();
-        CompoundNBT ret = super.toNbt();
+        CompoundTag ret = super.toNbt();
         ret.putString(KEY_ITEM, rl.toString());
         if (nbt != null) ret.put(KEY_NBT, nbt);
         if (cap != null) ret.put(KEY_CAP, cap);
@@ -232,17 +230,17 @@ public class LItemStack extends LStack<Item> {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void drawLabel(JecaGui gui) {
-        gui.drawItemStack(0, 0, rep, false);
-        if (fCap || fNbt || fMeta) gui.drawResource(Resource.LBL_FRAME, 0, 0);
-        if (fCap) gui.drawResource(Resource.LBL_FR_LL, 0, 0);
-        if (fNbt) gui.drawResource(Resource.LBL_FR_UL, 0, 0);
-        if (fMeta) gui.drawResource(Resource.LBL_FR_UR, 0, 0);
+    public void drawLabel(int xPos, int yPos, JecaGui gui, boolean hand) {
+        gui.drawItemStack(xPos, yPos, rep, false, hand);
+        if (fCap || fNbt || fMeta) gui.drawResource(Resource.LBL_FRAME, xPos, yPos);
+        if (fCap) gui.drawResource(Resource.LBL_FR_LL, xPos, yPos);
+        if (fNbt) gui.drawResource(Resource.LBL_FR_UL, xPos, yPos);
+        if (fMeta) gui.drawResource(Resource.LBL_FR_UR, xPos, yPos);
     }
 
     @Override
     public int hashCode() {
         return (nbt == null ? 0 : nbt.hashCode()) ^ (cap == null ? 0 : cap.hashCode())
-                ^ item.getTranslationKey().hashCode() ^ super.hashCode();
+                ^ item.getDescriptionId().hashCode() ^ super.hashCode();
     }
 }

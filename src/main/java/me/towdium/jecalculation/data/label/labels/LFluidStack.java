@@ -1,14 +1,14 @@
 package me.towdium.jecalculation.data.label.labels;
 
-import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.label.ILabel.Serializer.SerializationException;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.utils.Utilities;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -31,7 +31,7 @@ public class LFluidStack extends LStack<Fluid> {
     public static final String KEY_NBT = "nbt";
 
     Fluid fluid;
-    CompoundNBT nbt;
+    CompoundTag nbt;
     FluidStack temp;
 
     @Override
@@ -52,12 +52,12 @@ public class LFluidStack extends LStack<Fluid> {
         this(amount, fluid, null);
     }
 
-    public LFluidStack(long amount, Fluid fluid, @Nullable CompoundNBT nbt) {
+    public LFluidStack(long amount, Fluid fluid, @Nullable CompoundTag nbt) {
         super(amount, false);
         init(fluid, nbt);
     }
 
-    public LFluidStack(CompoundNBT nbt) {
+    public LFluidStack(CompoundTag nbt) {
         super(nbt);
         String id = nbt.getString(KEY_FLUID);
         Fluid f = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(id));
@@ -75,7 +75,7 @@ public class LFluidStack extends LStack<Fluid> {
         return Context.FLUID;
     }
 
-    private void init(Fluid fluid, @Nullable CompoundNBT nbt) {
+    private void init(Fluid fluid, @Nullable CompoundTag nbt) {
         this.fluid = fluid;
         this.nbt = nbt;
         temp = new FluidStack(fluid, 1, nbt);
@@ -115,8 +115,7 @@ public class LFluidStack extends LStack<Fluid> {
 
     @Override
     public boolean matches(Object l) {
-        if (l instanceof LFluidStack) {
-            LFluidStack lfs = (LFluidStack) l;
+        if (l instanceof LFluidStack lfs) {
             return (Objects.equals(nbt, lfs.nbt)) && fluid == lfs.fluid;
         } else return false;
     }
@@ -127,8 +126,8 @@ public class LFluidStack extends LStack<Fluid> {
     }
 
     @Override
-    public CompoundNBT toNbt() {
-        CompoundNBT ret = super.toNbt();
+    public CompoundTag toNbt() {
+        CompoundTag ret = super.toNbt();
         //noinspection ConstantConditions
         ret.putString(KEY_FLUID, ForgeRegistries.FLUIDS.getKey(fluid).toString());
         if (nbt != null) ret.put(KEY_NBT, nbt);
@@ -141,9 +140,9 @@ public class LFluidStack extends LStack<Fluid> {
     }
 
     @Override
-    public void drawLabel(JecaGui gui) {
-        gui.drawResource(Resource.LBL_FLUID, 0, 0);
-        gui.drawFluid(fluid, 2, 2, 12, 12);
+    public void drawLabel(int xPos, int yPos, JecaGui gui, boolean hand) {
+        gui.drawResource(Resource.LBL_FLUID, xPos, yPos);
+        gui.drawFluid(fluid, xPos + 2, yPos + 2, 12, 12);
     }
 
     @Override

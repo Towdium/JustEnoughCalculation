@@ -1,10 +1,10 @@
 package me.towdium.jecalculation.gui.widgets;
 
-import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.Utilities.I18n;
 import me.towdium.jecalculation.utils.wrappers.Pair;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -41,8 +41,7 @@ public abstract class WTooltip implements IWidget {
     public boolean onTooltip(JecaGui gui, int xMouse, int yMouse, List<String> tooltip) {
         if (timer.getTime() > 500) {
             List<Pair<String, Boolean>> suffix = getSuffix().stream()
-                    .map(s -> I18n.search(s.isEmpty() ? join(".", "gui", name) : join(".", "gui", name, s)))
-                    .collect(Collectors.toList());
+                    .map(s -> I18n.search(s.isEmpty() ? join(".", "gui", name) : join(".", "gui", name, s))).toList();
             String str = suffix.stream()
                     .filter(p -> p.two).findFirst().map(p -> p.one)
                     .orElse(JecaGui.ALWAYS_TOOLTIP ? suffix.get(0).one : null);

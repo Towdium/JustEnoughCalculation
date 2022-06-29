@@ -2,8 +2,8 @@ package me.towdium.jecalculation.data.structure;
 
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.utils.Utilities;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +25,10 @@ public class RecordCraft implements IRecord {
     public boolean inventory;
     public Mode mode;
 
-    public RecordCraft(CompoundNBT nbt) {
+    public RecordCraft(CompoundTag nbt) {
         List<ILabel> ls = nbt.getList(KEY_RECENTS, 10).stream()
-                .filter(n -> n instanceof CompoundNBT)
-                .map(n -> ILabel.SERIALIZER.deserialize((CompoundNBT) n))
+                .filter(n -> n instanceof CompoundTag)
+                .map(n -> ILabel.SERIALIZER.deserialize((CompoundTag) n))
                 .collect(Collectors.toList());
         new Utilities.ReversedIterator<>(ls).forEachRemaining(l -> record.push(l, false));
         amount = nbt.getString(KEY_AMOUNT);
@@ -53,11 +53,11 @@ public class RecordCraft implements IRecord {
         return record.size() > 1 ? record.toList().subList(1, record.size()) : new ArrayList<>();
     }
 
-    public CompoundNBT serialize() {
-        CompoundNBT ret = new CompoundNBT();
+    public CompoundTag serialize() {
+        CompoundTag ret = new CompoundTag();
         ret.putBoolean(KEY_INVENTORY, inventory);
         ret.putString(KEY_AMOUNT, amount);
-        ListNBT recent = new ListNBT();
+        ListTag recent = new ListTag();
         record.toList().forEach(l -> recent.add(ILabel.SERIALIZER.serialize(l)));
         ret.put(KEY_RECENTS, recent);
         ret.putString(KEY_MODE, mode.toString().toLowerCase());

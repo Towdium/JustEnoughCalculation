@@ -1,6 +1,5 @@
 package me.towdium.jecalculation.gui.guis;
 
-import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.structure.CostList;
@@ -11,6 +10,7 @@ import me.towdium.jecalculation.gui.widgets.*;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import me.towdium.jecalculation.utils.wrappers.Trio;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.glfw.GLFW;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 import static me.towdium.jecalculation.gui.JecaGui.COLOR_TEXT_RED;
 import static me.towdium.jecalculation.gui.JecaGui.COLOR_TEXT_WHITE;
-import static me.towdium.jecalculation.gui.JecaGui.Font.PLAIN;
+import static me.towdium.jecalculation.gui.JecaGui.FontType.PLAIN;
 import static me.towdium.jecalculation.gui.Resource.*;
 
 /**

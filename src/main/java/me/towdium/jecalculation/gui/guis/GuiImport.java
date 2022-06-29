@@ -1,6 +1,5 @@
 package me.towdium.jecalculation.gui.guis;
 
-import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.structure.Recipes;
 import me.towdium.jecalculation.gui.JecaGui;
@@ -8,6 +7,7 @@ import me.towdium.jecalculation.gui.widgets.*;
 import me.towdium.jecalculation.utils.Utilities.I18n;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import me.towdium.jecalculation.utils.wrappers.Quad;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -95,7 +95,7 @@ public class GuiImport extends Gui implements ISearchable {
         boolean expand = false;
 
         public WTextExpand(int yPos, String key) {
-            super(25, yPos + 2, 140, JecaGui.Font.SHADOW, key, false);
+            super(25, yPos + 2, 140, JecaGui.FontType.SHADOW, key, false);
         }
 
         //WRectangle rect = new WRectangle(22, 49 + 16 * i, 146, 13, JecaGui.COLOR_GUI_GREY);
@@ -106,11 +106,11 @@ public class GuiImport extends Gui implements ISearchable {
             if (expand) {
                 if (JecaGui.mouseIn(22, yPos - 2, gui.getStringWidth(key) + 6, 13, xMouse, yMouse)) {
                     gui.drawRectangle(22, yPos - 2, gui.getStringWidth(key) + 6, 13, JecaGui.COLOR_GUI_GREY);
-                    gui.drawText(25, yPos, JecaGui.Font.SHADOW, key);
+                    gui.drawText(25, yPos, JecaGui.FontType.SHADOW, key);
                 } else expand = false;
             } else if (JecaGui.mouseIn(22, yPos - 2, 146, 13, xMouse, yMouse) && gui.getStringWidth(key) > 140) {
                 gui.drawRectangle(22, yPos - 2, gui.getStringWidth(key) + 6, 13, JecaGui.COLOR_GUI_GREY);
-                gui.drawText(25, yPos, JecaGui.Font.SHADOW, key);
+                gui.drawText(25, yPos, JecaGui.FontType.SHADOW, key);
                 expand = true;
             }
             return false;
