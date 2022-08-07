@@ -67,9 +67,8 @@ public class Resource {
     public static final Resource BTN_DELETE_N_D = getIcon(8, 3);
     public static final Resource BTN_DELETE_1_N = getIcon(9, 2);
     public static final Resource BTN_DELETE_1_D = getIcon(9, 3);
-    public static final Resource BTN_DOWN_N_N = getIcon(10, 2);
-    public static final Resource BTN_DOWN_A_N = getIcon(11, 2);
-    public static final Resource BTN_UP_N_N = getIcon(12, 2);
+    public static final Resource BTN_WIDGET_E_N = getIcon(10, 2);
+    public static final Resource BTN_WIDGET_D_N = getIcon(11, 2);
 
     public static final Resource WGT_BUTTON_N = getWidget(0);
     public static final Resource WGT_BUTTON_F = getWidget(1);
@@ -169,9 +168,8 @@ public class Resource {
     public static final ResourceGroup BTN_PICK = new ResourceGroup(BTN_PICK_N);
     public static final ResourceGroup BTN_DELETE_N = new ResourceGroup(BTN_DELETE_N_N, BTN_DELETE_N_D);
     public static final ResourceGroup BTN_DELETE_1 = new ResourceGroup(BTN_DELETE_1_N, BTN_DELETE_1_D);
-    public static final ResourceGroup BTN_DOWN_N = new ResourceGroup(BTN_DOWN_N_N);
-    public static final ResourceGroup BTN_DOWN_A = new ResourceGroup(BTN_DOWN_A_N);
-    public static final ResourceGroup BTN_UP_N = new ResourceGroup(BTN_UP_N_N);
+    public static final ResourceGroup BTN_WIDGET_E = new ResourceGroup(BTN_WIDGET_E_N);
+    public static final ResourceGroup BTN_WIDGET_D = new ResourceGroup(BTN_WIDGET_D_N);
 
     public static final ResourceGroup WGT_ARR_L = new ResourceGroup(WGT_ARR_L_N, WGT_ARR_L_D);
     public static final ResourceGroup WGT_ARR_R = new ResourceGroup(WGT_ARR_R_N, WGT_ARR_R_D);
@@ -184,9 +182,11 @@ public class Resource {
     public static final ResourceGroup ICN_TEXT = new ResourceGroup(ICN_TEXT_N, ICN_TEXT_F);
     public static final ResourceGroup ICN_HELP = new ResourceGroup(ICN_HELP_N, ICN_HELP_F);
 
-    public static final Resource WGT_DRAG_N = new Resource(0, 120, 16, 16);
-    public static final Resource WGT_DRAG_F = new Resource(16, 120, 16, 16);
-    public static final Resource WGT_DRAG_A = new Resource(32, 120, 16, 16);
+    public static final Resource WGT_DRAG_N = new Resource(247, 84, 9, 7);
+    public static final Resource WGT_DRAG_F = new Resource(247, 91, 9, 7);
+    public static final Resource WGT_CROSS_N = new Resource(240, 84, 7, 7);
+    public static final Resource WGT_CROSS_F = new Resource(240, 91, 7, 7);
+
 
     protected int xPos, yPos, xSize, ySize;
     protected ResourceLocation rl;

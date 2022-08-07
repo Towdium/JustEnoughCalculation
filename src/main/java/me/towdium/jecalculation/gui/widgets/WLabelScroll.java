@@ -33,6 +33,10 @@ public class WLabelScroll extends WContainer implements ISearchable {
     protected final boolean accept;
 
     public WLabelScroll(int xPos, int yPos, int column, int row, boolean accept) {
+        this(xPos, yPos, column, row, accept, 4);
+    }
+
+    public WLabelScroll(int xPos, int yPos, int column, int row, boolean accept, int spacing) {
         this.accept = accept;
         this.xPos = xPos;
         this.yPos = yPos;
@@ -40,13 +44,13 @@ public class WLabelScroll extends WContainer implements ISearchable {
         this.row = row;
         labelGroup = new WLabelGroup(xPos, yPos, column, row, accept)
                 .setLsnrUpdate(this::onUpdate).setLsnrClick(this::onClick);
-        scroll = new WScroll(xPos + column * 18 + 4, yPos, row * 18)
+        scroll = new WScroll(xPos + column * 18 + spacing, yPos, row * 18)
                 .setListener(i -> update(i.getCurrent()))
                 .setStep(Float.POSITIVE_INFINITY)
                 .setRatio(1);
         add(labelGroup);
         add(scroll);
-        add(new WRectangle(xPos + column * 18, yPos, 4, row * 18, JecaGui.COLOR_GUI_GREY));
+        add(new WRectangle(xPos + column * 18, yPos, spacing, row * 18, JecaGui.COLOR_GUI_GREY));
     }
 
     public void update(float f) {
