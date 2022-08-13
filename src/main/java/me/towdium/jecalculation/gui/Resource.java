@@ -182,10 +182,10 @@ public class Resource {
     public static final ResourceGroup ICN_TEXT = new ResourceGroup(ICN_TEXT_N, ICN_TEXT_F);
     public static final ResourceGroup ICN_HELP = new ResourceGroup(ICN_HELP_N, ICN_HELP_F);
 
-    public static final Resource WGT_DRAG_N = new Resource(247, 84, 9, 7);
-    public static final Resource WGT_DRAG_F = new Resource(247, 91, 9, 7);
-    public static final Resource WGT_CROSS_N = new Resource(240, 84, 7, 7);
-    public static final Resource WGT_CROSS_F = new Resource(240, 91, 7, 7);
+    public static final Resource WGT_DRAG_N = new Resource(229, 118, 8, 5);
+    public static final Resource WGT_DRAG_F = new Resource(237, 118, 8, 5);
+    public static final Resource WGT_CROSS_N = new Resource(219, 118, 5, 5);
+    public static final Resource WGT_CROSS_F = new Resource(224, 118, 5, 5);
 
 
     protected int xPos, yPos, xSize, ySize;

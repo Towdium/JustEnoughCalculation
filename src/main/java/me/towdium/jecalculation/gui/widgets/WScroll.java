@@ -20,7 +20,7 @@ import static me.towdium.jecalculation.gui.Resource.*;
 @MethodsReturnNonnullByDefault
 @OnlyIn(Dist.CLIENT)
 public class WScroll implements IWidget {
-    public int xPos, yPos, ySize;
+    public int xPos, yPos, ySize, xSize;
     public float current;
     boolean active = false;
     float step = 0f;
@@ -34,13 +34,21 @@ public class WScroll implements IWidget {
         this.ySize = ySize;
     }
 
+    public WScroll(int xPos, int yPos, int xSize, int ySize) {
+        height = 17;
+        this.xPos = xPos;
+        this.yPos = yPos;
+        this.ySize = ySize;
+        this.xSize = xSize;
+    }
+
     @Override
     public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
         int offset = (int) (current * (ySize - height));
         boolean in = mouseIn(xMouse, yMouse);
         Resource r = in ? WGT_SCROLL_F : WGT_SCROLL_N;
-        gui.drawResourceContinuous(WGT_SLOT, xPos, yPos, 14, ySize, 3, 3, 3, 3);
-        gui.drawResourceContinuous(r, xPos, yPos + offset, 14, height, 3);
+        gui.drawResourceContinuous(WGT_SLOT, xPos, yPos, xSize, ySize, 3, 3, 3, 3);
+        gui.drawResourceContinuous(r, xPos, yPos + offset, xSize, height, 3);
         return false;
     }
 
@@ -103,7 +111,7 @@ public class WScroll implements IWidget {
     }
 
     public boolean mouseIn(int xMouse, int yMouse) {
-        return JecaGui.mouseIn(xPos + 1, yPos + 1, 12, ySize - 2, xMouse, yMouse);
+        return JecaGui.mouseIn(xPos + 1, yPos + 1, xSize - 2, ySize - 2, xMouse, yMouse);
     }
 
     public WScroll setListener(@Nullable ListenerAction<? super WScroll> listener) {

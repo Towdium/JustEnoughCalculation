@@ -33,10 +33,10 @@ public class WLabelScroll extends WContainer implements ISearchable {
     protected final boolean accept;
 
     public WLabelScroll(int xPos, int yPos, int column, int row, boolean accept) {
-        this(xPos, yPos, column, row, accept, 4);
+        this(xPos, yPos, column, row, accept, 4, 14);
     }
 
-    public WLabelScroll(int xPos, int yPos, int column, int row, boolean accept, int spacing) {
+    public WLabelScroll(int xPos, int yPos, int column, int row, boolean accept, int spacing, int scrollXSize) {
         this.accept = accept;
         this.xPos = xPos;
         this.yPos = yPos;
@@ -44,7 +44,7 @@ public class WLabelScroll extends WContainer implements ISearchable {
         this.row = row;
         labelGroup = new WLabelGroup(xPos, yPos, column, row, accept)
                 .setLsnrUpdate(this::onUpdate).setLsnrClick(this::onClick);
-        scroll = new WScroll(xPos + column * 18 + spacing, yPos, row * 18)
+        scroll = new WScroll(xPos + column * 18 + spacing, yPos, scrollXSize, row * 18)
                 .setListener(i -> update(i.getCurrent()))
                 .setStep(Float.POSITIVE_INFINITY)
                 .setRatio(1);

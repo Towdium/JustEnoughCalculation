@@ -8,7 +8,7 @@ import static me.towdium.jecalculation.gui.Resource.WGT_CROSS_N;
 
 public class WCross extends WButton {
     public WCross(int xPos, int yPos) {
-        super(xPos, yPos, 7, 7, null);
+        super(xPos, yPos, 5, 5, null);
     }
 
     @Override

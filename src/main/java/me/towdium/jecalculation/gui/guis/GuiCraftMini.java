@@ -33,8 +33,8 @@ import static me.towdium.jecalculation.utils.Utilities.getPlayer;
 @MethodsReturnNonnullByDefault
 @OnlyIn(Dist.CLIENT)
 public class GuiCraftMini extends WContainer {
-    public final int WINDOW_WIDTH = 98;
-    public final int WINDOW_HEIGHT = 134;
+    public final int WINDOW_WIDTH = 108;
+    public final int WINDOW_HEIGHT = 113;
 
     protected int slot = 0;
     protected ItemStack itemStack;
@@ -43,9 +43,9 @@ public class GuiCraftMini extends WContainer {
     protected ListenerAction<? super GuiCraftMini> windowFocusListener = null;
     protected ListenerAction<? super GuiCraftMini> windowCloseListener = null;
 
-    WDrag drag = new WDrag(4, 4, 81, 7);
+    WDrag drag = new WDrag(4, 4, 95, 5);
 
-    WButton close = new WCross(85, 4)
+    WButton close = new WCross(99, 4)
             .setListener((widget) -> {
                 record.overlayOpen = false;
                 Controller.setRCraft(record, itemStack, slot);
@@ -55,31 +55,31 @@ public class GuiCraftMini extends WContainer {
                 }
             });
 
-    WLabel label = new WLabel(5, 12, 20, 20, false);
+    WLabel label = new WLabel(5, 10, 20, 20, false);
 
-    WTextField amount = new WTextField(34, 12, 35)
+    WTextField amount = new WTextField(34, 10, 69)
             .setListener(i -> {
                 record.amount = i.getText();
                 Controller.setRCraft(record, itemStack, slot);
                 refreshCalculator();
             });
 
-    WButton invE = new WButtonIcon(71, 12, 20, 20, Resource.BTN_INV_E, "craft.inventory_enabled");
-    WButton invD = new WButtonIcon(71, 12, 20, 20, Resource.BTN_INV_D, "craft.inventory_disabled");
+    WButton invE = new WButtonIcon(83, 32, 20, 20, Resource.BTN_INV_E, "craft.inventory_enabled");
+    WButton invD = new WButtonIcon(83, 32, 20, 20, Resource.BTN_INV_D, "craft.inventory_disabled");
 
-    WButton input = new WButtonIcon(15, 34, 20, 20, Resource.BTN_IN, "common.input")
+    WButton input = new WButtonIcon(5, 32, 20, 20, Resource.BTN_IN, "common.input")
             .setListener(i -> setMode(INPUT));
 
-    WButton output = new WButtonIcon(34, 34, 20, 20, Resource.BTN_OUT, "craft.output")
+    WButton output = new WButtonIcon(24, 32, 20, 20, Resource.BTN_OUT, "craft.output")
             .setListener(i -> setMode(OUTPUT));
 
-    WButton catalyst = new WButtonIcon(52, 34, 20, 20, Resource.BTN_CAT, "common.catalyst")
+    WButton catalyst = new WButtonIcon(42, 32, 20, 20, Resource.BTN_CAT, "common.catalyst")
             .setListener(i -> setMode(CATALYST));
 
-    WButton steps = new WButtonIcon(71, 34, 20, 20, Resource.BTN_LIST, "craft.step")
+    WButton steps = new WButtonIcon(61, 32, 20, 20, Resource.BTN_LIST, "craft.step")
             .setListener(i -> setMode(STEPS));
 
-    WLabelScroll result = new WLabelScroll(5, 56, 4, 4, false, 0)
+    WLabelScroll result = new WLabelScroll(5, 54, 5, 3, false, 0, 8)
             .setLsnrClick((i, v) -> JecaPlugin.showRecipe(i.get(v).getLabel()))
             .setFmtAmount(i -> i.getAmountString(true))
             .setFmtTooltip((i, j) -> i.getToolTip(j, true));
@@ -93,7 +93,7 @@ public class GuiCraftMini extends WContainer {
         amount.setText(record.amount);
 
         add(new WPanel(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT));
-        add(new WText(27, 18, JecaGui.Font.RAW, "x"));
+        add(new WText(27, 16, JecaGui.Font.RAW, "x"));
         add(drag, close, label, input, output, catalyst, steps, result, amount, record.inventory ? invE : invD);
 
         drag.setDragStartListener((widget) -> widget.setConsumerOffset(offsetX, offsetY))

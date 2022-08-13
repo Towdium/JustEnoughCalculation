@@ -45,7 +45,7 @@ public class WDrag implements IWidget {
     public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
         boolean isHovering = mouseIn(xMouse, yMouse);
         Resource texture = getResource(isHovering);
-        gui.drawResourceContinuous(texture, xPos, yPos, xSize, ySize, 1, 2, 1, 2);
+        gui.drawResourceContinuous(texture, xPos, yPos, xSize, ySize, 1, 1, 1, 1);
 
         int newMouseX = gui.getGlobalMouseX();
         int newMouseY = gui.getGlobalMouseY();
