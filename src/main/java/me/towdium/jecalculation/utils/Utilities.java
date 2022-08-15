@@ -1,9 +1,5 @@
 package me.towdium.jecalculation.utils;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.platform.Lighting;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.utils.wrappers.Pair;
@@ -11,17 +7,10 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.nbt.*;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fluids.FluidStack;
@@ -118,39 +107,6 @@ public class Utilities {
 
     public static LocalPlayer getPlayer() {
         return Objects.requireNonNull(Minecraft.getInstance().player);
-    }
-
-    public static void drawItem(PoseStack poseStack, ItemRenderer itemRenderer, ItemStack itemStack, double x, double y){
-        if(itemStack.isEmpty())
-            return;
-
-        BakedModel bakedModel = itemRenderer.getModel(itemStack, null, Minecraft.getInstance().player, 0);
-        itemRenderer.blitOffset += 50.0F;
-
-        Minecraft.getInstance().getTextureManager().getTexture(InventoryMenu.BLOCK_ATLAS).setFilter(false, false);
-        RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
-        RenderSystem.enableBlend();
-        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        poseStack.pushPose();
-        poseStack.translate(x, y, 100.0F);
-        poseStack.translate(8.0D, 8.0D, 0.0D);
-        poseStack.scale(1.0F, -1.0F, 1.0F);
-        poseStack.scale(16.0F, 16.0F, 16.0F);
-        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-        boolean flag = !bakedModel.usesBlockLight();
-        if (flag) {
-            Lighting.setupForFlatItems();
-        }
-
-        itemRenderer.render(itemStack, ItemTransforms.TransformType.GUI, false, poseStack, bufferSource, 15728880, OverlayTexture.NO_OVERLAY, bakedModel);
-        bufferSource.endBatch();
-        poseStack.popPose();
-        RenderSystem.enableDepthTest();
-        if (flag) {
-            Lighting.setupFor3DItems();
-        }
-
     }
 
     public static class Relation<K, V> {
