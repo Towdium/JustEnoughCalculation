@@ -22,7 +22,7 @@ public class WTick extends WContainer {
     int xPos, yPos, xSize, ySize;
     String name;
     boolean disabled;
-    JecaGui.Font font;
+    JecaGui.FontType font;
     boolean displayLabel;
     ListenerAction<? super WTick> listener;
 
@@ -30,14 +30,14 @@ public class WTick extends WContainer {
         this(xPos, yPos, xSize, ySize, name, false, null);
     }
 
-    public WTick(int xPos, int yPos, int xSize, int ySize, @Nullable String name, boolean displayLabel, JecaGui.Font font) {
+    public WTick(int xPos, int yPos, int xSize, int ySize, @Nullable String name, boolean displayLabel, JecaGui.FontType font) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.xSize = xSize;
         this.ySize = ySize;
         this.name = name;
         this.displayLabel = displayLabel;
-        this.font = font == null ? JecaGui.Font.PLAIN : font;
+        this.font = font == null ? JecaGui.FontType.PLAIN : font;
         setSelected(false);
     }
 

@@ -79,6 +79,8 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
     protected static JecaGui override;
     protected JecaGui parent;
     protected PoseStack matrix;
+    private final Utilities.OffsetStack itemOffset = new Utilities.OffsetStack();
+
     public IGui root;
 
     public JecaGui(@Nullable JecaGui parent, IGui root) {
@@ -95,7 +97,12 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
 
     @Override
     public void init(Minecraft minecraft, int width, int height) {
-        super.init(minecraft, width, height);
+        this.minecraft = minecraft;
+        this.itemRenderer = minecraft.getItemRenderer();
+        this.font = minecraft.font;
+        this.width = width;
+        this.height = height;
+        this.init();
         minecraft.keyboardHandler.setSendRepeatsToGui(true);
     }
 
@@ -124,7 +131,7 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
 
     public int getGlobalMouseX() {
         Minecraft mc = Objects.requireNonNull(Minecraft.getInstance(), "Internal error");
-        int width = mc.getWindow().getWidth();
+        int width = mc.getWindow().getWidth() / 2;
         if (width == 0) {
             return 0;
         }
@@ -133,7 +140,7 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
 
     public int getGlobalMouseY() {
         Minecraft mc = Objects.requireNonNull(Minecraft.getInstance(), "Internal error");
-        int height = mc.getWindow().getHeight();
+        int height = mc.getWindow().getHeight() / 2;
         if (height == 0) {
             return 0;
         }
@@ -240,6 +247,10 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
 
     public void setMatrix(PoseStack matrix) {
         this.matrix = matrix;
+    }
+
+    public Utilities.OffsetStack getItemOffsetStack() {
+        return itemOffset;
     }
 
     /**
@@ -488,9 +499,8 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
         int y = hand ? yPos : topPos + yPos;
 
         RenderSystem.enableDepthTest();
-        itemRenderer.renderAndDecorateItem(is, x, y);
+        itemRenderer.renderAndDecorateItem(is, x + itemOffset.x(), y + itemOffset.y());
         itemRenderer.renderGuiItemDecorations(font, is, leftPos + xPos, topPos + yPos, null);
-        RenderSystem.applyModelViewMatrix();
         RenderSystem.disableDepthTest();
     }
 

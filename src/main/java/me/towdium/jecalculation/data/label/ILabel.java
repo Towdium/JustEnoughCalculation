@@ -250,6 +250,7 @@ public interface ILabel {
 
         public static ILabel from(@Nullable Object o) {
             if (o == null) return ILabel.EMPTY;
+            else if (o instanceof ILabel label) return label;
             else if (o instanceof ItemStack) return new LItemStack((ItemStack) o);
             else if (o instanceof FluidStack) return new LFluidStack((FluidStack) o);
             else if (o instanceof EnchantmentInstance) return new LItemStack(createForEnchantment((EnchantmentInstance) o));

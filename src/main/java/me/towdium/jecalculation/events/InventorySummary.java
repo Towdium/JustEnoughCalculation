@@ -1,8 +1,8 @@
 package me.towdium.jecalculation.events;
 
 import me.towdium.jecalculation.JecaItem;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,10 +13,10 @@ public class InventorySummary {
 
     protected List<ItemAmount> amounts = new ArrayList<>();
 
-    public InventorySummary(PlayerInventory inventory) {
-        inventory.armorInventory.forEach(this::addItemStack);
-        inventory.mainInventory.forEach(this::addItemStack);
-        inventory.offHandInventory.forEach(this::addItemStack);
+    public InventorySummary(Inventory inventory) {
+        inventory.armor.forEach(this::addItemStack);
+        inventory.items.forEach(this::addItemStack);
+        inventory.offhand.forEach(this::addItemStack);
     }
 
     protected void addItemStack(ItemStack stack) {

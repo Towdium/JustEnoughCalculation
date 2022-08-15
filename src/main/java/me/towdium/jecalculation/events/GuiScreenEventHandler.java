@@ -1,23 +1,22 @@
 package me.towdium.jecalculation.events;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import mcp.MethodsReturnNonnullByDefault;
+import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.gui.JecaGui;
 import mezz.jei.api.gui.handlers.IGlobalGuiHandler;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.renderer.Rectangle2d;
-import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.GuiOpenEvent;
-import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderTooltipEvent;
+import net.minecraftforge.client.event.ScreenEvent;
+import net.minecraftforge.client.event.ScreenOpenEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.client.gui.GuiUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
@@ -36,35 +35,34 @@ public class GuiScreenEventHandler implements IGlobalGuiHandler {
     protected RenderTooltipEvent.Pre cachedTooltipEvent;
 
     @SubscribeEvent
-    public void onGuiOpen(GuiOpenEvent event) {
-        ClientPlayerEntity player = Minecraft.getInstance().player;
-        Screen screen = event.getGui();
-        if (player == null || !(screen instanceof ContainerScreen)) {
+    public void onGuiOpen(ScreenOpenEvent event) {
+        LocalPlayer player = Minecraft.getInstance().player;
+        Screen screen = event.getScreen();
+        if (player == null || !(screen instanceof AbstractContainerScreen)) {
             return;
         }
 
-        overlayHandler = new GuiScreenOverlayHandler(player.inventory);
+        overlayHandler = new GuiScreenOverlayHandler(player.getInventory());
         gui = new JecaGui(null, false, overlayHandler);
         gui.init(Minecraft.getInstance(), screen.width, screen.height);
         overlayHandler.setGui(gui);
     }
 
     protected boolean isScreenValidForOverlay(Screen screen) {
-        return screen instanceof ContainerScreen
+        return screen instanceof AbstractContainerScreen
             && !(screen instanceof JecaGui);
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)
-    @SuppressWarnings("deprecation")
-    public void onDrawForeground(GuiScreenEvent.DrawScreenEvent.Post event) {
-        Screen screen = event.getGui();
+    public void onDrawForeground(ScreenEvent.DrawScreenEvent.Post event) {
+        Screen screen = event.getScreen();
         Minecraft minecraft = Minecraft.getInstance();
-        ClientPlayerEntity player = minecraft.player;
+        LocalPlayer player = minecraft.player;
         if (player == null || overlayHandler == null || !isScreenValidForOverlay(screen)) {
             return;
         }
 
-        PlayerInventory inventory = player.inventory;
+        Inventory inventory = player.getInventory();
         if (didInventoryChange(inventory)) {
             overlayHandler = new GuiScreenOverlayHandler(inventory);
             gui = new JecaGui(null, false, overlayHandler);
@@ -74,21 +72,22 @@ public class GuiScreenEventHandler implements IGlobalGuiHandler {
             gui.init(screen.getMinecraft(), screen.width, screen.height);
         }
 
-        gui.setMatrix(event.getMatrixStack());
+        gui.setMatrix(event.getPoseStack());
         int mouseX = gui.getGlobalMouseX();
         int mouseY = gui.getGlobalMouseY();
 
-        RenderSystem.pushMatrix();
-        RenderSystem.translatef(gui.getGuiLeft(), gui.getGuiTop(), 0);
+        event.getPoseStack().pushPose();
+        event.getPoseStack().translate(gui.getGuiLeft(), gui.getGuiTop(), 0);
         overlayHandler.onDraw(gui, mouseX, mouseY);
-        RenderSystem.popMatrix();
+        event.getPoseStack().popPose();
 
         List<String> tooltip = new ArrayList<>();
         overlayHandler.onTooltip(gui, mouseX, mouseY, tooltip);
-        gui.drawHoveringText(event.getMatrixStack(), tooltip, mouseX + gui.getGuiLeft(), mouseY + gui.getGuiTop(), minecraft.fontRenderer);
+        gui.drawHoveringText(event.getPoseStack(), tooltip, mouseX + gui.getGuiLeft(), mouseY + gui.getGuiTop(), minecraft.font);
         if (cachedTooltipEvent != null) {
             RenderTooltipEvent.Pre e = cachedTooltipEvent;
-            GuiUtils.drawHoveringText(e.getStack(), e.getMatrixStack(), e.getLines(), e.getX(), e.getY(), e.getScreenWidth(), e.getScreenHeight(), e.getMaxWidth(), e.getFontRenderer());
+            gui.renderTooltipInternal(e.getPoseStack(), e.getComponents(), e.getX(), e.getY());
+            //Screen.renderTooltip(e.getItemStack(), e.getPoseStack(), e.getComponents(), e.getX(), e.getY(), e.getScreenWidth(), e.getScreenHeight(), 1, e.getFont());
             cachedTooltipEvent = null;
         }
     }
@@ -107,8 +106,8 @@ public class GuiScreenEventHandler implements IGlobalGuiHandler {
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)
-    public void onMouse(GuiScreenEvent.MouseInputEvent event) {
-        Screen screen = event.getGui();
+    public void onMouse(ScreenEvent.MouseInputEvent event) {
+        Screen screen = event.getScreen();
         if (overlayHandler == null || !isScreenValidForOverlay(screen)) {
             return;
         }
@@ -116,38 +115,38 @@ public class GuiScreenEventHandler implements IGlobalGuiHandler {
         int xMouse = gui.getGlobalMouseX();
         int yMouse = gui.getGlobalMouseY();
 
-        if (event instanceof GuiScreenEvent.MouseScrollEvent.Pre) {
-            double diff = ((GuiScreenEvent.MouseScrollEvent) event).getScrollDelta();
+        if (event instanceof ScreenEvent.MouseScrollEvent.Pre) {
+            double diff = ((ScreenEvent.MouseScrollEvent) event).getScrollDelta();
             if (diff != 0) {
                 overlayHandler.onMouseScroll(gui, xMouse, yMouse, (int) diff);
             }
-        } else if (event instanceof GuiScreenEvent.MouseClickedEvent.Pre) {
-            int button = ((GuiScreenEvent.MouseClickedEvent) event).getButton();
+        } else if (event instanceof ScreenEvent.MouseClickedEvent.Pre) {
+            int button = ((ScreenEvent.MouseClickedEvent) event).getButton();
             overlayHandler.onMouseFocused(gui, xMouse, yMouse, button);
             if (overlayHandler.onMouseClicked(gui, xMouse, yMouse, button)) {
                 event.setCanceled(true);
             }
-        } else if (event instanceof GuiScreenEvent.MouseDragEvent.Pre) {
-            GuiScreenEvent.MouseDragEvent mde = (GuiScreenEvent.MouseDragEvent) event;
+        } else if (event instanceof ScreenEvent.MouseDragEvent.Pre) {
+            ScreenEvent.MouseDragEvent mde = (ScreenEvent.MouseDragEvent) event;
             overlayHandler.onMouseDragged(gui, xMouse, yMouse, (int) mde.getDragX(), (int)mde.getDragY());
-        } else if (event instanceof GuiScreenEvent.MouseReleasedEvent.Pre) {
-            int button = ((GuiScreenEvent.MouseReleasedEvent) event).getButton();
+        } else if (event instanceof ScreenEvent.MouseReleasedEvent.Pre) {
+            int button = ((ScreenEvent.MouseReleasedEvent) event).getButton();
             overlayHandler.onMouseReleased(gui, xMouse, yMouse, button);
         }
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)
-    public void onKeyboardKey(GuiScreenEvent.KeyboardKeyEvent event) {
-        Screen screen = event.getGui();
+    public void onKeyboardKey(ScreenEvent.KeyboardKeyEvent event) {
+        Screen screen = event.getScreen();
         if (overlayHandler == null || !isScreenValidForOverlay(screen)) {
             return;
         }
 
-        if (event instanceof GuiScreenEvent.KeyboardKeyPressedEvent.Pre) {
+        if (event instanceof ScreenEvent.KeyboardKeyPressedEvent.Pre) {
             if (overlayHandler.onKeyPressed(gui, event.getKeyCode(), event.getModifiers())) {
                 event.setCanceled(true);
             }
-        } else if (event instanceof GuiScreenEvent.KeyboardKeyReleasedEvent.Pre) {
+        } else if (event instanceof ScreenEvent.KeyboardKeyReleasedEvent.Pre) {
             if (overlayHandler.onKeyReleased(gui, event.getKeyCode(), event.getModifiers())) {
                 event.setCanceled(true);
             }
@@ -155,8 +154,8 @@ public class GuiScreenEventHandler implements IGlobalGuiHandler {
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)
-    public void onCharTyped(GuiScreenEvent.KeyboardCharTypedEvent event) {
-        Screen screen = event.getGui();
+    public void onCharTyped(ScreenEvent.KeyboardCharTypedEvent event) {
+        Screen screen = event.getScreen();
         if (overlayHandler == null || !isScreenValidForOverlay(screen)) {
             return;
         }
@@ -166,7 +165,7 @@ public class GuiScreenEventHandler implements IGlobalGuiHandler {
         }
     }
 
-    private boolean didInventoryChange(PlayerInventory inventory) {
+    private boolean didInventoryChange(Inventory inventory) {
         if (cachedInventory == null) {
             cachedInventory = new InventorySummary(inventory);
             return false;
@@ -182,7 +181,7 @@ public class GuiScreenEventHandler implements IGlobalGuiHandler {
     }
 
     @Override
-    public Collection<Rectangle2d> getGuiExtraAreas() {
+    public Collection<Rect2i> getGuiExtraAreas() {
         if (overlayHandler != null && gui != null) {
             return overlayHandler.getGuiExtraAreas(gui.getGuiLeft(), gui.getGuiTop());
         }

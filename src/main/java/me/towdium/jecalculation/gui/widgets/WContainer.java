@@ -1,5 +1,7 @@
 package me.towdium.jecalculation.gui.widgets;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.utils.Utilities;
@@ -68,11 +70,13 @@ public class WContainer implements IContainer {
     public boolean onDraw(JecaGui gui, int mouseX, int mouseY) {
         gui.getMatrix().pushPose();
         gui.getMatrix().translate(offsetX, offsetY, 0);
+        gui.getItemOffsetStack().push(offsetX, offsetY);
         Wrapper<IWidget> w = new Wrapper<>(null);
         widgets.forEach(i -> {
             if (i.onDraw(gui, mouseX - offsetX, mouseY - offsetY)) w.value = i;
         });
         if (w.value != null) w.value.onDraw(gui, mouseX - offsetX, mouseY - offsetY);
+        gui.getItemOffsetStack().pop();
         gui.getMatrix().popPose();
         return false;
     }

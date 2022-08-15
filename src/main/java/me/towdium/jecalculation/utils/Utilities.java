@@ -487,4 +487,20 @@ public class Utilities {
             }
         }
     }
+
+    public static class OffsetStack extends Stack<Pair<Integer, Integer>>{
+
+        public int x(){
+            return size() == 0 ? 0 : peek().one;
+        }
+
+        public int y(){
+            return size() == 0 ? 0 : peek().two;
+        }
+
+        public void push(int x, int y){
+            push(new Pair<>(x() + x, y() + y));
+        }
+    }
+
 }

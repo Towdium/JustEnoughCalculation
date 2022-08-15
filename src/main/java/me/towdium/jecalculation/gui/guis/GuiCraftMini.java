@@ -1,6 +1,5 @@
 package me.towdium.jecalculation.gui.guis;
 
-import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.structure.CostList;
@@ -10,8 +9,9 @@ import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.gui.widgets.*;
 import me.towdium.jecalculation.jei.JecaPlugin;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
+import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -93,7 +93,7 @@ public class GuiCraftMini extends WContainer {
         amount.setText(record.amount);
 
         add(new WPanel(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT));
-        add(new WText(27, 16, JecaGui.Font.RAW, "x"));
+        add(new WText(27, 16, JecaGui.FontType.RAW, "x"));
         add(drag, close, label, input, output, catalyst, steps, result, amount, record.inventory ? invE : invD);
 
         drag.setDragStartListener((widget) -> widget.setConsumerOffset(offsetX, offsetY))
@@ -158,15 +158,15 @@ public class GuiCraftMini extends WContainer {
     }
 
     List<ILabel> getInventory() {
-        PlayerInventory inv = getPlayer().inventory;
+        Inventory inv = getPlayer().getInventory();
         ArrayList<ILabel> labels = new ArrayList<>();
         Consumer<List<ItemStack>> add = i -> i.stream()
                 .filter(j -> !j.isEmpty())
                 .forEach(j -> labels.add(ILabel.Converter.from(j)));
 
-        add.accept(inv.armorInventory);
-        add.accept(inv.mainInventory);
-        add.accept(inv.offHandInventory);
+        add.accept(inv.armor);
+        add.accept(inv.items);
+        add.accept(inv.offhand);
         return labels;
     }
 
@@ -175,18 +175,10 @@ public class GuiCraftMini extends WContainer {
             result.setLabels(new ArrayList<>());
         } else {
             switch (record.mode) {
-                case INPUT:
-                    result.setLabels(calculator.getInputs());
-                    break;
-                case OUTPUT:
-                    result.setLabels(calculator.getOutputs(getInventory()));
-                    break;
-                case CATALYST:
-                    result.setLabels(calculator.getCatalysts());
-                    break;
-                case STEPS:
-                    result.setLabels(calculator.getSteps());
-                    break;
+                case INPUT -> result.setLabels(calculator.getInputs());
+                case OUTPUT -> result.setLabels(calculator.getOutputs(getInventory()));
+                case CATALYST -> result.setLabels(calculator.getCatalysts());
+                case STEPS -> result.setLabels(calculator.getSteps());
             }
         }
     }

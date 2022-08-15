@@ -61,7 +61,7 @@ minecraft {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.2-40.1.51'
+    minecraft 'net.minecraftforge:forge:1.18.2-40.1.73'
     compileOnly fg.deobf('mezz.jei:jei-1.18.2:9.7.0.196:api')
     runtimeOnly fg.deobf('mezz.jei:jei-1.18.2:9.7.0.196')
     //testCompile 'org.junit.jupiter:junit-jupiter-api:5.2.0'
@@ -83,7 +83,4 @@ jar {
 
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
-    if (JavaVersion.current() > JavaVersion.VERSION_1_8) {
-        options.compilerArgs.addAll(['--release', '8'])
-    }
 }

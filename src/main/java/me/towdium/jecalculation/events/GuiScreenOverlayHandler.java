@@ -3,24 +3,23 @@ package me.towdium.jecalculation.events;
 import com.google.common.collect.Comparators;
 import me.towdium.jecalculation.JecaItem;
 import me.towdium.jecalculation.gui.JecaGui;
-import me.towdium.jecalculation.gui.guis.Gui;
 import me.towdium.jecalculation.gui.guis.GuiCraftMini;
 import me.towdium.jecalculation.gui.guis.IGui;
 import me.towdium.jecalculation.gui.widgets.IWidget;
 import me.towdium.jecalculation.gui.widgets.WContainer;
-import net.minecraft.client.renderer.Rectangle2d;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
+import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class GuiScreenOverlayHandler extends WContainer implements IGui {
 
-    protected PlayerInventory inventory;
+    protected Inventory inventory;
     protected JecaGui gui;
 
-    public GuiScreenOverlayHandler(PlayerInventory inventory) {
+    public GuiScreenOverlayHandler(Inventory inventory) {
         this.inventory = inventory;
     }
 
@@ -29,13 +28,12 @@ public class GuiScreenOverlayHandler extends WContainer implements IGui {
         setupOverlay(inventory);
     }
 
-    public void setupOverlay(PlayerInventory inventory) {
+    public void setupOverlay(Inventory inventory) {
         clear();
 
         // Sort widgets by depth
         List<GuiCraftMini> widgets = inventoryToWidgets(inventory).stream()
-            .sorted(Comparator.comparingInt(GuiCraftMini::getDepth))
-            .collect(Collectors.toList());
+                .sorted(Comparator.comparingInt(GuiCraftMini::getDepth)).toList();
 
         // Normalize depth
         int numWidgetsInDefaultPosition = 0;
@@ -64,10 +62,10 @@ public class GuiScreenOverlayHandler extends WContainer implements IGui {
         widget.setOffsetY(gui.getYSize()/2 - widget.getHeight()/2 + offset*20);
     }
 
-    public List<GuiCraftMini> inventoryToWidgets(PlayerInventory inventory) {
+    public List<GuiCraftMini> inventoryToWidgets(Inventory inventory) {
         List<GuiCraftMini> results = new ArrayList<>();
-        for (int i = 0; i < inventory.mainInventory.size(); i++) {
-            ItemStack itemStack = inventory.mainInventory.get(i);
+        for (int i = 0; i < inventory.items.size(); i++) {
+            ItemStack itemStack = inventory.items.get(i);
             if (itemStack.getItem() == JecaItem.CRAFT) {
                 GuiCraftMini widget = new GuiCraftMini(itemStack, i);
                 if (widget.record.overlayOpen) {
@@ -121,11 +119,11 @@ public class GuiScreenOverlayHandler extends WContainer implements IGui {
         }
     }
 
-    public Collection<Rectangle2d> getGuiExtraAreas(int offsetX, int offsetY) {
+    public Collection<Rect2i> getGuiExtraAreas(int offsetX, int offsetY) {
         return getWidgets().stream()
             .filter((w) -> w instanceof GuiCraftMini)
             .map(GuiCraftMini.class::cast)
-            .map(w -> new Rectangle2d(w.getOffsetX() + offsetX, w.getOffsetY() + offsetY, w.getWidth(), w.getHeight()))
+            .map(w -> new Rect2i(w.getOffsetX() + offsetX, w.getOffsetY() + offsetY, w.getWidth(), w.getHeight()))
             .collect(Collectors.toList());
     }
 
