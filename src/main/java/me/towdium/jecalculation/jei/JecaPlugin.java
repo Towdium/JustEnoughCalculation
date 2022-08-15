@@ -9,11 +9,10 @@ import me.towdium.jecalculation.gui.guis.GuiRecipe;
 import me.towdium.jecalculation.utils.wrappers.Trio;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
-import mezz.jei.api.gui.ingredient.IRecipeSlotView;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.ingredients.ITypedIngredient;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.transfer.IRecipeTransferError;z
+import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
 import mezz.jei.api.registration.IRecipeTransferRegistration;
@@ -25,9 +24,7 @@ import net.minecraft.world.item.crafting.Recipe;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -41,8 +38,8 @@ public class JecaPlugin implements IModPlugin {
     public static IJeiRuntime runtime;
 
     public static ILabel getLabelUnderMouse() {
-        var ref = new Object(){
-          Object o = null;
+        var ref = new Object() {
+            Object o = null;
         };
         runtime.getIngredientListOverlay().getIngredientUnderMouse().ifPresent(ingredient -> ref.o = ingredient.getIngredient());
         runtime.getBookmarkOverlay().getIngredientUnderMouse().ifPresent(ingredient -> ref.o = ingredient.getIngredient());
@@ -103,14 +100,20 @@ public class JecaPlugin implements IModPlugin {
             return null;
         }
 
-
         private static EnumMap<IO, List<Trio<ILabel, CostList, CostList>>> convertRecipe(
                 IRecipeSlotsView recipe, Class<?> context) {
             EnumMap<IO, List<Trio<ILabel, CostList, CostList>>> merged = new EnumMap<>(IO.class);  // item disamb raw
-            merge(merged, recipe.getSlotViews(RecipeIngredientRole.INPUT).stream().flatMap(IRecipeSlotView::getAllIngredients).map(ITypedIngredient::getIngredient).toList(), context, IO.INPUT);
-            merge(merged, recipe.getSlotViews(RecipeIngredientRole.OUTPUT).stream().flatMap(IRecipeSlotView::getAllIngredients).map(ITypedIngredient::getIngredient).toList(), context, IO.OUTPUT);
-            merge(merged, recipe.getSlotViews(RecipeIngredientRole.CATALYST).stream().flatMap(IRecipeSlotView::getAllIngredients).map(ITypedIngredient::getIngredient).toList(), context, IO.CATALYST);
+            recipe.getSlotViews().forEach(view -> merge(merged, view.getAllIngredients().map(ITypedIngredient::getIngredient).toList(), context, fromRole(view.getRole())));
             return merged;
+        }
+
+        private static IO fromRole(RecipeIngredientRole role){
+            return switch (role){
+                case INPUT -> IO.INPUT;
+                case OUTPUT -> IO.OUTPUT;
+                case CATALYST -> IO.CATALYST;
+                case RENDER_ONLY -> null;
+            };
         }
 
         private static void merge(EnumMap<IO, List<Trio<ILabel, CostList, CostList>>> dst, List<?> objs, Class<?> context, IO type) {
