@@ -69,6 +69,8 @@ public class Resource {
     public static final Resource BTN_DELETE_1_D = getIcon(9, 3);
     public static final Resource BTN_WIDGET_E_N = getIcon(10, 2);
     public static final Resource BTN_WIDGET_D_N = getIcon(11, 2);
+    public static final Resource BTN_DELETE_L_N = getIcon(13, 2);
+
 
     public static final Resource WGT_BUTTON_N = getWidget(0);
     public static final Resource WGT_BUTTON_F = getWidget(1);
@@ -170,6 +172,8 @@ public class Resource {
     public static final ResourceGroup BTN_DELETE_1 = new ResourceGroup(BTN_DELETE_1_N, BTN_DELETE_1_D);
     public static final ResourceGroup BTN_WIDGET_E = new ResourceGroup(BTN_WIDGET_E_N);
     public static final ResourceGroup BTN_WIDGET_D = new ResourceGroup(BTN_WIDGET_D_N);
+    public static final ResourceGroup BTN_DELETE_L = new ResourceGroup(BTN_DELETE_L_N);
+
 
     public static final ResourceGroup WGT_ARR_L = new ResourceGroup(WGT_ARR_L_N, WGT_ARR_L_D);
     public static final ResourceGroup WGT_ARR_R = new ResourceGroup(WGT_ARR_R_N, WGT_ARR_R_D);

@@ -1,5 +1,6 @@
 package me.towdium.jecalculation.gui.guis;
 
+import me.towdium.jecalculation.JecaConfig;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.structure.CostList;
@@ -220,8 +221,9 @@ public class GuiRecipe extends Gui {
         WTextField text;
         WButton percent;
         WButton pick;
-        WButton yes;
-        WButton no;
+        WButton save;
+        WButton discard;
+        WButton delete;
         WButton disamb;
         WLabel ref;
 
@@ -244,21 +246,41 @@ public class GuiRecipe extends Gui {
             add(new WPanel(x - 7, y - 30, 111, 55));
             add(new WText(x + 21, y + 5, PLAIN, "x"));
             text = new WTextField(x + 28, y + 9 - WTextField.HEIGHT / 2, 50);
-            pick = new WButtonIcon(x + 21, y - 24, 20, 20, BTN_PICK, "recipe.pick")
-                    .setListener(i -> {
-                        JecaGui.getCurrent().hand = temp.getLabel();
-                        set(ILabel.EMPTY, type, idx);
-                    });
-            yes = new WButtonIcon(x + 59, y - 24, 20, 20, BTN_YES, "recipe.confirm")
-                    .setListener(i -> set(temp.getLabel(), type, idx));
-            no = new WButtonIcon(x + 78, y - 24, 20, 20, BTN_NO, "recipe.delete")
-                    .setListener(i -> set(ILabel.EMPTY, type, idx));
-            disamb = new WButtonIcon(x + 40, y - 24, 20, 20, BTN_DISAMB, "recipe.disamb");
+
+            if(JecaConfig.useOldLabelButtons.get()){
+                pick = new WButtonIcon(x + 21, y - 24, 20, 20, BTN_PICK, "recipe.pick")
+                        .setListener(i -> {
+                            JecaGui.getCurrent().hand = temp.getLabel();
+                            set(ILabel.EMPTY, type, idx);
+                        });
+                save = new WButtonIcon(x + 59, y - 24, 20, 20, BTN_YES, "recipe.confirm")
+                        .setListener(i -> set(temp.getLabel(), type, idx));
+                delete = new WButtonIcon(x + 78, y - 24, 20, 20, BTN_NO, "recipe.delete")
+                        .setListener(i -> set(ILabel.EMPTY, type, idx));
+                disamb = new WButtonIcon(x + 40, y - 24, 20, 20, BTN_DISAMB, "recipe.disamb");
+            }else{
+                pick = new WButtonIcon(x + 2, y - 24, 20, 20, BTN_PICK, "recipe.pick")
+                        .setListener(i -> {
+                            JecaGui.getCurrent().hand = temp.getLabel();
+                            set(ILabel.EMPTY, type, idx);
+                        });
+                disamb = new WButtonIcon(x + 21, y - 24, 20, 20, BTN_DISAMB, "recipe.disamb");
+                save = new WButtonIcon(x + 40, y - 24, 20, 20, BTN_YES, "recipe.confirm")
+                        .setListener(i -> set(temp.getLabel(), type, idx));
+                discard = new WButtonIcon(x + 59, y - 24, 20, 20, BTN_NO, "recipe.discard.new")
+                        .setListener(i -> GuiRecipe.this.setOverlay(null));
+                delete = new WButtonIcon(x + 78, y - 24, 20, 20, BTN_DELETE_L, "recipe.delete.new")
+                        .setListener(i -> set(ILabel.EMPTY, type, idx));
+            }
+
             Map<Integer, List<ILabel>> entry = GuiRecipe.this.disamb.get(type);
             if (entry != null && entry.containsKey(idx)) {
                 disamb.setListener(i -> GuiRecipe.this.setOverlay(new WDisamb(type, idx)));
             } else disamb.setDisabled(true);
-            add(temp, text, pick, yes, no, disamb);
+            if(JecaConfig.useOldLabelButtons.get())
+                add(temp, text, pick, save, delete, disamb);
+            else
+                add(temp, text, pick, disamb, save, discard, delete);
             text.setListener(i -> {
                 boolean acceptable;
                 long amount;
@@ -271,7 +293,7 @@ public class GuiRecipe extends Gui {
                     amount = 1;
                 }
                 text.setColor(acceptable ? COLOR_TEXT_WHITE : COLOR_TEXT_RED);
-                yes.setDisabled(!acceptable);
+                save.setDisabled(!acceptable);
                 temp.setLabel(temp.getLabel().setAmount(amount));
             });
             update();
