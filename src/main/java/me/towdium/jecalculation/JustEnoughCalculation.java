@@ -10,6 +10,7 @@ import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.ClientRegistry;
+import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -45,6 +46,7 @@ public class JustEnoughCalculation {
     public static GuiScreenEventHandler GUI_HANDLER = new GuiScreenEventHandler();
 
     public JustEnoughCalculation() {
+        MinecraftForge.EVENT_BUS.addListener(JustEnoughCalculation::registerClientCommand);
         //noinspection ResultOfMethodCallIgnored
         Utilities.config().mkdirs();
         String cfgPath = FMLPaths.CONFIGDIR.get().resolve(PATH).toString();
@@ -76,5 +78,9 @@ public class JustEnoughCalculation {
         ClientRegistry.registerKeyBinding(keyOpenGuiCraft);
         ClientRegistry.registerKeyBinding(keyOpenGuiMath);
         MinecraftForge.EVENT_BUS.register(GUI_HANDLER);
+    }
+
+    public static void registerClientCommand(RegisterClientCommandsEvent event){
+        JecaCommand.register(event.getDispatcher());
     }
 }
