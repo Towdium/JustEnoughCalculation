@@ -43,8 +43,6 @@
   "jecalculation.gui.recipe.new": "New group",
   "jecalculation.gui.recipe.pick": "Pick label",
   "jecalculation.gui.recipe.confirm": "Apply changes",
-  "jecalculation.gui.recipe.discard.new": "Discard changes\nIf you wish to use the old layout\ntype /jeca use_old_label_buttons\nin chat to switch",
-  "jecalculation.gui.recipe.delete.new": "Delete label\nIf you wish to use the old layout\ntype /jeca use_old_label_buttons\nin chat to switch",
   "jecalculation.gui.recipe.discard": "Discard changes",
   "jecalculation.gui.recipe.delete": "Delete label",
   "jecalculation.gui.recipe.to_percent": "Change to percentage",

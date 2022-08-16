@@ -21,17 +21,7 @@ public class JecaCommand {
                 .then(Commands.literal("craft")
                         .executes((c) -> JecaGui.openGuiCraft(null, 0)))
                 .then(Commands.literal("math")
-                        .executes((c) -> JecaGui.openGuiMath(null, 0)))
-                .then(Commands.literal("use_old_label_buttons")
-                        .executes(c -> {
-                            boolean inverted = !JecaConfig.useOldLabelButtons.get();
-                            JecaConfig.useOldLabelButtons.set(inverted);
-                            JecaConfig.useOldLabelButtons.save();
-                            String key = "jecalculation.command.use_old_label_buttons." + inverted;
-                            c.getSource().sendSuccess(new TranslatableComponent(key), false);
-                            return Command.SINGLE_SUCCESS;
-                        })
-                );
+                        .executes((c) -> JecaGui.openGuiMath(null, 0)));
         dispatcher.register(lab);
     }
 }

@@ -43,8 +43,6 @@
   "jecalculation.gui.recipe.new": "新建编组",
   "jecalculation.gui.recipe.pick": "抓取算子",
   "jecalculation.gui.recipe.confirm": "应用修改",
-  "jecalculation.gui.recipe.discard.new": "放弃修改\n如果你想使用旧版布局\n请在聊天框输入\n/jeca use_old_label_buttons\n来切换",
-  "jecalculation.gui.recipe.delete.new": "删除算子\n如果你想使用旧版布局\n请在聊天框输入\n/jeca use_old_label_buttons\n来切换",
   "jecalculation.gui.recipe.discard": "放弃修改",
   "jecalculation.gui.recipe.delete": "删除算子",
   "jecalculation.gui.recipe.to_percent": "切换至百分比",
