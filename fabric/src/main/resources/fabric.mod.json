@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "jecalculation",
+  "version": "${version}",
+  "name": "Just Enough Calculation",
+  "description": "A simple mod to help you with recipe calculation.",
+  "authors": [
+    "Towdium",
+    "MorningSage",
+    "yzl210"
+  ],
+  "contact": {
+    "sources": "https://github.com/Towdium/JustEnoughCalculation"
+  },
+  "license": "The MIT License (MIT)",
+  "icon": "assets/jecalculation/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "me.towdium.jecalculation.fabric.JustEnoughCalculationFabric"
+    ],
+    "rei_client": [
+      "me.towdium.jecalculation.compat.rei.JecaREIPlugin"
+    ],
+    "jei_mod_plugin": [
+      "me.towdium.jecalculation.compat.jei.JecaJEIPlugin"
+    ]
+  },
+  "mixins": [
+    "jecalculation-fabric-like.mixins.json"
+  ],
+  "depends": {
+    "fabric": "*",
+    "minecraft": ">=1.18.2",
+    "architectury": ">=4.9.83"
+  }
+}

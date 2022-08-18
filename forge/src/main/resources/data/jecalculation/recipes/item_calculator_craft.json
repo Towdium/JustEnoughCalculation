@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "xax",
+    "xbx",
+    "xcx"
+  ],
+  "key": {
+    "x": {
+      "item": "forge:stone"
+    },
+    "a": {
+      "tag": "forge:dyes/black"
+    },
+    "b": {
+      "tag": "forge:dusts/redstone"
+    },
+    "c": {
+      "item": "forge:ingots/iron"
+    }
+  },
+  "result": {
+    "item": "jecalculation:item_calculator_craft"
+  }
+}

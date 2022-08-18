@@ -1,86 +1,51 @@
-buildscript {
-    repositories {
-        maven { url = 'https://files.minecraftforge.net/maven' }
-        mavenCentral()
+plugins {
+    id "architectury-plugin" version "3.4-SNAPSHOT"
+    id "dev.architectury.loom" version "0.12.0-SNAPSHOT" apply false
+}
+
+architectury {
+    minecraft = rootProject.minecraft_version
+}
+
+subprojects {
+    apply plugin: "dev.architectury.loom"
+
+    loom {
+        silentMojangMappingsLicense()
     }
+
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
+        // The following line declares the mojmap mappings, you may use other mappings as well
+        mappings loom.layered() {
+            officialMojangMappings()
+            parchment("org.parchmentmc.data:parchment-1.18.2:2022.08.07@zip")
+        }
+        // The following line declares the yarn mappings you may select this one as well.
+        // mappings "net.fabricmc:yarn:1.18.2+build.4:v2"
     }
 }
 
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
+allprojects {
+    apply plugin: "java"
+    apply plugin: "architectury-plugin"
 
-repositories {
-    mavenCentral()
-    maven { url = "https://dvs1.progwml6.com/files/maven" }
-}
+    archivesBaseName = rootProject.archives_base_name
+    version = rootProject.mod_version
+    group = rootProject.maven_group
 
-version = "1.18.2-${verspec}.${verbuild}"
-group = "me.towdium.jecalculation"
-archivesBaseName = "JustEnoughCalculation"
-
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
-
-minecraft {
-    mappings channel: 'official', version: "1.18.2"
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
-    runs {
-        client {
-            workingDirectory project.file('run')
-            property 'forge.logging.console.level', 'debug'
-            mods {
-                jecalculation {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        server {
-            workingDirectory project.file('run')
-            property 'forge.logging.console.level', 'debug'
-            mods {
-                jecalculation {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        data {
-            workingDirectory project.file('run')
-            property 'forge.logging.console.level', 'debug'
-            args '--mod', 'jecalculation', '--all', '--output', file('src/generated/resources/')
-            mods {
-                jecalculation {
-                    source sourceSets.main
-                }
-            }
-        }
+    repositories {
+        maven { url = "https://maven.parchmentmc.org" }
+        maven { url = "https://dvs1.progwml6.com/files/maven" }
+        maven { url = "https://maven.shedaniel.me" }
     }
-}
 
-dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.2-40.1.73'
-    compileOnly fg.deobf('mezz.jei:jei-1.18.2:9.7.0.196:api')
-    runtimeOnly fg.deobf('mezz.jei:jei-1.18.2:9.7.0.196')
-    //testCompile 'org.junit.jupiter:junit-jupiter-api:5.2.0'
-}
-
-jar {
-    manifest {
-        attributes([
-                "Specification-Title": "Just Enough Calculation",
-                "Specification-Vendor": "Towdium",
-                "Specification-Version": "${verspec}",
-                "Implementation-Title": project.name,
-                "Implementation-Version": "${verspec}.${verbuild}",
-                "Implementation-Vendor" :"Towdium",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
-        ])
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+        options.release = 17
     }
-}
 
-tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
+    java {
+        withSourcesJar()
+    }
 }
