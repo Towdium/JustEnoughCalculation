@@ -1,5 +1,6 @@
 package me.towdium.jecalculation.utils;
 
+import com.google.common.base.Optional;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import mcp.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
@@ -14,12 +15,20 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.common.extensions.IForgeItem;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.forgespi.language.IModInfo;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
@@ -63,7 +72,7 @@ public class Utilities {
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public static <T> Stream<T> stream(Optional<T> o) {
+    public static <T> Stream<T> stream(java.util.Optional<T> o) {
         return o.map(Stream::of).orElse(Stream.empty());
     }
 
@@ -81,31 +90,42 @@ public class Utilities {
     }
 
     // MOD NAME
-    @Nullable
-    public static String getModName(Item item) {
-        ResourceLocation tmp = item.getRegistryName();
-        if (tmp == null) return null;
-        String id = tmp.getNamespace();
-        return id.equals("minecraft") ? "Minecraft" : getModName(id);
+    static <T extends IForgeRegistryEntry<T>> Optional<String> getModNameInternal(IForgeRegistry<T> registry, T t) {
+        return Optional.fromNullable(t instanceof Item ? ((Item) t).getCreatorModId(new ItemStack((Item) t)) : null)
+                .or(Optional.fromNullable(registry.getKey(t))
+                        .or(Optional.fromNullable(t.getRegistryName()))
+                        .transform(ResourceLocation::getNamespace))
+                .transform(s -> "minecraft".equals(s) ? "Minecraft" : getModName(s));
     }
 
     static String getModName(String id) {
         return ModList.get().getModContainerById(id)
-                .orElseThrow(() -> new RuntimeException("Internal error"))
-                .getModInfo().getDisplayName();
+                .map(ModContainer::getModInfo)
+                .map(IModInfo::getDisplayName)
+                .orElseGet(() -> WordUtils.capitalize(id.replace("_", " ")));
+    }
+
+    public static String getModName(Item item) {
+        return getModNameInternal(ForgeRegistries.ITEMS, item)
+                .or("Unknown");
+    }
+
+    public static String getModName(Fluid fluid) {
+        return getModNameInternal(ForgeRegistries.FLUIDS, fluid)
+                .or(() -> getModNameFromTexture(fluid));
+    }
+
+    static String getModNameFromTexture(Fluid fluid) {
+        FluidStack fs = new FluidStack(fluid, 1000);
+        String name = fs.getDisplayName().getString(); //.getFormattedText();
+        if (name.equals("lava") || name.equals("water")) return "Minecraft";
+        ResourceLocation texture = fluid.getAttributes().getStillTexture();
+        if (texture == null) return "Unknown";
+        else return getModName(texture.getNamespace());
     }
 
     public static File config() {
         return new File(FMLPaths.CONFIGDIR.get().toFile(), JustEnoughCalculation.MODID);
-    }
-
-    public static String getModName(Fluid fluid) {
-        FluidStack fs = new FluidStack(fluid, 1000);
-        String name = fs.getDisplayName().getString(); //.getFormattedText();
-        if (name.equals("lava") || name.equals("water")) return "Minecraft";
-        ResourceLocation texture = fluid.getAttributes().getStillTexture(fs);
-        if (texture == null) return "Unknown";
-        else return getModName(texture.getNamespace());
     }
 
     public static CompoundNBT getTag(ItemStack is) {
