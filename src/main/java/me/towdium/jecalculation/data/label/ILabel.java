@@ -461,8 +461,8 @@ public interface ILabel {
                     d = tmp;
                 }
                 if (a.isInstance(c) && b.isInstance(d) && p.test(c, d)) {
-                    long amountC = c.isPercent() ? c.getAmount() : Math.multiplyExact(c.getAmount(), 100);
-                    long amountD = d.isPercent() ? d.getAmount() : Math.multiplyExact(d.getAmount(), 100);
+                    long amountC = c.isPercent() ? c.getAmount() : Math.multiplyExact(c.getAmount(), 100L);
+                    long amountD = d.isPercent() ? d.getAmount() : Math.multiplyExact(d.getAmount(), 100L);
                     long amount = Math.addExact(amountC, amountD);
                     long amountI = (amount > 0 ? Math.addExact(amount, 99) : Math.subtractExact(amount, 99)) / 100;
                     if (amount == 0) return EMPTY;
