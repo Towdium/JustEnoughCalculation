@@ -2,6 +2,7 @@ package me.towdium.jecalculation.events;
 
 import com.google.common.collect.Comparators;
 import me.towdium.jecalculation.JecaItem;
+import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.guis.GuiCraftMini;
 import me.towdium.jecalculation.gui.guis.IGui;
@@ -67,13 +68,27 @@ public class GuiScreenOverlayHandler extends WContainer implements IGui {
 
     public List<GuiCraftMini> inventoryToWidgets(Inventory inventory) {
         List<GuiCraftMini> results = new ArrayList<>();
-        for (int i = 0; i < inventory.items.size(); i++) {
-            ItemStack itemStack = inventory.items.get(i);
-            if (itemStack.getItem() == JecaItem.CRAFT.get()) {
-                GuiCraftMini widget = new GuiCraftMini(itemStack, i);
-                if (widget.record.overlayOpen) {
-                    results.add(widget);
+        if (Controller.isServerActive())
+        {
+            for (int i = 0; i < inventory.items.size(); i++)
+            {
+                ItemStack itemStack = inventory.items.get(i);
+                if (itemStack.getItem() == JecaItem.CRAFT.get())
+                {
+                    GuiCraftMini widget = new GuiCraftMini(itemStack, i);
+                    if (widget.record.overlayOpen)
+                    {
+                        results.add(widget);
+                    }
                 }
+            }
+        }
+        else
+        {
+            GuiCraftMini widget = new GuiCraftMini(null, 0);
+            if (widget.record.overlayOpen)
+            {
+                results.add(widget);
             }
         }
         return results;
