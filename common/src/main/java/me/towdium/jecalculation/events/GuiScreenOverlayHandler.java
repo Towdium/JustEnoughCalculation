@@ -68,26 +68,20 @@ public class GuiScreenOverlayHandler extends WContainer implements IGui {
 
     public List<GuiCraftMini> inventoryToWidgets(Inventory inventory) {
         List<GuiCraftMini> results = new ArrayList<>();
-        if (Controller.isServerActive())
-        {
-            for (int i = 0; i < inventory.items.size(); i++)
-            {
+        if (Controller.isServerActive()) {
+            for (int i = 0; i < inventory.items.size(); i++) {
                 ItemStack itemStack = inventory.items.get(i);
-                if (itemStack.getItem() == JecaItem.CRAFT.get())
-                {
+                if (itemStack.getItem() == JecaItem.CRAFT.get()) {
                     GuiCraftMini widget = new GuiCraftMini(itemStack, i);
-                    if (widget.record.overlayOpen)
-                    {
+                    if (widget.record.overlayOpen) {
                         results.add(widget);
                     }
                 }
             }
         }
-        else
-        {
+        else {
             GuiCraftMini widget = new GuiCraftMini(null, 0);
-            if (widget.record.overlayOpen)
-            {
+            if (widget.record.overlayOpen) {
                 results.add(widget);
             }
         }
