@@ -148,7 +148,7 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
 
     public int getGlobalMouseX() {
         Minecraft mc = Objects.requireNonNull(Minecraft.getInstance(), "Internal error");
-        int width = mc.getWindow().getWidth() / 2;
+        int width = mc.getWindow().getWidth();
         if (width == 0) {
             return 0;
         }
@@ -157,7 +157,7 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
 
     public int getGlobalMouseY() {
         Minecraft mc = Objects.requireNonNull(Minecraft.getInstance(), "Internal error");
-        int height = mc.getWindow().getHeight() / 2;
+        int height = mc.getWindow().getHeight();
         if (height == 0) {
             return 0;
         }
