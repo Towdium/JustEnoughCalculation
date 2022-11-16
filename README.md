@@ -24,15 +24,14 @@ the [release page](https://minecraft.curseforge.com/projects/just-enough-calcula
 - Infinite inputs, outputs and catalysts of recipe
 - Math calculation
 - Recipe can be transferred from NEI recipe overlay gui (`shift` + click `?` button)
-  - [x] vanilla
-  - [x] gregtech
-  - [x] gregtech6
+  - [x] Any 3x3 or 2x2 recipe in crafting table
+  - [x] Gregtech
+  - [x] Gregtech6
   - [x] Forestry (`?` button may overlap with the fluid tank. Click carefully)
   - [x] Avaritia (`?` button may be covered by the NEI search bar)
   - [x] GT++ (support GT++ 1.7.05.68 (GTNH 2.1.0.0), have not tested old versions)
   - [x] Thaumcraft (no aspect)
-  - [ ] AE2
-  - [ ] Others
+  - [ ] AE2 (recipe in `Quartz Grindstone` or others)
 - [x] Item from NEI item panel
 - [ ] Fluid from NEI item panel (Only support GT & GT6, others need to get from labels picker)
 - [x] OreDictionary recognize
@@ -53,11 +52,12 @@ Tutorial links:
 
 ## TODO
 
+- [ ] More friendly fluid amount tooltip (144x??+?? and 1000x??+??)
 - ~~add new button to transfer the recipe.~~
 
 ## Known Issues
 
-- [ ] **May crash** if you open the gui immediately after entering the world. Please wait for the NEI to load completely.
+- [x] <del>**May crash** if you open the gui immediately after entering the world. Please wait for the NEI to load completely.</del>
 - [ ] Fluid from NEI ItemPanel will be recognized as item
 - [ ] Some OreDict items renders wrong with overlay (Now removed the overlay)
 - [ ] GUI will cover the NEI's GUI like tooltip on item panel
