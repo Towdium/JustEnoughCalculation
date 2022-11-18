@@ -40,8 +40,8 @@ public class JecaOverlayHandler implements IOverlayHandler {
     private static EnumMap<Recipe.IO, List<Trio<ILabel, CostList, CostList>>> convertRecipe(IRecipeHandler recipe,
                                                                                             int recipeIndex,
                                                                                             Class<?> context) {
-        EnumMap<Recipe.IO, List<Trio<ILabel, CostList, CostList>>> merged = new EnumMap<>(
-                Recipe.IO.class);  // item disamb raw
+        // item disamb raw
+        EnumMap<Recipe.IO, List<Trio<ILabel, CostList, CostList>>> merged = new EnumMap<>(Recipe.IO.class);
 
         // merge recipe input, output and catalysts
         List<Object[]> recipeInputs = new ArrayList<>();
@@ -77,7 +77,7 @@ public class JecaOverlayHandler implements IOverlayHandler {
             CostList cl = new CostList(list);
             if (p.three.equals(cl)) {
                 ILabel.MERGER.merge(p.one, fin).ifPresent(i -> p.one = i);
-                p.two = p.two.merge(cl, true, false);
+                p.two = CostList.merge(p.two, cl, true);
                 return true;
             } else
                 return false;

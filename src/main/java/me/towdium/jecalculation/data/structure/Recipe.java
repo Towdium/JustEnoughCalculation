@@ -85,6 +85,18 @@ public class Recipe {
         return p.test(input, r.input) && p.test(catalyst, r.catalyst) && p.test(output, r.output);
     }
 
+    public List<ILabel> getInput() {
+        return input;
+    }
+
+    public List<ILabel> getOutput() {
+        return output;
+    }
+
+    public List<ILabel> getCatalyst() {
+        return catalyst;
+    }
+
     public List<ILabel> getLabel(IO type) {
         return get(type, input, output, catalyst);
     }
