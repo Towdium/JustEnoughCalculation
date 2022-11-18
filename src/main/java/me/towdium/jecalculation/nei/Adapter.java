@@ -83,8 +83,14 @@ public class Adapter {
         if (resultStack != null)
             outputs.add(resultStack.items);
 
-        for (IAdapter adapter : adapters) {
-            adapter.handleRecipe(recipe, index, inputs, outputs);
+        try {
+            for (IAdapter adapter : adapters) {
+                adapter.handleRecipe(recipe, index, inputs, outputs);
+            }
+        } catch (Exception e) {
+            Utilities.addChatMessage(Utilities.ChatMessage.RECIPE_TRANSFER_ERROR);
+            JustEnoughCalculation.logger.error("Exception when handling recipe: " + recipe.getClass().getName());
+            e.printStackTrace();
         }
     }
 }

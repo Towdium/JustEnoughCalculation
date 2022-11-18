@@ -18,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.fluids.Fluid;
 import org.apache.commons.io.FileUtils;
@@ -52,10 +53,10 @@ public class Utilities {
     // FLOAT FORMATTING
     public static char[] suffix = new char[]{'K', 'M', 'B', 'G', 'T', 'P'};
     public static DecimalFormat[] format = new DecimalFormat[]{new DecimalFormat("#."),
-                                                               new DecimalFormat("#.#"),
-                                                               new DecimalFormat("#.##"),
-                                                               new DecimalFormat("#.###"),
-                                                               new DecimalFormat("#.####")};
+            new DecimalFormat("#.#"),
+            new DecimalFormat("#.##"),
+            new DecimalFormat("#.###"),
+            new DecimalFormat("#.####")};
 
     public static String cutNumber(float f, int size) {
         BiFunction<Float, Integer, String> form = (fl, len) -> format[len - 1 - (int) Math.log10(fl)].format(fl);
@@ -151,6 +152,27 @@ public class Utilities {
 
     public static EntityClientPlayerMP getPlayer() {
         return Objects.requireNonNull(ClientUtils.mc().thePlayer);
+    }
+
+    public static void addChatMessage(ChatMessage cm) {
+        EntityClientPlayerMP player = Utilities.getPlayer();
+        if (player != null)
+            player.addChatMessage(new ChatComponentTranslation(cm.get()));
+    }
+
+    public enum ChatMessage {
+        MAX_LOOP, RECIPE_TRANSFER_ERROR;
+
+        private String get() {
+            switch (this) {
+                case MAX_LOOP:
+                    return "jecalculation.chat.max_loop";
+                case RECIPE_TRANSFER_ERROR:
+                    return "jecalculation.chat.recipe_transfer_error";
+                default:
+                    return "";
+            }
+        }
     }
 
 
@@ -287,8 +309,8 @@ public class Utilities {
 
         public static List<String> wrap(String s, int width) {
             return new TextWrapper().wrap(s,
-                                          ClientUtils.mc().getLanguageManager().getCurrentLanguage().getLanguageCode(),
-                                          i -> TextWrapper.renderer.getCharWidth(i), width);
+                    ClientUtils.mc().getLanguageManager().getCurrentLanguage().getLanguageCode(),
+                    i -> TextWrapper.renderer.getCharWidth(i), width);
         }
 
         static class TextWrapper {

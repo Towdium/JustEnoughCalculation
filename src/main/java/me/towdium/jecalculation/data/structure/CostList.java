@@ -147,9 +147,8 @@ public class CostList {
                     addCatalyst(next.one.getLabel(Recipe.IO.CATALYST));
                     next = find(true);
                 }
-                if (count++ > 1000 && player != null) {
-                    player.addChatMessage(
-                            new ChatComponentTranslation("jecalculation.chat.max_loop"));
+                if (count++ > 1000) {
+                    Utilities.addChatMessage(Utilities.ChatMessage.MAX_LOOP);
                     break;
                 }
             }
