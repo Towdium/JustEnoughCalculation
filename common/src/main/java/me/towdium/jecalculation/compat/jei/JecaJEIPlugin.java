@@ -81,7 +81,7 @@ public class JecaJEIPlugin implements IModPlugin {
         registration.addGlobalGuiHandler(new IGlobalGuiHandler() {
             @Override
             public Collection<Rect2i> getGuiExtraAreas() {
-                return JustEnoughCalculation.GUI_HANDLER.getGuiAreas();
+                return JustEnoughCalculation.Client.GUI_HANDLER.getGuiAreas();
             }
         });
     }

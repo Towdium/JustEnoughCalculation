@@ -24,6 +24,8 @@ import me.towdium.jecalculation.data.structure.Recipe;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.guis.GuiRecipe;
 import me.towdium.jecalculation.utils.wrappers.Trio;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -35,6 +37,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static me.towdium.jecalculation.compat.ModCompat.merge;
 
+@Environment(EnvType.CLIENT)
 public class JecaREIPlugin implements REIClientPlugin {
 
     public static boolean isRecipeScreen(Screen screen) {
@@ -89,7 +92,7 @@ public class JecaREIPlugin implements REIClientPlugin {
 
     @Override
     public void registerExclusionZones(ExclusionZones zones) {
-        zones.register(AbstractContainerScreen.class, screen -> JustEnoughCalculation.GUI_HANDLER.getGuiAreas().parallelStream()
+        zones.register(AbstractContainerScreen.class, screen -> JustEnoughCalculation.Client.GUI_HANDLER.getGuiAreas().parallelStream()
                 .map(rect2i -> new Rectangle(rect2i.getX(), rect2i.getY(), rect2i.getWidth(), rect2i.getHeight())).toList());
     }
 

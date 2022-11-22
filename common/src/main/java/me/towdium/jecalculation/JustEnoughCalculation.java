@@ -34,15 +34,14 @@ import static me.towdium.jecalculation.gui.JecaGui.keyOpenGuiMath;
 public class JustEnoughCalculation {
     public static final String MODID = "jecalculation";
     public static final String MODNAME = "Just Enough Calculation";
-    public static final String PROTOCOL = "1";
     public static NetworkChannel network;
     public static Logger logger = LogManager.getLogger(MODID);
-    @Environment(EnvType.CLIENT)
-    public static GuiScreenEventHandler GUI_HANDLER;
 
-    static {
-        if (Platform.getEnv() == EnvType.CLIENT)
-            GUI_HANDLER = new GuiScreenEventHandler();
+    @Environment(EnvType.CLIENT)
+    public static class Client {
+        @Environment(EnvType.CLIENT)
+        public static GuiScreenEventHandler GUI_HANDLER =
+                new GuiScreenEventHandler();
     }
 
     public JustEnoughCalculation() {
