@@ -16,7 +16,7 @@
       "tag": "forge:dusts/redstone"
     },
     "c": {
-      "item": "forge:ingots/iron"
+      "tag": "forge:ingots/iron"
     }
   },
   "result": {

@@ -7,7 +7,7 @@
   ],
   "key": {
     "x": {
-      "item": "forge:stone"
+      "tag": "forge:stone"
     },
     "a": {
       "tag": "forge:dyes/black"
@@ -16,7 +16,7 @@
       "tag": "forge:dusts/redstone"
     },
     "c": {
-      "item": "forge:ingots/iron"
+      "tag": "forge:ingots/iron"
     }
   },
   "result": {
