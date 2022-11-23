@@ -41,12 +41,12 @@ public class UtilitiesImpl {
 
     //TODO: Use normal method to get value when possible
     @SuppressWarnings("unchecked")
-    public static FluidStack getFluidStackFromJeiIngredient(Object object) {
+    public static FluidStack createFluidStackFromJeiIngredient(Object object) {
         try {
             if (GET_FLUID == null)
-                GET_FLUID = JecaJEIPlugin.FLUID_INGREDIENT_CLASS.getDeclaredMethod("getFluid");
+                GET_FLUID = JecaJEIPlugin.FABRIC_FLUID_INGREDIENT_CLASS.getDeclaredMethod("getFluid");
             if (GET_TAG == null)
-                GET_TAG = JecaJEIPlugin.FLUID_INGREDIENT_CLASS.getDeclaredMethod("getTag");
+                GET_TAG = JecaJEIPlugin.FABRIC_FLUID_INGREDIENT_CLASS.getDeclaredMethod("getTag");
             if (object instanceof IJeiFluidIngredient fluid)
                 return FluidStack.create((Fluid) GET_FLUID.invoke(fluid), fluid.getAmount(),
                         ((Optional<CompoundTag>) GET_TAG.invoke(fluid)).orElse(null));

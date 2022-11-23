@@ -112,7 +112,7 @@ public class Utilities {
     }
 
     @ExpectPlatform
-    public static FluidStack getFluidStackFromJeiIngredient(Object object) {
+    public static FluidStack createFluidStackFromJeiIngredient(Object object) {
         throw new AssertionError();
     }
 

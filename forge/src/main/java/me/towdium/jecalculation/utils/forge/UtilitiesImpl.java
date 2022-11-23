@@ -1,6 +1,7 @@
 package me.towdium.jecalculation.utils.forge;
 
 import dev.architectury.fluid.FluidStack;
+import dev.architectury.hooks.fluid.forge.FluidStackHooksForge;
 import me.towdium.jecalculation.data.structure.RecordPlayer;
 import me.towdium.jecalculation.forge.JecaCapability;
 import me.towdium.jecalculation.forge.JecaConfig;
@@ -31,7 +32,9 @@ public class UtilitiesImpl {
         return itemStack.areCapsCompatible(itemStack1);
     }
 
-    public static FluidStack getFluidStackFromJeiIngredient(Object object) {
-        throw new UnsupportedOperationException();
+    public static FluidStack createFluidStackFromJeiIngredient(Object object) {
+        if(object instanceof net.minecraftforge.fluids.FluidStack fluidStack)
+            return FluidStackHooksForge.fromForge(fluidStack);
+        return null;
     }
 }

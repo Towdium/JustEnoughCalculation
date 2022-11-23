@@ -48,7 +48,8 @@ import static me.towdium.jecalculation.compat.ModCompat.merge;
 public class JecaJEIPlugin implements IModPlugin {
     public static IJeiRuntime runtime;
 
-    public static Class<?> FLUID_INGREDIENT_CLASS;
+    public static Class<?> FABRIC_FLUID_INGREDIENT_CLASS;
+    public static Class<?> FORGE_FLUID_INGREDIENT_CLASS;
 
     public static ILabel getLabelUnderMouse() {
         var ref = new Object() {
@@ -99,9 +100,15 @@ public class JecaJEIPlugin implements IModPlugin {
     public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
         runtime = jeiRuntime;
         ModCompat.isJEILoaded = true;
+        if(Platform.isForge())
+            try {
+                FORGE_FLUID_INGREDIENT_CLASS = Class.forName("net.minecraftforge.fluids.FluidStack");
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException("Forge fluid ingredient class should exist!", e);
+            }
         if (Platform.isFabric())
             try {
-                FLUID_INGREDIENT_CLASS = Class.forName("mezz.jei.api.fabric.ingredients.fluids.IJeiFluidIngredient");
+                FABRIC_FLUID_INGREDIENT_CLASS = Class.forName("mezz.jei.api.fabric.ingredients.fluids.IJeiFluidIngredient");
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException("Fabric fluid ingredient class should exist!", e);
             }

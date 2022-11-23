@@ -1,7 +1,6 @@
 package me.towdium.jecalculation.data.label;
 
 import dev.architectury.fluid.FluidStack;
-import dev.architectury.platform.Platform;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.compat.ModCompat;
 import me.towdium.jecalculation.compat.jei.JecaJEIPlugin;
@@ -255,9 +254,11 @@ public interface ILabel {
             else if (o instanceof FluidStack) return new LFluidStack((FluidStack) o);
             else if (o instanceof EnchantmentInstance)
                 return new LItemStack(createForEnchantment((EnchantmentInstance) o));
-            if (ModCompat.isJEILoaded && Platform.isFabric() && JecaJEIPlugin.FLUID_INGREDIENT_CLASS != null && JecaJEIPlugin.FLUID_INGREDIENT_CLASS.isAssignableFrom(o.getClass()))
-                return new LFluidStack(Utilities.getFluidStackFromJeiIngredient(o));
-            else return LPlaceholder.Converter.from(o);
+            if (ModCompat.isJEILoaded &&
+                    (JecaJEIPlugin.FABRIC_FLUID_INGREDIENT_CLASS != null && JecaJEIPlugin.FABRIC_FLUID_INGREDIENT_CLASS.isAssignableFrom(o.getClass())) ||
+                    (JecaJEIPlugin.FORGE_FLUID_INGREDIENT_CLASS != null && JecaJEIPlugin.FORGE_FLUID_INGREDIENT_CLASS.isAssignableFrom(o.getClass())))
+                return new LFluidStack(Utilities.createFluidStackFromJeiIngredient(o));
+            return LPlaceholder.Converter.from(o);
         }
 
         public void register(ConverterFunction handler, Priority priority) {
