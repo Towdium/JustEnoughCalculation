@@ -20,6 +20,7 @@ import me.towdium.jecalculation.utils.wrappers.Wrapper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.Util;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -71,6 +72,7 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
     public static final boolean ALWAYS_TOOLTIP = false;
     @SuppressWarnings("StringOperationCanBeSimplified")
     public static final String SEPARATOR = new String();
+    public static final boolean IS_OSX = Util.OS.OSX.equals(Util.getPlatform());
     public ILabel hand = ILabel.EMPTY;
     protected static JecaGui last;
     public static JecaGui override;
@@ -152,6 +154,8 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
         if (width == 0) {
             return 0;
         }
+        if(IS_OSX)
+            width /= 2;
         return (int) mc.mouseHandler.xpos() * mc.getWindow().getGuiScaledWidth() / width - this.leftPos;
     }
 
@@ -161,6 +165,8 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
         if (height == 0) {
             return 0;
         }
+        if(IS_OSX)
+            height /= 2;
         return (int) mc.mouseHandler.ypos() * mc.getWindow().getGuiScaledHeight() / height - this.topPos;
     }
 
