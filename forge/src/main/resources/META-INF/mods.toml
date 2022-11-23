@@ -9,7 +9,7 @@ version="${version}"
 displayName="Just Enough Calculation"
 displayURL="https://github.com/Towdium/JustEnoughCalculation"
 credits="Thanks to the MCP, Forge and FML guys; along with sesess, Pahimar, MrCrayfish and BedrockMiner for their tutorial."
-authors="Towdium, MorningSage, LeoY"
+authors="Towdium, MorningSage, 6LeoY"
 description="A simple mod to help you with recipe calculation."
 logoFile="icon.png"
 [[dependencies.jecalculation]]
