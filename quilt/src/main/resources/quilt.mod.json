@@ -12,13 +12,13 @@
     "authors": [
       "Towdium",
       "MorningSage",
-      "yzl210"
+      "LeoY"
     ],
     "contact": {
       "sources": "https://github.com/Towdium/JustEnoughCalculation"
     },
     "license": "The MIT License (MIT)",
-    "icon": "assets/jecalculation/icon.png",
+    "icon": "icon.png",
     "intermediate_mappings": "net.fabricmc:intermediary",
     "environment": "*",
     "entrypoints": {
