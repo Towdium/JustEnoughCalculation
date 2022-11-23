@@ -1,5 +1,6 @@
 package me.towdium.jecalculation.compat.jei;
 
+import dev.architectury.fluid.FluidStack;
 import dev.architectury.platform.Platform;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.compat.ModCompat;
@@ -65,8 +66,11 @@ public class JecaJEIPlugin implements IModPlugin {
     public static boolean showRecipe(ILabel l) {
         Screen s = Minecraft.getInstance().screen;
         Object rep = l.getRepresentation();
-        if (rep != null)
+        if (rep != null) {
+            if(rep instanceof FluidStack fluidStack)
+                rep = runtime.getJeiHelpers().getPlatformFluidHelper().create(fluidStack.getFluid(), fluidStack.getAmount());
             runtime.getRecipesGui().show(runtime.getJeiHelpers().getFocusFactory().createFocus(RecipeIngredientRole.OUTPUT, runtime.getIngredientManager().getIngredientType(rep), rep));
+        }
         return Minecraft.getInstance().screen != s;
     }
 
