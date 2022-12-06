@@ -74,6 +74,7 @@ public class GuiScreenOverlayHandler extends WContainer implements IGui {
                 if (itemStack.getItem() == JecaItem.CRAFT.get()) {
                     GuiCraftMini widget = new GuiCraftMini(itemStack, i);
                     if (widget.record.overlayOpen) {
+                        widget.refreshCalculator();
                         results.add(widget);
                     }
                 }
@@ -82,6 +83,7 @@ public class GuiScreenOverlayHandler extends WContainer implements IGui {
         else {
             GuiCraftMini widget = new GuiCraftMini(null, 0);
             if (widget.record.overlayOpen) {
+                widget.refreshCalculator();
                 results.add(widget);
             }
         }

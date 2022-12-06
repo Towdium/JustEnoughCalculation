@@ -125,7 +125,6 @@ public class GuiCraftMini extends WContainer {
 
         refreshRecent();
         setMode(record.mode);
-        refreshCalculator();
     }
 
     void setMode(RecordCraft.Mode mode) {
@@ -142,7 +141,7 @@ public class GuiCraftMini extends WContainer {
         label.setLabel(record.getLatest());
     }
 
-    void refreshCalculator() {
+    public void refreshCalculator() {
         try {
             String s = amount.getText();
             long i = s.isEmpty() ? 1 : Long.parseLong(amount.getText());
