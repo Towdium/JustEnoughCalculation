@@ -66,10 +66,15 @@ public class GregTech implements IAdapter {
     }
 
     protected void handleDefault(IRecipeHandler recipe, int index, List<Object[]> inputs, List<Object[]> outputs) {
-        for (int i = 0; i < inputs.size(); i++) {
-            Object[] objects = Arrays.stream(inputs.get(i)).map(o -> GregTech.convertFluid((ItemStack) o)).toArray();
-            inputs.set(i, objects);
-        }
+        inputs.replaceAll(ts -> Arrays.stream(ts).map(o -> {
+            if(o instanceof ItemStack) {
+                return GregTech.convertFluid((ItemStack) o);
+            } else if (o instanceof FluidStack) {
+                return o;
+            } else {
+                throw new IllegalArgumentException("Shall get ItemStack or FluidStack, but get: " + o.getClass());
+            }
+        }).toArray());
         List<PositionedStack> otherStacks = recipe.getOtherStacks(index);
         outputs.addAll(otherStacks.stream()
                                   .map(positionedStack -> positionedStack.items)

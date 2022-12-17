@@ -31,42 +31,42 @@ public class Adapter {
     public static void init() {
         JustEnoughCalculation.logger.info("=====Just Enough Calculation Init Start=====");
         if (Loader.isModLoaded("Forestry")) {
-            JustEnoughCalculation.logger.info("Forestry installed");
+            JustEnoughCalculation.logger.info("Forestry detected");
             adapters.add(new Forestry());
         }
         if (Loader.isModLoaded("appliedenergistics2")) {
-            JustEnoughCalculation.logger.info("ae2 not supported");
+            JustEnoughCalculation.logger.info("ae2 detected");
             adapters.add(new AE2());
         }
         if (Loader.isModLoaded("gregtech")) {
             if(GregTech6.isGT6()) {
-                JustEnoughCalculation.logger.info("gregtech6 installed");
+                JustEnoughCalculation.logger.info("gregtech6 detected");
                 adapters.add(new GregTech6());
             } else {
-                JustEnoughCalculation.logger.info("gregtech5 installed");
+                JustEnoughCalculation.logger.info("gregtech5 detected");
                 adapters.add(new GregTech());
             }
         }
         try {
             if (Loader.isModLoaded("miscutils")) {
                 adapters.add(new GTPP());
-                JustEnoughCalculation.logger.info("gt++ installed");
+                JustEnoughCalculation.logger.info("gt++ detected");
             }
         } catch (Exception e) {
-            JustEnoughCalculation.logger.info("exception when installing gt++");
+            JustEnoughCalculation.logger.error("Init error with gt++");
             e.printStackTrace();
         }
         if (Loader.isModLoaded("Avaritia")) {
-            JustEnoughCalculation.logger.info("Avaritia installed");
+            JustEnoughCalculation.logger.info("Avaritia detected");
             adapters.add(new Avaritia());
         }
         if (Loader.isModLoaded("EnderIO")) {
-            JustEnoughCalculation.logger.info("EnderIO installed");
+            JustEnoughCalculation.logger.info("EnderIO detected");
             adapters.add(new EnderIO());
         }
         if (Loader.isModLoaded("thaumcraftneiplugin")) {
             adapters.add(new Thaum());
-            JustEnoughCalculation.logger.info("Thaumcraft installed");
+            JustEnoughCalculation.logger.info("Thaumcraft detected");
         }
         JustEnoughCalculation.logger.info("=====Just Enough Calculation Init Finish=====");
     }
