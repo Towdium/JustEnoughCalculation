@@ -16,20 +16,18 @@ public class NEIEventHandler implements IContainerInputHandler {
     }
 
     @Override
-    public void onKeyTyped(GuiContainer guiContainer, char c, int i) {
-    }
+    public void onKeyTyped(GuiContainer guiContainer, char c, int i) {}
 
     @Override
     public boolean lastKeyTyped(GuiContainer guiContainer, char keyChar, int keyCode) {
         if (guiContainer == Minecraft.getMinecraft().currentScreen && guiContainer instanceof JecaGui) {
             JecaGui gui = (JecaGui) guiContainer;
             ILabel label = gui.getLabelUnderMouse();
-            if (label == null)
-                return false;
+            if (label == null) return false;
             Object stack = label.getRepresentation();
 
-            if (keyCode == NEIClientConfig.getKeyBinding("gui.usage") ||
-                (keyCode == NEIClientConfig.getKeyBinding("gui.recipe") && NEIClientUtils.shiftKey())) {
+            if (keyCode == NEIClientConfig.getKeyBinding("gui.usage")
+                    || (keyCode == NEIClientConfig.getKeyBinding("gui.recipe") && NEIClientUtils.shiftKey())) {
                 return NEIPlugin.openRecipeGui(stack, true);
             }
             if (keyCode == NEIClientConfig.getKeyBinding("gui.recipe")) {
@@ -48,9 +46,7 @@ public class NEIEventHandler implements IContainerInputHandler {
     }
 
     @Override
-    public void onMouseClicked(GuiContainer guiContainer, int i, int i1, int i2) {
-
-    }
+    public void onMouseClicked(GuiContainer guiContainer, int i, int i1, int i2) {}
 
     @Override
     public void onMouseUp(GuiContainer guiContainer, int i, int i1, int i2) {
@@ -63,12 +59,8 @@ public class NEIEventHandler implements IContainerInputHandler {
     }
 
     @Override
-    public void onMouseScrolled(GuiContainer guiContainer, int i, int i1, int i2) {
-
-    }
+    public void onMouseScrolled(GuiContainer guiContainer, int i, int i1, int i2) {}
 
     @Override
-    public void onMouseDragged(GuiContainer guiContainer, int i, int i1, int i2, long l) {
-
-    }
+    public void onMouseDragged(GuiContainer guiContainer, int i, int i1, int i2, long l) {}
 }

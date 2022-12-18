@@ -2,29 +2,35 @@ package me.towdium.jecalculation.nei.adapter;
 
 import codechicken.nei.recipe.IRecipeHandler;
 import cpw.mods.fml.common.registry.GameData;
-import net.minecraft.item.ItemStack;
-
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.annotation.ParametersAreNonnullByDefault;
+import net.minecraft.item.ItemStack;
 
 @ParametersAreNonnullByDefault
 public class Thaum implements IAdapter {
     @Override
     public Set<String> getAllOverlayIdentifier() {
-        return new HashSet<>(
-                Arrays.asList("arcaneshapedrecipes", "arcaneshapelessrecipes", "aspectsRecipe", "cruciblerecipe",
-                              "infusionCrafting"));
+        return new HashSet<>(Arrays.asList(
+                "arcaneshapedrecipes",
+                "arcaneshapelessrecipes",
+                "aspectsRecipe",
+                "cruciblerecipe",
+                "infusionCrafting"));
     }
 
-    private final static Set<Class<?>> defaultHandlers;
+    private static final Set<Class<?>> defaultHandlers;
 
     static {
-        List<String> handlers = Stream.of("ArcaneShapedRecipeHandler", "ArcaneShapelessRecipeHandler",
-                                          "AspectRecipeHandler", "CrucibleRecipeHandler", "InfusionRecipeHandler")
-                                      .map(name -> "com.djgiannuzz.thaumcraftneiplugin.nei.recipehandler." + name)
-                                      .collect(Collectors.toList());
+        List<String> handlers = Stream.of(
+                        "ArcaneShapedRecipeHandler",
+                        "ArcaneShapelessRecipeHandler",
+                        "AspectRecipeHandler",
+                        "CrucibleRecipeHandler",
+                        "InfusionRecipeHandler")
+                .map(name -> "com.djgiannuzz.thaumcraftneiplugin.nei.recipehandler." + name)
+                .collect(Collectors.toList());
         defaultHandlers = new HashSet<>();
         for (String handler : handlers) {
             try {
@@ -52,7 +58,6 @@ public class Thaum implements IAdapter {
                     }
                 }
             }
-
         }
     }
 }

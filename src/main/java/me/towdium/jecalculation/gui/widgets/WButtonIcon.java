@@ -2,11 +2,10 @@ package me.towdium.jecalculation.gui.widgets;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import me.towdium.jecalculation.gui.JecaGui;
-import me.towdium.jecalculation.gui.Resource;
-
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import me.towdium.jecalculation.gui.JecaGui;
+import me.towdium.jecalculation.gui.Resource;
 
 /**
  * Author: towdium
@@ -25,14 +24,15 @@ public class WButtonIcon extends WButton {
         this(xPos, yPos, xSize, ySize, res.normal, res.focused, res.disabled, null);
     }
 
-    private WButtonIcon(int xPos,
-                        int yPos,
-                        int xSize,
-                        int ySize,
-                        Resource normal,
-                        Resource focused,
-                        @Nullable Resource disabled,
-                        @Nullable String name) {
+    private WButtonIcon(
+            int xPos,
+            int yPos,
+            int xSize,
+            int ySize,
+            Resource normal,
+            Resource focused,
+            @Nullable Resource disabled,
+            @Nullable String name) {
         super(xPos, yPos, xSize, ySize, name);
         this.rNormal = normal;
         this.rFocused = focused;

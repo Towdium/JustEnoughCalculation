@@ -2,12 +2,11 @@ package me.towdium.jecalculation.gui.widgets;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import javax.annotation.ParametersAreNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiTextField;
-
-import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
  * Author: towdium
@@ -41,8 +40,7 @@ public class WTextField implements IWidget {
             textField.setText("");
             notifyLsnr();
             return true;
-        } else
-            return false;
+        } else return false;
     }
 
     @Override
@@ -54,8 +52,7 @@ public class WTextField implements IWidget {
     @Override
     public boolean onKeyPressed(JecaGui gui, char ch, int code) {
         boolean ret = textField.textboxKeyTyped(ch, code);
-        if (ret)
-            notifyLsnr();
+        if (ret) notifyLsnr();
         return ret;
     }
 
@@ -80,7 +77,6 @@ public class WTextField implements IWidget {
     }
 
     protected void notifyLsnr() {
-        if (listener != null)
-            listener.invoke(this);
+        if (listener != null) listener.invoke(this);
     }
 }

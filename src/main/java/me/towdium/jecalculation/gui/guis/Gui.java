@@ -1,11 +1,10 @@
 package me.towdium.jecalculation.gui.guis;
 
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import me.towdium.jecalculation.gui.widgets.IWidget;
 import me.towdium.jecalculation.gui.widgets.WContainer;
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
-
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
@@ -20,8 +19,7 @@ public class Gui extends WContainer implements IGui {
 
     public void setOverlay(@Nullable IWidget overlay) {
         this.overlay.clear();
-        if (overlay != null)
-            this.overlay.add(overlay);
+        if (overlay != null) this.overlay.add(overlay);
     }
 
     @Override

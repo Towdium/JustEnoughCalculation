@@ -1,15 +1,14 @@
 package me.towdium.jecalculation.data.structure;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.polyfill.NBTHelper;
 import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * Author: Towdium
@@ -28,9 +27,9 @@ public class RecordCraft implements IRecord {
 
     public RecordCraft(NBTTagCompound nbt) {
         List<ILabel> ls = StreamSupport.stream(NBTHelper.spliterator(nbt.getTagList(KEY_RECENTS, 10)), false)
-                                       .filter(n -> n instanceof NBTTagCompound)
-                                       .map(n -> ILabel.SERIALIZER.deserialize((NBTTagCompound) n))
-                                       .collect(Collectors.toList());
+                .filter(n -> n instanceof NBTTagCompound)
+                .map(n -> ILabel.SERIALIZER.deserialize((NBTTagCompound) n))
+                .collect(Collectors.toList());
         new Utilities.ReversedIterator<>(ls).forEachRemaining(l -> record.push(l, false));
         amount = nbt.getString(KEY_AMOUNT);
         inventory = nbt.getBoolean(KEY_INVENTORY);
@@ -67,6 +66,9 @@ public class RecordCraft implements IRecord {
     }
 
     public enum Mode {
-        INPUT, OUTPUT, CATALYST, STEPS
+        INPUT,
+        OUTPUT,
+        CATALYST,
+        STEPS
     }
 }

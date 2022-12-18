@@ -1,12 +1,11 @@
 package me.towdium.jecalculation.data.structure;
 
-import net.minecraft.nbt.NBTTagCompound;
-
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.LinkedList;
 import java.util.List;
+import net.minecraft.nbt.NBTTagCompound;
 
 /**
  * Author: Towdium
@@ -25,10 +24,18 @@ public class RecordMath implements IRecord {
     public Operator operator;
     String current;
 
-    public enum State {INPUT, OUTPUT, ERROR}
+    public enum State {
+        INPUT,
+        OUTPUT,
+        ERROR
+    }
 
     public enum Operator {
-        EQUALS, PLUS, MINUS, TIMES, DIVIDE;
+        EQUALS,
+        PLUS,
+        MINUS,
+        TIMES,
+        DIVIDE;
 
         public BigDecimal operate(BigDecimal a, BigDecimal b) {
             switch (this) {
@@ -48,21 +55,15 @@ public class RecordMath implements IRecord {
         }
     }
 
-    public RecordMath(State state,
-                      Operator operator,
-                      BigDecimal last,
-                      boolean sign,
-                      int dot,
-                      List<BigDecimal> numbers) {
+    public RecordMath(
+            State state, Operator operator, BigDecimal last, boolean sign, int dot, List<BigDecimal> numbers) {
         this.state = state;
         this.operator = operator;
         this.last = last;
         StringBuilder sb = new StringBuilder();
-        if (!sign)
-            sb.append('-');
+        if (!sign) sb.append('-');
         numbers.forEach(i -> sb.append(i.toString()));
-        if (dot != DOT_NONE)
-            sb.insert(sb.length() - dot, '.');
+        if (dot != DOT_NONE) sb.insert(sb.length() - dot, '.');
         current = sb.toString();
     }
 
@@ -89,19 +90,16 @@ public class RecordMath implements IRecord {
 
     public LinkedList<BigDecimal> getNumbers() {
         LinkedList<BigDecimal> ret = new LinkedList<>();
-        if (current == null)
-            return ret;
+        if (current == null) return ret;
         for (int i = 0; i < current.length(); i++) {
             char ch = current.charAt(i);
-            if (ch != '-' && ch != '.')
-                ret.add(new BigDecimal(ch - '0'));
+            if (ch != '-' && ch != '.') ret.add(new BigDecimal(ch - '0'));
         }
         return ret;
     }
 
     public int getDot() {
-        if (current == null)
-            return DOT_NONE;
+        if (current == null) return DOT_NONE;
         int index = current.indexOf('.');
         return index == -1 ? DOT_NONE : current.length() - index - 1;
     }

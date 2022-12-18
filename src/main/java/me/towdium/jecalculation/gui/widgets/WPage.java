@@ -1,17 +1,16 @@
 package me.towdium.jecalculation.gui.widgets;
 
+import static me.towdium.jecalculation.gui.Resource.WGT_PAGER_F;
+import static me.towdium.jecalculation.gui.Resource.WGT_PANEL_N;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.List;
+import javax.annotation.ParametersAreNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel.RegistryEditor.Record;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
-
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
-
-import static me.towdium.jecalculation.gui.Resource.WGT_PAGER_F;
-import static me.towdium.jecalculation.gui.Resource.WGT_PANEL_N;
 
 /**
  * Author: towdium

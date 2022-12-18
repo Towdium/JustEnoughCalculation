@@ -2,13 +2,12 @@ package me.towdium.jecalculation.gui.guis.pickers;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.function.Consumer;
+import javax.annotation.ParametersAreNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.guis.Gui;
 import me.towdium.jecalculation.gui.guis.IGui;
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
-
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.function.Consumer;
 
 /**
  * Author: towdium
@@ -30,8 +29,7 @@ public interface IPicker extends IGui {
         }
 
         protected void notifyLsnr(ILabel l) {
-            if (callback != null && l != ILabel.EMPTY)
-                callback.accept(l);
+            if (callback != null && l != ILabel.EMPTY) callback.accept(l);
         }
     }
 }

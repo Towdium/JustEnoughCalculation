@@ -2,6 +2,13 @@ package me.towdium.jecalculation.data.label;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.*;
+import java.util.function.BiPredicate;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.label.labels.LFluidStack;
 import me.towdium.jecalculation.data.label.labels.LItemStack;
@@ -23,14 +30,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.*;
-import java.util.function.BiPredicate;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 /**
  * Author: towdium
@@ -68,10 +67,10 @@ public interface ILabel {
         MERGER.register("itemStack", "itemStack", Impl.form(LItemStack.class, LItemStack.class, LItemStack::merge));
         MERGER.register("oreDict", "oreDict", Impl.form(LOreDict.class, LOreDict.class, LOreDict::mergeSame));
         MERGER.register("oreDict", "itemStack", Impl.form(LOreDict.class, LItemStack.class, LOreDict::mergeFuzzy));
-        MERGER.register("fluidStack", "fluidStack",
-                        Impl.form(LFluidStack.class, LFluidStack.class, LFluidStack::merge));
-        MERGER.register("placeholder", "placeholder",
-                        Impl.form(LPlaceholder.class, LPlaceholder.class, LPlaceholder::merge));
+        MERGER.register(
+                "fluidStack", "fluidStack", Impl.form(LFluidStack.class, LFluidStack.class, LFluidStack::merge));
+        MERGER.register(
+                "placeholder", "placeholder", Impl.form(LPlaceholder.class, LPlaceholder.class, LPlaceholder::merge));
     }
 
     long getAmount();
@@ -114,7 +113,6 @@ public interface ILabel {
     @SideOnly(Side.CLIENT)
     void drawLabel(JecaGui gui, int xPos, int yPos, boolean center);
 
-
     /**
      * Since {@link ILabel} merging is bidirectional, it is redundant to
      * implement on both side. So this class is created for merging
@@ -126,8 +124,7 @@ public interface ILabel {
     class Merger {
         private final Utilities.Relation<String, MergerFunction> functions = new Utilities.Relation<>();
 
-        private Merger() {
-        }
+        private Merger() {}
 
         public void register(String a, String b, MergerFunction func) {
             functions.put(a, b, func);
@@ -144,8 +141,7 @@ public interface ILabel {
          */
         public Optional<ILabel> merge(ILabel a, ILabel b) {
             MergerFunction mf = functions.get(a.getIdentifier(), b.getIdentifier());
-            if (mf == null)
-                return Optional.empty();
+            if (mf == null) return Optional.empty();
             return Optional.ofNullable(mf.merge(a, b));
         }
 
@@ -175,8 +171,7 @@ public interface ILabel {
 
         private final HashMap<String, Function<NBTTagCompound, ILabel>> idToData = new HashMap<>();
 
-        private Serializer() {
-        }
+        private Serializer() {}
 
         public void register(String identifier, Function<NBTTagCompound, ILabel> deserializer) {
             idToData.put(identifier, deserializer);
@@ -198,8 +193,7 @@ public interface ILabel {
         public ILabel deserialize(NBTTagCompound nbt) {
             String s = nbt.getString(KEY_IDENTIFIER);
             Function<NBTTagCompound, ILabel> func = idToData.get(s);
-            if (func == null)
-                JustEnoughCalculation.logger.warn("Unrecognized identifier \"" + s + "\", abort");
+            if (func == null) JustEnoughCalculation.logger.warn("Unrecognized identifier \"" + s + "\", abort");
             else
                 try {
                     return func.apply(nbt.getCompoundTag(KEY_CONTENT));
@@ -237,7 +231,10 @@ public interface ILabel {
          * while input does not contain all entries recorded in tag
          * Fallback is also used with one input label to guess possible conventions
          */
-        public enum Priority {SUGGEST, FALLBACK}
+        public enum Priority {
+            SUGGEST,
+            FALLBACK
+        }
 
         static {
             handlers = new EnumMap<>(Priority.class);
@@ -246,12 +243,9 @@ public interface ILabel {
         }
 
         public static ILabel from(@Nullable Object o) {
-            if (o == null)
-                return ILabel.EMPTY;
-            else if (o instanceof ItemStack)
-                return new LItemStack((ItemStack) o);
-            else if (o instanceof FluidStack)
-                return new LFluidStack((FluidStack) o);
+            if (o == null) return ILabel.EMPTY;
+            else if (o instanceof ItemStack) return new LItemStack((ItemStack) o);
+            else if (o instanceof FluidStack) return new LFluidStack((FluidStack) o);
             else if (o instanceof EnchantmentData) {
                 ItemStack itemStack = new ItemStack(Items.enchanted_book);
                 new ItemEnchantedBook().addEnchantment(itemStack, (EnchantmentData) o);
@@ -274,17 +268,10 @@ public interface ILabel {
 
         // to test if the labels can be converted to other labels (like oreDict)
         public Pair<List<ILabel>, List<ILabel>> guess(List<ILabel> labels, @Nullable Class<?> context) {
-            List<ILabel> suggest = new ReversedIterator<>(handlers.get(Priority.SUGGEST)).stream()
-                                                                                         .flatMap(h -> h.convert(labels,
-                                                                                                                 context)
-                                                                                                        .stream())
-                                                                                         .collect(Collectors.toList());
-            List<ILabel> fallback = new ReversedIterator<>(handlers.get(Priority.FALLBACK)).stream()
-                                                                                           .flatMap(h -> h.convert(
-                                                                                                   labels, context)
-                                                                                                          .stream())
-                                                                                           .collect(
-                                                                                                   Collectors.toList());
+            List<ILabel> suggest = new ReversedIterator<>(handlers.get(Priority.SUGGEST))
+                    .stream().flatMap(h -> h.convert(labels, context).stream()).collect(Collectors.toList());
+            List<ILabel> fallback = new ReversedIterator<>(handlers.get(Priority.FALLBACK))
+                    .stream().flatMap(h -> h.convert(labels, context).stream()).collect(Collectors.toList());
             return new Pair<>(suggest, fallback);
         }
 
@@ -298,13 +285,11 @@ public interface ILabel {
 
         private final ArrayList<Record> records = new ArrayList<>();
 
-        private RegistryEditor() {
-        }
+        private RegistryEditor() {}
 
         public void register(Supplier<IPicker> editor, String unlocalizedName, ILabel representation) {
             records.add(new Record(editor, "common.label." + unlocalizedName, representation));
         }
-
 
         public List<Record> getRecords() {
             return records;
@@ -332,11 +317,9 @@ public interface ILabel {
         }
 
         @Override
-        public void drawLabel(JecaGui gui, int xPos, int yPos, boolean center) {
-        }
+        public void drawLabel(JecaGui gui, int xPos, int yPos, boolean center) {}
 
-        private LEmpty() {
-        }
+        private LEmpty() {}
 
         @Nullable
         @Override
@@ -395,8 +378,7 @@ public interface ILabel {
         }
 
         @Override
-        public void getToolTip(List<String> existing, boolean detailed) {
-        }
+        public void getToolTip(List<String> existing, boolean detailed) {}
 
         @Override
         public ILabel copy() {
@@ -412,7 +394,6 @@ public interface ILabel {
         public String getIdentifier() {
             return IDENTIFIER;
         }
-
     }
 
     abstract class Impl implements ILabel {
@@ -453,7 +434,7 @@ public interface ILabel {
             GlStateManager.popMatrix();
         }
 
-        abstract protected void drawLabel(JecaGui gui);
+        protected abstract void drawLabel(JecaGui gui);
 
         @Override
         public ILabel increaseAmount() {
@@ -466,7 +447,8 @@ public interface ILabel {
         public ILabel decreaseAmount() {
             if (getAmount() <= 0) {
                 return ILabel.EMPTY;
-            } if (getAmount() <= getMultiplier()) {
+            }
+            if (getAmount() <= getMultiplier()) {
                 return setAmount(1);
             } else {
                 return setAmount(getAmount() - getMultiplier());
@@ -490,22 +472,17 @@ public interface ILabel {
                     long amountD = d.isPercent() ? d.getAmount() : Math.multiplyExact(d.getAmount(), 100);
                     long amount = Math.addExact(amountC, amountD);
                     long amountI = (amount > 0 ? Math.addExact(amount, 99) : Math.subtractExact(amount, 99)) / 100;
-                    if (amount == 0)
-                        return EMPTY;
-                    else if (amount > 0)
-                        return d.copy().setAmount(d.isPercent() ? amount : amountI);
-                    else
-                        return c.copy().setAmount(c.isPercent() ? amount : amountI);
-                } else
-                    return null;
+                    if (amount == 0) return EMPTY;
+                    else if (amount > 0) return d.copy().setAmount(d.isPercent() ? amount : amountI);
+                    else return c.copy().setAmount(c.isPercent() ? amount : amountI);
+                } else return null;
             };
         }
 
         @Override
         public ILabel multiply(float i) {
             float amount = i * getAmount();
-            if (amount > Long.MAX_VALUE)
-                throw new ArithmeticException("Multiply overflow");
+            if (amount > Long.MAX_VALUE) throw new ArithmeticException("Multiply overflow");
             return setAmount((long) amount);
         }
 
@@ -519,12 +496,9 @@ public interface ILabel {
                 boolean showStack = stack != 0;
                 boolean showReminder = stack < 1000 && remainder != 0;
                 String tip = "";
-                if (showStack)
-                    tip += Utilities.cutNumber(stack, 5) + "x64";
-                if (showStack && showReminder)
-                    tip += "+";
-                if (showReminder)
-                    tip += Long.toString(remainder);
+                if (showStack) tip += Utilities.cutNumber(stack, 5) + "x64";
+                if (showStack && showReminder) tip += "+";
+                if (showReminder) tip += Long.toString(remainder);
                 existing.add(FORMAT_GREY + Utilities.I18n.get("label.common.amount", tip));
             }
         }
@@ -536,8 +510,7 @@ public interface ILabel {
 
         @Override
         public ILabel setAmount(long amount) {
-            if (amount == 0)
-                return ILabel.EMPTY;
+            if (amount == 0) return ILabel.EMPTY;
             this.amount = amount;
             return this;
         }
@@ -546,8 +519,7 @@ public interface ILabel {
         public NBTTagCompound toNbt() {
             NBTTagCompound nbt = new NBTTagCompound();
             nbt.setLong(KEY_AMOUNT, amount);
-            if (percent)
-                nbt.setBoolean(KEY_PERCENT, true);
+            if (percent) nbt.setBoolean(KEY_PERCENT, true);
             return nbt;
         }
 
@@ -557,8 +529,7 @@ public interface ILabel {
         }
 
         public ILabel setPercent(boolean p) {
-            if (p && !acceptPercent())
-                throw new UnsupportedOperationException();
+            if (p && !acceptPercent()) throw new UnsupportedOperationException();
             if (p && !percent) {
                 amount *= 100;
                 percent = true;
@@ -583,18 +554,14 @@ public interface ILabel {
         @SideOnly(Side.CLIENT)
         @SuppressWarnings("IntegerDivisionInFloatingPointContext")
         public String getAmountString(boolean round) {
-            if (getAmount() == 0)
-                return "";
-            else if (!percent)
-                return Utilities.cutNumber(getAmount(), 5);
-            else if (round)
-                return Utilities.cutNumber((getAmount() + 99) / 100, 5);
-            else
-                return Utilities.cutNumber(getAmount(), 4) + "%";
+            if (getAmount() == 0) return "";
+            else if (!percent) return Utilities.cutNumber(getAmount(), 5);
+            else if (round) return Utilities.cutNumber((getAmount() + 99) / 100, 5);
+            else return Utilities.cutNumber(getAmount(), 4) + "%";
         }
 
         @Override
-        abstract public Impl copy();
+        public abstract Impl copy();
 
         @Override
         public boolean matches(Object l) {

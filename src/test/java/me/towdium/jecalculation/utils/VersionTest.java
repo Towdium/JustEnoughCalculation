@@ -1,10 +1,9 @@
 package me.towdium.jecalculation.utils;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.Test;
 
 /**
  * Please use IDEA test instead Gradle. (In settings 'Gradle -> Run Tests Using')
@@ -34,7 +33,6 @@ class VersionTest {
     void compareTo_withEarlierVersion_isGreaterThan() {
         assertEquals(new Version("2.0.0").compareTo(new Version("1.0.0")), 1);
     }
-
 
     @Test
     void compareTo_withSameVersion_isEqual() {

@@ -5,6 +5,8 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.function.Consumer;
+import javax.annotation.ParametersAreNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.guis.pickers.IPicker;
 import me.towdium.jecalculation.gui.widgets.WContainer;
@@ -13,9 +15,6 @@ import me.towdium.jecalculation.gui.widgets.WPage;
 import me.towdium.jecalculation.gui.widgets.WPanel;
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.utils.wrappers.Wrapper;
-
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.function.Consumer;
 
 /**
  * Author: towdium

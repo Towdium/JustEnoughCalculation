@@ -2,6 +2,11 @@
 
 To be consistent with the main branch,  it may miss some versions
 
+## 3.8.5
+- Fixed: gtpp transfer crash
+- Fixed: gtpp recipe output doubles
+- Chore: upgrade gradle build system
+
 ## 3.8.4
 - Rebuild of 3.8.3
 

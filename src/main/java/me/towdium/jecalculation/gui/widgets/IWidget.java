@@ -1,11 +1,10 @@
 package me.towdium.jecalculation.gui.widgets;
 
+import java.util.List;
+import javax.annotation.ParametersAreNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.utils.wrappers.Wrapper;
-
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
 
 /**
  * Author: towdium
@@ -25,8 +24,7 @@ public interface IWidget {
         return false;
     }
 
-    default void onMouseFocused(JecaGui gui, int xMouse, int yMouse, int button) {
-    }
+    default void onMouseFocused(JecaGui gui, int xMouse, int yMouse, int button) {}
 
     default boolean onMouseReleased(JecaGui gui, int xMouse, int yMouse, int button) {
         return false;

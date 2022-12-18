@@ -1,17 +1,13 @@
 package me.towdium.jecalculation.polyfill;
 
-import me.towdium.jecalculation.utils.ItemStackHelper;
-import me.towdium.jecalculation.utils.ReflectionHelper;
-import net.minecraft.item.Item;
+import java.util.List;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import javax.annotation.ParametersAreNonnullByDefault;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
-import java.util.Spliterator;
-import java.util.Spliterators;
 
 @ParametersAreNonnullByDefault
 public class NBTHelper {
@@ -55,5 +51,4 @@ public class NBTHelper {
         stack.writeToNBT(ret);
         return ret;
     }
-
 }

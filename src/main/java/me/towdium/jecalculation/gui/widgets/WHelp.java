@@ -1,17 +1,16 @@
 package me.towdium.jecalculation.gui.widgets;
 
+import static me.towdium.jecalculation.gui.JecaGui.Font.PLAIN;
+import static me.towdium.jecalculation.gui.JecaGui.Font.SHADOW;
+import static me.towdium.jecalculation.gui.Resource.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import javax.annotation.ParametersAreNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.utils.Utilities.I18n;
 import org.lwjgl.input.Keyboard;
-
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
-import java.util.List;
-
-import static me.towdium.jecalculation.gui.JecaGui.Font.PLAIN;
-import static me.towdium.jecalculation.gui.JecaGui.Font.SHADOW;
-import static me.towdium.jecalculation.gui.Resource.*;
 
 /**
  * Author: Towdium
@@ -24,8 +23,7 @@ public class WHelp extends WContainer {
 
     public WHelp(String content) {
         key = content;
-        if (I18n.search("gui." + WHelp.this.key + ".title").two
-            && I18n.search("gui." + WHelp.this.key + ".help").two) {
+        if (I18n.search("gui." + WHelp.this.key + ".title").two && I18n.search("gui." + WHelp.this.key + ".help").two) {
             add(new Impl());
         }
     }
@@ -51,8 +49,7 @@ public class WHelp extends WContainer {
         @Override
         public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
             boolean ret = mouseIn(xMouse, yMouse);
-            if (ret)
-                gui.root.setOverlay(new Doc());
+            if (ret) gui.root.setOverlay(new Doc());
             return ret;
         }
     }
@@ -66,11 +63,9 @@ public class WHelp extends WContainer {
             add(new WPanel(), new Icon(), title, text, switcher);
         }
 
-
         @Override
         public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
-            if (!super.onMouseClicked(gui, xMouse, yMouse, button))
-                gui.root.remove(this);
+            if (!super.onMouseClicked(gui, xMouse, yMouse, button)) gui.root.remove(this);
             return true;
         }
 
@@ -145,8 +140,7 @@ public class WHelp extends WContainer {
             @Override
             public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
                 boolean ret = mouseIn(xMouse, yMouse);
-                if (ret)
-                    gui.root.setOverlay(null);
+                if (ret) gui.root.setOverlay(null);
                 return ret;
             }
 
@@ -157,13 +151,11 @@ public class WHelp extends WContainer {
 
             @Override
             public boolean onKeyPressed(JecaGui gui, char ch, int code) {
-                if (super.onKeyPressed(gui, ch, code))
-                    return true;
+                if (super.onKeyPressed(gui, ch, code)) return true;
                 if (code == Keyboard.KEY_ESCAPE) {
                     gui.root.setOverlay(null);
                     return true;
-                } else
-                    return false;
+                } else return false;
             }
         }
     }

@@ -1,11 +1,10 @@
 package me.towdium.jecalculation.command;
 
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
-
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Collections;
 import java.util.List;
+import javax.annotation.ParametersAreNonnullByDefault;
+import net.minecraft.command.CommandException;
+import net.minecraft.command.ICommandSender;
 
 /**
  * Author: towdium

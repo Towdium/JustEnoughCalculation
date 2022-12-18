@@ -1,14 +1,14 @@
 package me.towdium.jecalculation.polyfill.google.common.collect;
 
-import javax.annotation.Nullable;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import javax.annotation.Nullable;
 
 public class Streams {
     public interface FunctionWithIndex<T, R> {
@@ -38,8 +38,7 @@ public class Streams {
      * <p>The order of the resulting stream is defined if and only if the order of the original stream
      * was defined.
      */
-    public static <T, R> Stream<R> mapWithIndex(
-            Stream<T> stream, FunctionWithIndex<? super T, ? extends R> function) {
+    public static <T, R> Stream<R> mapWithIndex(Stream<T> stream, FunctionWithIndex<? super T, ? extends R> function) {
         checkNotNull(stream);
         checkNotNull(function);
         boolean isParallel = stream.isParallel();
@@ -98,7 +97,7 @@ public class Streams {
     }
 
     private abstract static class MapWithIndexSpliterator<
-            F extends Spliterator<?>, R, S extends MapWithIndexSpliterator<F, R, S>>
+                    F extends Spliterator<?>, R, S extends MapWithIndexSpliterator<F, R, S>>
             implements Spliterator<R> {
         final F fromSpliterator;
         long index;
@@ -129,8 +128,7 @@ public class Streams {
 
         @Override
         public int characteristics() {
-            return fromSpliterator.characteristics()
-                   & (Spliterator.ORDERED | Spliterator.SIZED | Spliterator.SUBSIZED);
+            return fromSpliterator.characteristics() & (Spliterator.ORDERED | Spliterator.SIZED | Spliterator.SUBSIZED);
         }
     }
 }

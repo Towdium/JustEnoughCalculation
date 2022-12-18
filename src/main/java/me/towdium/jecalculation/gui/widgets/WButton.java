@@ -1,19 +1,18 @@
 package me.towdium.jecalculation.gui.widgets;
 
+import static me.towdium.jecalculation.gui.Resource.*;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.Arrays;
+import java.util.List;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.utils.ClientUtils;
 import org.lwjgl.input.Keyboard;
-
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Arrays;
-import java.util.List;
-
-import static me.towdium.jecalculation.gui.Resource.*;
 
 /**
  * Author: towdium
@@ -50,8 +49,7 @@ public abstract class WButton extends WTooltip {
         else if (hovered) res = WGT_BUTTON_F;
         else res = WGT_BUTTON_N;
 
-        gui.drawResourceContinuous(res, xPos, yPos, xSize,
-                                   ySize, 5, 5, 5, 5);
+        gui.drawResourceContinuous(res, xPos, yPos, xSize, ySize, 5, 5, 5, 5);
         return hovered;
     }
 
@@ -60,18 +58,14 @@ public abstract class WButton extends WTooltip {
         if (mouseIn(xMouse, yMouse) && !disabled && button == 0 && listener != null) {
             trigger();
             return true;
-        } else
-            return false;
+        } else return false;
     }
 
     protected boolean hovered(int xMouse, int yMouse) {
         if (mouseIn(xMouse, yMouse)) {
             return true;
         }
-        if (keys != null)
-            for (int i : keys)
-                if (Keyboard.isKeyDown(i))
-                    return true;
+        if (keys != null) for (int i : keys) if (Keyboard.isKeyDown(i)) return true;
         return false;
     }
 

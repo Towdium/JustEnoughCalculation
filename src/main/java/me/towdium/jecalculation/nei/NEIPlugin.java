@@ -19,7 +19,8 @@ public class NEIPlugin {
     public static void init() {
         GuiContainerManager.addTooltipHandler(new JecaTooltipHandler());
         // nei version check
-        String neiVersion = Loader.instance().getIndexedModList().get("NotEnoughItems").getVersion();
+        String neiVersion =
+                Loader.instance().getIndexedModList().get("NotEnoughItems").getVersion();
         JustEnoughCalculation.logger.info("NEI version: " + neiVersion);
         Version version = new Version(neiVersion);
         if (version.isSuccess() && version.compareTo(CATALYST_NEI_VERSION) >= 0) {
@@ -37,8 +38,7 @@ public class NEIPlugin {
     }
 
     public static ILabel getLabelUnderMouse() {
-        if (NEIPlugin.currentItemStack == null)
-            return ILabel.EMPTY;
+        if (NEIPlugin.currentItemStack == null) return ILabel.EMPTY;
         Object stack = Adapter.convertFluid(NEIPlugin.currentItemStack);
         return ILabel.Converter.from(stack);
     }

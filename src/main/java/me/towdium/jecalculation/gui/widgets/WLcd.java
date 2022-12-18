@@ -1,19 +1,17 @@
 package me.towdium.jecalculation.gui.widgets;
 
-import me.towdium.jecalculation.data.structure.RecordMath.Operator;
-import me.towdium.jecalculation.gui.JecaGui;
-import me.towdium.jecalculation.gui.Resource;
-import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
+import static me.towdium.jecalculation.data.structure.RecordMath.DOT_NONE;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Objects;
-
-import static me.towdium.jecalculation.data.structure.RecordMath.DOT_NONE;
-
+import javax.annotation.ParametersAreNonnullByDefault;
+import me.towdium.jecalculation.data.structure.RecordMath.Operator;
+import me.towdium.jecalculation.gui.JecaGui;
+import me.towdium.jecalculation.gui.Resource;
+import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 
 /**
  * Author: Towdium
@@ -24,7 +22,6 @@ import static me.towdium.jecalculation.data.structure.RecordMath.DOT_NONE;
 public class WLcd implements IWidget {
     static HashMap<Character, boolean[]> PATTERN = new HashMap<>();
 
-
     public int yPos;
     public String text = "";
     public int dot = DOT_NONE;
@@ -32,22 +29,22 @@ public class WLcd implements IWidget {
     public Operator operator = Operator.EQUALS;
 
     static {
-        PATTERN.put('0', new boolean[]{true, true, true, true, true, true, false});
-        PATTERN.put('1', new boolean[]{false, true, true, false, false, false, false});
-        PATTERN.put('2', new boolean[]{true, true, false, true, true, false, true});
-        PATTERN.put('3', new boolean[]{true, true, true, true, false, false, true});
-        PATTERN.put('4', new boolean[]{false, true, true, false, false, true, true});
-        PATTERN.put('5', new boolean[]{true, false, true, true, false, true, true});
-        PATTERN.put('6', new boolean[]{true, false, true, true, true, true, true});
-        PATTERN.put('7', new boolean[]{true, true, true, false, false, false, false});
-        PATTERN.put('8', new boolean[]{true, true, true, true, true, true, true});
-        PATTERN.put('9', new boolean[]{true, true, true, true, false, true, true});
-        PATTERN.put('E', new boolean[]{true, false, false, true, true, true, true});
-        PATTERN.put('o', new boolean[]{false, false, true, true, true, false, true});
-        PATTERN.put('r', new boolean[]{false, false, false, false, true, false, true});
-        PATTERN.put('-', new boolean[]{false, false, false, false, false, false, true});
-        PATTERN.put(' ', new boolean[]{false, false, false, false, false, false, false});
-        //format.setMinimumIntegerDigits(0);
+        PATTERN.put('0', new boolean[] {true, true, true, true, true, true, false});
+        PATTERN.put('1', new boolean[] {false, true, true, false, false, false, false});
+        PATTERN.put('2', new boolean[] {true, true, false, true, true, false, true});
+        PATTERN.put('3', new boolean[] {true, true, true, true, false, false, true});
+        PATTERN.put('4', new boolean[] {false, true, true, false, false, true, true});
+        PATTERN.put('5', new boolean[] {true, false, true, true, false, true, true});
+        PATTERN.put('6', new boolean[] {true, false, true, true, true, true, true});
+        PATTERN.put('7', new boolean[] {true, true, true, false, false, false, false});
+        PATTERN.put('8', new boolean[] {true, true, true, true, true, true, true});
+        PATTERN.put('9', new boolean[] {true, true, true, true, false, true, true});
+        PATTERN.put('E', new boolean[] {true, false, false, true, true, true, true});
+        PATTERN.put('o', new boolean[] {false, false, true, true, true, false, true});
+        PATTERN.put('r', new boolean[] {false, false, false, false, true, false, true});
+        PATTERN.put('-', new boolean[] {false, false, false, false, false, false, true});
+        PATTERN.put(' ', new boolean[] {false, false, false, false, false, false, false});
+        // format.setMinimumIntegerDigits(0);
     }
 
     public WLcd(int yPos) {
@@ -58,8 +55,7 @@ public class WLcd implements IWidget {
     public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
         drawBackground(gui);
         drawStr(gui, text);
-        if (dot != DOT_NONE)
-            drawDot(gui, 6 - dot);
+        if (dot != DOT_NONE) drawDot(gui, 6 - dot);
         drawOperator(gui, operator);
         return false;
     }
@@ -85,26 +81,18 @@ public class WLcd implements IWidget {
     protected void drawChar(JecaGui gui, char ch, int index) {
         boolean[] pattern = PATTERN.get(ch);
         Objects.requireNonNull(pattern, "Unsupported char: " + ch + ".");
-        if (pattern[0])
-            gui.drawResource(Resource.WGT_LCD_H_F, 19 + index * 21, yPos + 14);
-        if (pattern[1])
-            gui.drawResource(Resource.WGT_LCD_UR_F, 30 + index * 21, yPos + 14);
-        if (pattern[2])
-            gui.drawResource(Resource.WGT_LCD_LR_F, 30 + index * 21, yPos + 28);
-        if (pattern[3])
-            gui.drawResource(Resource.WGT_LCD_H_F, 19 + index * 21, yPos + 40);
-        if (pattern[4])
-            gui.drawResource(Resource.WGT_LCD_LL_F, 16 + index * 21, yPos + 28);
-        if (pattern[5])
-            gui.drawResource(Resource.WGT_LCD_UL_F, 16 + index * 21, yPos + 14);
-        if (pattern[6])
-            gui.drawResource(Resource.WGT_LCD_H_F, 19 + index * 21, yPos + 27);
+        if (pattern[0]) gui.drawResource(Resource.WGT_LCD_H_F, 19 + index * 21, yPos + 14);
+        if (pattern[1]) gui.drawResource(Resource.WGT_LCD_UR_F, 30 + index * 21, yPos + 14);
+        if (pattern[2]) gui.drawResource(Resource.WGT_LCD_LR_F, 30 + index * 21, yPos + 28);
+        if (pattern[3]) gui.drawResource(Resource.WGT_LCD_H_F, 19 + index * 21, yPos + 40);
+        if (pattern[4]) gui.drawResource(Resource.WGT_LCD_LL_F, 16 + index * 21, yPos + 28);
+        if (pattern[5]) gui.drawResource(Resource.WGT_LCD_UL_F, 16 + index * 21, yPos + 14);
+        if (pattern[6]) gui.drawResource(Resource.WGT_LCD_H_F, 19 + index * 21, yPos + 27);
     }
 
     protected void drawStr(JecaGui gui, String str) {
         int offset = 7 - str.length();
-        for (int i = offset; i < 7; i++)
-            drawChar(gui, str.charAt(i - offset), i);
+        for (int i = offset; i < 7; i++) drawChar(gui, str.charAt(i - offset), i);
     }
 
     protected void drawDot(JecaGui gui, int index) {

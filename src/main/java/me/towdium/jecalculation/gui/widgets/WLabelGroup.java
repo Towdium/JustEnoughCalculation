@@ -2,16 +2,15 @@ package me.towdium.jecalculation.gui.widgets;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import me.towdium.jecalculation.data.label.ILabel;
-import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
-
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import javax.annotation.ParametersAreNonnullByDefault;
+import me.towdium.jecalculation.data.label.ILabel;
+import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 
 /**
  * Author: towdium
@@ -33,17 +32,16 @@ public class WLabelGroup extends WContainer {
         for (int j = 0; j < row; j++) {
             int r = j;
             IntStream.range(0, column).forEach(c -> {
-                WLabel l = new WLabel(xPos + c * xSize, yPos + r * ySize, xSize, ySize, accept).setLsnrUpdate(
-                        (i, v) -> {
-                            if (lsnrUpdate != null)
-                                lsnrUpdate.invoke(this, r * column + c);
-                        }).setLsnrLeftClick(i -> {
-                    if (lsnrLeftClick != null)
-                        lsnrLeftClick.invoke(this, r * column + c);
-                }).setLsnrRightClick(i -> {
-                    if (lsnrRightClick != null)
-                        lsnrRightClick.invoke(this, r * column + c);
-                });
+                WLabel l = new WLabel(xPos + c * xSize, yPos + r * ySize, xSize, ySize, accept)
+                        .setLsnrUpdate((i, v) -> {
+                            if (lsnrUpdate != null) lsnrUpdate.invoke(this, r * column + c);
+                        })
+                        .setLsnrLeftClick(i -> {
+                            if (lsnrLeftClick != null) lsnrLeftClick.invoke(this, r * column + c);
+                        })
+                        .setLsnrRightClick(i -> {
+                            if (lsnrRightClick != null) lsnrRightClick.invoke(this, r * column + c);
+                        });
                 labels.add(l);
                 add(l);
             });
@@ -63,8 +61,7 @@ public class WLabelGroup extends WContainer {
     }
 
     public void setLabel(List<ILabel> labels, int start) {
-        for (WLabel label : this.labels)
-            label.setLabel(start < labels.size() ? labels.get(start++) : ILabel.EMPTY);
+        for (WLabel label : this.labels) label.setLabel(start < labels.size() ? labels.get(start++) : ILabel.EMPTY);
     }
 
     public WLabelGroup setLsnrUpdate(ListenerValue<? super WLabelGroup, Integer> listener) {

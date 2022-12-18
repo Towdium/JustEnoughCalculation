@@ -1,10 +1,10 @@
 package me.towdium.jecalculation.utils.wrappers;
 
-import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import javax.annotation.Nullable;
 
 /**
  * Author: Towdium
@@ -19,8 +19,7 @@ public class Wrapper<T> {
     }
 
     public Wrapper<T> push(@Nullable T value) {
-        if (value != null && predicate.test(value))
-            this.value = value;
+        if (value != null && predicate.test(value)) this.value = value;
         return this;
     }
 
@@ -34,14 +33,12 @@ public class Wrapper<T> {
     }
 
     public Wrapper<T> ifPresent(Consumer<T> c) {
-        if (value != null)
-            c.accept(value);
+        if (value != null) c.accept(value);
         return this;
     }
 
     public Wrapper<T> ifPresentNot(Runnable r) {
-        if (value == null)
-            r.run();
+        if (value == null) r.run();
         return this;
     }
 }

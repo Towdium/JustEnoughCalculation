@@ -2,6 +2,14 @@ package me.towdium.jecalculation.data;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.io.File;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import me.towdium.jecalculation.JecaConfig;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.label.labels.LPlaceholder;
@@ -13,15 +21,6 @@ import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentTranslation;
-
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.io.File;
-import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Author: towdium
@@ -51,8 +50,7 @@ public class Controller {
     public static List<Pair<String, Recipes>> discover() {
         File dir = JecaConfig.dataDir;
         File[] fs = dir.listFiles();
-        if (fs == null)
-            return new ArrayList<>();
+        if (fs == null) return new ArrayList<>();
         Function<File, Recipes> read = f -> {
             NBTTagCompound nbt = Utilities.Json.read(f);
             if (nbt == null) {
@@ -63,22 +61,20 @@ public class Controller {
             }
         };
         return Arrays.stream(fs)
-                     .map(i -> new Pair<>(i.getName(), read.apply(i)))
-                     .filter(i -> i.two != null)
-                     .collect(Collectors.toList());
+                .map(i -> new Pair<>(i.getName(), read.apply(i)))
+                .filter(i -> i.two != null)
+                .collect(Collectors.toList());
     }
 
     public static void inport(Recipes recipes, String group) {
         ArrayList<Recipe> buffer = new ArrayList<>();
         recipes.getGroup(group).stream().filter(i -> !hasDuplicate(i)).forEach(buffer::add);
-        for (Recipe r : buffer)
-            addRecipe(group, r);
+        for (Recipe r : buffer) addRecipe(group, r);
     }
 
     private static void export(String s, Function<Recipes, NBTTagCompound> r) {
         EntityClientPlayerMP player = Utilities.getPlayer();
-        if (player == null)
-            return;
+        if (player == null) return;
 
         File f = JecaConfig.getDataFile(s);
         Utilities.Json.write(r.apply(getRecipes()), f);
@@ -192,17 +188,14 @@ public class Controller {
     public static boolean hasDuplicate(Recipe r, String group, int index) {
         Recipes.RecipeIterator ri = recipeIterator();
         return ri.stream().anyMatch(i -> {
-            if (ri.getIndex() == index && ri.getGroup().equals(group))
-                return false;
-            else
-                return i.equals(r);
+            if (ri.getIndex() == index && ri.getGroup().equals(group)) return false;
+            else return i.equals(r);
         });
     }
 
     public static boolean hasDuplicate(Recipe r) {
         return recipeIterator().stream().anyMatch(i -> i.equals(r));
     }
-
 
     public static void loadFromLocal() {
         //noinspection ResultOfMethodCallIgnored
@@ -214,9 +207,8 @@ public class Controller {
         if (nbt != null) {
             rCraftClient = new RecordCraft(nbt.getCompoundTag(KEY_CRAFT));
             rMathClient = new RecordMath(nbt.getCompoundTag(KEY_MATH));
-            rPlayerClient = nbt.hasKey(KEY_PLAYER) ?
-                            new RecordPlayer(nbt.getCompoundTag(KEY_PLAYER)) :
-                            new RecordPlayer();
+            rPlayerClient =
+                    nbt.hasKey(KEY_PLAYER) ? new RecordPlayer(nbt.getCompoundTag(KEY_PLAYER)) : new RecordPlayer();
         } else {
             rPlayerClient = new RecordPlayer();
             rCraftClient = new RecordCraft(new NBTTagCompound());
