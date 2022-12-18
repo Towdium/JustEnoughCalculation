@@ -44,7 +44,6 @@ public class GTPP extends GregTech {
         Set<String> recipeNames = new HashSet<>();
         try {
             // add as many recipe as possible
-
             recipeNames.addAll(
                     this.reflectGetRecipeMapNEIName("gregtech.api.util.GTPP_Recipe$GTPP_Recipe_Map", "sMappings"));
 
@@ -62,7 +61,7 @@ public class GTPP extends GregTech {
     @Override
     public void handleRecipe(IRecipeHandler recipe, int index, List<Object[]> inputs, List<Object[]> outputs) {
         if (defaultHandlers.stream().anyMatch(aClass -> aClass.isInstance(recipe))) {
-            handleDefault(recipe, index, inputs, outputs);
+            handleDefault(recipe, index, inputs, outputs, true);
         }
     }
 }

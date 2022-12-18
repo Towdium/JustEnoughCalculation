@@ -66,8 +66,12 @@ public class GregTech implements IAdapter {
     }
 
     protected void handleDefault(IRecipeHandler recipe, int index, List<Object[]> inputs, List<Object[]> outputs) {
+        handleDefault(recipe, index, inputs, outputs, false);
+    }
+
+    protected void handleDefault(IRecipeHandler recipe, int index, List<Object[]> inputs, List<Object[]> outputs, boolean clearOutput) {
         inputs.replaceAll(ts -> Arrays.stream(ts).map(o -> {
-            if(o instanceof ItemStack) {
+            if (o instanceof ItemStack) {
                 return GregTech.convertFluid((ItemStack) o);
             } else if (o instanceof FluidStack) {
                 return o;
@@ -75,11 +79,14 @@ public class GregTech implements IAdapter {
                 throw new IllegalArgumentException("Shall get ItemStack or FluidStack, but get: " + o.getClass());
             }
         }).toArray());
+        if (clearOutput) {
+            outputs.clear();
+        }
         List<PositionedStack> otherStacks = recipe.getOtherStacks(index);
         outputs.addAll(otherStacks.stream()
-                                  .map(positionedStack -> positionedStack.items)
-                                  .map(itemStacks -> Arrays.stream(itemStacks).map(GregTech::convertFluid).toArray())
-                                  .collect(Collectors.toList()));
+                .map(positionedStack -> positionedStack.items)
+                .map(itemStacks -> Arrays.stream(itemStacks).map(GregTech::convertFluid).toArray())
+                .collect(Collectors.toList()));
     }
 
     public static Object convertFluid(ItemStack itemStack) {
@@ -99,7 +106,7 @@ public class GregTech implements IAdapter {
             Method getItem = itemListClz.getMethod("getItem");
             Item displayFluidItem = (Item) getItem.invoke(display_fluid);
             if (!isStackValid(aDisplayStack) || aDisplayStack.getItem() != displayFluidItem ||
-                !aDisplayStack.hasTagCompound())
+                    !aDisplayStack.hasTagCompound())
                 return null;
             Fluid tFluid = FluidRegistry.getFluid(displayFluidItem.getDamage(aDisplayStack));
             return new FluidStack(tFluid, (int) aDisplayStack.getTagCompound().getLong("mFluidDisplayAmount"));
@@ -111,6 +118,6 @@ public class GregTech implements IAdapter {
 
     private static boolean isStackValid(Object aStack) {
         return (aStack instanceof ItemStack) && ((ItemStack) aStack).getItem() != null &&
-               ((ItemStack) aStack).stackSize >= 0;
+                ((ItemStack) aStack).stackSize >= 0;
     }
 }
