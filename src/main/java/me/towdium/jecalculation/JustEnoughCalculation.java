@@ -1,14 +1,10 @@
 package me.towdium.jecalculation;
 
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import cpw.mods.fml.common.SidedProxy;
+import cpw.mods.fml.common.event.*;
 import javax.annotation.ParametersAreNonnullByDefault;
-import me.towdium.jecalculation.nei.NEIPlugin;
-import me.towdium.jecalculation.network.ClientHandler;
+import me.towdium.jecalculation.network.CommonProxy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -17,30 +13,61 @@ import org.apache.logging.log4j.Logger;
  */
 @ParametersAreNonnullByDefault
 @SuppressWarnings("unused")
-@SideOnly(Side.CLIENT)
-@Mod(modid = Tags.MODID, name = Tags.MODNAME, version = Tags.VERSION, dependencies = "required-after:NotEnoughItems")
+@Mod(
+        modid = Tags.MODID,
+        name = Tags.MODNAME,
+        version = Tags.VERSION,
+        dependencies = "required-after:NotEnoughItems",
+        acceptedMinecraftVersions = "[1.7.10]")
 public class JustEnoughCalculation {
+    public static Logger logger = LogManager.getLogger(Tags.MODID);
+
+    @SidedProxy(
+            clientSide = Tags.GROUPNAME + ".network.ClientProxy",
+            serverSide = Tags.GROUPNAME + ".network.CommonProxy")
+    public static CommonProxy proxy;
+
     @Mod.Instance(Tags.MODID)
     public static JustEnoughCalculation INSTANCE;
 
-    public static ClientHandler handler = new ClientHandler();
-
-    public static Logger logger = LogManager.getLogger(Tags.MODID);
-
     @Mod.EventHandler
-    public static void initPre(FMLPreInitializationEvent event) {
-        JecaConfig.preInit(event);
-        handler.initPre();
+    public static void preInit(FMLPreInitializationEvent event) {
+        proxy.preInit(event);
     }
 
     @Mod.EventHandler
     public static void init(FMLInitializationEvent event) {
-        handler.init();
+        proxy.init(event);
     }
 
     @Mod.EventHandler
     public static void postInit(FMLPostInitializationEvent event) {
-        handler.initPost();
-        NEIPlugin.init();
+        proxy.postInit(event);
+    }
+
+    @Mod.EventHandler
+    public void serverAboutToStart(FMLServerAboutToStartEvent event) {
+        proxy.serverAboutToStart(event);
+    }
+
+    @Mod.EventHandler
+    // register server commands in this event handler
+    public void serverStarting(FMLServerStartingEvent event) {
+        proxy.serverStarting(event);
+    }
+
+    @Mod.EventHandler
+    public void serverStarted(FMLServerStartedEvent event) {
+        proxy.serverStarted(event);
+    }
+
+    @Mod.EventHandler
+    public void serverStopping(FMLServerStoppingEvent event) {
+        proxy.serverStopping(event);
+    }
+
+    @Mod.EventHandler
+    public void serverStopped(FMLServerStoppedEvent event) {
+        proxy.serverStopped(event);
     }
 }
