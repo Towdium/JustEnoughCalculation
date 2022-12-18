@@ -50,7 +50,6 @@ jobs:
 
       - name: Release under current tag
         run: |
-          echo "RELEASE_VERSION=${RELEASE_VERSION}"
           export "CHANGELOG_FILE=$(mktemp --suffix=.md)"
           echo "CHANGELOG_FILE=${CHANGELOG_FILE}" >> $GITHUB_ENV
           gh api --method POST -H "Accept: application/vnd.github+json" \
