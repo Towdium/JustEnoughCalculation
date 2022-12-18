@@ -2,7 +2,7 @@ package me.towdium.jecalculation.data.label.labels;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import me.towdium.jecalculation.JustEnoughCalculation;
+import me.towdium.jecalculation.Tags;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.polyfill.mc.util.NonNullList;
@@ -205,7 +205,7 @@ public class LOreDict extends ILabel.Impl {
     @SideOnly(Side.CLIENT)
     public void getToolTip(List<String> existing, boolean detailed) {
         super.getToolTip(existing, detailed);
-        existing.add(FORMAT_BLUE + FORMAT_ITALIC + JustEnoughCalculation.Reference.MODNAME);
+        existing.add(FORMAT_BLUE + FORMAT_ITALIC + Tags.MODNAME);
     }
 
     @Override

@@ -20,17 +20,17 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 @SuppressWarnings("unused")
 @SideOnly(Side.CLIENT)
-@Mod(modid = JustEnoughCalculation.Reference.MODID,
-     name = JustEnoughCalculation.Reference.MODNAME,
-     version = JustEnoughCalculation.Reference.VERSION,
+@Mod(modid = Tags.MODID,
+     name = Tags.MODNAME,
+     version = Tags.VERSION,
      dependencies = "required-after:NotEnoughItems")
 public class JustEnoughCalculation {
-    @Mod.Instance(Reference.MODID)
+    @Mod.Instance(Tags.MODID)
     public static JustEnoughCalculation INSTANCE;
 
     public static ClientHandler handler = new ClientHandler();
 
-    public static Logger logger = LogManager.getLogger(Reference.MODID);
+    public static Logger logger = LogManager.getLogger(Tags.MODID);
 
     @Mod.EventHandler
     public static void initPre(FMLPreInitializationEvent event) {
@@ -49,9 +49,4 @@ public class JustEnoughCalculation {
         NEIPlugin.init();
     }
 
-    public static class Reference {
-        public static final String MODID = "jecalculation";
-        public static final String MODNAME = "Just Enough Calculation";
-        public static final String VERSION = "@VERSION@";
-    }
 }

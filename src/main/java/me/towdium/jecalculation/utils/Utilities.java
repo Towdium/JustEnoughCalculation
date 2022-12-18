@@ -9,15 +9,14 @@ import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.JustEnoughCalculation;
+import me.towdium.jecalculation.Tags;
 import me.towdium.jecalculation.polyfill.NBTHelper;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.fluids.Fluid;
@@ -147,7 +146,7 @@ public class Utilities {
     }
 
     public static NBTTagCompound getTag(ItemStack is) {
-        return NBTHelper.getOrCreateSubCompound(is, JustEnoughCalculation.Reference.MODID);
+        return NBTHelper.getOrCreateSubCompound(is, Tags.MODID);
     }
 
     public static EntityClientPlayerMP getPlayer() {

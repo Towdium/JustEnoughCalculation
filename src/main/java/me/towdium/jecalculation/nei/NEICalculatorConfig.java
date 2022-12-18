@@ -2,7 +2,7 @@ package me.towdium.jecalculation.nei;
 
 import codechicken.nei.api.API;
 import codechicken.nei.api.IConfigureNEI;
-import me.towdium.jecalculation.JustEnoughCalculation;
+import me.towdium.jecalculation.Tags;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.nei.adapter.IAdapter;
 
@@ -34,11 +34,11 @@ public class NEICalculatorConfig implements IConfigureNEI {
 
     @Override
     public String getName() {
-        return JustEnoughCalculation.Reference.MODNAME;
+        return Tags.MODNAME;
     }
 
     @Override
     public String getVersion() {
-        return JustEnoughCalculation.Reference.VERSION;
+        return Tags.VERSION;
     }
 }

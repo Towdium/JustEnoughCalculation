@@ -1,16 +1,17 @@
-[
 {
-  "modid": "jecalculation",
-  "name": "Just Enough Calculation",
-  "description": "A simple mod to help you with recipe calculation.",
-  "version": "${version}",
-  "mcversion": "${mcversion}",
-  "url": "https://github.com/Towdium/JustEnoughCalculation",
-  "updateUrl": "http://minecratft.curseforge.com/projects/just-enough-calculation",
-  "authorList": ["Towdium", "Discreater"],
-  "logoFile": "",
-  "screenshots": [],
-  "dependencies": ["NotEnoughItems"],
-  "credits": "Thanks to the MCP, Forge and FML guys; along with sesess, Pahimar, MrCrayfish and BedrockMiner for their tutorial."
+    "modListVersion": 2,
+    "modList": [{
+      "modid": "${modId}",
+      "name": "${modName}",
+      "description": "A simple mod to help you with recipe calculation.",
+      "version": "${modVersion}",
+      "mcversion": "${minecraftVersion}",
+      "url": "https://github.com/Towdium/JustEnoughCalculation",
+      "updateUrl": "http://minecratft.curseforge.com/projects/just-enough-calculation",
+      "authorList": ["Towdium", "Discreater"],
+      "logoFile": "",
+      "screenshots": [],
+      "dependencies": ["NotEnoughItems"],
+      "credits": "Thanks to the MCP, Forge and FML guys; along with sesess, Pahimar, MrCrayfish and BedrockMiner for their tutorial."
+    }]
 }
-]

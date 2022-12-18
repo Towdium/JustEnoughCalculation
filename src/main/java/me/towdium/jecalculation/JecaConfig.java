@@ -134,7 +134,7 @@ public class JecaConfig {
     public static Object empty;
 
     public static void preInit(FMLPreInitializationEvent event) {
-        config = new Configuration(configFile, JustEnoughCalculation.Reference.VERSION);
+        config = new Configuration(configFile, Tags.VERSION);
         config.load();
         handleInit();
         config.save();
