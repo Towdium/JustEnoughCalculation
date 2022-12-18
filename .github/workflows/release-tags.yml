@@ -22,6 +22,7 @@ jobs:
           IFS='-' read -r mv pv <<< "${GITHUB_REF#refs/*/}"
           echo "MC_VERSION=${mv}" >> $GITHUB_ENV
           echo "RELEASE_VERSION=${pv}" >> $GITHUB_ENV
+          echo "VERSION=${pv}" >> $GITHUB_ENV
 
       - name: Set up JDK 8
         uses: actions/setup-java@v3
@@ -49,6 +50,7 @@ jobs:
 
       - name: Release under current tag
         run: |
+          echo "RELEASE_VERSION=${RELEASE_VERSION}"
           export "CHANGELOG_FILE=$(mktemp --suffix=.md)"
           echo "CHANGELOG_FILE=${CHANGELOG_FILE}" >> $GITHUB_ENV
           gh api --method POST -H "Accept: application/vnd.github+json" \
