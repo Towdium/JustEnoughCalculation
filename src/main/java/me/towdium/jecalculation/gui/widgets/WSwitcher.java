@@ -1,23 +1,19 @@
 package me.towdium.jecalculation.gui.widgets;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import me.towdium.jecalculation.gui.JecaGui;
-import me.towdium.jecalculation.gui.Resource;
-import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.utils.Utilities.Circulator;
-
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-
 import static me.towdium.jecalculation.gui.JecaGui.COLOR_GUI_GREY;
 import static me.towdium.jecalculation.gui.JecaGui.Font.SHADOW;
 import static me.towdium.jecalculation.gui.Resource.WGT_ARR_L;
 import static me.towdium.jecalculation.gui.Resource.WGT_ARR_R;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
+import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
+import me.towdium.jecalculation.utils.Utilities.Circulator;
 
 /**
  * Author: towdium
@@ -39,8 +35,11 @@ public class WSwitcher extends WContainer {
     protected String temp;
 
     public WSwitcher(int xPos, int yPos, int xSize, int total) {
-        this(xPos, yPos, xSize,
-             IntStream.rangeClosed(1, total).mapToObj(i -> i + "/" + total).collect(Collectors.toList()));
+        this(
+                xPos,
+                yPos,
+                xSize,
+                IntStream.rangeClosed(1, total).mapToObj(i -> i + "/" + total).collect(Collectors.toList()));
     }
 
     public WSwitcher(int xPos, int yPos, int xSize, List<String> keys) {
@@ -99,7 +98,6 @@ public class WSwitcher extends WContainer {
     public List<String> getTexts() {
         return keys;
     }
-
 
     public String getText() {
         return temp == null ? keys.get(index.current()) : temp;

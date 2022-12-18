@@ -1,5 +1,7 @@
 package me.towdium.jecalculation.utils;
 
+import static net.minecraft.client.resources.I18n.format;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
@@ -8,6 +10,21 @@ import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.text.BreakIterator;
+import java.text.DecimalFormat;
+import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.Tags;
 import me.towdium.jecalculation.polyfill.NBTHelper;
@@ -24,24 +41,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.text.WordUtils;
 
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.text.BreakIterator;
-import java.text.DecimalFormat;
-import java.util.*;
-import java.util.function.BiFunction;
-import java.util.function.BiPredicate;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-
-import static net.minecraft.client.resources.I18n.format;
-
 /**
  * Author: Towdium
  * Date:   2016/6/25.
@@ -50,20 +49,20 @@ import static net.minecraft.client.resources.I18n.format;
 @ParametersAreNonnullByDefault
 public class Utilities {
     // FLOAT FORMATTING
-    public static char[] suffix = new char[]{'K', 'M', 'B', 'G', 'T', 'P'};
-    public static DecimalFormat[] format = new DecimalFormat[]{new DecimalFormat("#."),
-            new DecimalFormat("#.#"),
-            new DecimalFormat("#.##"),
-            new DecimalFormat("#.###"),
-            new DecimalFormat("#.####")};
+    public static char[] suffix = new char[] {'K', 'M', 'B', 'G', 'T', 'P'};
+    public static DecimalFormat[] format = new DecimalFormat[] {
+        new DecimalFormat("#."),
+        new DecimalFormat("#.#"),
+        new DecimalFormat("#.##"),
+        new DecimalFormat("#.###"),
+        new DecimalFormat("#.####")
+    };
 
     public static String cutNumber(float f, int size) {
         BiFunction<Float, Integer, String> form = (fl, len) -> format[len - 1 - (int) Math.log10(fl)].format(fl);
         int scale = (int) Math.log10(f) / 3;
-        if (scale == 0)
-            return form.apply(f, size);
-        else
-            return form.apply(f / (float) Math.pow(1000, scale), size - 1) + suffix[scale - 1];
+        if (scale == 0) return form.apply(f, size);
+        else return form.apply(f / (float) Math.pow(1000, scale), size - 1) + suffix[scale - 1];
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
@@ -80,8 +79,7 @@ public class Utilities {
 
     public static String repeat(String s, int n) {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < n; i++)
-            sb.append(s);
+        for (int i = 0; i < n; i++) sb.append(s);
         return sb.toString();
     }
 
@@ -90,7 +88,9 @@ public class Utilities {
     public static String getModName(Item item) {
         String name = getName(item);
         String id = name.substring(0, name.indexOf(":"));
-        return id.equals("minecraft") ? "Minecraft" : Loader.instance().getIndexedModList().get(id).getName();
+        return id.equals("minecraft")
+                ? "Minecraft"
+                : Loader.instance().getIndexedModList().get(id).getName();
     }
 
     public static String getName(Item item) {
@@ -113,8 +113,7 @@ public class Utilities {
      */
     public static String getModName(Fluid fluid) {
         String name = fluid.getName();
-        if (name.equals("lava") || name.equals("water"))
-            return "Minecraft";
+        if (name.equals("lava") || name.equals("water")) return "Minecraft";
         else {
             IIcon icon = getFluidIcon(fluid);
             if (icon == null) {
@@ -136,7 +135,6 @@ public class Utilities {
         }
     }
 
-
     private static IIcon getFluidIcon(Fluid fluid) {
         IIcon icon = fluid.getFlowingIcon();
         if (icon == null) {
@@ -155,12 +153,12 @@ public class Utilities {
 
     public static void addChatMessage(ChatMessage cm) {
         EntityClientPlayerMP player = Utilities.getPlayer();
-        if (player != null)
-            player.addChatMessage(new ChatComponentTranslation(cm.get()));
+        if (player != null) player.addChatMessage(new ChatComponentTranslation(cm.get()));
     }
 
     public enum ChatMessage {
-        MAX_LOOP, RECIPE_TRANSFER_ERROR;
+        MAX_LOOP,
+        RECIPE_TRANSFER_ERROR;
 
         private String get() {
             switch (this) {
@@ -174,7 +172,6 @@ public class Utilities {
         }
     }
 
-
     public static class Relation<K, V> {
         public HashMap<Pair<K, K>, V> data = new HashMap<>();
 
@@ -187,8 +184,7 @@ public class Utilities {
         @Nullable
         public V get(K a, K b) {
             V ret = data.get(new Pair<>(a, b));
-            if (ret == null)
-                ret = data.get(new Pair<>(b, a));
+            if (ret == null) ret = data.get(new Pair<>(b, a));
             return ret;
         }
     }
@@ -198,8 +194,7 @@ public class Utilities {
         boolean running = false;
 
         public void setState(boolean b) {
-            if (!b && running)
-                running = false;
+            if (!b && running) running = false;
             if (b && !running) {
                 running = true;
                 time = System.currentTimeMillis();
@@ -234,10 +229,8 @@ public class Utilities {
 
         public Circulator move(int steps) {
             current += steps;
-            if (current < 0)
-                current += (total - current - 1) / total * total;
-            else
-                current = current % total;
+            if (current < 0) current += (total - current - 1) / total * total;
+            else current = current % total;
             return this;
         }
 
@@ -246,10 +239,8 @@ public class Utilities {
         }
 
         public Circulator set(int index) {
-            if (index >= 0 && index < total)
-                current = index;
-            else
-                throw new RuntimeException(String.format("Expected: [0, %d), given: %d.", total, index));
+            if (index >= 0 && index < total) current = index;
+            else throw new RuntimeException(String.format("Expected: [0, %d), given: %d.", total, index));
             return this;
         }
 
@@ -266,8 +257,7 @@ public class Utilities {
         }
 
         public ReversedIterator(ListIterator<T> i) {
-            while (i.hasNext())
-                i.next();
+            while (i.hasNext()) i.next();
             this.i = i;
         }
 
@@ -307,9 +297,15 @@ public class Utilities {
         }
 
         public static List<String> wrap(String s, int width) {
-            return new TextWrapper().wrap(s,
-                    ClientUtils.mc().getLanguageManager().getCurrentLanguage().getLanguageCode(),
-                    i -> TextWrapper.renderer.getCharWidth(i), width);
+            return new TextWrapper()
+                    .wrap(
+                            s,
+                            ClientUtils.mc()
+                                    .getLanguageManager()
+                                    .getCurrentLanguage()
+                                    .getLanguageCode(),
+                            i -> TextWrapper.renderer.getCharWidth(i),
+                            width);
         }
 
         static class TextWrapper {
@@ -323,11 +319,9 @@ public class Utilities {
 
             private void cut() {
                 char c = str.charAt(cursor);
-                if (c == '\f')
-                    cursor++;
+                if (c == '\f') cursor++;
                 temp.add(str.substring(start, cursor));
-                if (c == ' ' || c == '　' || c == '\n')
-                    cursor++;
+                if (c == ' ' || c == '　' || c == '\n') cursor++;
                 start = cursor;
                 end = cursor;
                 space = width;
@@ -356,13 +350,10 @@ public class Utilities {
                     for (cursor = end; cursor < i; cursor++) {
                         char ch = str.charAt(cursor);
                         section += func.apply(str.charAt(cursor));
-                        if (ch == '\n' || ch == '\f')
-                            cut();
+                        if (ch == '\n' || ch == '\f') cut();
                         else if (section > space) {
-                            if (start == end)
-                                cut();
-                            else
-                                move();
+                            if (start == end) cut();
+                            else move();
                         }
                     }
                     space -= section;
@@ -390,12 +381,10 @@ public class Utilities {
         }
 
         public boolean push(T obj, boolean replace) {
-            if (replace)
-                data.pop();
+            if (replace) data.pop();
             boolean ret = data.removeIf(t -> tester != null ? tester.test(t, obj) : t.equals(obj));
             data.addFirst(obj);
-            if (data.size() > limit)
-                data.removeLast();
+            if (data.size() > limit) data.removeLast();
             return ret;
         }
 
@@ -462,12 +451,10 @@ public class Utilities {
 
     public static Locale getLocaleFromString(String languageCode) {
         String[] parts = languageCode.split("_", -1);
-        if (parts.length == 1)
-            return new Locale(parts[0]);
+        if (parts.length == 1) return new Locale(parts[0]);
         else if (parts.length == 2 || (parts.length == 3 && parts[2].startsWith("#")))
             return new Locale(parts[0], parts[1]);
-        else
-            return new Locale(parts[0], parts[1], parts[2]);
+        else return new Locale(parts[0], parts[1], parts[2]);
     }
 
     public static String[] mergeStringArrays(String[]... arrays) {

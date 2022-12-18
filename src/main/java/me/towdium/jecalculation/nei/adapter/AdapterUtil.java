@@ -1,7 +1,7 @@
 package me.towdium.jecalculation.nei.adapter;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Optional;
+import javax.annotation.ParametersAreNonnullByDefault;
 
 @SuppressWarnings("rawtypes")
 @ParametersAreNonnullByDefault
@@ -14,5 +14,4 @@ public class AdapterUtil {
             return Optional.empty();
         }
     }
-
 }

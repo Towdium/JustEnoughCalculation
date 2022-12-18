@@ -3,13 +3,12 @@ package me.towdium.jecalculation.nei;
 import codechicken.nei.PositionedStack;
 import codechicken.nei.recipe.IRecipeHandler;
 import cpw.mods.fml.common.Loader;
+import java.util.ArrayList;
+import java.util.List;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.nei.adapter.*;
 import me.towdium.jecalculation.utils.Utilities;
 import net.minecraft.item.ItemStack;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Adapter {
     public static List<IAdapter> adapters = new ArrayList<>();
@@ -19,7 +18,7 @@ public class Adapter {
         String modId = name.substring(0, name.indexOf(":"));
         String itemId = name.substring(name.indexOf(":") + 1);
         if (Loader.isModLoaded("gregtech")) {
-            if(GregTech6.isGT6()) {
+            if (GregTech6.isGT6()) {
                 return GregTech6.convertFluid(itemStack);
             } else {
                 return GregTech.convertFluid(itemStack);
@@ -39,7 +38,7 @@ public class Adapter {
             adapters.add(new AE2());
         }
         if (Loader.isModLoaded("gregtech")) {
-            if(GregTech6.isGT6()) {
+            if (GregTech6.isGT6()) {
                 JustEnoughCalculation.logger.info("gregtech6 detected");
                 adapters.add(new GregTech6());
             } else {
@@ -73,15 +72,13 @@ public class Adapter {
 
     public static void handleRecipe(IRecipeHandler recipe, int index, List<Object[]> inputs, List<Object[]> outputs) {
         // raw inputs
-        recipe.getIngredientStacks(index)
-              .stream()
-              .map((positionedStack) -> (Object[]) positionedStack.items)
-              .forEach(inputs::add);
+        recipe.getIngredientStacks(index).stream()
+                .map((positionedStack) -> (Object[]) positionedStack.items)
+                .forEach(inputs::add);
 
         // raw outputs
         PositionedStack resultStack = recipe.getResultStack(index);
-        if (resultStack != null)
-            outputs.add(resultStack.items);
+        if (resultStack != null) outputs.add(resultStack.items);
 
         try {
             for (IAdapter adapter : adapters) {
@@ -89,7 +86,8 @@ public class Adapter {
             }
         } catch (Exception e) {
             Utilities.addChatMessage(Utilities.ChatMessage.RECIPE_TRANSFER_ERROR);
-            JustEnoughCalculation.logger.error("Exception when handling recipe: " + recipe.getClass().getName());
+            JustEnoughCalculation.logger.error(
+                    "Exception when handling recipe: " + recipe.getClass().getName());
             e.printStackTrace();
         }
     }

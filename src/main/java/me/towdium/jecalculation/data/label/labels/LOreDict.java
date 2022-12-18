@@ -2,6 +2,13 @@ package me.towdium.jecalculation.data.label.labels;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import me.towdium.jecalculation.Tags;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
@@ -14,14 +21,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.oredict.OreDictionary;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Author: towdium
@@ -59,8 +58,7 @@ public class LOreDict extends ILabel.Impl {
             LOreDict lodA = (LOreDict) a;
             LOreDict lodB = (LOreDict) b;
             return lodA.getName().equals(lodB.getName());
-        } else
-            return false;
+        } else return false;
     }
 
     public static boolean mergeFuzzy(ILabel a, ILabel b) {
@@ -81,35 +79,32 @@ public class LOreDict extends ILabel.Impl {
 
     public static List<ILabel> suggest(List<ILabel> iss, @Nullable Class<?> context) {
         ILabel l = iss.get(0);
-        if (!(l instanceof LItemStack))
-            return new ArrayList<>();
+        if (!(l instanceof LItemStack)) return new ArrayList<>();
         LItemStack lis = (LItemStack) l;
         HashSet<Integer> ids = new HashSet<>();
         long amount = lis.getAmount();
-        for (int i : OreDictionary.getOreIDs(lis.getRep()))
-            if (check(i, iss, true))
-                ids.add(i);
-        return ids.stream().map(i -> new LOreDict(OreDictionary.getOreName(i), amount)).collect(Collectors.toList());
+        for (int i : OreDictionary.getOreIDs(lis.getRep())) if (check(i, iss, true)) ids.add(i);
+        return ids.stream()
+                .map(i -> new LOreDict(OreDictionary.getOreName(i), amount))
+                .collect(Collectors.toList());
     }
 
     public static List<ILabel> fallback(List<ILabel> iss, @Nullable Class<?> context) {
         ILabel l = iss.get(0);
-        if (!(l instanceof LItemStack))
-            return new ArrayList<>();
+        if (!(l instanceof LItemStack)) return new ArrayList<>();
         LItemStack lis = (LItemStack) l;
         HashSet<Integer> ids = new HashSet<>();
         long amount = lis.getAmount();
-        for (int i : OreDictionary.getOreIDs(lis.getRep()))
-            if (check(i, iss, false))
-                ids.add(i);
-        return ids.stream().map(i -> new LOreDict(OreDictionary.getOreName(i), amount)).collect(Collectors.toList());
+        for (int i : OreDictionary.getOreIDs(lis.getRep())) if (check(i, iss, false)) ids.add(i);
+        return ids.stream()
+                .map(i -> new LOreDict(OreDictionary.getOreName(i), amount))
+                .collect(Collectors.toList());
     }
 
     // check labels in the list suitable for the ore id
     private static boolean check(int id, List<ILabel> labels, boolean biDir) {
         ArrayList<ItemStack> ores = OreDictionary.getOres(OreDictionary.getOreName(id));
-        if (labels.size() == 1 && ores.size() == 1 && biDir && !MODE_FORCE)
-            return false;
+        if (labels.size() == 1 && ores.size() == 1 && biDir && !MODE_FORCE) return false;
 
         Wrapper<Boolean> acceptable = new Wrapper<>(true);
         if (biDir) {
@@ -159,8 +154,7 @@ public class LOreDict extends ILabel.Impl {
                 list.add(ore);
             }
         }
-        if (list.isEmpty())
-            return ItemStackHelper.EMPTY_ITEM_STACK;
+        if (list.isEmpty()) return ItemStackHelper.EMPTY_ITEM_STACK;
         long index = System.currentTimeMillis() / 1500;
         return list.get((int) (index % list.size()));
     }

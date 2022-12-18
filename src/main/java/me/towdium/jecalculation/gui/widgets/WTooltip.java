@@ -1,20 +1,19 @@
 package me.towdium.jecalculation.gui.widgets;
 
+import static java.lang.String.join;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.Utilities.I18n;
 import me.towdium.jecalculation.utils.wrappers.Pair;
-
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static java.lang.String.join;
 
 /**
  * Author: towdium
@@ -33,8 +32,7 @@ public abstract class WTooltip implements IWidget {
 
     @Override
     public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
-        if (name != null)
-            timer.setState(mouseIn(xMouse, yMouse));
+        if (name != null) timer.setState(mouseIn(xMouse, yMouse));
         return false;
     }
 
@@ -42,17 +40,14 @@ public abstract class WTooltip implements IWidget {
     public boolean onTooltip(JecaGui gui, int xMouse, int yMouse, List<String> tooltip) {
         if (timer.getTime() > 500) {
             List<Pair<String, Boolean>> suffix = getSuffix().stream()
-                                                            .map(s -> I18n.search(s.isEmpty() ?
-                                                                                  join(".", "gui", name) :
-                                                                                  join(".", "gui", name, s)))
-                                                            .collect(Collectors.toList());
+                    .map(s -> I18n.search(s.isEmpty() ? join(".", "gui", name) : join(".", "gui", name, s)))
+                    .collect(Collectors.toList());
             String str = suffix.stream()
-                               .filter(p -> p.two)
-                               .findFirst()
-                               .map(p -> p.one)
-                               .orElse(JecaGui.ALWAYS_TOOLTIP ? suffix.get(0).one : null);
-            if (str != null)
-                Collections.addAll(tooltip, str.split("\n"));
+                    .filter(p -> p.two)
+                    .findFirst()
+                    .map(p -> p.one)
+                    .orElse(JecaGui.ALWAYS_TOOLTIP ? suffix.get(0).one : null);
+            if (str != null) Collections.addAll(tooltip, str.split("\n"));
         }
         return false;
     }

@@ -2,10 +2,9 @@ package me.towdium.jecalculation.gui.widgets;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import me.towdium.jecalculation.gui.JecaGui;
-
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import me.towdium.jecalculation.gui.JecaGui;
 
 /**
  * Author: towdium

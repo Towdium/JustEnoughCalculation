@@ -1,17 +1,16 @@
 package me.towdium.jecalculation.data.structure;
 
+import static me.towdium.jecalculation.utils.Utilities.stream;
+
+import java.util.*;
+import java.util.stream.Collectors;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
-
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static me.towdium.jecalculation.utils.Utilities.stream;
 
 // positive => generate; negative => require
 @MethodsReturnNonnullByDefault
@@ -83,8 +82,7 @@ public class CostList {
             CostList c = (CostList) obj;
             CostList m = c.copy().multiply(-1);
             return CostList.merge(this, m, true).labels.isEmpty();
-        } else
-            return false;
+        } else return false;
     }
 
     public CostList copy() {
@@ -92,7 +90,6 @@ public class CostList {
         ret.labels = labels.stream().map(ILabel::copy).collect(Collectors.toList());
         return ret;
     }
-
 
     public boolean isEmpty() {
         return labels.isEmpty();
@@ -102,7 +99,6 @@ public class CostList {
         return labels;
     }
 
-
     public Calculator calculate() {
         return new Calculator();
     }
@@ -110,8 +106,7 @@ public class CostList {
     @Override
     public int hashCode() {
         int hash = 0;
-        for (ILabel i : labels)
-            hash ^= i.hashCode();
+        for (ILabel i : labels) hash ^= i.hashCode();
         return hash;
     }
 
@@ -131,14 +126,12 @@ public class CostList {
             int count = 0;
             while (next != null) {
                 CostList original = getCurrent();
-                List<ILabel> outL = next.one.getOutput()
-                        .stream()
+                List<ILabel> outL = next.one.getOutput().stream()
                         .filter(i -> i != ILabel.EMPTY)
                         .collect(Collectors.toList());
                 CostList outC = new CostList(outL);
                 outC.multiply(-next.two);
-                List<ILabel> inL = next.one.getInput()
-                        .stream()
+                List<ILabel> inL = next.one.getInput().stream()
                         .filter(i -> i != ILabel.EMPTY)
                         .collect(Collectors.toList());
                 CostList inC = new CostList(inL);
@@ -175,14 +168,12 @@ public class CostList {
             for (; index < labels.size(); index++) {
                 ILabel label = labels.get(index);
                 // Only negative label is required to calculate
-                if (label.getAmount() >= 0)
-                    continue;
+                if (label.getAmount() >= 0) continue;
                 // Find the recipe for the label.
                 // Reset or not reset the iterator is a question
                 while (iterator.hasNext()) {
                     Recipe r = iterator.next();
-                    if (r.matches(label).isPresent())
-                        return new Pair<>(r, r.multiplier(label));
+                    if (r.matches(label).isPresent()) return new Pair<>(r, r.multiplier(label));
                 }
                 iterator = Controller.recipeIterator();
             }
@@ -190,13 +181,11 @@ public class CostList {
         }
 
         private void addCatalyst(List<ILabel> labels) {
-            labels.stream()
-                    .filter(i -> i != ILabel.EMPTY)
-                    .forEach(i -> catalysts.stream()
-                            .filter(j -> j.matches(i))
-                            .findAny()
-                            .map(j -> j.setAmount(Math.max(i.getAmount(), j.getAmount())))
-                            .orElseGet(Utilities.fake(() -> catalysts.add(i))));
+            labels.stream().filter(i -> i != ILabel.EMPTY).forEach(i -> catalysts.stream()
+                    .filter(j -> j.matches(i))
+                    .findAny()
+                    .map(j -> j.setAmount(Math.max(i.getAmount(), j.getAmount())))
+                    .orElseGet(Utilities.fake(() -> catalysts.add(i))));
         }
 
         private CostList getCurrent() {

@@ -1,15 +1,14 @@
 package me.towdium.jecalculation.command;
 
+import java.util.Collections;
+import java.util.List;
+import javax.annotation.ParametersAreNonnullByDefault;
 import me.towdium.jecalculation.command.commands.CHelp;
 import me.towdium.jecalculation.utils.wrappers.Wrapper;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.ChatComponentTranslation;
-
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Author: towdium
@@ -26,7 +25,6 @@ public class JecaCommand extends CommandBase {
     public String getCommandUsage(ICommandSender sender) {
         return "/jeca [options]";
     }
-
 
     @Override
     public void processCommand(ICommandSender sender, String[] args) throws CommandException {
@@ -48,8 +46,7 @@ public class JecaCommand extends CommandBase {
     }
 
     private String[] cut(String[] args) {
-        if (args.length == 0)
-            return new String[0];
+        if (args.length == 0) return new String[0];
         String[] ret = new String[args.length - 1];
         System.arraycopy(args, 1, ret, 0, args.length - 1);
         return ret;
@@ -66,12 +63,11 @@ public class JecaCommand extends CommandBase {
             return getListOfStringsFromIterableMatchingLastWord(args, Commands.commands.keySet());
         } else {
             Wrapper<ISubCommand> sub = new Wrapper<>(null);
-            Commands.commands.values().stream().filter(c -> c.getName().equals(cmd))
-                    .findFirst().ifPresent(sub::push);
-            return sub.value != null ? sub.value.getTabCompletions(sender, cut(args))
-                    : Collections.emptyList();
+            Commands.commands.values().stream()
+                    .filter(c -> c.getName().equals(cmd))
+                    .findFirst()
+                    .ifPresent(sub::push);
+            return sub.value != null ? sub.value.getTabCompletions(sender, cut(args)) : Collections.emptyList();
         }
     }
-
-
 }

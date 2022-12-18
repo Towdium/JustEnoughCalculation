@@ -1,10 +1,9 @@
 package me.towdium.jecalculation.command.commands;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import me.towdium.jecalculation.command.ISubCommand;
 import me.towdium.jecalculation.gui.JecaGui;
 import net.minecraft.command.ICommandSender;
-
-import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
  * Author: Towdium

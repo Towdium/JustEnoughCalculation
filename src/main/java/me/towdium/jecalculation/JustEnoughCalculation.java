@@ -6,24 +6,19 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import javax.annotation.ParametersAreNonnullByDefault;
 import me.towdium.jecalculation.nei.NEIPlugin;
 import me.towdium.jecalculation.network.ClientHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-
 /**
  * @author Towdium
  */
-
 @ParametersAreNonnullByDefault
 @SuppressWarnings("unused")
 @SideOnly(Side.CLIENT)
-@Mod(modid = Tags.MODID,
-     name = Tags.MODNAME,
-     version = Tags.VERSION,
-     dependencies = "required-after:NotEnoughItems")
+@Mod(modid = Tags.MODID, name = Tags.MODNAME, version = Tags.VERSION, dependencies = "required-after:NotEnoughItems")
 public class JustEnoughCalculation {
     @Mod.Instance(Tags.MODID)
     public static JustEnoughCalculation INSTANCE;
@@ -48,5 +43,4 @@ public class JustEnoughCalculation {
         handler.initPost();
         NEIPlugin.init();
     }
-
 }

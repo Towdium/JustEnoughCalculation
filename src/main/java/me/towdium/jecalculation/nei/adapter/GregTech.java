@@ -2,18 +2,17 @@ package me.towdium.jecalculation.nei.adapter;
 
 import codechicken.nei.PositionedStack;
 import codechicken.nei.recipe.IRecipeHandler;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
+import javax.annotation.ParametersAreNonnullByDefault;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 
 @ParametersAreNonnullByDefault
 public class GregTech implements IAdapter {
@@ -30,13 +29,16 @@ public class GregTech implements IAdapter {
             Field mNEINameField = gtRecipeMapClz.getField("mNEIName");
             Collection sMappings = (Collection) sMappingsField.get(null);
 
-            return (Set<String>) sMappings.stream().map(sMapping -> {
-                try {
-                    return mNEINameField.get(sMapping);
-                } catch (IllegalAccessException e) {
-                    return null;
-                }
-            }).filter(Objects::nonNull).collect(Collectors.toSet());
+            return (Set<String>) sMappings.stream()
+                    .map(sMapping -> {
+                        try {
+                            return mNEINameField.get(sMapping);
+                        } catch (IllegalAccessException e) {
+                            return null;
+                        }
+                    })
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
         } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
             return new HashSet<>();
@@ -69,23 +71,28 @@ public class GregTech implements IAdapter {
         handleDefault(recipe, index, inputs, outputs, false);
     }
 
-    protected void handleDefault(IRecipeHandler recipe, int index, List<Object[]> inputs, List<Object[]> outputs, boolean clearOutput) {
-        inputs.replaceAll(ts -> Arrays.stream(ts).map(o -> {
-            if (o instanceof ItemStack) {
-                return GregTech.convertFluid((ItemStack) o);
-            } else if (o instanceof FluidStack) {
-                return o;
-            } else {
-                throw new IllegalArgumentException("Shall get ItemStack or FluidStack, but get: " + o.getClass());
-            }
-        }).toArray());
+    protected void handleDefault(
+            IRecipeHandler recipe, int index, List<Object[]> inputs, List<Object[]> outputs, boolean clearOutput) {
+        inputs.replaceAll(ts -> Arrays.stream(ts)
+                .map(o -> {
+                    if (o instanceof ItemStack) {
+                        return GregTech.convertFluid((ItemStack) o);
+                    } else if (o instanceof FluidStack) {
+                        return o;
+                    } else {
+                        throw new IllegalArgumentException(
+                                "Shall get ItemStack or FluidStack, but get: " + o.getClass());
+                    }
+                })
+                .toArray());
         if (clearOutput) {
             outputs.clear();
         }
         List<PositionedStack> otherStacks = recipe.getOtherStacks(index);
         outputs.addAll(otherStacks.stream()
                 .map(positionedStack -> positionedStack.items)
-                .map(itemStacks -> Arrays.stream(itemStacks).map(GregTech::convertFluid).toArray())
+                .map(itemStacks ->
+                        Arrays.stream(itemStacks).map(GregTech::convertFluid).toArray())
                 .collect(Collectors.toList()));
     }
 
@@ -105,19 +112,23 @@ public class GregTech implements IAdapter {
             Enum display_fluid = Enum.valueOf(itemListClz, "Display_Fluid");
             Method getItem = itemListClz.getMethod("getItem");
             Item displayFluidItem = (Item) getItem.invoke(display_fluid);
-            if (!isStackValid(aDisplayStack) || aDisplayStack.getItem() != displayFluidItem ||
-                    !aDisplayStack.hasTagCompound())
-                return null;
+            if (!isStackValid(aDisplayStack)
+                    || aDisplayStack.getItem() != displayFluidItem
+                    || !aDisplayStack.hasTagCompound()) return null;
             Fluid tFluid = FluidRegistry.getFluid(displayFluidItem.getDamage(aDisplayStack));
             return new FluidStack(tFluid, (int) aDisplayStack.getTagCompound().getLong("mFluidDisplayAmount"));
-        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+        } catch (ClassNotFoundException
+                | NoSuchMethodException
+                | IllegalAccessException
+                | InvocationTargetException e) {
             e.printStackTrace();
             return null;
         }
     }
 
     private static boolean isStackValid(Object aStack) {
-        return (aStack instanceof ItemStack) && ((ItemStack) aStack).getItem() != null &&
-                ((ItemStack) aStack).stackSize >= 0;
+        return (aStack instanceof ItemStack)
+                && ((ItemStack) aStack).getItem() != null
+                && ((ItemStack) aStack).stackSize >= 0;
     }
 }

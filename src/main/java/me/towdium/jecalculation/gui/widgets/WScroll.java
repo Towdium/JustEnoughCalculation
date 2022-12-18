@@ -1,16 +1,15 @@
 package me.towdium.jecalculation.gui.widgets;
 
+import static me.towdium.jecalculation.gui.Resource.*;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 import org.lwjgl.input.Mouse;
-
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-
-import static me.towdium.jecalculation.gui.Resource.*;
 
 /**
  * Author: towdium
@@ -37,10 +36,8 @@ public class WScroll implements IWidget {
 
     @Override
     public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
-        if (Mouse.isButtonDown(0) && active)
-            setCurrent(yMouse - yPos - height / 2, true);
-        else
-            active = false;
+        if (Mouse.isButtonDown(0) && active) setCurrent(yMouse - yPos - height / 2, true);
+        else active = false;
 
         int offset = (int) (current * (ySize - height));
         boolean in = mouseIn(xMouse, yMouse);
@@ -54,8 +51,7 @@ public class WScroll implements IWidget {
     @Override
     public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {
         active = mouseIn(xMouse, yMouse);
-        if (active)
-            setCurrent(yMouse - yPos - height / 2, true);
+        if (active) setCurrent(yMouse - yPos - height / 2, true);
         return active;
     }
 
@@ -91,7 +87,7 @@ public class WScroll implements IWidget {
     }
 
     public WScroll setCurrent(float ratio, boolean notify) {
-        //setCurrent((int) ((ySize - height) * ratio), false);
+        // setCurrent((int) ((ySize - height) * ratio), false);
         current = ratio;
         if (current < 0) current = 0;
         if (current > 1) current = 1;

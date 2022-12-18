@@ -1,7 +1,15 @@
 package me.towdium.jecalculation.gui.guis;
 
+import static me.towdium.jecalculation.gui.JecaGui.COLOR_TEXT_RED;
+import static me.towdium.jecalculation.gui.JecaGui.COLOR_TEXT_WHITE;
+import static me.towdium.jecalculation.gui.JecaGui.Font.PLAIN;
+import static me.towdium.jecalculation.gui.Resource.*;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.*;
+import java.util.stream.Collectors;
+import javax.annotation.ParametersAreNonnullByDefault;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.structure.CostList;
@@ -14,15 +22,6 @@ import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
 import me.towdium.jecalculation.utils.wrappers.Trio;
 import org.lwjgl.input.Keyboard;
-
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static me.towdium.jecalculation.gui.JecaGui.COLOR_TEXT_RED;
-import static me.towdium.jecalculation.gui.JecaGui.COLOR_TEXT_WHITE;
-import static me.towdium.jecalculation.gui.JecaGui.Font.PLAIN;
-import static me.towdium.jecalculation.gui.Resource.*;
 
 /**
  * Author: towdium
@@ -44,29 +43,30 @@ public class GuiRecipe extends Gui {
         Controller.addRecipe(group.getText(), toRecipe());
         JecaGui.displayParent();
     });
-    WButton label = new WButtonIcon(45, 25, 20, 20, BTN_LABEL, "recipe.label").setListener(
-            i -> JecaGui.displayGui(new GuiLabel((l) -> {
+    WButton label = new WButtonIcon(45, 25, 20, 20, BTN_LABEL, "recipe.label")
+            .setListener(i -> JecaGui.displayGui(new GuiLabel((l) -> {
                 JecaGui.displayParent();
                 JecaGui.getCurrent().hand = l;
             })));
-    WButton save = new WButtonIcon(26, 25, 20, 20, BTN_SAVE, "recipe.save").setDisabled(true).setListener(i -> {
-        if (dest == null)
-            Controller.addRecipe(group.getText(), toRecipe());
-        else {
-            String group = this.group.getText();
-            if (group.equals(dest.one))
-                Controller.setRecipe(dest.one, dest.two, toRecipe());
-            else
-                Controller.setRecipe(group, dest.one, dest.two, toRecipe());
-        }
-        JecaGui.displayParent();
-    });
-    WButton yes = new WButtonIcon(7, 25, 20, 20, BTN_YES, "recipe.confirm").setDisabled(true).setListener(i -> {
-        group.setText(text.getText());
-        text.setText("");
-        setNewGroup(false);
-        refresh();
-    });
+    WButton save = new WButtonIcon(26, 25, 20, 20, BTN_SAVE, "recipe.save")
+            .setDisabled(true)
+            .setListener(i -> {
+                if (dest == null) Controller.addRecipe(group.getText(), toRecipe());
+                else {
+                    String group = this.group.getText();
+                    if (group.equals(dest.one)) Controller.setRecipe(dest.one, dest.two, toRecipe());
+                    else Controller.setRecipe(group, dest.one, dest.two, toRecipe());
+                }
+                JecaGui.displayParent();
+            });
+    WButton yes = new WButtonIcon(7, 25, 20, 20, BTN_YES, "recipe.confirm")
+            .setDisabled(true)
+            .setListener(i -> {
+                group.setText(text.getText());
+                text.setText("");
+                setNewGroup(false);
+                refresh();
+            });
     WButton no = new WButtonIcon(26, 25, 20, 20, BTN_NO, "common.cancel").setListener(i -> setNewGroup(false));
     WButton neu = new WButtonIcon(7, 25, 20, 20, BTN_NEW, "recipe.new").setListener(i -> setNewGroup(true));
     EnumMap<IO, Map<Integer, List<ILabel>>> disamb = new EnumMap<>(IO.class);
@@ -84,22 +84,21 @@ public class GuiRecipe extends Gui {
 
     public GuiRecipe() {
         for (IO j : IO.values()) {
-            getWidget(j).setFmtAmount(i -> i.getAmountString(false))
-                        .setFmtTooltip((i, k) -> i.getToolTip(k, true))
-                        .setLsnrLeftClick((i, v) -> {
-                            ILabel l = i.get(v).getLabel();
-                            if (l != ILabel.EMPTY)
-                                setOverlay(new WAmount(j, v));
-                        })
-                        .setLsnrRightClick((widget, value) ->  {
-                            ILabel l = widget.get(value).getLabel();
-                            if (l != ILabel.EMPTY)
-                                widget.get(value).setLabel(ILabel.EMPTY, true);
-                        })
-                        .setLsnrUpdate((i, v) -> {
-                            refresh();
-                            removeDisamb(j, v);
-                        });
+            getWidget(j)
+                    .setFmtAmount(i -> i.getAmountString(false))
+                    .setFmtTooltip((i, k) -> i.getToolTip(k, true))
+                    .setLsnrLeftClick((i, v) -> {
+                        ILabel l = i.get(v).getLabel();
+                        if (l != ILabel.EMPTY) setOverlay(new WAmount(j, v));
+                    })
+                    .setLsnrRightClick((widget, value) -> {
+                        ILabel l = widget.get(value).getLabel();
+                        if (l != ILabel.EMPTY) widget.get(value).setLabel(ILabel.EMPTY, true);
+                    })
+                    .setLsnrUpdate((i, v) -> {
+                        refresh();
+                        removeDisamb(j, v);
+                    });
         }
         add(new WHelp("recipe"), new WPanel());
         add(new WIcon(7, 61, 18, 36, ICN_OUTPUT, "common.output"));
@@ -107,14 +106,11 @@ public class GuiRecipe extends Gui {
         add(new WIcon(7, 123, 18, 36, ICN_INPUT, "common.input"));
         add(new WLine(52));
         add(catalyst, input, output, group);
-        if (group.getTexts().isEmpty())
-            group.setText(Utilities.I18n.get("gui.common.default"));
+        if (group.getTexts().isEmpty()) group.setText(Utilities.I18n.get("gui.common.default"));
         String last = Controller.getLast();
         int index = -1;
-        if (last != null)
-            index = group.getTexts().indexOf(last);
-        if (index != -1)
-            group.setIndex(index);
+        if (last != null) index = group.getTexts().indexOf(last);
+        if (index != -1) group.setIndex(index);
         setNewGroup(false);
         copy.setDisabled(true);
         text.setListener(i -> yes.setDisabled(i.getText().isEmpty()));
@@ -156,8 +152,7 @@ public class GuiRecipe extends Gui {
     }
 
     public void reset() {
-        for (IO i : IO.values())
-            getWidget(i).setLabels(new ArrayList<>());
+        for (IO i : IO.values()) getWidget(i).setLabels(new ArrayList<>());
         disamb.clear();
         refresh();
     }
@@ -166,18 +161,15 @@ public class GuiRecipe extends Gui {
         disamb.clear();
 
         // generate disamb and fill slots
-        for (IO i : IO.values())
-            getWidget(i).setLabels(extract(recipe, i, context));
+        for (IO i : IO.values()) getWidget(i).setLabels(extract(recipe, i, context));
         refresh();
     }
 
-    private ArrayList<ILabel> extract(EnumMap<IO, List<Trio<ILabel, CostList, CostList>>> src,
-                                      IO type,
-                                      Class<?> context) {
+    private ArrayList<ILabel> extract(
+            EnumMap<IO, List<Trio<ILabel, CostList, CostList>>> src, IO type, Class<?> context) {
         List<Trio<ILabel, CostList, CostList>> l = src.get(type);
         ArrayList<ILabel> ret = new ArrayList<>();
-        if (l == null)
-            return ret;
+        if (l == null) return ret;
         for (int i = 0; i < l.size(); i++) {
             Trio<ILabel, CostList, CostList> p = l.get(i);
             ret.add(p.one);
@@ -194,8 +186,7 @@ public class GuiRecipe extends Gui {
 
     private List<ILabel> trim(List<ILabel> ls) {
         for (int i = ls.size() - 1; i >= 0; i--) {
-            if (ls.get(i) == ILabel.EMPTY)
-                ls.remove(i);
+            if (ls.get(i) == ILabel.EMPTY) ls.remove(i);
         }
         return ls;
     }
@@ -209,8 +200,7 @@ public class GuiRecipe extends Gui {
             Recipe r = toRecipe();
             boolean d = dest == null ? Controller.hasDuplicate(r) : Controller.hasDuplicate(r, dest.one, dest.two);
             save.setDisabled(d);
-            if (dest != null)
-                copy.setDisabled(d);
+            if (dest != null) copy.setDisabled(d);
         } catch (IllegalArgumentException e) {
             save.setDisabled(true);
             copy.setDisabled(true);
@@ -219,14 +209,12 @@ public class GuiRecipe extends Gui {
 
     private void removeDisamb(IO type, int index) {
         Map<Integer, List<ILabel>> entry = disamb.get(type);
-        if (entry != null)
-            entry.remove(index);
+        if (entry != null) entry.remove(index);
     }
 
     static boolean handleLabelScroll(WLabel w, int diff) {
         ILabel l = w.getLabel();
-        for (int i = 0; i < Math.abs(diff); i++)
-            l = diff > 0 ? l.increaseAmount() : l.decreaseAmount();
+        for (int i = 0; i < Math.abs(diff); i++) l = diff > 0 ? l.increaseAmount() : l.decreaseAmount();
         w.setLabel(l, true);
         return true;
     }
@@ -263,16 +251,15 @@ public class GuiRecipe extends Gui {
                 JecaGui.getCurrent().hand = temp.getLabel();
                 set(ILabel.EMPTY, type, idx);
             });
-            yes = new WButtonIcon(x + 59, y - 24, 20, 20, BTN_YES, "recipe.confirm").setListener(
-                    i -> set(temp.getLabel(), type, idx));
-            no = new WButtonIcon(x + 78, y - 24, 20, 20, BTN_NO, "recipe.delete").setListener(
-                    i -> set(ILabel.EMPTY, type, idx));
+            yes = new WButtonIcon(x + 59, y - 24, 20, 20, BTN_YES, "recipe.confirm")
+                    .setListener(i -> set(temp.getLabel(), type, idx));
+            no = new WButtonIcon(x + 78, y - 24, 20, 20, BTN_NO, "recipe.delete")
+                    .setListener(i -> set(ILabel.EMPTY, type, idx));
             disamb = new WButtonIcon(x + 40, y - 24, 20, 20, BTN_DISAMB, "recipe.disamb");
             Map<Integer, List<ILabel>> entry = GuiRecipe.this.disamb.get(type);
             if (entry != null && entry.containsKey(idx)) {
                 disamb.setListener(i -> GuiRecipe.this.setOverlay(new WDisamb(type, idx)));
-            } else
-                disamb.setDisabled(true);
+            } else disamb.setDisabled(true);
             add(temp, text, pick, yes, no, disamb);
             text.setListener(i -> {
                 boolean acceptable;
@@ -280,8 +267,7 @@ public class GuiRecipe extends Gui {
                 try {
                     amount = Long.parseLong(text.getText());
                     acceptable = amount > 0;
-                    if (!acceptable)
-                        amount = 1;
+                    if (!acceptable) amount = 1;
                 } catch (NumberFormatException e) {
                     acceptable = text.getText().isEmpty();
                     amount = 1;
@@ -291,7 +277,6 @@ public class GuiRecipe extends Gui {
                 temp.setLabel(temp.getLabel().setAmount(amount));
             });
             update();
-
         }
 
         private void set(ILabel l, IO type, int idx) {
@@ -326,13 +311,13 @@ public class GuiRecipe extends Gui {
             add(new WPanel(x - 7, y - 46, 111, 71));
             temp = new WLabel(x - 1, y - 1, 20, 20, false);
             temp.setLabel(ref.getLabel().copy());
-            content = new WLabelScroll(x + 8, y - 40, 4, 2, false).setLabels(disamb.get(type).get(idx))
-                                                                  .setLsnrLeftClick((i, v) -> {
-                                                                      list.setLabel(
-                                                                              idx, i.get(v).getLabel().copy().multiply(-1));
-                                                                      GuiRecipe.this.setOverlay(null);
-                                                                      refresh();
-                                                                  });
+            content = new WLabelScroll(x + 8, y - 40, 4, 2, false)
+                    .setLabels(disamb.get(type).get(idx))
+                    .setLsnrLeftClick((i, v) -> {
+                        list.setLabel(idx, i.get(v).getLabel().copy().multiply(-1));
+                        GuiRecipe.this.setOverlay(null);
+                        refresh();
+                    });
             add(new WIcon(x + 22, y - 1, 20, 20, ICN_TEXT, "common.search"));
             search = new WSearch(x + 42, y - 1, 56, content);
             add(temp, content, search);

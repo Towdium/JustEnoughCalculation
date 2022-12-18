@@ -7,6 +7,9 @@ import codechicken.nei.recipe.IRecipeHandler;
 import codechicken.nei.recipe.TemplateRecipeHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.*;
+import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.structure.CostList;
 import me.towdium.jecalculation.data.structure.Recipe;
@@ -15,10 +18,6 @@ import me.towdium.jecalculation.gui.guis.GuiRecipe;
 import me.towdium.jecalculation.utils.wrappers.Trio;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.item.ItemStack;
-
-import javax.annotation.Nonnull;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @SideOnly(Side.CLIENT)
 public class JecaOverlayHandler implements IOverlayHandler {
@@ -37,9 +36,8 @@ public class JecaOverlayHandler implements IOverlayHandler {
         }
     }
 
-    private static EnumMap<Recipe.IO, List<Trio<ILabel, CostList, CostList>>> convertRecipe(IRecipeHandler recipe,
-                                                                                            int recipeIndex,
-                                                                                            Class<?> context) {
+    private static EnumMap<Recipe.IO, List<Trio<ILabel, CostList, CostList>>> convertRecipe(
+            IRecipeHandler recipe, int recipeIndex, Class<?> context) {
         // item disamb raw
         EnumMap<Recipe.IO, List<Trio<ILabel, CostList, CostList>>> merged = new EnumMap<>(Recipe.IO.class);
 
@@ -61,31 +59,32 @@ public class JecaOverlayHandler implements IOverlayHandler {
         return merged;
     }
 
-    private static void merge(EnumMap<Recipe.IO, List<Trio<ILabel, CostList, CostList>>> dst,
-                              List<?> objs,
-                              Class<?> context,
-                              Recipe.IO type) {
+    private static void merge(
+            EnumMap<Recipe.IO, List<Trio<ILabel, CostList, CostList>>> dst,
+            List<?> objs,
+            Class<?> context,
+            Recipe.IO type) {
         List<ILabel> list = objs.stream().map(ILabel.Converter::from).collect(Collectors.toList());
-        if (list.isEmpty())
-            return;
+        if (list.isEmpty()) return;
         ILabel rep = list.get(0).copy();
-        if (type == Recipe.IO.INPUT && list.size() != 1)
-            rep = ILabel.CONVERTER.first(list, context);
+        if (type == Recipe.IO.INPUT && list.size() != 1) rep = ILabel.CONVERTER.first(list, context);
         ILabel fin = rep;
 
-        dst.computeIfAbsent(type, i -> new ArrayList<>()).stream().filter(p -> {
-            CostList cl = new CostList(list);
-            if (p.three.equals(cl)) {
-                ILabel.MERGER.merge(p.one, fin).ifPresent(i -> p.one = i);
-                p.two = CostList.merge(p.two, cl, true);
-                return true;
-            } else
-                return false;
-        }).findAny().orElseGet(() -> {
-            Trio<ILabel, CostList, CostList> ret = new Trio<>(fin, new CostList(list), new CostList(list));
-            dst.get(type).add(ret);
-            return ret;
-        });
+        dst.computeIfAbsent(type, i -> new ArrayList<>()).stream()
+                .filter(p -> {
+                    CostList cl = new CostList(list);
+                    if (p.three.equals(cl)) {
+                        ILabel.MERGER.merge(p.one, fin).ifPresent(i -> p.one = i);
+                        p.two = CostList.merge(p.two, cl, true);
+                        return true;
+                    } else return false;
+                })
+                .findAny()
+                .orElseGet(() -> {
+                    Trio<ILabel, CostList, CostList> ret = new Trio<>(fin, new CostList(list), new CostList(list));
+                    dst.get(type).add(ret);
+                    return ret;
+                });
     }
 
     private static Optional<ItemStack> getCatalyst(@Nonnull IRecipeHandler handler) {
@@ -107,5 +106,4 @@ public class JecaOverlayHandler implements IOverlayHandler {
         ItemStack itemStack = info.getItemStack();
         return Optional.ofNullable(itemStack);
     }
-
 }

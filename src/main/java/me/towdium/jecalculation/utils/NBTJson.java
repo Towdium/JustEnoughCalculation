@@ -1,8 +1,6 @@
 package me.towdium.jecalculation.utils;
 
 import com.google.gson.*;
-import net.minecraft.nbt.*;
-
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +8,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
+import net.minecraft.nbt.*;
 
 public class NBTJson {
     private static final Pattern numberPattern = Pattern.compile("^([-+]?[\\d]+\\.?[0-9]*)([bBsSlLfFdD]?)$");
@@ -20,16 +19,16 @@ public class NBTJson {
         final String jsonString = toJsonObject(tag).toString();
         return gson.toJson(parser.parse(jsonString));
     }
-    
+
     @SuppressWarnings("unchecked")
     public static JsonElement toJsonObject(NBTBase nbt) {
         if (nbt instanceof NBTTagCompound) {
             // NBTTagCompound
             final NBTTagCompound nbtTagCompound = (NBTTagCompound) nbt;
-            final Map<String, NBTBase> tagMap = (Map<String, NBTBase>)nbtTagCompound.tagMap;
-            
+            final Map<String, NBTBase> tagMap = (Map<String, NBTBase>) nbtTagCompound.tagMap;
+
             JsonObject root = new JsonObject();
-            for (Map.Entry<String, NBTBase> nbtEntry : tagMap.entrySet() ) {
+            for (Map.Entry<String, NBTBase> nbtEntry : tagMap.entrySet()) {
                 root.add(nbtEntry.getKey(), toJsonObject(nbtEntry.getValue()));
             }
             return root;
@@ -38,7 +37,7 @@ public class NBTJson {
             return new JsonPrimitive(((NBTBase.NBTPrimitive) nbt).func_150286_g());
         } else if (nbt instanceof NBTTagString) {
             // String
-           return new JsonPrimitive(((NBTTagString) nbt).func_150285_a_());
+            return new JsonPrimitive(((NBTTagString) nbt).func_150285_a_());
         } else if (nbt instanceof NBTTagList) {
             // Tag List
             JsonArray arr = new JsonArray();
@@ -47,14 +46,14 @@ public class NBTJson {
         } else if (nbt instanceof NBTTagIntArray) {
             // Int Array
             JsonArray arr = new JsonArray();
-            for(int i : ((NBTTagIntArray) nbt).func_150302_c()) {
+            for (int i : ((NBTTagIntArray) nbt).func_150302_c()) {
                 arr.add(new JsonPrimitive(i));
             }
             return arr;
         } else if (nbt instanceof NBTTagByteArray) {
             // Byte Array
             JsonArray arr = new JsonArray();
-            for(int i : ((NBTTagByteArray) nbt).func_150292_c()) {
+            for (int i : ((NBTTagByteArray) nbt).func_150292_c()) {
                 arr.add(new JsonPrimitive(i));
             }
             return arr;
@@ -62,19 +61,19 @@ public class NBTJson {
             throw new IllegalArgumentException("Unsupported NBT Tag: " + NBTBase.NBTTypes[nbt.getId()] + " - " + nbt);
         }
     }
-    
+
     public static NBTBase toNbt(JsonElement jsonElement) {
         if (jsonElement instanceof JsonPrimitive) {
             // Number or String
             final JsonPrimitive jsonPrimitive = (JsonPrimitive) jsonElement;
             final String jsonString = jsonPrimitive.getAsString();
             final Matcher m = numberPattern.matcher(jsonString);
-            if(m.find()) {
+            if (m.find()) {
                 // Number
                 final String numberString = m.group(1);
                 if (m.groupCount() == 2 && m.group(2).length() > 0) {
                     final char numberType = m.group(2).charAt(0);
-                    switch(numberType) {
+                    switch (numberType) {
                         case 'b':
                         case 'B':
                             return new NBTTagByte(Byte.parseByte(numberString));
@@ -92,34 +91,34 @@ public class NBTJson {
                             return new NBTTagDouble(Double.parseDouble(numberString));
                     }
                 } else {
-                    if (numberString.contains("."))
-                        return new NBTTagDouble(Double.parseDouble(numberString));
-                    else
-                        return new NBTTagInt(Integer.parseInt(numberString));
+                    if (numberString.contains(".")) return new NBTTagDouble(Double.parseDouble(numberString));
+                    else return new NBTTagInt(Integer.parseInt(numberString));
                 }
             } else {
                 // String
                 return new NBTTagString(jsonString);
             }
-        }  else if (jsonElement instanceof JsonArray) {
+        } else if (jsonElement instanceof JsonArray) {
             // NBTTagIntArray or NBTTagList
             final JsonArray jsonArray = (JsonArray) jsonElement;
             final List<NBTBase> nbtList = new ArrayList<>();
-           
+
             for (JsonElement element : jsonArray) {
                 nbtList.add(toNbt(element));
             }
-            
+
             if (nbtList.stream().allMatch(n -> n instanceof NBTTagInt)) {
-                return new NBTTagIntArray(nbtList.stream().mapToInt(i -> ((NBTTagInt)i).func_150287_d() ).toArray());
+                return new NBTTagIntArray(nbtList.stream()
+                        .mapToInt(i -> ((NBTTagInt) i).func_150287_d())
+                        .toArray());
             } else if (nbtList.stream().allMatch(n -> n instanceof NBTTagByte)) {
-                return new NBTTagByteArray(toByteArray(nbtList.stream().mapToInt(i -> ((NBTTagInt)i).func_150287_d() )));
+                return new NBTTagByteArray(
+                        toByteArray(nbtList.stream().mapToInt(i -> ((NBTTagInt) i).func_150287_d())));
             } else {
                 NBTTagList nbtTagList = new NBTTagList();
                 nbtList.forEach(nbtTagList::appendTag);
 
                 return nbtTagList;
-
             }
         } else if (jsonElement instanceof JsonObject) {
             // NBTTagCompound
@@ -130,12 +129,15 @@ public class NBTJson {
             }
             return nbtTagCompound;
         }
-        
+
         throw new IllegalArgumentException("Unhandled element " + jsonElement);
     }
+
     public static byte[] toByteArray(IntStream stream) {
-        return stream.collect(ByteArrayOutputStream::new, (baos, i) -> baos.write((byte) i), (baos1, baos2) -> baos1.write(baos2.toByteArray(), 0, baos2.size()))
-            .toByteArray();
+        return stream.collect(
+                        ByteArrayOutputStream::new,
+                        (baos, i) -> baos.write((byte) i),
+                        (baos1, baos2) -> baos1.write(baos2.toByteArray(), 0, baos2.size()))
+                .toByteArray();
     }
-    
 }

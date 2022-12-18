@@ -2,10 +2,9 @@ package me.towdium.jecalculation;
 
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import java.io.File;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
-
-import java.io.File;
 
 public class JecaConfig {
     public static File configDir = new File(Loader.instance().getConfigDir(), "JustEnoughCalculation/");
@@ -27,7 +26,10 @@ public class JecaConfig {
     }
 
     public enum EnumItems {
-        ClientMode, EnableInventoryCheck, ListRecipeBlackList, ListRecipeCategory;
+        ClientMode,
+        EnableInventoryCheck,
+        ListRecipeBlackList,
+        ListRecipeCategory;
 
         public String getComment() {
             switch (this) {
@@ -36,8 +38,8 @@ public class JecaConfig {
                 case EnableInventoryCheck:
                     return "Set to false to disable auto inventory check";
                 case ListRecipeBlackList:
-                    return "Add string identifier here to disable quick transfer of this type recipe\n" +
-                           "Names can be found in ListRecipeCategory";
+                    return "Add string identifier here to disable quick transfer of this type recipe\n"
+                            + "Names can be found in ListRecipeCategory";
                 case ListRecipeCategory:
                     return "List of categories, this is maintained by the mod automatically";
             }
@@ -89,7 +91,7 @@ public class JecaConfig {
                 case ListRecipeBlackList:
                     return new String[0];
                 case ListRecipeCategory:
-                    return new String[]{"minecraft.crafting", "minecraft.smelting"};
+                    return new String[] {"minecraft.crafting", "minecraft.smelting"};
             }
             return JecaConfig.empty;
         }
@@ -99,11 +101,11 @@ public class JecaConfig {
             if (type != null) {
                 switch (this.getType()) {
                     case Boolean:
-                        return config.get(this.getCategory(), this.getName(), (Boolean) this.getDefault(),
-                                          this.getComment());
+                        return config.get(
+                                this.getCategory(), this.getName(), (Boolean) this.getDefault(), this.getComment());
                     case ListString:
-                        return config.get(this.getCategory(), this.getName(), (String[]) this.getDefault(),
-                                          this.getComment());
+                        return config.get(
+                                this.getCategory(), this.getName(), (String[]) this.getDefault(), this.getComment());
                 }
                 config.getCategory(EnumCategory.General.toString()).get(this.getName());
             }
@@ -128,7 +130,9 @@ public class JecaConfig {
     }
 
     public enum EnumType {
-        Boolean, ListString, Error
+        Boolean,
+        ListString,
+        Error
     }
 
     public static Object empty;
@@ -139,7 +143,6 @@ public class JecaConfig {
         handleInit();
         config.save();
     }
-
 
     public static void handleInit() {
         for (EnumItems item : EnumItems.values()) {

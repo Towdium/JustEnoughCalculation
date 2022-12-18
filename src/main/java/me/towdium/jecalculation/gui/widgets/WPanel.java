@@ -2,14 +2,13 @@ package me.towdium.jecalculation.gui.widgets;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.List;
+import javax.annotation.ParametersAreNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.utils.wrappers.Wrapper;
-
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
 
 /**
  * Author: towdium
@@ -32,7 +31,6 @@ public class WPanel implements IWidget {
     public WPanel() {
         this(0, 0, 176, 166);
     }
-
 
     @Override
     public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {

@@ -6,5 +6,4 @@ public class Tags {
     public static final String VERSION = "GRADLETOKEN_VERSION";
 
     public static final String GROUPNAME = "GRADLETOKEN_GROUPNAME";
-
 }

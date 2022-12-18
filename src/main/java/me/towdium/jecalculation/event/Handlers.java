@@ -2,12 +2,11 @@ package me.towdium.jecalculation.event;
 
 import codechicken.nei.guihook.GuiContainerManager;
 import cpw.mods.fml.common.FMLCommonHandler;
+import java.util.ArrayList;
 import me.towdium.jecalculation.event.handlers.EBusEventHandler;
 import me.towdium.jecalculation.event.handlers.FMLBusEventHandler;
 import me.towdium.jecalculation.event.handlers.NEIEventHandler;
 import net.minecraftforge.common.MinecraftForge;
-
-import java.util.ArrayList;
 
 public class Handlers {
     public static final ArrayList<Object> fmlHandlers;

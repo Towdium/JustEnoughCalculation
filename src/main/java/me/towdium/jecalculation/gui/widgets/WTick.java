@@ -1,15 +1,14 @@
 package me.towdium.jecalculation.gui.widgets;
 
+import static me.towdium.jecalculation.gui.Resource.*;
+
+import java.util.Collections;
+import java.util.List;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
-
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Collections;
-import java.util.List;
-
-import static me.towdium.jecalculation.gui.Resource.*;
 
 /**
  * Author: Towdium
@@ -23,7 +22,6 @@ public class WTick extends WContainer {
     String name;
     boolean disabled;
     ListenerAction<? super WTick> listener;
-
 
     public WTick(int xPos, int yPos, int xSize, int ySize, @Nullable String name) {
         this.xPos = xPos;
@@ -50,13 +48,10 @@ public class WTick extends WContainer {
     }
 
     public WTick setSelected(boolean selected) {
-        if (selected == selected())
-            return this;
+        if (selected == selected()) return this;
         remove(button);
-        if (selected)
-            button = new Selected(xPos, yPos, xSize, ySize, name);
-        else
-            button = new Normal(xPos, yPos, xSize, ySize, name);
+        if (selected) button = new Selected(xPos, yPos, xSize, ySize, name);
+        else button = new Normal(xPos, yPos, xSize, ySize, name);
         add(button);
         return this;
     }

@@ -2,17 +2,16 @@ package me.towdium.jecalculation.gui.widgets;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import me.towdium.jecalculation.data.label.ILabel;
-import me.towdium.jecalculation.gui.JecaGui;
-import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
-import me.towdium.jecalculation.utils.Utilities.I18n;
-
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import javax.annotation.ParametersAreNonnullByDefault;
+import me.towdium.jecalculation.data.label.ILabel;
+import me.towdium.jecalculation.gui.JecaGui;
+import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
+import me.towdium.jecalculation.utils.Utilities.I18n;
 
 /**
  * Author: towdium
@@ -38,30 +37,31 @@ public class WLabelScroll extends WContainer implements ISearchable {
         this.yPos = yPos;
         this.column = column;
         this.row = row;
-        labelGroup = new WLabelGroup(xPos, yPos, column, row, accept).setLsnrUpdate(this::onUpdate)
-                                                                     .setLsnrLeftClick(this::onLeftClick)
-                                                                     .setLsnrRightClick(this::onRightClick);
-        scroll = new WScroll(xPos + column * 18 + 4, yPos, row * 18).setListener(i -> update(i.getCurrent()))
-                                                                    .setStep(Float.POSITIVE_INFINITY)
-                                                                    .setRatio(1);
+        labelGroup = new WLabelGroup(xPos, yPos, column, row, accept)
+                .setLsnrUpdate(this::onUpdate)
+                .setLsnrLeftClick(this::onLeftClick)
+                .setLsnrRightClick(this::onRightClick);
+        scroll = new WScroll(xPos + column * 18 + 4, yPos, row * 18)
+                .setListener(i -> update(i.getCurrent()))
+                .setStep(Float.POSITIVE_INFINITY)
+                .setRatio(1);
         add(labelGroup);
         add(scroll);
         add(new WRectangle(xPos + column * 18, yPos, 4, row * 18, JecaGui.COLOR_GUI_GREY));
     }
 
     public void update(float f) {
-        if (f < 0)
-            f = 0;
-        if (f > 1)
-            f = 1;
+        if (f < 0) f = 0;
+        if (f > 1) f = 1;
         int amount = getAmountSteps();
         current = (int) (amount * f);
-        if (current == amount)
-            current--;
+        if (current == amount) current--;
         List<ILabel> ls = accept ? labels : filtered;
         labelGroup.setLabel(ls, current * column);
         float step = 1f / (amount - 1);
-        scroll.setRatio(Math.min(row / (float) getAmountRows(), 1f)).setCurrent(f).setStep(step);
+        scroll.setRatio(Math.min(row / (float) getAmountRows(), 1f))
+                .setCurrent(f)
+                .setStep(step);
     }
 
     public WLabel get(int index) {
@@ -70,10 +70,8 @@ public class WLabelScroll extends WContainer implements ISearchable {
 
     public WLabelScroll setLabels(List<ILabel> labels) {
         this.labels = labels;
-        if (accept)
-            update(0);
-        else
-            setFilter(filter);
+        if (accept) update(0);
+        else setFilter(filter);
         return this;
     }
 
@@ -83,11 +81,10 @@ public class WLabelScroll extends WContainer implements ISearchable {
     }
 
     public boolean setFilter(String str) {
-        if (accept)
-            throw new RuntimeException("Filtering not allowed when editing");
+        if (accept) throw new RuntimeException("Filtering not allowed when editing");
         filtered = labels.stream()
-                         .filter(l -> I18n.contains(l.getDisplayName().toLowerCase(), str.toLowerCase()))
-                         .collect(Collectors.toList());
+                .filter(l -> I18n.contains(l.getDisplayName().toLowerCase(), str.toLowerCase()))
+                .collect(Collectors.toList());
         update(0);
         return filtered.size() != 0;
     }
@@ -114,11 +111,9 @@ public class WLabelScroll extends WContainer implements ISearchable {
     protected void onUpdate(WLabelGroup w, int index) {
         ILabel l = w.get(index).getLabel();
         int i = column * current + index;
-        while (labels.size() <= i)
-            labels.add(ILabel.EMPTY);
+        while (labels.size() <= i) labels.add(ILabel.EMPTY);
         labels.set(i, l);
-        if (lsnrUpdate != null)
-            lsnrUpdate.invoke(this, i);
+        if (lsnrUpdate != null) lsnrUpdate.invoke(this, i);
 
         if (index + 1 == row * column && l != ILabel.EMPTY && (row + current) * column == labels.size()) {
             labels.add(ILabel.EMPTY);
@@ -129,13 +124,11 @@ public class WLabelScroll extends WContainer implements ISearchable {
     }
 
     protected void onLeftClick(WLabelGroup w, int index) {
-        if (hdlrLeftClick != null)
-            hdlrLeftClick.invoke(this, column * current + index);
+        if (hdlrLeftClick != null) hdlrLeftClick.invoke(this, column * current + index);
     }
 
     protected void onRightClick(WLabelGroup w, int index) {
-        if (hdlrRightClick != null)
-            hdlrRightClick.invoke(this, column * current + index);
+        if (hdlrRightClick != null) hdlrRightClick.invoke(this, column * current + index);
     }
 
     public WLabelScroll setLsnrScroll(ListenerValue<? super WLabel, Integer> hdlr) {
