@@ -19,9 +19,11 @@ jobs:
 
       - name: Set release version
         run: |
-          IFS='/' read -r mv pv <<< "${GITHUB_REF#refs/*/}"
+          IFS='-' read -r mv pv <<< "${GITHUB_REF#refs/*/}"
           echo "MC_VERSION=${mv}" >> $GITHUB_ENV
           echo "RELEASE_VERSION=${pv}" >> $GITHUB_ENV
+          echo "${mv}"
+          echo "${pv}"
 
       - name: Set up JDK 8
         uses: actions/setup-java@v3
@@ -42,7 +44,7 @@ jobs:
       # Continue on error in the following steps to make sure releases still get made even if one of the methods fails
 
       - name: Delete old release if it already exists
-        run: gh release delete --yes "${MC_VERSION}/${RELEASE_VERSION}"
+        run: gh release delete --yes "${MC_VERSION}-${RELEASE_VERSION}"
         continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -53,10 +55,10 @@ jobs:
           echo "CHANGELOG_FILE=${CHANGELOG_FILE}" >> $GITHUB_ENV
           gh api --method POST -H "Accept: application/vnd.github+json" \
             "/repos/${GITHUB_REPOSITORY}/releases/generate-notes" \
-            -f tag_name="${MC_VERSION}/${RELEASE_VERSION}" \
+            -f tag_name="${MC_VERSION}-${RELEASE_VERSION}" \
             --jq ".body" > "${CHANGELOG_FILE}"
           cat "${CHANGELOG_FILE}"
-          gh release create "${MC_VERSION}/${RELEASE_VERSION}" -F "${CHANGELOG_FILE}" ./build/libs/*.jar
+          gh release create "${MC_VERSION}-{RELEASE_VERSION}" -F "${CHANGELOG_FILE}" ./build/libs/*.jar
         shell: bash
         continue-on-error: true
         env:
