@@ -4,13 +4,13 @@ import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import me.towdium.jecalculation.gui.JecaGui;
 import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -25,7 +25,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class JecaItem extends Item {
 
-    public static final DeferredRegister<Item> REGISTRY = DeferredRegister.create(JustEnoughCalculation.MODID, Registry.ITEM_REGISTRY);
+    public static final DeferredRegister<Item> REGISTRY = DeferredRegister.create(JustEnoughCalculation.MODID, Registries.ITEM);
 
     public static RegistrySupplier<JecaItem> CRAFT = register("craft");
     public static RegistrySupplier<JecaItem> MATH = register("math");
@@ -33,7 +33,7 @@ public class JecaItem extends Item {
     String key;
 
     private JecaItem(String name) {
-        super(new Item.Properties().stacksTo(1).tab(CreativeModeTab.TAB_TOOLS));
+        super(new Item.Properties().stacksTo(1).arch$tab(CreativeModeTabs.TOOLS_AND_UTILITIES));
         key = "jecalculation.item.calculator_" + name;
     }
 

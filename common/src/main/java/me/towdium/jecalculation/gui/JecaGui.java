@@ -30,8 +30,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
@@ -90,7 +89,7 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
 
     public JecaGui(@Nullable JecaGui parent, boolean acceptsTransfer, IGui root, boolean isWidget) {
         super(acceptsTransfer ? new JecaGui.ContainerTransfer() : new JecaGui.ContainerNonTransfer(),
-                getPlayer().getInventory(), new TextComponent(""));
+                getPlayer().getInventory(), Component.literal(""));
         this.parent = parent;
         this.root = root;
         this.isWidget = isWidget;
@@ -113,7 +112,7 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
     public void init(Minecraft minecraft, int width, int height) {
         if (!isWidget) {
             super.init(minecraft, width, height);
-            minecraft.keyboardHandler.setSendRepeatsToGui(true);
+            //minecraft.keyboardHandler.setSendRepeatsToGui(true);
             return;
         }
         this.minecraft = minecraft;
@@ -122,14 +121,14 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
         this.width = width;
         this.height = height;
         this.init();
-        minecraft.keyboardHandler.setSendRepeatsToGui(true);
+        //minecraft.keyboardHandler.setSendRepeatsToGui(true);
     }
 
     @Override
     public void removed() {
         super.removed();
         Objects.requireNonNull(this.minecraft);
-        this.minecraft.keyboardHandler.setSendRepeatsToGui(false);
+        //this.minecraft.keyboardHandler.setSendRepeatsToGui(false);
     }
 
     public static int getMouseX() {
@@ -373,7 +372,7 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
     public static int openGuiMath(@Nullable ItemStack is, int slot) {
         boolean ret = is == null && Controller.isServerActive();
         String s = "jecalculation.chat.server_mode";
-        if (ret) getPlayer().displayClientMessage(new TranslatableComponent(s), false);
+        if (ret) getPlayer().displayClientMessage(Component.translatable(s), false);
         else JecaGui.displayGui(new GuiMath(is, slot));
         return ret ? 1 : 0;
     }
@@ -382,7 +381,7 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
     public static int openGuiCraft(@Nullable ItemStack is, int slot) {
         boolean ret = is == null && Controller.isServerActive();
         String s = "jecalculation.chat.server_mode";
-        if (ret) getPlayer().displayClientMessage(new TranslatableComponent(s), false);
+        if (ret) getPlayer().displayClientMessage(Component.translatable(s), false);
         else JecaGui.displayGui(new GuiCraft(is, slot));
         return ret ? 1 : 0;
     }
@@ -638,6 +637,11 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
 
         public void setGui(JecaGui gui) {
             this.gui = gui;
+        }
+
+        @Override
+        public ItemStack quickMoveStack(Player player, int index) {
+            return null;
         }
 
         @Override

@@ -16,6 +16,7 @@ import mezz.jei.api.gui.handlers.IGlobalGuiHandler;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.ingredients.ITypedIngredient;
 import mezz.jei.api.recipe.RecipeIngredientRole;
+import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
@@ -28,6 +29,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.crafting.Recipe;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,6 +37,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Optional;
 
 import static me.towdium.jecalculation.compat.ModCompat.merge;
 
@@ -46,6 +49,8 @@ import static me.towdium.jecalculation.compat.ModCompat.merge;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class JecaJEIPlugin implements IModPlugin {
+
+    private static final RecipeType<Recipe> RECIPE_TYPE = RecipeType.create(JustEnoughCalculation.MODID, "any", Recipe.class);
     public static IJeiRuntime runtime;
 
     public static Class<?> FABRIC_FLUID_INGREDIENT_CLASS;
@@ -70,7 +75,8 @@ public class JecaJEIPlugin implements IModPlugin {
         if (rep != null) {
             if(rep instanceof FluidStack fluidStack)
                 rep = runtime.getJeiHelpers().getPlatformFluidHelper().create(fluidStack.getFluid(), fluidStack.getAmount());
-            runtime.getRecipesGui().show(runtime.getJeiHelpers().getFocusFactory().createFocus(RecipeIngredientRole.OUTPUT, runtime.getIngredientManager().getIngredientType(rep), rep));
+            Object finalRep = rep;
+            runtime.getIngredientManager().getIngredientTypeChecked(rep).ifPresent(type -> runtime.getRecipesGui().show(runtime.getJeiHelpers().getFocusFactory().createFocus(RecipeIngredientRole.OUTPUT, type, finalRep)));
         }
         return Minecraft.getInstance().screen != s;
     }
@@ -120,11 +126,16 @@ public class JecaJEIPlugin implements IModPlugin {
             return JecaGui.ContainerTransfer.class;
         }
 
+        @Override
+        public Optional<MenuType<JecaGui.ContainerTransfer>> getMenuType() {
+            return Optional.empty();
+        }
 
         @Override
-        public Class<Recipe> getRecipeClass() {
-            return Recipe.class;
+        public RecipeType<Recipe> getRecipeType() {
+            return RECIPE_TYPE;
         }
+
 
         @Override
         public @Nullable IRecipeTransferError transferRecipe(JecaGui.ContainerTransfer container, Recipe recipe, IRecipeSlotsView recipeSlots, Player player, boolean maxTransfer, boolean doTransfer) {

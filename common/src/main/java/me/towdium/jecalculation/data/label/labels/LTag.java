@@ -10,6 +10,8 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -92,10 +94,10 @@ public abstract class LTag<T> extends LContext<T> {
 
     // check labels in the list suitable for the ore id
     private static <T> boolean check(TagKey<T> id, List<LStack<T>> labels, boolean biDir) {
-        if (!id.isFor(Registry.ITEM_REGISTRY))
+        if (!id.isFor(Registries.ITEM))
             return false;
         Stream<LStack<T>> ores = labels.get(0).getContext().discover(id);
-        Optional<List<Item>> tag = Registry.ITEM.getTags()
+        Optional<List<Item>> tag = BuiltInRegistries.ITEM.getTags()
                 .filter(pair -> pair.getFirst().equals(id))
                 .map(Pair::getSecond)
                 .findFirst()

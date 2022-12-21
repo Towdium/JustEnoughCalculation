@@ -13,7 +13,7 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 
@@ -88,7 +88,7 @@ public class Controller {
 
         File f = new File(Platform.getConfigFolder().toFile(), JustEnoughCalculation.MODID + "/data/" + s + ".json");
         Utilities.Json.write(r.apply(getRecipes()), f);
-        player.displayClientMessage(new TranslatableComponent(
+        player.displayClientMessage(Component.translatable(
                 "jecalculation.chat.export", f.getAbsolutePath()), false);
     }
 

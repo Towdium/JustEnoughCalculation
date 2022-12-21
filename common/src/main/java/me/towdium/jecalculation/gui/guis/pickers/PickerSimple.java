@@ -11,7 +11,7 @@ import me.towdium.jecalculation.gui.widgets.WSearch;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Comparator;
@@ -42,7 +42,7 @@ public class PickerSimple extends IPicker.Impl implements IGui {
 
     public static class FluidStack extends PickerSimple {
         public FluidStack() {
-            super(Registry.FLUID.stream().filter(i -> i.isSource(i.defaultFluidState()))
+            super(BuiltInRegistries.FLUID.stream().filter(i -> i.isSource(i.defaultFluidState()))
                     .map(i -> new LFluidStack(1000, i)).collect(Collectors.toList()));
         }
     }
@@ -53,11 +53,11 @@ public class PickerSimple extends IPicker.Impl implements IGui {
         }
 
         static List<ILabel> generate() {
-            Stream<LItemTag> items = Registry.ITEM.getTags()
+            Stream<LItemTag> items = BuiltInRegistries.ITEM.getTags()
                     .filter(i -> i.getSecond().size() > 1)
                     .map(i -> new LItemTag(i.getFirst()))
                     .sorted(Comparator.comparing(LItemTag::getName));
-            Stream<LFluidTag> fluids = Registry.FLUID.getTags()
+            Stream<LFluidTag> fluids = BuiltInRegistries.FLUID.getTags()
                     .filter(i -> i.getSecond().size() > 1)
                     .map(i -> new LFluidTag(i.getFirst()))
                     .sorted(Comparator.comparing(LFluidTag::getName));
