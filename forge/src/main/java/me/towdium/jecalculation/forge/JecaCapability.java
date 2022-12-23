@@ -55,7 +55,7 @@ public class JecaCapability {
     @SubscribeEvent
     public static void onCloneCapability(PlayerEvent.Clone e) {
         RecordPlayer r = JecaCapability.getRecord(e.getOriginal());
-        e.getPlayer().getCapability(JecaCapability.CAPABILITY_RECORD, Direction.UP).orElseGet(Container::new).setRecord(r);
+        e.getOriginal().getCapability(JecaCapability.CAPABILITY_RECORD, Direction.UP).orElseGet(Container::new).setRecord(r);
     }
 
     public static class Container {

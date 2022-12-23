@@ -7,7 +7,7 @@ import me.towdium.jecalculation.utils.wrappers.Pair;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -137,7 +137,7 @@ public class CostList {
                     next = find(true);
                 }
                 if (count++ > 1000 && player != null) {
-                    player.displayClientMessage(new TranslatableComponent("jecalculation.chat.max_loop"), false);
+                    player.displayClientMessage(Component.translatable("jecalculation.chat.max_loop"), false);
                     break;
                 }
             }

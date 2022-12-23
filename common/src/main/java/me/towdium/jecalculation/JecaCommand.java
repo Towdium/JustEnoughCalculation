@@ -3,7 +3,7 @@ package me.towdium.jecalculation;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import me.towdium.jecalculation.gui.JecaGui;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 
 import static me.towdium.jecalculation.utils.Utilities.getPlayer;
 
@@ -12,7 +12,7 @@ public class JecaCommand {
         LiteralArgumentBuilder<T> lab = LiteralArgumentBuilder.<T>literal("jeca")
                 .executes((c) -> {
                     String key = "jecalculation.chat.help";
-                    getPlayer().displayClientMessage(new TranslatableComponent(key), false);
+                    getPlayer().displayClientMessage(Component.translatable(key), false);
                     return 0;
                 })
                 .then(LiteralArgumentBuilder.<T>literal("craft")
