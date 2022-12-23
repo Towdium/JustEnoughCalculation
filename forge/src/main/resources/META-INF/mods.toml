@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[40,)"
+loaderVersion="[43,)"
 issueTrackerURL="https://github.com/Towdium/JustEnoughCalculation/issues"
 license="The MIT License (MIT)"
 
@@ -13,20 +13,26 @@ authors="Towdium, MorningSage, 6LeoY"
 description="A simple mod to help you with recipe calculation."
 logoFile="icon.png"
 [[dependencies.jecalculation]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.19.2]"
+ordering="NONE"
+side="BOTH"
+[[dependencies.jecalculation]]
 modId="architectury"
 mandatory=true
-versionRange="[4.9.83,)"
+versionRange="[6.4.62,)"
 ordering="AFTER"
 side="BOTH"
 [[dependencies.jecalculation]]
 modId="jei"
 mandatory=false
-versionRange="[10.2.0,)"
+versionRange="[11.5.0.292,)"
 ordering="BEFORE"
 side="BOTH"
 [[dependencies.jecalculation]]
 modId="roughlyenoughitems"
 mandatory=false
-versionRange="[8.3.527,)"
+versionRange="[9.1.580,)"
 ordering="BEFORE"
 side="BOTH"
