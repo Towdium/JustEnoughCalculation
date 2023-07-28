@@ -21,7 +21,7 @@ public abstract class ServerPlayerMixin extends Player implements JecaPlayerReco
     private RecordPlayer Jeca_record = new RecordPlayer();
 
     public ServerPlayerMixin(Level level, BlockPos blockPos, float f, GameProfile gameProfile, @Nullable ProfilePublicKey profilePublicKey) {
-        super(level, blockPos, f, gameProfile, profilePublicKey);
+        super(level, blockPos, f, gameProfile); // profilePublicKey);
     }
 
     @Inject(at = @At("HEAD"), method = "addAdditionalSaveData")

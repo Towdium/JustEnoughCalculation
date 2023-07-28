@@ -19,6 +19,8 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -142,7 +144,7 @@ public class Utilities {
         throw new AssertionError();
     }
 
-    public static TagKey<Item> IRON_INGOTS = tag(Registry.ITEM_REGISTRY, Platform.isForge() ? "ingots/iron" : "iron_ingots");
+    public static TagKey<Item> IRON_INGOTS = tag(Registries.ITEM, Platform.isForge() ? "ingots/iron" : "iron_ingots");
 
     public static <T> TagKey<T> tag(ResourceKey<? extends Registry<T>> key, String tag) {
         return TagKey.create(key, new ResourceLocation(getTagNamespace(), tag));
@@ -166,12 +168,12 @@ public class Utilities {
     }
 
     public static String getModName(Item item) {
-        return getModNameInternal(Registry.ITEM, item)
+        return getModNameInternal(BuiltInRegistries.ITEM, item)
                 .orElse("Unknown");
     }
 
     public static String getModName(Fluid fluid) {
-        return getModNameInternal(Registry.FLUID, fluid)
+        return getModNameInternal(BuiltInRegistries.FLUID, fluid)
                 .orElseGet(() -> getModNameFromTexture(fluid));
     }
 
@@ -181,7 +183,7 @@ public class Utilities {
         if (name.equals("lava") || name.equals("water")) return "Minecraft";
         TextureAtlasSprite texture = FluidStackHooks.getStillTexture(fluid);
         if (texture == null) return "Unknown";
-        else return getModName(texture.getName().getNamespace());
+        else return getModName(texture.atlasLocation().getNamespace());
     }
 
     public static File config() {

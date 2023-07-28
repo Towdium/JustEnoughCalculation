@@ -112,7 +112,7 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
     public void init(Minecraft minecraft, int width, int height) {
         if (!isWidget) {
             super.init(minecraft, width, height);
-            minecraft.keyboardHandler.setSendRepeatsToGui(true);
+            //minecraft.keyboardHandler.setSendRepeatsToGui(true);
             return;
         }
         this.minecraft = minecraft;
@@ -121,14 +121,14 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
         this.width = width;
         this.height = height;
         this.init();
-        minecraft.keyboardHandler.setSendRepeatsToGui(true);
+        //minecraft.keyboardHandler.setSendRepeatsToGui(true);
     }
 
     @Override
     public void removed() {
         super.removed();
         Objects.requireNonNull(this.minecraft);
-        this.minecraft.keyboardHandler.setSendRepeatsToGui(false);
+        //this.minecraft.keyboardHandler.setSendRepeatsToGui(false);
     }
 
     public static int getMouseX() {

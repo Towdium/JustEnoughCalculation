@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "jecalculation:items/calculator_craft"
+    "layer0": "jecalculation:item/calculator_craft"
   }
 }
