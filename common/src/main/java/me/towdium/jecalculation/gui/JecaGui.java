@@ -242,11 +242,11 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
         return pass();
     }
 
-    @Override
-    public void tick() {
-        super.tick();
-        root.onTick(this);
-    }
+    // @Override
+    // public void tick() {
+    //     super.tick();
+    //     root.onTick(this);
+    // }
 
     @Nullable
     public Slot getSlotUnderMouse() {
