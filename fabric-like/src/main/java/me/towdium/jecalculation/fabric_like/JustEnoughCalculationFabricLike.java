@@ -4,7 +4,7 @@ import dev.architectury.platform.Platform;
 import me.towdium.jecalculation.JecaCommand;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import net.fabricmc.api.EnvType;
-import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 
 public class JustEnoughCalculationFabricLike {
 
@@ -12,7 +12,7 @@ public class JustEnoughCalculationFabricLike {
         //noinspection InstantiationOfUtilityClass
         new JustEnoughCalculation();
         if (Platform.getEnv() == EnvType.CLIENT)
-            JecaCommand.register(ClientCommandManager.DISPATCHER);
+            ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> JecaCommand.register(dispatcher));
         JecaConfig.load();
     }
 
