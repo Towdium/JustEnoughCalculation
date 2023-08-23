@@ -1,7 +1,6 @@
 package me.towdium.jecalculation.utils.fabric;
 
 import dev.architectury.fluid.FluidStack;
-import me.towdium.jecalculation.compat.jei.JecaJEIPlugin;
 import me.towdium.jecalculation.data.structure.RecordPlayer;
 import me.towdium.jecalculation.fabric_like.JecaConfig;
 import me.towdium.jecalculation.fabric_like.JecaPlayerRecordAccessor;
@@ -10,10 +9,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.material.Fluid;
-
-import java.lang.reflect.Method;
-import java.util.Optional;
 
 public class UtilitiesImpl {
     public static CompoundTag getCap(ItemStack itemStack) {
@@ -36,23 +31,9 @@ public class UtilitiesImpl {
         return true;
     }
 
-    private static Method GET_FLUID;
-    private static Method GET_TAG;
-
-    //TODO: Use normal method to get value when possible
-    @SuppressWarnings("unchecked")
     public static FluidStack createFluidStackFromJeiIngredient(Object object) {
-        try {
-            if (GET_FLUID == null)
-                GET_FLUID = JecaJEIPlugin.FABRIC_FLUID_INGREDIENT_CLASS.getDeclaredMethod("getFluid");
-            if (GET_TAG == null)
-                GET_TAG = JecaJEIPlugin.FABRIC_FLUID_INGREDIENT_CLASS.getDeclaredMethod("getTag");
-            if (object instanceof IJeiFluidIngredient fluid)
-                return FluidStack.create((Fluid) GET_FLUID.invoke(fluid), fluid.getAmount(),
-                        ((Optional<CompoundTag>) GET_TAG.invoke(fluid)).orElse(null));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        if (object instanceof IJeiFluidIngredient fluid)
+            return FluidStack.create(fluid.getFluid(), fluid.getAmount(), fluid.getTag().orElse(null));
         return null;
     }
 }

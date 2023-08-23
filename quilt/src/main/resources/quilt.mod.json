@@ -7,20 +7,22 @@
     "group": "${group}",
     "id": "jecalculation",
     "version": "${version}",
-    "name": "Just Enough Calculation",
-    "description": "A simple mod to help you with recipe calculation.",
-    "authors": [
-      "Towdium",
-      "MorningSage",
-      "6LeoY"
-    ],
-    "contact": {
-      "sources": "https://github.com/Towdium/JustEnoughCalculation"
+    "metadata": {
+      "name": "Just Enough Calculation",
+      "description": "A simple mod to help you with recipe calculation.",
+      "contact": {
+        "sources": "https://github.com/Towdium/JustEnoughCalculation"
+      },
+      "license": "AML",
+      "icon": "icon.png",
+      "contributors": {
+        "Towdium": "",
+        "MorningSage": "",
+        "6LeoY": ""
+      }
     },
-    "license": "The MIT License (MIT)",
-    "icon": "icon.png",
+
     "intermediate_mappings": "net.fabricmc:intermediary",
-    "environment": "*",
     "entrypoints": {
       "init": [
         "me.towdium.jecalculation.quilt.JustEnoughCalculationQuilt"
