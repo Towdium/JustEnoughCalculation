@@ -47,11 +47,10 @@ public interface Context<T> {
             return false;
 
         Optional<HolderSet.Named<T>> tagEntry = registry().getTag((TagKey<T>) tag);
-        if (!tagEntry.isPresent())
+        if (tagEntry.isEmpty())
             return false;
 
-        HolderSet.Named<T> holderSet = tagEntry.get();
-        return holderSet.stream()
+        return tagEntry.get().stream()
             .map(Holder::value)
             .anyMatch(t -> t.equals(s.get()));
     }
@@ -69,7 +68,7 @@ public interface Context<T> {
 
         @Override
         public Stream<Pair<TagKey<Item>, Stream<Item>>> tags() {
-            return Utilities.getTags(Registry.ITEM);
+            return Utilities.getTags(registry());
         }
 
 
@@ -97,7 +96,7 @@ public interface Context<T> {
 
         @Override
         public Stream<Pair<TagKey<Fluid>, Stream<Fluid>>> tags() {
-            return Utilities.getTags(Registry.FLUID);
+            return Utilities.getTags(registry());
         }
 
 

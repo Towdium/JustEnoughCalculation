@@ -15,5 +15,5 @@ dependencies {
     modApi "mezz.jei:jei-${rootProject.minecraft_version}-fabric-api:${rootProject.jei_version}"
 
 
-    compileClasspath(project(path: ":common", configuration: "namedElements")) { transitive false }
+    compileOnly(project(path: ":common", configuration: "namedElements")) { transitive false }
 }
