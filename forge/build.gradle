@@ -13,9 +13,6 @@ loom {
     forge {
         convertAccessWideners = true
         extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
-
-        //mixinConfig "jecalculation-common.mixins.json"
-        //mixinConfig "jecalculation.mixins.json"
     }
 }
 
@@ -32,9 +29,8 @@ dependencies {
     // Remove the next line if you don't want to depend on the API
     modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
 
-    //modRuntimeOnly("mezz.jei:jei-1.18.2-forge:${rootProject.jei_version}")
-
-    modImplementation("me.shedaniel:RoughlyEnoughItems-forge:${rootProject.rei_version}")
+    modRuntimeOnly("mezz.jei:jei-${rootProject.minecraft_version}-forge:${rootProject.jei_version}") { transitive false }
+    modImplementation "me.shedaniel:RoughlyEnoughItems-forge:${rootProject.rei_version}"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }

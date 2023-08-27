@@ -1,5 +1,4 @@
 accessWidener   v2  named
-extendable method net/minecraft/client/gui/screens/inventory/AbstractContainerScreen tick ()V
 extendable method net/minecraft/client/gui/screens/Screen init (Lnet/minecraft/client/Minecraft;II)V
 accessible method net/minecraft/client/gui/screens/Screen renderTooltipInternal (Lcom/mojang/blaze3d/vertex/PoseStack;Ljava/util/List;IILnet/minecraft/client/gui/screens/inventory/tooltip/ClientTooltipPositioner;)V
 accessible method net/minecraft/util/thread/BlockableEventLoop submitAsync (Ljava/lang/Runnable;)Ljava/util/concurrent/CompletableFuture;
