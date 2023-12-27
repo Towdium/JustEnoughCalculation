@@ -2,6 +2,10 @@
 
 To be consistent with the main branch,  it may miss some versions
 
+## 3.8.6
+- Dep: Upgrade deps
+- Fixed: Migrate to new GT recipeMap 
+
 ## 3.8.5
 - Fixed: gtpp transfer crash
 - Fixed: gtpp recipe output doubles
