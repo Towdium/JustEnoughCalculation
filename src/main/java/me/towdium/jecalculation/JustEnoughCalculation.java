@@ -1,12 +1,14 @@
 package me.towdium.jecalculation;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.*;
-import javax.annotation.ParametersAreNonnullByDefault;
 import me.towdium.jecalculation.network.CommonProxy;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * @author Towdium
@@ -14,17 +16,18 @@ import org.apache.logging.log4j.Logger;
 @ParametersAreNonnullByDefault
 @SuppressWarnings("unused")
 @Mod(
-        modid = Tags.MODID,
-        name = Tags.MODNAME,
-        version = Tags.VERSION,
-        dependencies = "required-after:NotEnoughItems",
-        acceptedMinecraftVersions = "[1.7.10]")
+    modid = Tags.MODID,
+    name = Tags.MODNAME,
+    version = Tags.VERSION,
+    dependencies = "required-after:NotEnoughItems",
+    acceptedMinecraftVersions = "[1.7.10]")
 public class JustEnoughCalculation {
+
     public static Logger logger = LogManager.getLogger(Tags.MODID);
 
     @SidedProxy(
-            clientSide = Tags.GROUPNAME + ".network.ClientProxy",
-            serverSide = Tags.GROUPNAME + ".network.CommonProxy")
+        clientSide = Tags.GROUPNAME + ".network.ClientProxy",
+        serverSide = Tags.GROUPNAME + ".network.CommonProxy")
     public static CommonProxy proxy;
 
     @Mod.Instance(Tags.MODID)

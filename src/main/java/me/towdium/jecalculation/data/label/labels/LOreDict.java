@@ -1,14 +1,22 @@
 package me.towdium.jecalculation.data.label.labels;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.oredict.OreDictionary;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.Tags;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
@@ -16,18 +24,14 @@ import me.towdium.jecalculation.polyfill.mc.util.NonNullList;
 import me.towdium.jecalculation.utils.ItemStackHelper;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Wrapper;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.oredict.OreDictionary;
 
 /**
  * Author: towdium
- * Date:   17-9-10.
+ * Date: 17-9-10.
  */
 @ParametersAreNonnullByDefault
 public class LOreDict extends ILabel.Impl {
+
     public static final String IDENTIFIER = "oreDict";
     public static final String KEY_NAME = "name";
     public static final boolean MODE_FORCE = false;
@@ -57,7 +61,8 @@ public class LOreDict extends ILabel.Impl {
         if (a instanceof LOreDict && b instanceof LOreDict) {
             LOreDict lodA = (LOreDict) a;
             LOreDict lodB = (LOreDict) b;
-            return lodA.getName().equals(lodB.getName());
+            return lodA.getName()
+                .equals(lodB.getName());
         } else return false;
     }
 
@@ -85,8 +90,8 @@ public class LOreDict extends ILabel.Impl {
         long amount = lis.getAmount();
         for (int i : OreDictionary.getOreIDs(lis.getRep())) if (check(i, iss, true)) ids.add(i);
         return ids.stream()
-                .map(i -> new LOreDict(OreDictionary.getOreName(i), amount))
-                .collect(Collectors.toList());
+            .map(i -> new LOreDict(OreDictionary.getOreName(i), amount))
+            .collect(Collectors.toList());
     }
 
     public static List<ILabel> fallback(List<ILabel> iss, @Nullable Class<?> context) {
@@ -97,8 +102,8 @@ public class LOreDict extends ILabel.Impl {
         long amount = lis.getAmount();
         for (int i : OreDictionary.getOreIDs(lis.getRep())) if (check(i, iss, false)) ids.add(i);
         return ids.stream()
-                .map(i -> new LOreDict(OreDictionary.getOreName(i), amount))
-                .collect(Collectors.toList());
+            .map(i -> new LOreDict(OreDictionary.getOreName(i), amount))
+            .collect(Collectors.toList());
     }
 
     // check labels in the list suitable for the ore id

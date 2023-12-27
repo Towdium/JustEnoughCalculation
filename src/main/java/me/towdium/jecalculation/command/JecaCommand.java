@@ -2,20 +2,24 @@ package me.towdium.jecalculation.command;
 
 import java.util.Collections;
 import java.util.List;
+
 import javax.annotation.ParametersAreNonnullByDefault;
-import me.towdium.jecalculation.command.commands.CHelp;
-import me.towdium.jecalculation.utils.wrappers.Wrapper;
+
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.ChatComponentTranslation;
 
+import me.towdium.jecalculation.command.commands.CHelp;
+import me.towdium.jecalculation.utils.wrappers.Wrapper;
+
 /**
  * Author: towdium
- * Date:   8/10/17.
+ * Date: 8/10/17.
  */
 @ParametersAreNonnullByDefault
 public class JecaCommand extends CommandBase {
+
     @Override
     public String getCommandName() {
         return "jeca";
@@ -29,7 +33,8 @@ public class JecaCommand extends CommandBase {
     @Override
     public void processCommand(ICommandSender sender, String[] args) throws CommandException {
         if (args.length == 0 || args[0].equalsIgnoreCase("help")) {
-            Commands.commands.get(CHelp.NAME).execute(sender, cut(args));
+            Commands.commands.get(CHelp.NAME)
+                .execute(sender, cut(args));
         } else {
             ISubCommand cmd = Commands.commands.get(args[0].toLowerCase());
             if (cmd != null) {
@@ -63,10 +68,13 @@ public class JecaCommand extends CommandBase {
             return getListOfStringsFromIterableMatchingLastWord(args, Commands.commands.keySet());
         } else {
             Wrapper<ISubCommand> sub = new Wrapper<>(null);
-            Commands.commands.values().stream()
-                    .filter(c -> c.getName().equals(cmd))
-                    .findFirst()
-                    .ifPresent(sub::push);
+            Commands.commands.values()
+                .stream()
+                .filter(
+                    c -> c.getName()
+                        .equals(cmd))
+                .findFirst()
+                .ifPresent(sub::push);
             return sub.value != null ? sub.value.getTabCompletions(sender, cut(args)) : Collections.emptyList();
         }
     }

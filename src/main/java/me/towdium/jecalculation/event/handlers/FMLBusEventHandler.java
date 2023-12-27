@@ -13,10 +13,11 @@ import me.towdium.jecalculation.gui.JecaGui;
 
 /**
  * Author: towdium
- * Date:   8/13/17.
+ * Date: 8/13/17.
  */
 @SuppressWarnings("unused")
 public class FMLBusEventHandler {
+
     @SideOnly(Side.CLIENT)
     @SubscribeEvent(receiveCanceled = true)
     public void onKey(InputEvent.KeyInputEvent event) {

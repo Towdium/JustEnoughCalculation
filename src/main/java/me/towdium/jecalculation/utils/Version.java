@@ -1,11 +1,13 @@
 package me.towdium.jecalculation.utils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class Version implements Comparable<Version> {
+
     private int major = 0, minor = 0, patch = 0;
     private String preRelease = "";
     private final boolean success;

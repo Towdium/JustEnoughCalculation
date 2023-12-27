@@ -3,7 +3,9 @@ package me.towdium.jecalculation.polyfill;
 import java.util.List;
 import java.util.Spliterator;
 import java.util.Spliterators;
+
 import javax.annotation.ParametersAreNonnullByDefault;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -11,6 +13,7 @@ import net.minecraft.nbt.NBTTagList;
 
 @ParametersAreNonnullByDefault
 public class NBTHelper {
+
     /**
      * Get an NBTTagCompound from this stack's NBT data.
      *

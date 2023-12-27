@@ -1,12 +1,15 @@
 package me.towdium.jecalculation.nei;
 
-import codechicken.nei.guihook.IContainerTooltipHandler;
 import java.util.List;
-import me.towdium.jecalculation.gui.JecaGui;
+
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.item.ItemStack;
 
+import codechicken.nei.guihook.IContainerTooltipHandler;
+import me.towdium.jecalculation.gui.JecaGui;
+
 public class JecaTooltipHandler implements IContainerTooltipHandler {
+
     @Override
     public List<String> handleTooltip(GuiContainer gui, int mousex, int mousey, List<String> currenttip) {
         return currenttip;
@@ -18,8 +21,8 @@ public class JecaTooltipHandler implements IContainerTooltipHandler {
     }
 
     @Override
-    public List<String> handleItemTooltip(
-            GuiContainer gui, ItemStack itemstack, int mousex, int mousey, List<String> currenttip) {
+    public List<String> handleItemTooltip(GuiContainer gui, ItemStack itemstack, int mousex, int mousey,
+        List<String> currenttip) {
         if (gui instanceof JecaGui) {
             NEIPlugin.setLabelUnderMouse(itemstack);
         }

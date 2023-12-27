@@ -3,13 +3,15 @@ package me.towdium.jecalculation.gui.widgets;
 import static me.towdium.jecalculation.gui.JecaGui.Font.HALF;
 import static me.towdium.jecalculation.gui.Resource.WGT_SLOT;
 
-import codechicken.lib.gui.GuiDraw;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+
 import javax.annotation.ParametersAreNonnullByDefault;
+
+import codechicken.lib.gui.GuiDraw;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
@@ -18,12 +20,13 @@ import me.towdium.jecalculation.utils.wrappers.Wrapper;
 
 /**
  * Author: towdium
- * Date:   17-8-17.
+ * Date: 17-8-17.
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class WLabel implements IWidget {
+
     public int xPos, yPos, xSize, ySize;
     ILabel label = ILabel.EMPTY;
     public boolean accept;
@@ -62,10 +65,10 @@ public class WLabel implements IWidget {
         label.drawLabel(gui, xPos + xSize / 2, yPos + ySize / 2, true);
         String s = fmtAmount.apply(label);
         gui.drawText(
-                xPos + xSize / 2.0f + 8 - HALF.getTextWidth(s),
-                yPos + ySize / 2.0f + 8.5f - HALF.getTextHeight(),
-                HALF,
-                s);
+            xPos + xSize / 2.0f + 8 - HALF.getTextWidth(s),
+            yPos + ySize / 2.0f + 8.5f - HALF.getTextHeight(),
+            HALF,
+            s);
         if (accept) {
             timer.setState(gui.hand != ILabel.EMPTY);
             int color = 0xFFFFFF + (int) ((-Math.cos(timer.getTime() * Math.PI / 1500) + 1) * 0x40) * 0x1000000;

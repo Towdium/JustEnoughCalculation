@@ -1,13 +1,15 @@
 package me.towdium.jecalculation.gui.widgets;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
 import javax.annotation.ParametersAreNonnullByDefault;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
@@ -15,12 +17,13 @@ import me.towdium.jecalculation.utils.Utilities.I18n;
 
 /**
  * Author: towdium
- * Date:   17-9-17.
+ * Date: 17-9-17.
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class WLabelScroll extends WContainer implements ISearchable {
+
     protected List<ILabel> labels = new ArrayList<>();
     protected List<ILabel> filtered = null;
     protected WLabelGroup labelGroup;
@@ -37,14 +40,12 @@ public class WLabelScroll extends WContainer implements ISearchable {
         this.yPos = yPos;
         this.column = column;
         this.row = row;
-        labelGroup = new WLabelGroup(xPos, yPos, column, row, accept)
-                .setLsnrUpdate(this::onUpdate)
-                .setLsnrLeftClick(this::onLeftClick)
-                .setLsnrRightClick(this::onRightClick);
-        scroll = new WScroll(xPos + column * 18 + 4, yPos, row * 18)
-                .setListener(i -> update(i.getCurrent()))
-                .setStep(Float.POSITIVE_INFINITY)
-                .setRatio(1);
+        labelGroup = new WLabelGroup(xPos, yPos, column, row, accept).setLsnrUpdate(this::onUpdate)
+            .setLsnrLeftClick(this::onLeftClick)
+            .setLsnrRightClick(this::onRightClick);
+        scroll = new WScroll(xPos + column * 18 + 4, yPos, row * 18).setListener(i -> update(i.getCurrent()))
+            .setStep(Float.POSITIVE_INFINITY)
+            .setRatio(1);
         add(labelGroup);
         add(scroll);
         add(new WRectangle(xPos + column * 18, yPos, 4, row * 18, JecaGui.COLOR_GUI_GREY));
@@ -60,8 +61,8 @@ public class WLabelScroll extends WContainer implements ISearchable {
         labelGroup.setLabel(ls, current * column);
         float step = 1f / (amount - 1);
         scroll.setRatio(Math.min(row / (float) getAmountRows(), 1f))
-                .setCurrent(f)
-                .setStep(step);
+            .setCurrent(f)
+            .setStep(step);
     }
 
     public WLabel get(int index) {
@@ -83,8 +84,12 @@ public class WLabelScroll extends WContainer implements ISearchable {
     public boolean setFilter(String str) {
         if (accept) throw new RuntimeException("Filtering not allowed when editing");
         filtered = labels.stream()
-                .filter(l -> I18n.contains(l.getDisplayName().toLowerCase(), str.toLowerCase()))
-                .collect(Collectors.toList());
+            .filter(
+                l -> I18n.contains(
+                    l.getDisplayName()
+                        .toLowerCase(),
+                    str.toLowerCase()))
+            .collect(Collectors.toList());
         update(0);
         return filtered.size() != 0;
     }
@@ -109,7 +114,8 @@ public class WLabelScroll extends WContainer implements ISearchable {
     }
 
     protected void onUpdate(WLabelGroup w, int index) {
-        ILabel l = w.get(index).getLabel();
+        ILabel l = w.get(index)
+            .getLabel();
         int i = column * current + index;
         while (labels.size() <= i) labels.add(ILabel.EMPTY);
         labels.set(i, l);

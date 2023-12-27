@@ -1,15 +1,17 @@
 package me.towdium.jecalculation.event.handlers;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.inventory.GuiContainer;
+
 import codechicken.nei.NEIClientConfig;
 import codechicken.nei.NEIClientUtils;
 import codechicken.nei.guihook.IContainerInputHandler;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.nei.NEIPlugin;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.inventory.GuiContainer;
 
 public class NEIEventHandler implements IContainerInputHandler {
+
     @Override
     public boolean keyTyped(GuiContainer guiContainer, char c, int i) {
         return false;
@@ -27,7 +29,7 @@ public class NEIEventHandler implements IContainerInputHandler {
             Object stack = label.getRepresentation();
 
             if (keyCode == NEIClientConfig.getKeyBinding("gui.usage")
-                    || (keyCode == NEIClientConfig.getKeyBinding("gui.recipe") && NEIClientUtils.shiftKey())) {
+                || (keyCode == NEIClientConfig.getKeyBinding("gui.recipe") && NEIClientUtils.shiftKey())) {
                 return NEIPlugin.openRecipeGui(stack, true);
             }
             if (keyCode == NEIClientConfig.getKeyBinding("gui.recipe")) {

@@ -2,26 +2,30 @@ package me.towdium.jecalculation.gui.widgets;
 
 import static me.towdium.jecalculation.gui.Resource.*;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Arrays;
 import java.util.List;
+
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+
+import org.lwjgl.input.Keyboard;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.utils.ClientUtils;
-import org.lwjgl.input.Keyboard;
 
 /**
  * Author: towdium
- * Date:   17-8-17.
+ * Date: 17-8-17.
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
 public abstract class WButton extends WTooltip {
+
     protected int xPos, yPos, xSize, ySize;
     protected ListenerAction<? super WButton> listener;
     protected boolean disabled;
@@ -76,13 +80,12 @@ public abstract class WButton extends WTooltip {
 
     @Override
     public boolean onKeyPressed(JecaGui gui, char ch, int code) {
-        if (keys != null)
-            for (int i : keys) {
-                if (i == code) {
-                    trigger();
-                    return true;
-                }
+        if (keys != null) for (int i : keys) {
+            if (i == code) {
+                trigger();
+                return true;
             }
+        }
         return false;
     }
 

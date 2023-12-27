@@ -2,6 +2,7 @@ package me.towdium.jecalculation.gui.guis;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+
 import me.towdium.jecalculation.gui.widgets.IWidget;
 import me.towdium.jecalculation.gui.widgets.WContainer;
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
@@ -9,6 +10,7 @@ import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class Gui extends WContainer implements IGui {
+
     protected WContainer overlay = new WContainer();
     protected WContainer widgets = new WContainer();
 

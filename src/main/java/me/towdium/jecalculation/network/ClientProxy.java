@@ -3,6 +3,8 @@ package me.towdium.jecalculation.network;
 import static me.towdium.jecalculation.gui.JecaGui.keyOpenGuiCraft;
 import static me.towdium.jecalculation.gui.JecaGui.keyOpenGuiMath;
 
+import net.minecraftforge.client.ClientCommandHandler;
+
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.common.event.*;
 import me.towdium.jecalculation.JecaConfig;
@@ -11,7 +13,6 @@ import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.event.Handlers;
 import me.towdium.jecalculation.nei.NEIPlugin;
-import net.minecraftforge.client.ClientCommandHandler;
 
 @SuppressWarnings("unused")
 public class ClientProxy extends CommonProxy {

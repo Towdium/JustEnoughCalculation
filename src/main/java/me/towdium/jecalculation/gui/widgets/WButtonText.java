@@ -1,18 +1,20 @@
 package me.towdium.jecalculation.gui.widgets;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.gui.JecaGui;
 
 /**
  * Author: towdium
- * Date:   17-9-16.
+ * Date: 17-9-16.
  */
 @ParametersAreNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class WButtonText extends WButton {
+
     public static final JecaGui.Font focused_u = new JecaGui.Font(0xFFFFA0, true, false, false);
     public static final JecaGui.Font normal_u = new JecaGui.Font(0xFFFFFF, true, false, false);
     public static final JecaGui.Font focused_r = new JecaGui.Font(0xFFFFA0, true, false, true);

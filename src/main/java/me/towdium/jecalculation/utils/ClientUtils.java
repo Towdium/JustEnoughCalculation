@@ -5,6 +5,7 @@ import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
 
 public class ClientUtils {
+
     public static Minecraft mc() {
         return Minecraft.getMinecraft();
     }
@@ -12,7 +13,7 @@ public class ClientUtils {
     public static void playClickSound(float pitchIn) {
         try {
             mc().getSoundHandler()
-                    .playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), pitchIn));
+                .playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), pitchIn));
         } catch (Exception e) {
             // why may crash ??
             e.printStackTrace();

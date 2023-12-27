@@ -7,5 +7,6 @@ import net.minecraft.nbt.NBTTagCompound;
  * Date: 05/02/19
  */
 public interface IRecord {
+
     NBTTagCompound serialize();
 }

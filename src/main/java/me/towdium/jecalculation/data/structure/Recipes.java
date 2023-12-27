@@ -6,8 +6,13 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+
 import me.towdium.jecalculation.JecaConfig;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
@@ -15,16 +20,15 @@ import me.towdium.jecalculation.polyfill.NBTHelper;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.Utilities.ReversedIterator;
 import me.towdium.jecalculation.utils.wrappers.Pair;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 
 /**
  * Author: towdium
- * Date:   18-8-28.
+ * Date: 18-8-28.
  */
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class Recipes {
+
     HashMap<String, List<Recipe>> records = new HashMap<>();
 
     public Recipes() {
@@ -42,11 +46,13 @@ public class Recipes {
     }
 
     protected void deserialize(NBTTagCompound nbt) {
-        //noinspection unchecked
+        // noinspection unchecked
         Set<String> keySet = (Set<String>) nbt.func_150296_c();
-        keySet.stream().sorted().forEach(i -> {
-            NBTTagList group = nbt.getTagList(i, 10);
-            StreamSupport.stream(NBTHelper.spliterator(group), false)
+        keySet.stream()
+            .sorted()
+            .forEach(i -> {
+                NBTTagList group = nbt.getTagList(i, 10);
+                StreamSupport.stream(NBTHelper.spliterator(group), false)
                     .filter(r -> r instanceof NBTTagCompound)
                     .forEach(r -> {
                         try {
@@ -55,11 +61,12 @@ public class Recipes {
                             JustEnoughCalculation.logger.warn("Invalid recipe record :" + r);
                         }
                     });
-        });
+            });
     }
 
     public void add(String group, Recipe recipe) {
-        records.computeIfAbsent(group, k -> new ArrayList<>()).add(recipe);
+        records.computeIfAbsent(group, k -> new ArrayList<>())
+            .add(recipe);
     }
 
     public void renameGroup(String old, String neu) {
@@ -81,7 +88,8 @@ public class Recipes {
     }
 
     public void set(String group, int index, Recipe recipe) {
-        records.get(group).set(index, recipe);
+        records.get(group)
+            .set(index, recipe);
     }
 
     public void set(String neu, String old, int index, Recipe recipe) {
@@ -94,7 +102,9 @@ public class Recipes {
     }
 
     public Stream<Pair<String, List<Recipe>>> stream() {
-        return records.entrySet().stream().map(i -> new Pair<>(i.getKey(), i.getValue()));
+        return records.entrySet()
+            .stream()
+            .map(i -> new Pair<>(i.getKey(), i.getValue()));
     }
 
     public void remove(String group, int index) {
@@ -112,7 +122,10 @@ public class Recipes {
     }
 
     public List<Recipe> getRecipes() {
-        return records.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
+        return records.values()
+            .stream()
+            .flatMap(Collection::stream)
+            .collect(Collectors.toList());
     }
 
     public List<Recipe> getRecipes(String group) {
@@ -144,7 +157,10 @@ public class Recipes {
     }
 
     public List<String> getGroups() {
-        return records.keySet().stream().sorted().collect(Collectors.toList());
+        return records.keySet()
+            .stream()
+            .sorted()
+            .collect(Collectors.toList());
     }
 
     public NBTTagCompound serialize() {
@@ -160,6 +176,7 @@ public class Recipes {
     }
 
     public class RecipeIterator implements Iterator<Recipe> {
+
         String group;
         int index;
         Iterator<String> i;
@@ -170,7 +187,8 @@ public class Recipes {
         }
 
         public RecipeIterator(String group) {
-            i = Collections.singleton(group).iterator();
+            i = Collections.singleton(group)
+                .iterator();
         }
 
         @Override
@@ -188,7 +206,7 @@ public class Recipes {
 
         @Override
         public Recipe next() {
-            //noinspection ResultOfMethodCallIgnored
+            // noinspection ResultOfMethodCallIgnored
             hasNext();
             index--;
             return j.next();

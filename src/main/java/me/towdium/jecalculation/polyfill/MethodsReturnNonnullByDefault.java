@@ -4,6 +4,7 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
 import javax.annotation.Nonnull;
 import javax.annotation.meta.TypeQualifierDefault;
 
@@ -14,7 +15,7 @@ import javax.annotation.meta.TypeQualifierDefault;
  * <li>An explicit nullness annotation
  * <li>The method overrides a method in a superclass (in which case the
  * annotation of the corresponding method in the superclass applies)
- * <li> there is a default parameter annotation applied to a more tightly nested
+ * <li>there is a default parameter annotation applied to a more tightly nested
  * element.
  * </ul>
  */

@@ -5,6 +5,7 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.LinkedList;
 import java.util.List;
+
 import net.minecraft.nbt.NBTTagCompound;
 
 /**
@@ -12,6 +13,7 @@ import net.minecraft.nbt.NBTTagCompound;
  * Date: 19-1-20
  */
 public class RecordMath implements IRecord {
+
     public static MathContext context = new MathContext(7, RoundingMode.HALF_UP);
     public static final int DOT_NONE = -1;
     static final String KEY_CURRENT = "current";
@@ -31,6 +33,7 @@ public class RecordMath implements IRecord {
     }
 
     public enum Operator {
+
         EQUALS,
         PLUS,
         MINUS,
@@ -55,8 +58,8 @@ public class RecordMath implements IRecord {
         }
     }
 
-    public RecordMath(
-            State state, Operator operator, BigDecimal last, boolean sign, int dot, List<BigDecimal> numbers) {
+    public RecordMath(State state, Operator operator, BigDecimal last, boolean sign, int dot,
+        List<BigDecimal> numbers) {
         this.state = state;
         this.operator = operator;
         this.last = last;

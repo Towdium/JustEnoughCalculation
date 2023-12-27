@@ -6,11 +6,14 @@ import static me.towdium.jecalculation.gui.Resource.*;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.annotation.ParametersAreNonnullByDefault;
+
+import org.lwjgl.input.Keyboard;
+
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.utils.Utilities.I18n;
-import org.lwjgl.input.Keyboard;
 
 /**
  * Author: Towdium
@@ -19,6 +22,7 @@ import org.lwjgl.input.Keyboard;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class WHelp extends WContainer {
+
     protected String key;
 
     public WHelp(String content) {
@@ -29,6 +33,7 @@ public class WHelp extends WContainer {
     }
 
     private class Impl extends WTooltip {
+
         public Impl() {
             super("common.help");
         }
@@ -55,6 +60,7 @@ public class WHelp extends WContainer {
     }
 
     private class Doc extends WContainer {
+
         Text text = new Text();
         WSwitcher switcher = new WSwitcher(7, 146, 162, text.amount()).setListener(i -> text.setPage(i.getIndex()));
 
@@ -77,6 +83,7 @@ public class WHelp extends WContainer {
         }
 
         public class Text implements IWidget {
+
             List<List<String>> pages = new ArrayList<>();
             int page;
 
@@ -119,6 +126,7 @@ public class WHelp extends WContainer {
         }
 
         public class Icon extends WTooltip {
+
             public Icon() {
                 super("common.close");
             }

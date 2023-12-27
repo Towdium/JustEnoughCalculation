@@ -1,16 +1,19 @@
 package me.towdium.jecalculation.nei;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import net.minecraft.item.ItemStack;
+
 import codechicken.nei.PositionedStack;
 import codechicken.nei.recipe.IRecipeHandler;
 import cpw.mods.fml.common.Loader;
-import java.util.ArrayList;
-import java.util.List;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.nei.adapter.*;
 import me.towdium.jecalculation.utils.Utilities;
-import net.minecraft.item.ItemStack;
 
 public class Adapter {
+
     public static List<IAdapter> adapters = new ArrayList<>();
 
     public static Object convertFluid(ItemStack itemStack) {
@@ -37,18 +40,24 @@ public class Adapter {
             JustEnoughCalculation.logger.info("ae2 detected");
             adapters.add(new AE2());
         }
-        if (Loader.isModLoaded("gregtech")) {
-            if (GregTech6.isGT6()) {
-                JustEnoughCalculation.logger.info("gregtech6 detected");
-                adapters.add(new GregTech6());
-            } else {
-                JustEnoughCalculation.logger.info("gregtech5 detected");
-                adapters.add(new GregTech());
+        boolean isNH = false;
+        if (Loader.isModLoaded("gregtech") && !Loader.isModLoaded("gregapi")) {
+            try {
+                Class.forName("gregtech.api.recipe.RecipeMap");
+                isNH = true;
+                JustEnoughCalculation.logger.info("NH version of GregTech detected");
+            } catch (ClassNotFoundException e) {
+                JustEnoughCalculation.logger.info("GregTech5 detected");
             }
+            adapters.add(new GregTech(isNH));
+        }
+        if (Loader.isModLoaded("gregapi") && Loader.isModLoaded("gregapi_post")) {
+            JustEnoughCalculation.logger.info("GregTech6 detected");
+            adapters.add(new GregTech6());
         }
         try {
             if (Loader.isModLoaded("miscutils")) {
-                adapters.add(new GTPP());
+                adapters.add(new GTPP(isNH));
                 JustEnoughCalculation.logger.info("gt++ detected");
             }
         } catch (Exception e) {
@@ -67,14 +76,15 @@ public class Adapter {
             adapters.add(new Thaum());
             JustEnoughCalculation.logger.info("Thaumcraft detected");
         }
-        JustEnoughCalculation.logger.info("=====Just Enough Calculation Init Finish=====");
+        JustEnoughCalculation.logger.info("=====Just Enough Calculation Init Finished=====");
     }
 
     public static void handleRecipe(IRecipeHandler recipe, int index, List<Object[]> inputs, List<Object[]> outputs) {
         // raw inputs
-        recipe.getIngredientStacks(index).stream()
-                .map((positionedStack) -> (Object[]) positionedStack.items)
-                .forEach(inputs::add);
+        recipe.getIngredientStacks(index)
+            .stream()
+            .map((positionedStack) -> (Object[]) positionedStack.items)
+            .forEach(inputs::add);
 
         // raw outputs
         PositionedStack resultStack = recipe.getResultStack(index);
@@ -87,7 +97,8 @@ public class Adapter {
         } catch (Exception e) {
             Utilities.addChatMessage(Utilities.ChatMessage.RECIPE_TRANSFER_ERROR);
             JustEnoughCalculation.logger.error(
-                    "Exception when handling recipe: " + recipe.getClass().getName());
+                "Exception when handling recipe: " + recipe.getClass()
+                    .getName());
             e.printStackTrace();
         }
     }

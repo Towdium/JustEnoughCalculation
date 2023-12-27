@@ -1,6 +1,5 @@
 package me.towdium.jecalculation.utils;
 
-import com.google.gson.*;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,9 +7,13 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
+
 import net.minecraft.nbt.*;
 
+import com.google.gson.*;
+
 public class NBTJson {
+
     private static final Pattern numberPattern = Pattern.compile("^([-+]?[\\d]+\\.?[0-9]*)([bBsSlLfFdD]?)$");
     private static final JsonParser parser = new JsonParser();
     private static final Gson gson = new GsonBuilder().create();
@@ -71,8 +74,10 @@ public class NBTJson {
             if (m.find()) {
                 // Number
                 final String numberString = m.group(1);
-                if (m.groupCount() == 2 && m.group(2).length() > 0) {
-                    final char numberType = m.group(2).charAt(0);
+                if (m.groupCount() == 2 && m.group(2)
+                    .length() > 0) {
+                    final char numberType = m.group(2)
+                        .charAt(0);
                     switch (numberType) {
                         case 'b':
                         case 'B':
@@ -107,19 +112,24 @@ public class NBTJson {
                 nbtList.add(toNbt(element));
             }
 
-            if (nbtList.stream().allMatch(n -> n instanceof NBTTagInt)) {
-                return new NBTTagIntArray(nbtList.stream()
+            if (nbtList.stream()
+                .allMatch(n -> n instanceof NBTTagInt)) {
+                return new NBTTagIntArray(
+                    nbtList.stream()
                         .mapToInt(i -> ((NBTTagInt) i).func_150287_d())
                         .toArray());
-            } else if (nbtList.stream().allMatch(n -> n instanceof NBTTagByte)) {
-                return new NBTTagByteArray(
-                        toByteArray(nbtList.stream().mapToInt(i -> ((NBTTagInt) i).func_150287_d())));
-            } else {
-                NBTTagList nbtTagList = new NBTTagList();
-                nbtList.forEach(nbtTagList::appendTag);
+            } else if (nbtList.stream()
+                .allMatch(n -> n instanceof NBTTagByte)) {
+                    return new NBTTagByteArray(
+                        toByteArray(
+                            nbtList.stream()
+                                .mapToInt(i -> ((NBTTagInt) i).func_150287_d())));
+                } else {
+                    NBTTagList nbtTagList = new NBTTagList();
+                    nbtList.forEach(nbtTagList::appendTag);
 
-                return nbtTagList;
-            }
+                    return nbtTagList;
+                }
         } else if (jsonElement instanceof JsonObject) {
             // NBTTagCompound
             final JsonObject jsonObject = (JsonObject) jsonElement;
@@ -134,10 +144,11 @@ public class NBTJson {
     }
 
     public static byte[] toByteArray(IntStream stream) {
-        return stream.collect(
-                        ByteArrayOutputStream::new,
-                        (baos, i) -> baos.write((byte) i),
-                        (baos1, baos2) -> baos1.write(baos2.toByteArray(), 0, baos2.size()))
-                .toByteArray();
+        return stream
+            .collect(
+                ByteArrayOutputStream::new,
+                (baos, i) -> baos.write((byte) i),
+                (baos1, baos2) -> baos1.write(baos2.toByteArray(), 0, baos2.size()))
+            .toByteArray();
     }
 }

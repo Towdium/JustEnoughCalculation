@@ -1,10 +1,12 @@
 package me.towdium.jecalculation.gui.widgets;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+
+import org.lwjgl.input.Keyboard;
+
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.polyfill.mc.client.renderer.GlStateManager;
-import org.lwjgl.input.Keyboard;
 
 /**
  * Author: Towdium
@@ -13,6 +15,7 @@ import org.lwjgl.input.Keyboard;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class WOverlay extends WContainer {
+
     @Override
     public boolean onKeyPressed(JecaGui gui, char ch, int code) {
         if (super.onKeyPressed(gui, ch, code)) return true;

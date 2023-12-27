@@ -4,8 +4,10 @@ import static me.towdium.jecalculation.utils.Utilities.stream;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
@@ -25,9 +27,11 @@ public class CostList {
 
     public CostList(List<ILabel> labels) {
         this.labels = labels.stream()
-                .filter(i -> i != ILabel.EMPTY)
-                .map(i -> i.copy().multiply(-1))
-                .collect(Collectors.toList());
+            .filter(i -> i != ILabel.EMPTY)
+            .map(
+                i -> i.copy()
+                    .multiply(-1))
+            .collect(Collectors.toList());
     }
 
     public CostList(List<ILabel> positive, List<ILabel> negative) {
@@ -68,11 +72,15 @@ public class CostList {
                 }
             }
         }
-        this.labels = this.labels.stream().filter(i -> i != ILabel.EMPTY).collect(Collectors.toList());
+        this.labels = this.labels.stream()
+            .filter(i -> i != ILabel.EMPTY)
+            .collect(Collectors.toList());
     }
 
     public CostList multiply(long i) {
-        labels = labels.stream().map(j -> j.multiply(i)).collect(Collectors.toList());
+        labels = labels.stream()
+            .map(j -> j.multiply(i))
+            .collect(Collectors.toList());
         return this;
     }
 
@@ -80,14 +88,17 @@ public class CostList {
     public boolean equals(Object obj) {
         if (obj instanceof CostList) {
             CostList c = (CostList) obj;
-            CostList m = c.copy().multiply(-1);
+            CostList m = c.copy()
+                .multiply(-1);
             return CostList.merge(this, m, true).labels.isEmpty();
         } else return false;
     }
 
     public CostList copy() {
         CostList ret = new CostList();
-        ret.labels = labels.stream().map(ILabel::copy).collect(Collectors.toList());
+        ret.labels = labels.stream()
+            .map(ILabel::copy)
+            .collect(Collectors.toList());
         return ret;
     }
 
@@ -111,6 +122,7 @@ public class CostList {
     }
 
     public class Calculator {
+
         ArrayList<Pair<CostList, CostList>> procedure = new ArrayList<>();
         ArrayList<ILabel> catalysts = new ArrayList<>();
         Recipes.RecipeIterator iterator = Controller.recipeIterator();
@@ -126,14 +138,16 @@ public class CostList {
             int count = 0;
             while (next != null) {
                 CostList original = getCurrent();
-                List<ILabel> outL = next.one.getOutput().stream()
-                        .filter(i -> i != ILabel.EMPTY)
-                        .collect(Collectors.toList());
+                List<ILabel> outL = next.one.getOutput()
+                    .stream()
+                    .filter(i -> i != ILabel.EMPTY)
+                    .collect(Collectors.toList());
                 CostList outC = new CostList(outL);
                 outC.multiply(-next.two);
-                List<ILabel> inL = next.one.getInput().stream()
-                        .filter(i -> i != ILabel.EMPTY)
-                        .collect(Collectors.toList());
+                List<ILabel> inL = next.one.getInput()
+                    .stream()
+                    .filter(i -> i != ILabel.EMPTY)
+                    .collect(Collectors.toList());
                 CostList inC = new CostList(inL);
                 inC.multiply(next.two);
                 CostList result = CostList.merge(original, outC, false);
@@ -173,7 +187,8 @@ public class CostList {
                 // Reset or not reset the iterator is a question
                 while (iterator.hasNext()) {
                     Recipe r = iterator.next();
-                    if (r.matches(label).isPresent()) return new Pair<>(r, r.multiplier(label));
+                    if (r.matches(label)
+                        .isPresent()) return new Pair<>(r, r.multiplier(label));
                 }
                 iterator = Controller.recipeIterator();
             }
@@ -181,11 +196,14 @@ public class CostList {
         }
 
         private void addCatalyst(List<ILabel> labels) {
-            labels.stream().filter(i -> i != ILabel.EMPTY).forEach(i -> catalysts.stream()
-                    .filter(j -> j.matches(i))
-                    .findAny()
-                    .map(j -> j.setAmount(Math.max(i.getAmount(), j.getAmount())))
-                    .orElseGet(Utilities.fake(() -> catalysts.add(i))));
+            labels.stream()
+                .filter(i -> i != ILabel.EMPTY)
+                .forEach(
+                    i -> catalysts.stream()
+                        .filter(j -> j.matches(i))
+                        .findAny()
+                        .map(j -> j.setAmount(Math.max(i.getAmount(), j.getAmount())))
+                        .orElseGet(Utilities.fake(() -> catalysts.add(i))));
         }
 
         private CostList getCurrent() {
@@ -198,25 +216,32 @@ public class CostList {
 
         public List<ILabel> getInputs() {
             return getCurrent().labels.stream()
-                    .filter(i -> i.getAmount() < 0)
-                    .map(i -> i.copy().multiply(-1))
-                    .collect(Collectors.toList());
+                .filter(i -> i.getAmount() < 0)
+                .map(
+                    i -> i.copy()
+                        .multiply(-1))
+                .collect(Collectors.toList());
         }
 
         public List<ILabel> getOutputs(List<ILabel> ignore) {
             return getCurrent().labels.stream()
-                    .map(i -> i.copy().multiply(-1))
-                    .map(i -> ignore.stream()
-                            .flatMap(j -> stream(ILabel.MERGER.merge(i, j)))
-                            .findFirst()
-                            .orElse(i))
-                    .filter(i -> i != ILabel.EMPTY && i.getAmount() < 0)
-                    .map(i -> i.multiply(-1))
-                    .collect(Collectors.toList());
+                .map(
+                    i -> i.copy()
+                        .multiply(-1))
+                .map(
+                    i -> ignore.stream()
+                        .flatMap(j -> stream(ILabel.MERGER.merge(i, j)))
+                        .findFirst()
+                        .orElse(i))
+                .filter(i -> i != ILabel.EMPTY && i.getAmount() < 0)
+                .map(i -> i.multiply(-1))
+                .collect(Collectors.toList());
         }
 
         public List<ILabel> getSteps() {
-            List<ILabel> ret = procedure.stream().map(i -> i.two.labels.get(0)).collect(Collectors.toList());
+            List<ILabel> ret = procedure.stream()
+                .map(i -> i.two.labels.get(0))
+                .collect(Collectors.toList());
             Collections.reverse(ret);
             CostList cl = new CostList(ret).multiply(-1);
             CostList temp = new CostList();

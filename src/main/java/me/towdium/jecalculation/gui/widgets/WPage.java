@@ -3,10 +3,12 @@ package me.towdium.jecalculation.gui.widgets;
 import static me.towdium.jecalculation.gui.Resource.WGT_PAGER_F;
 import static me.towdium.jecalculation.gui.Resource.WGT_PANEL_N;
 
+import java.util.List;
+
+import javax.annotation.ParametersAreNonnullByDefault;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import java.util.List;
-import javax.annotation.ParametersAreNonnullByDefault;
 import me.towdium.jecalculation.data.label.ILabel.RegistryEditor.Record;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
@@ -14,12 +16,13 @@ import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 
 /**
  * Author: towdium
- * Date:   17-9-16.
+ * Date: 17-9-16.
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class WPage extends WTooltip {
+
     protected int index;
     protected Record record;
     protected boolean focused;

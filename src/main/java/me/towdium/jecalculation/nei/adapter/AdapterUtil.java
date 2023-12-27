@@ -1,6 +1,7 @@
 package me.towdium.jecalculation.nei.adapter;
 
 import java.util.Optional;
+
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @SuppressWarnings("rawtypes")

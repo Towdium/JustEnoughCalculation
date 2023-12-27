@@ -1,9 +1,11 @@
 package me.towdium.jecalculation.command.commands;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+
+import net.minecraft.command.ICommandSender;
+
 import me.towdium.jecalculation.command.ISubCommand;
 import me.towdium.jecalculation.gui.JecaGui;
-import net.minecraft.command.ICommandSender;
 
 /**
  * Author: Towdium
@@ -11,6 +13,7 @@ import net.minecraft.command.ICommandSender;
  */
 @ParametersAreNonnullByDefault
 public class CCraft implements ISubCommand {
+
     @Override
     public String getName() {
         return "craft";
