@@ -11,18 +11,15 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ github.ref_name }}
+      RELEASE_VERSION: ${{ github.ref_name }}
+      SNAPSHOT: ${{ endsWith(github.ref_name, '-snapshot') || contains(github.event.head_commit.message, '[snapshot]') }}
     steps:
       - name: Checkout mod repo
         uses: actions/checkout@v3
         with:
           fetch-depth: 32
-
-      - name: Set release version
-        run: |
-          IFS='-' read -r mv pv <<< "${{ github.ref_name }}"
-          echo "MC_VERSION=${mv}" >> $GITHUB_ENV
-          echo "RELEASE_VERSION=${{ github.ref_name }}" >> $GITHUB_ENV
-          echo "VERSION=${{ github.ref_name }}" >> $GITHUB_ENV
 
       - name: Validate gradle wrapper checksum
         uses: gradle/wrapper-validation-action@v1
@@ -48,7 +45,7 @@ jobs:
       # Continue on error in the following steps to make sure releases still get made even if one of the methods fails
 
       - name: Delete old release if it already exists
-        run: gh release delete --yes "${MC_VERSION}-${RELEASE_VERSION}"
+        run: gh release delete --yes "${RELEASE_VERSION}"
         continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
