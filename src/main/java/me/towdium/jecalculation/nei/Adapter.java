@@ -37,18 +37,24 @@ public class Adapter {
             JustEnoughCalculation.logger.info("ae2 detected");
             adapters.add(new AE2());
         }
-        if (Loader.isModLoaded("gregtech")) {
-            if (GregTech6.isGT6()) {
-                JustEnoughCalculation.logger.info("gregtech6 detected");
-                adapters.add(new GregTech6());
-            } else {
-                JustEnoughCalculation.logger.info("gregtech5 detected");
-                adapters.add(new GregTech());
+        boolean isNH = false;
+        if (Loader.isModLoaded("gregtech") && !Loader.isModLoaded("gregapi")) {
+            try {
+                Class.forName("gregtech.api.recipe.RecipeMap");
+                isNH = true;
+                JustEnoughCalculation.logger.info("NH version of GregTech detected");
+            } catch (ClassNotFoundException e) {
+                JustEnoughCalculation.logger.info("GregTech5 detected");
             }
+            adapters.add(new GregTech(isNH));
+        }
+        if(Loader.isModLoaded("gregapi") && Loader.isModLoaded("gregapi_post")) {
+            JustEnoughCalculation.logger.info("GregTech6 detected");
+            adapters.add(new GregTech6());
         }
         try {
             if (Loader.isModLoaded("miscutils")) {
-                adapters.add(new GTPP());
+                adapters.add(new GTPP(isNH));
                 JustEnoughCalculation.logger.info("gt++ detected");
             }
         } catch (Exception e) {
@@ -67,7 +73,7 @@ public class Adapter {
             adapters.add(new Thaum());
             JustEnoughCalculation.logger.info("Thaumcraft detected");
         }
-        JustEnoughCalculation.logger.info("=====Just Enough Calculation Init Finish=====");
+        JustEnoughCalculation.logger.info("=====Just Enough Calculation Init Finished=====");
     }
 
     public static void handleRecipe(IRecipeHandler recipe, int index, List<Object[]> inputs, List<Object[]> outputs) {

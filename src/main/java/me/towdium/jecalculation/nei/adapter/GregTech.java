@@ -8,6 +8,8 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 import javax.annotation.ParametersAreNonnullByDefault;
+
+import gregtech.api.recipe.RecipeCategory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
@@ -16,8 +18,34 @@ import net.minecraftforge.fluids.FluidStack;
 
 @ParametersAreNonnullByDefault
 public class GregTech implements IAdapter {
+    private static final Class<?> gtDefault, gtAssLine;
+
+    private final boolean isNH;
+
+    static {
+        Class<?> gtDf = null;
+        Class<?> gtAL = null;
+        try {
+            gtDf = Class.forName("gregtech.nei.GT_NEI_DefaultHandler");
+            gtAL = Class.forName("gregtech.nei.GT_NEI_AssLineHandler");
+        } catch (ClassNotFoundException ignored) {
+        }
+        gtDefault = gtDf;
+        gtAssLine = gtAL;
+    }
+
+    public GregTech(boolean isNH) {
+        this.isNH = isNH;
+    }
+
     @Override
     public Set<String> getAllOverlayIdentifier() {
+        if(isNH) {
+            return RecipeCategory.ALL_RECIPE_CATEGORIES.values().stream()
+                    .filter(category -> category.recipeMap.getFrontend().getNEIProperties().registerNEI)
+                    .map(category -> category.unlocalizedName).collect(Collectors.toSet());
+        }
+
         return reflectGetRecipeMapNEIName("gregtech.api.util.GT_Recipe$GT_Recipe_Map", "sMappings");
     }
 
@@ -45,24 +73,9 @@ public class GregTech implements IAdapter {
         }
     }
 
-    private static final Class<?> gtDefault, gtAssLine;
-
-    static {
-        Class<?> gtDf = null;
-        Class<?> gtAL = null;
-        try {
-            gtDf = Class.forName("gregtech.nei.GT_NEI_DefaultHandler");
-            gtAL = Class.forName("gregtech.nei.GT_NEI_AssLineHandler");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        gtDefault = gtDf;
-        gtAssLine = gtAL;
-    }
-
     @Override
     public void handleRecipe(IRecipeHandler recipe, int index, List<Object[]> inputs, List<Object[]> outputs) {
-        if (gtDefault.isInstance(recipe) || gtAssLine.isInstance(recipe)) {
+        if (gtDefault.isInstance(recipe) || (gtAssLine != null && gtAssLine.isInstance(recipe))) {
             handleDefault(recipe, index, inputs, outputs);
         }
     }

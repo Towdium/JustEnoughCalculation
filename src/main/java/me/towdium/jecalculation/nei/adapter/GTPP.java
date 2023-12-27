@@ -14,6 +14,14 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class GTPP extends GregTech {
 
+    private final boolean isNH;
+
+    // TODO
+    public GTPP(boolean isNH) {
+        super(isNH);
+        this.isNH = isNH;
+    }
+
     private static final Set<Class<?>> defaultHandlers;
 
     static {
@@ -49,6 +57,11 @@ public class GTPP extends GregTech {
     @Override
     public Set<String> getAllOverlayIdentifier() {
         Set<String> recipeNames = new HashSet<>();
+        recipeNames.add("GTPP_Decayables");
+        if(isNH) {
+            return recipeNames;
+        }
+
         try {
             // add as many recipe as possible
             recipeNames.addAll(
@@ -59,9 +72,7 @@ public class GTPP extends GregTech {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        // which one?
-        recipeNames.add("GTPP_Decayables");
-        recipeNames.add("Decayables");
+
         return recipeNames;
     }
 
