@@ -2,14 +2,6 @@ package me.towdium.jecalculation.utils;
 
 import static net.minecraft.client.resources.I18n.format;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.ModContainer;
-import cpw.mods.fml.common.registry.GameData;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -23,12 +15,10 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import me.towdium.jecalculation.JustEnoughCalculation;
-import me.towdium.jecalculation.Tags;
-import me.towdium.jecalculation.polyfill.NBTHelper;
-import me.towdium.jecalculation.utils.wrappers.Pair;
+
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.Item;
@@ -37,26 +27,37 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.fluids.Fluid;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.text.WordUtils;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
+
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.registry.GameData;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import me.towdium.jecalculation.JustEnoughCalculation;
+import me.towdium.jecalculation.Tags;
+import me.towdium.jecalculation.polyfill.NBTHelper;
+import me.towdium.jecalculation.utils.wrappers.Pair;
+
 /**
  * Author: Towdium
- * Date:   2016/6/25.
+ * Date: 2016/6/25.
  */
-@SuppressWarnings({"unused", "UnusedReturnValue"})
+@SuppressWarnings({ "unused", "UnusedReturnValue" })
 @ParametersAreNonnullByDefault
 public class Utilities {
+
     // FLOAT FORMATTING
-    public static char[] suffix = new char[] {'K', 'M', 'B', 'G', 'T', 'P'};
-    public static DecimalFormat[] format = new DecimalFormat[] {
-        new DecimalFormat("#."),
-        new DecimalFormat("#.#"),
-        new DecimalFormat("#.##"),
-        new DecimalFormat("#.###"),
-        new DecimalFormat("#.####")
-    };
+    public static char[] suffix = new char[] { 'K', 'M', 'B', 'G', 'T', 'P' };
+    public static DecimalFormat[] format = new DecimalFormat[] { new DecimalFormat("#."), new DecimalFormat("#.#"),
+        new DecimalFormat("#.##"), new DecimalFormat("#.###"), new DecimalFormat("#.####") };
 
     public static String cutNumber(float f, int size) {
         BiFunction<Float, Integer, String> form = (fl, len) -> format[len - 1 - (int) Math.log10(fl)].format(fl);
@@ -67,7 +68,8 @@ public class Utilities {
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static <T> Stream<T> stream(Optional<T> o) {
-        return o.map(Stream::of).orElse(Stream.empty());
+        return o.map(Stream::of)
+            .orElse(Stream.empty());
     }
 
     public static <T> Supplier<T> fake(Runnable r) {
@@ -88,13 +90,16 @@ public class Utilities {
     public static String getModName(Item item) {
         String name = getName(item);
         String id = name.substring(0, name.indexOf(":"));
-        return id.equals("minecraft")
-                ? "Minecraft"
-                : Loader.instance().getIndexedModList().get(id).getName();
+        return id.equals("minecraft") ? "Minecraft"
+            : Loader.instance()
+                .getIndexedModList()
+                .get(id)
+                .getName();
     }
 
     public static String getName(Item item) {
-        return GameData.getItemRegistry().getNameForObject(item);
+        return GameData.getItemRegistry()
+            .getNameForObject(item);
     }
 
     public static String getName(ItemStack itemStack) {
@@ -122,7 +127,8 @@ public class Utilities {
             String iconName = icon.getIconName();
             String modId = iconName.split(":")[0];
 
-            Map<String, ModContainer> indexedModList = Loader.instance().getIndexedModList();
+            Map<String, ModContainer> indexedModList = Loader.instance()
+                .getIndexedModList();
             ModContainer modContainer = indexedModList.get(modId);
             if (modContainer == null) {
                 String capitalizedModId = WordUtils.capitalize(modId);
@@ -157,6 +163,7 @@ public class Utilities {
     }
 
     public enum ChatMessage {
+
         MAX_LOOP,
         RECIPE_TRANSFER_ERROR;
 
@@ -173,6 +180,7 @@ public class Utilities {
     }
 
     public static class Relation<K, V> {
+
         public HashMap<Pair<K, K>, V> data = new HashMap<>();
 
         public void put(K a, K b, V v) {
@@ -190,6 +198,7 @@ public class Utilities {
     }
 
     public static class Timer {
+
         long time = System.currentTimeMillis();
         boolean running = false;
 
@@ -208,6 +217,7 @@ public class Utilities {
 
     @SuppressWarnings("UnusedReturnValue")
     public static class Circulator {
+
         int total, current;
 
         public Circulator(int total) {
@@ -250,6 +260,7 @@ public class Utilities {
     }
 
     public static class ReversedIterator<T> implements Iterator<T> {
+
         ListIterator<T> i;
 
         public ReversedIterator(List<T> l) {
@@ -278,6 +289,7 @@ public class Utilities {
 
     @SideOnly(Side.CLIENT)
     public static class I18n {
+
         public static boolean contains(String s1, String s2) {
             return s1.contains(s2);
         }
@@ -297,18 +309,18 @@ public class Utilities {
         }
 
         public static List<String> wrap(String s, int width) {
-            return new TextWrapper()
-                    .wrap(
-                            s,
-                            ClientUtils.mc()
-                                    .getLanguageManager()
-                                    .getCurrentLanguage()
-                                    .getLanguageCode(),
-                            i -> TextWrapper.renderer.getCharWidth(i),
-                            width);
+            return new TextWrapper().wrap(
+                s,
+                ClientUtils.mc()
+                    .getLanguageManager()
+                    .getCurrentLanguage()
+                    .getLanguageCode(),
+                i -> TextWrapper.renderer.getCharWidth(i),
+                width);
         }
 
         static class TextWrapper {
+
             static FontRenderer renderer = ClientUtils.mc().fontRenderer;
 
             String str;
@@ -367,6 +379,7 @@ public class Utilities {
     }
 
     public static class Recent<T> {
+
         LinkedList<T> data = new LinkedList<>();
         BiPredicate<T, T> tester;
         int limit;
@@ -402,6 +415,7 @@ public class Utilities {
     }
 
     public static class Json {
+
         @Nullable
         public static NBTTagCompound read(File f) {
             try {
@@ -458,6 +472,8 @@ public class Utilities {
     }
 
     public static String[] mergeStringArrays(String[]... arrays) {
-        return Stream.of(arrays).flatMap(Stream::of).toArray(String[]::new);
+        return Stream.of(arrays)
+            .flatMap(Stream::of)
+            .toArray(String[]::new);
     }
 }

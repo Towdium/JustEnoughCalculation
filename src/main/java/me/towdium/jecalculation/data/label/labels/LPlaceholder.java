@@ -1,7 +1,5 @@
 package me.towdium.jecalculation.data.label.labels;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -9,22 +7,28 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+
+import net.minecraft.nbt.NBTTagCompound;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.Tags;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
-import net.minecraft.nbt.NBTTagCompound;
 
 /**
  * Author: towdium
- * Date:   17-9-28.
+ * Date: 17-9-28.
  */
 @ParametersAreNonnullByDefault
 public class LPlaceholder extends ILabel.Impl {
+
     public static final String KEY_NAME = "name";
     public static final String IDENTIFIER = "placeholder";
     public static boolean state = true; // true for client, false for server
@@ -69,7 +73,10 @@ public class LPlaceholder extends ILabel.Impl {
     }
 
     public static List<ILabel> getRecent() {
-        return getActive().toList().stream().map(LPlaceholder::copy).collect(Collectors.toList());
+        return getActive().toList()
+            .stream()
+            .map(LPlaceholder::copy)
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -129,32 +136,37 @@ public class LPlaceholder extends ILabel.Impl {
     }
 
     public static class Converter {
+
         @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
-        static List<Pair<Pattern, Function<Matcher, LPlaceholder>>> converters = Arrays.asList(new Pair<>(
+        static List<Pair<Pattern, Function<Matcher, LPlaceholder>>> converters = Arrays.asList(
+            new Pair<>(
                 Pattern.compile("\\[\\[Gas: mekanism:(.+)], (\\d+)]"),
                 i -> new LPlaceholder("Gas - " + capitalize(i.group(1)), Integer.parseInt(i.group(2)))));
 
         public static String capitalize(String s) {
-            String[] arr = s.replace('_', ' ').split(" ");
+            String[] arr = s.replace('_', ' ')
+                .split(" ");
             StringBuilder sb = new StringBuilder();
 
             for (String value : arr) {
                 sb.append(Character.toUpperCase(value.charAt(0)));
-                sb.append(value.substring(1)).append(" ");
+                sb.append(value.substring(1))
+                    .append(" ");
             }
-            return sb.toString().trim();
+            return sb.toString()
+                .trim();
         }
 
         public static LPlaceholder from(Object o) {
             String s = o.toString();
             return converters.stream()
-                    .map(i -> {
-                        Matcher m = i.one.matcher(s);
-                        return m.matches() ? i.two.apply(m) : null;
-                    })
-                    .filter(Objects::nonNull)
-                    .findFirst()
-                    .orElseGet(() -> new LPlaceholder(s, 1));
+                .map(i -> {
+                    Matcher m = i.one.matcher(s);
+                    return m.matches() ? i.two.apply(m) : null;
+                })
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseGet(() -> new LPlaceholder(s, 1));
         }
     }
 }

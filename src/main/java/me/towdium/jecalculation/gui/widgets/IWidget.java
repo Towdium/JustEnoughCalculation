@@ -1,17 +1,20 @@
 package me.towdium.jecalculation.gui.widgets;
 
 import java.util.List;
+
 import javax.annotation.ParametersAreNonnullByDefault;
+
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.utils.wrappers.Wrapper;
 
 /**
  * Author: towdium
- * Date:   8/14/17.
+ * Date: 8/14/17.
  */
 @ParametersAreNonnullByDefault
 public interface IWidget {
+
     default boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
         return false;
     }
@@ -44,11 +47,13 @@ public interface IWidget {
 
     @FunctionalInterface
     interface ListenerValue<W extends IWidget, V> {
+
         void invoke(W widget, V value);
     }
 
     @FunctionalInterface
     interface ListenerAction<W extends IWidget> {
+
         void invoke(W widget);
     }
 }

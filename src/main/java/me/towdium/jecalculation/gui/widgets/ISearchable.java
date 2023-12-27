@@ -5,5 +5,6 @@ package me.towdium.jecalculation.gui.widgets;
  * Date: 18-12-7
  */
 public interface ISearchable extends IWidget {
+
     boolean setFilter(String s);
 }

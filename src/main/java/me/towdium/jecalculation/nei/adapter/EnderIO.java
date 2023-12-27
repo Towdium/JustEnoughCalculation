@@ -1,21 +1,25 @@
 package me.towdium.jecalculation.nei.adapter;
 
-import codechicken.nei.recipe.IRecipeHandler;
-import codechicken.nei.recipe.TemplateRecipeHandler;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import javax.annotation.ParametersAreNonnullByDefault;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+
+import codechicken.nei.recipe.IRecipeHandler;
+import codechicken.nei.recipe.TemplateRecipeHandler;
 
 @ParametersAreNonnullByDefault
 public class EnderIO implements IAdapter {
 
     @Override
     public Set<String> getAllOverlayIdentifier() {
-        return new HashSet<>(Arrays.asList(
+        return new HashSet<>(
+            Arrays.asList(
                 "EnderIOAlloySmelter",
                 "EIOEnchanter",
                 "EnderIOSagMill",
@@ -29,8 +33,8 @@ public class EnderIO implements IAdapter {
 
     static {
         List<String> handlers = Stream.of("SagMillRecipeHandler")
-                .map(name -> "crazypants.enderio.nei." + name)
-                .collect(Collectors.toList());
+            .map(name -> "crazypants.enderio.nei." + name)
+            .collect(Collectors.toList());
         defaultHandlers = new HashSet<>();
         for (String handler : handlers) {
             try {
@@ -50,10 +54,12 @@ public class EnderIO implements IAdapter {
 
     @Override
     public void handleRecipe(IRecipeHandler recipe, int index, List<Object[]> inputs, List<Object[]> outputs) {
-        if (defaultHandlers.stream().anyMatch(aClass -> aClass.isInstance(recipe))) {
-            List<ItemStack[]> otherStacks = recipe.getOtherStacks(index).stream()
-                    .map(positionedStack -> positionedStack.items)
-                    .collect(Collectors.toList());
+        if (defaultHandlers.stream()
+            .anyMatch(aClass -> aClass.isInstance(recipe))) {
+            List<ItemStack[]> otherStacks = recipe.getOtherStacks(index)
+                .stream()
+                .map(positionedStack -> positionedStack.items)
+                .collect(Collectors.toList());
             outputs.addAll(otherStacks);
         } else {
             try {
@@ -62,8 +68,8 @@ public class EnderIO implements IAdapter {
 
                     Field arecipes = vat.getField("arecipes");
                     @SuppressWarnings("unchecked")
-                    TemplateRecipeHandler.CachedRecipe cachedRecipe =
-                            ((ArrayList<TemplateRecipeHandler.CachedRecipe>) arecipes.get(recipe)).get(index);
+                    TemplateRecipeHandler.CachedRecipe cachedRecipe = ((ArrayList<TemplateRecipeHandler.CachedRecipe>) arecipes
+                        .get(recipe)).get(index);
 
                     Field resultField = vatInnerRecipe.getDeclaredField("result");
                     Field inFluidField = vatInnerRecipe.getDeclaredField("inFluid");
@@ -72,8 +78,8 @@ public class EnderIO implements IAdapter {
 
                     FluidStack result = (FluidStack) resultField.get(cachedRecipe);
                     FluidStack inFluid = (FluidStack) inFluidField.get(cachedRecipe);
-                    inputs.add(new Object[] {inFluid});
-                    outputs.add(new Object[] {result});
+                    inputs.add(new Object[] { inFluid });
+                    outputs.add(new Object[] { result });
                     resultField.setAccessible(false);
                     inFluidField.setAccessible(false);
                 }

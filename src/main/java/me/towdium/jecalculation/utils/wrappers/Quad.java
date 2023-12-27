@@ -5,6 +5,7 @@ package me.towdium.jecalculation.utils.wrappers;
  * Date: 18-12-7
  */
 public class Quad<T, U, V, W> {
+
     public T one;
     public U two;
     public V three;

@@ -2,16 +2,19 @@ package me.towdium.jecalculation.command;
 
 import java.util.Collections;
 import java.util.List;
+
 import javax.annotation.ParametersAreNonnullByDefault;
+
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 
 /**
  * Author: towdium
- * Date:   8/10/17.
+ * Date: 8/10/17.
  */
 @ParametersAreNonnullByDefault
 public interface ISubCommand {
+
     String getName();
 
     String getUsage(ICommandSender sender);

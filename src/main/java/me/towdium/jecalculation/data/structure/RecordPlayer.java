@@ -7,6 +7,7 @@ import net.minecraft.nbt.NBTTagCompound;
  * Date: 19-1-21
  */
 public class RecordPlayer implements IRecord {
+
     public static final String KEY_RECIPES = "recipes";
     public static final String KEY_LAST = "last";
 

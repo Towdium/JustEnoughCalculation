@@ -4,13 +4,15 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+
 import javax.annotation.Nullable;
 
 /**
  * Author: Towdium
- * Date:   2016/7/1.
+ * Date: 2016/7/1.
  */
 public class Wrapper<T> {
+
     public T value;
     public Predicate<T> predicate = t -> true;
 

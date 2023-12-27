@@ -1,13 +1,19 @@
 package me.towdium.jecalculation;
 
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import java.io.File;
+
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+
 public class JecaConfig {
-    public static File configDir = new File(Loader.instance().getConfigDir(), "JustEnoughCalculation/");
+
+    public static File configDir = new File(
+        Loader.instance()
+            .getConfigDir(),
+        "JustEnoughCalculation/");
     public static final File configFile = new File(configDir, "main.cfg");
     public static final File recordFile = new File(configDir, "record.json");
     public static final File defaultFile = new File(configDir, "default.json");
@@ -22,10 +28,12 @@ public class JecaConfig {
     public static Configuration config;
 
     public static boolean isClintMode() {
-        return EnumItems.ClientMode.getProperty().getBoolean();
+        return EnumItems.ClientMode.getProperty()
+            .getBoolean();
     }
 
     public enum EnumItems {
+
         ClientMode,
         EnableInventoryCheck,
         ListRecipeBlackList,
@@ -39,7 +47,7 @@ public class JecaConfig {
                     return "Set to false to disable auto inventory check";
                 case ListRecipeBlackList:
                     return "Add string identifier here to disable quick transfer of this type recipe\n"
-                            + "Names can be found in ListRecipeCategory";
+                        + "Names can be found in ListRecipeCategory";
                 case ListRecipeCategory:
                     return "List of categories, this is maintained by the mod automatically";
             }
@@ -91,7 +99,7 @@ public class JecaConfig {
                 case ListRecipeBlackList:
                     return new String[0];
                 case ListRecipeCategory:
-                    return new String[] {"minecraft.crafting", "minecraft.smelting"};
+                    return new String[] { "minecraft.crafting", "minecraft.smelting" };
             }
             return JecaConfig.empty;
         }
@@ -101,23 +109,26 @@ public class JecaConfig {
             if (type != null) {
                 switch (this.getType()) {
                     case Boolean:
-                        return config.get(
-                                this.getCategory(), this.getName(), (Boolean) this.getDefault(), this.getComment());
+                        return config
+                            .get(this.getCategory(), this.getName(), (Boolean) this.getDefault(), this.getComment());
                     case ListString:
-                        return config.get(
-                                this.getCategory(), this.getName(), (String[]) this.getDefault(), this.getComment());
+                        return config
+                            .get(this.getCategory(), this.getName(), (String[]) this.getDefault(), this.getComment());
                 }
-                config.getCategory(EnumCategory.General.toString()).get(this.getName());
+                config.getCategory(EnumCategory.General.toString())
+                    .get(this.getName());
             }
             return config.get(this.getCategory(), this.getName(), false, this.getComment());
         }
 
         public Property getProperty() {
-            return config.getCategory(EnumCategory.General.toString()).get(this.getName());
+            return config.getCategory(EnumCategory.General.toString())
+                .get(this.getName());
         }
     }
 
     public enum EnumCategory {
+
         General;
 
         @Override

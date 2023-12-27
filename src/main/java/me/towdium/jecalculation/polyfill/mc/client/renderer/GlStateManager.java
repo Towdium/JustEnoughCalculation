@@ -1,15 +1,16 @@
 package me.towdium.jecalculation.polyfill.mc.client.renderer;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+
 import javax.annotation.Nullable;
+
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
+
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -19,9 +20,13 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GLContext;
 import org.lwjgl.util.vector.Quaternion;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 @SuppressWarnings("ALL")
 @SideOnly(Side.CLIENT)
 public class GlStateManager {
+
     private static final FloatBuffer BUF_FLOAT_16 = BufferUtils.createFloatBuffer(16);
     private static final FloatBuffer BUF_FLOAT_4 = BufferUtils.createFloatBuffer(4);
     private static final GlStateManager.AlphaState alphaState = new GlStateManager.AlphaState();
@@ -155,19 +160,15 @@ public class GlStateManager {
         }
     }
 
-    public static void tryBlendFuncSeparate(
-            GlStateManager.SourceFactor srcFactor,
-            GlStateManager.DestFactor dstFactor,
-            GlStateManager.SourceFactor srcFactorAlpha,
-            GlStateManager.DestFactor dstFactorAlpha) {
+    public static void tryBlendFuncSeparate(GlStateManager.SourceFactor srcFactor, GlStateManager.DestFactor dstFactor,
+        GlStateManager.SourceFactor srcFactorAlpha, GlStateManager.DestFactor dstFactorAlpha) {
         tryBlendFuncSeparate(srcFactor.factor, dstFactor.factor, srcFactorAlpha.factor, dstFactorAlpha.factor);
     }
 
     public static void tryBlendFuncSeparate(int srcFactor, int dstFactor, int srcFactorAlpha, int dstFactorAlpha) {
-        if (srcFactor != blendState.srcFactor
-                || dstFactor != blendState.dstFactor
-                || srcFactorAlpha != blendState.srcFactorAlpha
-                || dstFactorAlpha != blendState.dstFactorAlpha) {
+        if (srcFactor != blendState.srcFactor || dstFactor != blendState.dstFactor
+            || srcFactorAlpha != blendState.srcFactorAlpha
+            || dstFactorAlpha != blendState.dstFactorAlpha) {
             blendState.srcFactor = srcFactor;
             blendState.dstFactor = dstFactor;
             blendState.srcFactorAlpha = srcFactorAlpha;
@@ -408,34 +409,18 @@ public class GlStateManager {
         }
     }
 
-    public static void glTexImage2D(
-            int target,
-            int level,
-            int internalFormat,
-            int width,
-            int height,
-            int border,
-            int format,
-            int type,
-            @Nullable IntBuffer pixels) {
+    public static void glTexImage2D(int target, int level, int internalFormat, int width, int height, int border,
+        int format, int type, @Nullable IntBuffer pixels) {
         GL11.glTexImage2D(target, level, internalFormat, width, height, border, format, type, pixels);
     }
 
-    public static void glTexSubImage2D(
-            int target,
-            int level,
-            int xOffset,
-            int yOffset,
-            int width,
-            int height,
-            int format,
-            int type,
-            IntBuffer pixels) {
+    public static void glTexSubImage2D(int target, int level, int xOffset, int yOffset, int width, int height,
+        int format, int type, IntBuffer pixels) {
         GL11.glTexSubImage2D(target, level, xOffset, yOffset, width, height, format, type, pixels);
     }
 
-    public static void glCopyTexSubImage2D(
-            int target, int level, int xOffset, int yOffset, int x, int y, int width, int height) {
+    public static void glCopyTexSubImage2D(int target, int level, int xOffset, int yOffset, int x, int y, int width,
+        int height) {
         GL11.glCopyTexSubImage2D(target, level, xOffset, yOffset, x, y, width, height);
     }
 
@@ -471,10 +456,9 @@ public class GlStateManager {
     }
 
     public static void colorMask(boolean red, boolean green, boolean blue, boolean alpha) {
-        if (red != colorMaskState.red
-                || green != colorMaskState.green
-                || blue != colorMaskState.blue
-                || alpha != colorMaskState.alpha) {
+        if (red != colorMaskState.red || green != colorMaskState.green
+            || blue != colorMaskState.blue
+            || alpha != colorMaskState.alpha) {
             colorMaskState.red = red;
             colorMaskState.green = green;
             colorMaskState.blue = blue;
@@ -491,10 +475,9 @@ public class GlStateManager {
     }
 
     public static void clearColor(float red, float green, float blue, float alpha) {
-        if (red != clearState.color.red
-                || green != clearState.color.green
-                || blue != clearState.color.blue
-                || alpha != clearState.color.alpha) {
+        if (red != clearState.color.red || green != clearState.color.green
+            || blue != clearState.color.blue
+            || alpha != clearState.color.alpha) {
             clearState.color.red = red;
             clearState.color.green = green;
             clearState.color.blue = blue;
@@ -591,10 +574,9 @@ public class GlStateManager {
     }
 
     public static void color(float colorRed, float colorGreen, float colorBlue, float colorAlpha) {
-        if (colorRed != colorState.red
-                || colorGreen != colorState.green
-                || colorBlue != colorState.blue
-                || colorAlpha != colorState.alpha) {
+        if (colorRed != colorState.red || colorGreen != colorState.green
+            || colorBlue != colorState.blue
+            || colorAlpha != colorState.alpha) {
             colorState.red = colorRed;
             colorState.green = colorGreen;
             colorState.blue = colorBlue;
@@ -756,6 +738,7 @@ public class GlStateManager {
 
     @SideOnly(Side.CLIENT)
     static class AlphaState {
+
         public GlStateManager.BooleanState alphaTest;
         public int func;
         public float ref;
@@ -769,6 +752,7 @@ public class GlStateManager {
 
     @SideOnly(Side.CLIENT)
     static class BlendState {
+
         public GlStateManager.BooleanState blend;
         public int srcFactor;
         public int dstFactor;
@@ -786,6 +770,7 @@ public class GlStateManager {
 
     @SideOnly(Side.CLIENT)
     static class BooleanState {
+
         private final int capability;
         private boolean currentState;
 
@@ -816,6 +801,7 @@ public class GlStateManager {
 
     @SideOnly(Side.CLIENT)
     static class ClearState {
+
         public double depth;
         public GlStateManager.Color color;
 
@@ -827,6 +813,7 @@ public class GlStateManager {
 
     @SideOnly(Side.CLIENT)
     static class Color {
+
         public float red;
         public float green;
         public float blue;
@@ -850,6 +837,7 @@ public class GlStateManager {
 
     @SideOnly(Side.CLIENT)
     static class ColorLogicState {
+
         public GlStateManager.BooleanState colorLogicOp;
         public int opcode;
 
@@ -861,6 +849,7 @@ public class GlStateManager {
 
     @SideOnly(Side.CLIENT)
     static class ColorMask {
+
         public boolean red;
         public boolean green;
         public boolean blue;
@@ -876,6 +865,7 @@ public class GlStateManager {
 
     @SideOnly(Side.CLIENT)
     static class ColorMaterialState {
+
         public GlStateManager.BooleanState colorMaterial;
         public int face;
         public int mode;
@@ -889,6 +879,7 @@ public class GlStateManager {
 
     @SideOnly(Side.CLIENT)
     public static enum CullFace {
+
         FRONT(1028),
         BACK(1029),
         FRONT_AND_BACK(1032);
@@ -902,6 +893,7 @@ public class GlStateManager {
 
     @SideOnly(Side.CLIENT)
     static class CullState {
+
         public GlStateManager.BooleanState cullFace;
         public int mode;
 
@@ -913,6 +905,7 @@ public class GlStateManager {
 
     @SideOnly(Side.CLIENT)
     static class DepthState {
+
         public GlStateManager.BooleanState depthTest;
         public boolean maskEnabled;
         public int depthFunc;
@@ -926,6 +919,7 @@ public class GlStateManager {
 
     @SideOnly(Side.CLIENT)
     public static enum DestFactor {
+
         CONSTANT_ALPHA(32771),
         CONSTANT_COLOR(32769),
         DST_ALPHA(772),
@@ -950,6 +944,7 @@ public class GlStateManager {
 
     @SideOnly(Side.CLIENT)
     public static enum FogMode {
+
         LINEAR(9729),
         EXP(2048),
         EXP2(2049);
@@ -963,6 +958,7 @@ public class GlStateManager {
 
     @SideOnly(Side.CLIENT)
     static class FogState {
+
         public GlStateManager.BooleanState fog;
         public int mode;
         public float density;
@@ -979,6 +975,7 @@ public class GlStateManager {
 
     @SideOnly(Side.CLIENT)
     public static enum LogicOp {
+
         AND(5377),
         AND_INVERTED(5380),
         AND_REVERSE(5378),
@@ -1005,6 +1002,7 @@ public class GlStateManager {
 
     @SideOnly(Side.CLIENT)
     static class PolygonOffsetState {
+
         public GlStateManager.BooleanState polygonOffsetFill;
         public GlStateManager.BooleanState polygonOffsetLine;
         public float factor;
@@ -1018,7 +1016,9 @@ public class GlStateManager {
 
     @SideOnly(Side.CLIENT)
     public static enum Profile {
+
         DEFAULT {
+
             public void apply() {
                 GlStateManager.disableAlpha();
                 GlStateManager.alphaFunc(519, 0.0F);
@@ -1032,14 +1032,22 @@ public class GlStateManager {
 
                     if (i == 0) {
                         GL11.glLight(
-                                GL11.GL_LIGHT0 + i, GL11.GL_DIFFUSE, reflectSetColorBuffer(1.0F, 1.0F, 1.0F, 1.0F));
+                            GL11.GL_LIGHT0 + i,
+                            GL11.GL_DIFFUSE,
+                            reflectSetColorBuffer(1.0F, 1.0F, 1.0F, 1.0F));
                         GL11.glLight(
-                                GL11.GL_LIGHT0 + i, GL11.GL_SPECULAR, reflectSetColorBuffer(1.0F, 1.0F, 1.0F, 1.0F));
+                            GL11.GL_LIGHT0 + i,
+                            GL11.GL_SPECULAR,
+                            reflectSetColorBuffer(1.0F, 1.0F, 1.0F, 1.0F));
                     } else {
                         GL11.glLight(
-                                GL11.GL_LIGHT0 + i, GL11.GL_DIFFUSE, reflectSetColorBuffer(0.0F, 0.0F, 0.0F, 1.0F));
+                            GL11.GL_LIGHT0 + i,
+                            GL11.GL_DIFFUSE,
+                            reflectSetColorBuffer(0.0F, 0.0F, 0.0F, 1.0F));
                         GL11.glLight(
-                                GL11.GL_LIGHT0 + i, GL11.GL_SPECULAR, reflectSetColorBuffer(0.0F, 0.0F, 0.0F, 1.0F));
+                            GL11.GL_LIGHT0 + i,
+                            GL11.GL_SPECULAR,
+                            reflectSetColorBuffer(0.0F, 0.0F, 0.0F, 1.0F));
                     }
                 }
 
@@ -1051,10 +1059,10 @@ public class GlStateManager {
                 GlStateManager.disableBlend();
                 GlStateManager.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
                 GlStateManager.tryBlendFuncSeparate(
-                        GlStateManager.SourceFactor.ONE,
-                        GlStateManager.DestFactor.ZERO,
-                        GlStateManager.SourceFactor.ONE,
-                        GlStateManager.DestFactor.ZERO);
+                    GlStateManager.SourceFactor.ONE,
+                    GlStateManager.DestFactor.ZERO,
+                    GlStateManager.SourceFactor.ONE,
+                    GlStateManager.DestFactor.ZERO);
                 GL14.glBlendEquation(GL14.GL_FUNC_ADD);
                 GlStateManager.disableFog();
                 GL11.glFogi(GL11.GL_FOG_MODE, GL11.GL_EXP);
@@ -1097,7 +1105,9 @@ public class GlStateManager {
                 GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, 0.0F);
                 GL11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_MODULATE);
                 GL11.glTexEnv(
-                        GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_COLOR, reflectSetColorBuffer(0.0F, 0.0F, 0.0F, 0.0F));
+                    GL11.GL_TEXTURE_ENV,
+                    GL11.GL_TEXTURE_ENV_COLOR,
+                    reflectSetColorBuffer(0.0F, 0.0F, 0.0F, 0.0F));
                 GL11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL13.GL_COMBINE_RGB, GL11.GL_MODULATE);
                 GL11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL13.GL_COMBINE_ALPHA, GL11.GL_MODULATE);
                 GL11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL15.GL_SRC0_RGB, GL11.GL_TEXTURE);
@@ -1128,6 +1138,7 @@ public class GlStateManager {
             public void clean() {}
         },
         PLAYER_SKIN {
+
             public void apply() {
                 GlStateManager.enableBlend();
                 GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
@@ -1138,12 +1149,13 @@ public class GlStateManager {
             }
         },
         TRANSPARENT_MODEL {
+
             public void apply() {
                 GlStateManager.color(1.0F, 1.0F, 1.0F, 0.15F);
                 GlStateManager.depthMask(false);
                 GlStateManager.enableBlend();
-                GlStateManager.blendFunc(
-                        GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+                GlStateManager
+                    .blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
                 GlStateManager.alphaFunc(516, 0.003921569F);
             }
 
@@ -1163,6 +1175,7 @@ public class GlStateManager {
 
     @SideOnly(Side.CLIENT)
     public static enum SourceFactor {
+
         CONSTANT_ALPHA(32771),
         CONSTANT_COLOR(32769),
         DST_ALPHA(772),
@@ -1188,6 +1201,7 @@ public class GlStateManager {
 
     @SideOnly(Side.CLIENT)
     static class StencilFunc {
+
         public int func;
         public int mask;
 
@@ -1199,6 +1213,7 @@ public class GlStateManager {
 
     @SideOnly(Side.CLIENT)
     static class StencilState {
+
         public GlStateManager.StencilFunc func;
         public int mask;
         public int fail;
@@ -1224,6 +1239,7 @@ public class GlStateManager {
 
     @SideOnly(Side.CLIENT)
     static class TexGenCoord {
+
         public GlStateManager.BooleanState textureGen;
         public int coord;
         public int param = -1;
@@ -1236,6 +1252,7 @@ public class GlStateManager {
 
     @SideOnly(Side.CLIENT)
     static class TexGenState {
+
         public GlStateManager.TexGenCoord s;
         public GlStateManager.TexGenCoord t;
         public GlStateManager.TexGenCoord r;
@@ -1251,6 +1268,7 @@ public class GlStateManager {
 
     @SideOnly(Side.CLIENT)
     static class TextureState {
+
         public GlStateManager.BooleanState texture2DState;
         public int textureName;
 
@@ -1259,12 +1277,12 @@ public class GlStateManager {
         }
     }
 
-    private static FloatBuffer reflectSetColorBuffer(
-            float p_74521_0_, float p_74521_1_, float p_74521_2_, float p_74521_3_) {
+    private static FloatBuffer reflectSetColorBuffer(float p_74521_0_, float p_74521_1_, float p_74521_2_,
+        float p_74521_3_) {
         FloatBuffer res = null;
         try {
-            Method m = RenderHelper.class.getDeclaredMethod(
-                    "setColorBuffer", float.class, float.class, float.class, float.class);
+            Method m = RenderHelper.class
+                .getDeclaredMethod("setColorBuffer", float.class, float.class, float.class, float.class);
             m.setAccessible(true);
             res = (FloatBuffer) m.invoke(null, p_74521_0_, p_74521_1_, p_74521_2_, p_74521_3_);
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {

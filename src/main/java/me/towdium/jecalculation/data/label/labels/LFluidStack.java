@@ -1,27 +1,31 @@
 package me.towdium.jecalculation.data.label.labels;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import me.towdium.jecalculation.data.label.ILabel;
-import me.towdium.jecalculation.gui.JecaGui;
-import me.towdium.jecalculation.gui.Resource;
-import me.towdium.jecalculation.utils.Utilities;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import me.towdium.jecalculation.data.label.ILabel;
+import me.towdium.jecalculation.gui.JecaGui;
+import me.towdium.jecalculation.gui.Resource;
+import me.towdium.jecalculation.utils.Utilities;
+
 /**
  * Author: towdium
- * Date:   17-9-27.
+ * Date: 17-9-27.
  */
 @ParametersAreNonnullByDefault
 public class LFluidStack extends ILabel.Impl {
+
     public static final String IDENTIFIER = "fluidStack";
     public static final String KEY_FLUID = "fluid";
     public static final String KEY_NBT = "nbt";
@@ -133,7 +137,8 @@ public class LFluidStack extends ILabel.Impl {
 
     @Override
     public int hashCode() {
-        return super.hashCode() ^ fluid.getUnlocalizedName().hashCode() ^ (nbt == null ? 0 : nbt.hashCode());
+        return super.hashCode() ^ fluid.getUnlocalizedName()
+            .hashCode() ^ (nbt == null ? 0 : nbt.hashCode());
     }
 
     public static List<ILabel> suggest(List<ILabel> iss, @Nullable Class<?> context) {

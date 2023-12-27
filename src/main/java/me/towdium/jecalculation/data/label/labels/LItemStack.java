@@ -2,29 +2,33 @@ package me.towdium.jecalculation.data.label.labels;
 
 import static net.minecraftforge.oredict.OreDictionary.WILDCARD_VALUE;
 
-import cpw.mods.fml.common.registry.GameData;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import me.towdium.jecalculation.data.label.ILabel;
-import me.towdium.jecalculation.gui.JecaGui;
-import me.towdium.jecalculation.utils.ItemStackHelper;
-import me.towdium.jecalculation.utils.Utilities;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import cpw.mods.fml.common.registry.GameData;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import me.towdium.jecalculation.data.label.ILabel;
+import me.towdium.jecalculation.gui.JecaGui;
+import me.towdium.jecalculation.utils.ItemStackHelper;
+import me.towdium.jecalculation.utils.Utilities;
+
 /**
  * Author: towdium
- * Date:   8/11/17.
+ * Date: 8/11/17.
  */
 @ParametersAreNonnullByDefault
 public class LItemStack extends ILabel.Impl {
+
     public static final String IDENTIFIER = "itemStack";
 
     private static final String KEY_ITEM = "item";
@@ -49,8 +53,10 @@ public class LItemStack extends ILabel.Impl {
     public LItemStack(NBTTagCompound tag) {
         super(tag);
         final String strId = tag.getString(KEY_ITEM);
-        if (!tag.hasKey("id"))
-            tag.setShort("id", (short) GameData.getItemRegistry().getId(strId));
+        if (!tag.hasKey("id")) tag.setShort(
+            "id",
+            (short) GameData.getItemRegistry()
+                .getId(strId));
         tag.setByte("Count", (byte) 1);
         tag.setShort("Damage", tag.hasKey(KEY_META) ? (short) tag.getInteger(KEY_META) : 0);
         ItemStack stack = ItemStack.loadItemStackFromNBT(tag);
@@ -59,11 +65,11 @@ public class LItemStack extends ILabel.Impl {
             throw new Serializer.SerializationException("Item " + strId + " cannot be resolved, ignoring");
         Item i = stack.getItem();
         init(
-                i,
-                tag.getInteger(KEY_META),
-                tag.hasKey(KEY_NBT) ? stack.stackTagCompound : null,
-                tag.getBoolean(KEY_F_META),
-                tag.getBoolean(KEY_F_NBT));
+            i,
+            tag.getInteger(KEY_META),
+            tag.hasKey(KEY_NBT) ? stack.stackTagCompound : null,
+            tag.getBoolean(KEY_F_META),
+            tag.getBoolean(KEY_F_NBT));
     }
 
     private LItemStack(LItemStack lis) {
@@ -91,11 +97,10 @@ public class LItemStack extends ILabel.Impl {
         if (a instanceof LItemStack && b instanceof LItemStack) {
             LItemStack lisA = (LItemStack) a;
             LItemStack lisB = (LItemStack) b;
-            if (lisA.meta != lisB.meta
-                    && !lisA.fMeta
-                    && lisA.meta != WILDCARD_VALUE
-                    && !lisB.fMeta
-                    && lisB.meta != WILDCARD_VALUE) return false;
+            if (lisA.meta != lisB.meta && !lisA.fMeta
+                && lisA.meta != WILDCARD_VALUE
+                && !lisB.fMeta
+                && lisB.meta != WILDCARD_VALUE) return false;
             if (!lisA.fNbt && !lisB.fNbt) {
                 if (lisA.nbt == null) {
                     if (lisB.nbt != null) return false;
@@ -118,8 +123,10 @@ public class LItemStack extends ILabel.Impl {
             if (ii.meta != lis.meta || ii.fMeta) fMeta = true;
             if (!Objects.equals(ii.nbt, lis.nbt)) fNbt = true;
         }
-        if (fMeta || fNbt)
-            return Collections.singletonList(lis.copy().setFMeta(fMeta).setFNbt(fNbt));
+        if (fMeta || fNbt) return Collections.singletonList(
+            lis.copy()
+                .setFMeta(fMeta)
+                .setFNbt(fNbt));
         else return new ArrayList<>();
     }
 
@@ -130,9 +137,16 @@ public class LItemStack extends ILabel.Impl {
             if (!(label instanceof LItemStack)) return ret;
             LItemStack lis = (LItemStack) label;
             if (lis.fNbt || lis.fMeta) return new ArrayList<>();
-            ret.add(lis.copy().setFMeta(true));
-            ret.add(lis.copy().setFNbt(true));
-            ret.add(lis.copy().setFMeta(true).setFNbt(true));
+            ret.add(
+                lis.copy()
+                    .setFMeta(true));
+            ret.add(
+                lis.copy()
+                    .setFNbt(true));
+            ret.add(
+                lis.copy()
+                    .setFMeta(true)
+                    .setFNbt(true));
         }
         return ret;
     }
@@ -186,12 +200,11 @@ public class LItemStack extends ILabel.Impl {
     public boolean matches(Object l) {
         if (l instanceof LItemStack) {
             LItemStack lis = (LItemStack) l;
-            return (Objects.equals(nbt, lis.nbt))
-                    && meta == lis.meta
-                    && item == lis.item
-                    && fNbt == lis.fNbt
-                    && super.matches(l)
-                    && fMeta == lis.fMeta;
+            return (Objects.equals(nbt, lis.nbt)) && meta == lis.meta
+                && item == lis.item
+                && fNbt == lis.fNbt
+                && super.matches(l)
+                && fMeta == lis.fMeta;
         } else return false;
     }
 
@@ -218,19 +231,19 @@ public class LItemStack extends ILabel.Impl {
     public void drawLabel(JecaGui gui) {
         gui.drawItemStack(0, 0, rep, false);
         // TODO some item won't render correctly with overlay
-        //        if (fNbt || fMeta)
-        //            gui.drawResource(Resource.LBL_FRAME, 0, 0);
-        //        if (fNbt)
-        //            gui.drawResource(Resource.LBL_FR_UL, 0, 0);
-        //        if (fMeta)
-        //            gui.drawResource(Resource.LBL_FR_UR, 0, 0);
+        // if (fNbt || fMeta)
+        // gui.drawResource(Resource.LBL_FRAME, 0, 0);
+        // if (fNbt)
+        // gui.drawResource(Resource.LBL_FR_UL, 0, 0);
+        // if (fMeta)
+        // gui.drawResource(Resource.LBL_FR_UR, 0, 0);
     }
 
     @Override
     public int hashCode() { // TODO all labels use super hashcode
-        return (nbt == null ? 0 : nbt.hashCode())
-                ^ meta
-                ^ item.getUnlocalizedName().hashCode()
-                ^ (int) amount;
+        return (nbt == null ? 0 : nbt.hashCode()) ^ meta
+            ^ item.getUnlocalizedName()
+                .hashCode()
+            ^ (int) amount;
     }
 }

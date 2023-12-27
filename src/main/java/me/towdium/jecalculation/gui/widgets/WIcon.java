@@ -2,22 +2,24 @@ package me.towdium.jecalculation.gui.widgets;
 
 import static me.towdium.jecalculation.gui.JecaGui.COLOR_GUI_GREY;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 
 /**
  * Author: towdium
- * Date:   17-8-18.
+ * Date: 17-8-18.
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class WIcon extends WTooltip {
+
     public int xPos, yPos, xSize, ySize;
     public Resource normal, focused;
 
@@ -51,11 +53,11 @@ public class WIcon extends WTooltip {
     @Override
     public boolean mouseIn(int xMouse, int yMouse) {
         return JecaGui.mouseIn(
-                xPos + (xSize - normal.getXSize()) / 2,
-                yPos + (ySize - normal.getYSize()) / 2,
-                normal.getXSize(),
-                normal.getYSize(),
-                xMouse,
-                yMouse);
+            xPos + (xSize - normal.getXSize()) / 2,
+            yPos + (ySize - normal.getYSize()) / 2,
+            normal.getXSize(),
+            normal.getYSize(),
+            xMouse,
+            yMouse);
     }
 }

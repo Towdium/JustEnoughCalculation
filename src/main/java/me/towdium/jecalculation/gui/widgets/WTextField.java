@@ -1,21 +1,24 @@
 package me.towdium.jecalculation.gui.widgets;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import javax.annotation.ParametersAreNonnullByDefault;
-import me.towdium.jecalculation.gui.JecaGui;
-import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiTextField;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import me.towdium.jecalculation.gui.JecaGui;
+import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
+
 /**
  * Author: towdium
- * Date:   17-8-18.
+ * Date: 17-8-18.
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class WTextField implements IWidget {
+
     public ListenerAction<? super WTextField> listener;
     protected int xPos, yPos, xSize;
     GuiTextField textField;

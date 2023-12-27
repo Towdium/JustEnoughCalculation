@@ -1,20 +1,22 @@
 package me.towdium.jecalculation.gui.widgets;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import javax.annotation.ParametersAreNonnullByDefault;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 
 /**
  * Author: towdium
- * Date:   17-8-18.
+ * Date: 17-8-18.
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class WLine implements IWidget {
+
     int xPos, yPos, xSize, ySize;
 
     public WLine(int y) {
@@ -40,6 +42,7 @@ public class WLine implements IWidget {
     }
 
     public static class Joint implements IWidget {
+
         int xPos, yPos;
         boolean up, down, left, right;
         public static Resource u = Resource.WGT_SLOT.sub(9, 0, 2, 1);

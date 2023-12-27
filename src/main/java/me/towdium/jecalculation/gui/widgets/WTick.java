@@ -4,8 +4,10 @@ import static me.towdium.jecalculation.gui.Resource.*;
 
 import java.util.Collections;
 import java.util.List;
+
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
@@ -17,6 +19,7 @@ import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class WTick extends WContainer {
+
     WButton button;
     int xPos, yPos, xSize, ySize;
     String name;
@@ -57,6 +60,7 @@ public class WTick extends WContainer {
     }
 
     private class Normal extends WButton {
+
         public Normal(int xPos, int yPos, int xSize, int ySize, @Nullable String name) {
             super(xPos, yPos, xSize, ySize, name);
             listener = i -> {
@@ -73,6 +77,7 @@ public class WTick extends WContainer {
     }
 
     private class Selected extends WButton {
+
         public Selected(int xPos, int yPos, int xSize, int ySize, @Nullable String name) {
             super(xPos, yPos, xSize, ySize, name);
             listener = i -> {

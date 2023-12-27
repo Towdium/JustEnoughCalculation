@@ -1,16 +1,19 @@
 package me.towdium.jecalculation.nei;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import net.minecraft.item.ItemStack;
+
 import codechicken.nei.PositionedStack;
 import codechicken.nei.recipe.IRecipeHandler;
 import cpw.mods.fml.common.Loader;
-import java.util.ArrayList;
-import java.util.List;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.nei.adapter.*;
 import me.towdium.jecalculation.utils.Utilities;
-import net.minecraft.item.ItemStack;
 
 public class Adapter {
+
     public static List<IAdapter> adapters = new ArrayList<>();
 
     public static Object convertFluid(ItemStack itemStack) {
@@ -48,7 +51,7 @@ public class Adapter {
             }
             adapters.add(new GregTech(isNH));
         }
-        if(Loader.isModLoaded("gregapi") && Loader.isModLoaded("gregapi_post")) {
+        if (Loader.isModLoaded("gregapi") && Loader.isModLoaded("gregapi_post")) {
             JustEnoughCalculation.logger.info("GregTech6 detected");
             adapters.add(new GregTech6());
         }
@@ -78,9 +81,10 @@ public class Adapter {
 
     public static void handleRecipe(IRecipeHandler recipe, int index, List<Object[]> inputs, List<Object[]> outputs) {
         // raw inputs
-        recipe.getIngredientStacks(index).stream()
-                .map((positionedStack) -> (Object[]) positionedStack.items)
-                .forEach(inputs::add);
+        recipe.getIngredientStacks(index)
+            .stream()
+            .map((positionedStack) -> (Object[]) positionedStack.items)
+            .forEach(inputs::add);
 
         // raw outputs
         PositionedStack resultStack = recipe.getResultStack(index);
@@ -93,7 +97,8 @@ public class Adapter {
         } catch (Exception e) {
             Utilities.addChatMessage(Utilities.ChatMessage.RECIPE_TRANSFER_ERROR);
             JustEnoughCalculation.logger.error(
-                    "Exception when handling recipe: " + recipe.getClass().getName());
+                "Exception when handling recipe: " + recipe.getClass()
+                    .getName());
             e.printStackTrace();
         }
     }

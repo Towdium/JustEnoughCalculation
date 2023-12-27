@@ -1,14 +1,24 @@
 package me.towdium.jecalculation.data.label;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+
+import net.minecraft.enchantment.EnchantmentData;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemEnchantedBook;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.JustEnoughCalculation;
 import me.towdium.jecalculation.data.label.labels.LFluidStack;
 import me.towdium.jecalculation.data.label.labels.LItemStack;
@@ -23,20 +33,14 @@ import me.towdium.jecalculation.polyfill.mc.client.renderer.GlStateManager;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.Utilities.ReversedIterator;
 import me.towdium.jecalculation.utils.wrappers.Pair;
-import net.minecraft.enchantment.EnchantmentData;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemEnchantedBook;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
 
 /**
  * Author: towdium
- * Date:   8/11/17.
+ * Date: 8/11/17.
  */
 @ParametersAreNonnullByDefault
 public interface ILabel {
+
     Merger MERGER = new Merger();
     Serializer SERIALIZER = new Serializer();
     Converter CONVERTER = new Converter();
@@ -67,10 +71,12 @@ public interface ILabel {
         MERGER.register("itemStack", "itemStack", Impl.form(LItemStack.class, LItemStack.class, LItemStack::merge));
         MERGER.register("oreDict", "oreDict", Impl.form(LOreDict.class, LOreDict.class, LOreDict::mergeSame));
         MERGER.register("oreDict", "itemStack", Impl.form(LOreDict.class, LItemStack.class, LOreDict::mergeFuzzy));
+        MERGER
+            .register("fluidStack", "fluidStack", Impl.form(LFluidStack.class, LFluidStack.class, LFluidStack::merge));
         MERGER.register(
-                "fluidStack", "fluidStack", Impl.form(LFluidStack.class, LFluidStack.class, LFluidStack::merge));
-        MERGER.register(
-                "placeholder", "placeholder", Impl.form(LPlaceholder.class, LPlaceholder.class, LPlaceholder::merge));
+            "placeholder",
+            "placeholder",
+            Impl.form(LPlaceholder.class, LPlaceholder.class, LPlaceholder::merge));
     }
 
     long getAmount();
@@ -122,6 +128,7 @@ public interface ILabel {
      * For registering, see {@link Serializer}.
      */
     class Merger {
+
         private final Utilities.Relation<String, MergerFunction> functions = new Utilities.Relation<>();
 
         private Merger() {}
@@ -134,10 +141,10 @@ public interface ILabel {
          * @param a one label
          * @param b another label
          * @return merge result or empty
-         * This function will try to merge two labels.
-         * If both label has same type, just sum up amount
-         * For different type, the framework will try reversing the order for MergeFunctions to work
-         * So generally speaking, a and b has no priority in this function
+         *         This function will try to merge two labels.
+         *         If both label has same type, just sum up amount
+         *         For different type, the framework will try reversing the order for MergeFunctions to work
+         *         So generally speaking, a and b has no priority in this function
          */
         public Optional<ILabel> merge(ILabel a, ILabel b) {
             MergerFunction mf = functions.get(a.getIdentifier(), b.getIdentifier());
@@ -147,13 +154,14 @@ public interface ILabel {
 
         @FunctionalInterface
         public interface MergerFunction {
+
             /**
              * @param a requested label
              * @param b supplied label
              * @return merge result or empty
-             * This function ensures to generate same type if a and b are from same type
-             * If a is fuzzy, b is explicit, generates a is amount is negative, else generates b
-             * Normally, explicit type cannot request fuzzy type
+             *         This function ensures to generate same type if a and b are from same type
+             *         If a is fuzzy, b is explicit, generates a is amount is negative, else generates b
+             *         Normally, explicit type cannot request fuzzy type
              */
             @Nullable
             ILabel merge(ILabel a, ILabel b);
@@ -166,6 +174,7 @@ public interface ILabel {
      * For {@link ILabel} operations, see {@link Merger}
      */
     class Serializer {
+
         public static final String KEY_IDENTIFIER = "type";
         public static final String KEY_CONTENT = "content";
 
@@ -180,25 +189,26 @@ public interface ILabel {
         /**
          * @param nbt NBT to deserialize
          * @return the recovered label
-         * A typical NBT structure of an {@link ILabel} is as follows:
-         * <pre>{@code
+         *         A typical NBT structure of an {@link ILabel} is as follows:
+         * 
+         *         <pre>
+         * {@code
          * {
          *     KEY_IDENTIFIER: entry_id
          *     KEY_CONTENT: {
          *         entry_content
          *     }
          * }
-         * }</pre>
+         * }
+         *         </pre>
          */
         public ILabel deserialize(NBTTagCompound nbt) {
             String s = nbt.getString(KEY_IDENTIFIER);
             Function<NBTTagCompound, ILabel> func = idToData.get(s);
             if (func == null) JustEnoughCalculation.logger.warn("Unrecognized identifier \"" + s + "\", abort");
-            else
-                try {
-                    return func.apply(nbt.getCompoundTag(KEY_CONTENT));
-                } catch (SerializationException ignored) {
-                }
+            else try {
+                return func.apply(nbt.getCompoundTag(KEY_CONTENT));
+            } catch (SerializationException ignored) {}
             return EMPTY;
         }
 
@@ -210,6 +220,7 @@ public interface ILabel {
         }
 
         public static class SerializationException extends RuntimeException {
+
             public SerializationException(String s) {
                 super(s);
                 JustEnoughCalculation.logger.warn(s);
@@ -223,6 +234,7 @@ public interface ILabel {
      * It can also convert ItemStack or FluidStack to ILabel
      */
     class Converter {
+
         static EnumMap<Priority, ArrayList<ConverterFunction>> handlers;
 
         /**
@@ -257,7 +269,8 @@ public interface ILabel {
         }
 
         public void register(ConverterFunction handler, Priority priority) {
-            handlers.get(priority).add(handler);
+            handlers.get(priority)
+                .add(handler);
         }
 
         // get most possible guess from labels
@@ -268,15 +281,22 @@ public interface ILabel {
 
         // to test if the labels can be converted to other labels (like oreDict)
         public Pair<List<ILabel>, List<ILabel>> guess(List<ILabel> labels, @Nullable Class<?> context) {
-            List<ILabel> suggest = new ReversedIterator<>(handlers.get(Priority.SUGGEST))
-                    .stream().flatMap(h -> h.convert(labels, context).stream()).collect(Collectors.toList());
-            List<ILabel> fallback = new ReversedIterator<>(handlers.get(Priority.FALLBACK))
-                    .stream().flatMap(h -> h.convert(labels, context).stream()).collect(Collectors.toList());
+            List<ILabel> suggest = new ReversedIterator<>(handlers.get(Priority.SUGGEST)).stream()
+                .flatMap(
+                    h -> h.convert(labels, context)
+                        .stream())
+                .collect(Collectors.toList());
+            List<ILabel> fallback = new ReversedIterator<>(handlers.get(Priority.FALLBACK)).stream()
+                .flatMap(
+                    h -> h.convert(labels, context)
+                        .stream())
+                .collect(Collectors.toList());
             return new Pair<>(suggest, fallback);
         }
 
         @FunctionalInterface
         public interface ConverterFunction {
+
             List<ILabel> convert(List<ILabel> a, @Nullable Class<?> context);
         }
     }
@@ -296,6 +316,7 @@ public interface ILabel {
         }
 
         public static class Record {
+
             public Supplier<IPicker> editor;
             public String localizeKey;
             public ILabel representation;
@@ -309,6 +330,7 @@ public interface ILabel {
     }
 
     class LEmpty implements ILabel {
+
         public static final String IDENTIFIER = "empty";
 
         @Override
@@ -397,6 +419,7 @@ public interface ILabel {
     }
 
     abstract class Impl implements ILabel {
+
         public static final String KEY_AMOUNT = "amount";
         public static final String KEY_PERCENT = "percent";
         protected long amount;
@@ -473,8 +496,10 @@ public interface ILabel {
                     long amount = Math.addExact(amountC, amountD);
                     long amountI = (amount > 0 ? Math.addExact(amount, 99) : Math.subtractExact(amount, 99)) / 100;
                     if (amount == 0) return EMPTY;
-                    else if (amount > 0) return d.copy().setAmount(d.isPercent() ? amount : amountI);
-                    else return c.copy().setAmount(c.isPercent() ? amount : amountI);
+                    else if (amount > 0) return d.copy()
+                        .setAmount(d.isPercent() ? amount : amountI);
+                    else return c.copy()
+                        .setAmount(c.isPercent() ? amount : amountI);
                 } else return null;
             };
         }

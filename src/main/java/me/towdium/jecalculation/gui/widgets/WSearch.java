@@ -3,19 +3,21 @@ package me.towdium.jecalculation.gui.widgets;
 import static me.towdium.jecalculation.gui.JecaGui.COLOR_TEXT_RED;
 import static me.towdium.jecalculation.gui.JecaGui.COLOR_TEXT_WHITE;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import javax.annotation.ParametersAreNonnullByDefault;
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 
 /**
  * Author: towdium
- * Date:   17-9-28.
+ * Date: 17-9-28.
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class WSearch extends WTextField {
+
     ISearchable[] lss;
 
     public WSearch(int xPos, int yPos, int xSize, ISearchable... lss) {

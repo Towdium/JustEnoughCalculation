@@ -2,24 +2,27 @@ package me.towdium.jecalculation.gui.widgets;
 
 import static me.towdium.jecalculation.gui.Resource.*;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+
+import org.lwjgl.input.Mouse;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
-import org.lwjgl.input.Mouse;
 
 /**
  * Author: towdium
- * Date:   17-8-19.
+ * Date: 17-8-19.
  * Scroll bar
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class WScroll implements IWidget {
+
     public int xPos, yPos, ySize;
     public float current;
     boolean active = false;

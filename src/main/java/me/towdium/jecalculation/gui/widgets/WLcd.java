@@ -7,7 +7,9 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Objects;
+
 import javax.annotation.ParametersAreNonnullByDefault;
+
 import me.towdium.jecalculation.data.structure.RecordMath.Operator;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.Resource;
@@ -20,6 +22,7 @@ import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class WLcd implements IWidget {
+
     static HashMap<Character, boolean[]> PATTERN = new HashMap<>();
 
     public int yPos;
@@ -29,21 +32,21 @@ public class WLcd implements IWidget {
     public Operator operator = Operator.EQUALS;
 
     static {
-        PATTERN.put('0', new boolean[] {true, true, true, true, true, true, false});
-        PATTERN.put('1', new boolean[] {false, true, true, false, false, false, false});
-        PATTERN.put('2', new boolean[] {true, true, false, true, true, false, true});
-        PATTERN.put('3', new boolean[] {true, true, true, true, false, false, true});
-        PATTERN.put('4', new boolean[] {false, true, true, false, false, true, true});
-        PATTERN.put('5', new boolean[] {true, false, true, true, false, true, true});
-        PATTERN.put('6', new boolean[] {true, false, true, true, true, true, true});
-        PATTERN.put('7', new boolean[] {true, true, true, false, false, false, false});
-        PATTERN.put('8', new boolean[] {true, true, true, true, true, true, true});
-        PATTERN.put('9', new boolean[] {true, true, true, true, false, true, true});
-        PATTERN.put('E', new boolean[] {true, false, false, true, true, true, true});
-        PATTERN.put('o', new boolean[] {false, false, true, true, true, false, true});
-        PATTERN.put('r', new boolean[] {false, false, false, false, true, false, true});
-        PATTERN.put('-', new boolean[] {false, false, false, false, false, false, true});
-        PATTERN.put(' ', new boolean[] {false, false, false, false, false, false, false});
+        PATTERN.put('0', new boolean[] { true, true, true, true, true, true, false });
+        PATTERN.put('1', new boolean[] { false, true, true, false, false, false, false });
+        PATTERN.put('2', new boolean[] { true, true, false, true, true, false, true });
+        PATTERN.put('3', new boolean[] { true, true, true, true, false, false, true });
+        PATTERN.put('4', new boolean[] { false, true, true, false, false, true, true });
+        PATTERN.put('5', new boolean[] { true, false, true, true, false, true, true });
+        PATTERN.put('6', new boolean[] { true, false, true, true, true, true, true });
+        PATTERN.put('7', new boolean[] { true, true, true, false, false, false, false });
+        PATTERN.put('8', new boolean[] { true, true, true, true, true, true, true });
+        PATTERN.put('9', new boolean[] { true, true, true, true, false, true, true });
+        PATTERN.put('E', new boolean[] { true, false, false, true, true, true, true });
+        PATTERN.put('o', new boolean[] { false, false, true, true, true, false, true });
+        PATTERN.put('r', new boolean[] { false, false, false, false, true, false, true });
+        PATTERN.put('-', new boolean[] { false, false, false, false, false, false, true });
+        PATTERN.put(' ', new boolean[] { false, false, false, false, false, false, false });
         // format.setMinimumIntegerDigits(0);
     }
 
@@ -117,10 +120,15 @@ public class WLcd implements IWidget {
     }
 
     public void print(BigDecimal num) {
-        String s = num.stripTrailingZeros().toPlainString();
+        String s = num.stripTrailingZeros()
+            .toPlainString();
         double f = num.floatValue();
         int len = f > 0 ? 7 : 6;
-        int sca = num.unscaledValue().abs().toString().length() - num.scale() - 1;
+        int sca = num.unscaledValue()
+            .abs()
+            .toString()
+            .length() - num.scale()
+            - 1;
         if (Math.abs(sca) > len) {
             String scale = String.valueOf(sca);
             len -= scale.length() + 2;

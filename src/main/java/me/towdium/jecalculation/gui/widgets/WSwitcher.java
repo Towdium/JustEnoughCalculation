@@ -5,25 +5,28 @@ import static me.towdium.jecalculation.gui.JecaGui.Font.SHADOW;
 import static me.towdium.jecalculation.gui.Resource.WGT_ARR_L;
 import static me.towdium.jecalculation.gui.Resource.WGT_ARR_R;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.utils.Utilities.Circulator;
 
 /**
  * Author: towdium
- * Date:   17-8-19.
+ * Date: 17-8-19.
  * Widget to select page with button for left and right
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 @SideOnly(Side.CLIENT)
 public class WSwitcher extends WContainer {
+
     public static final int SIZE = 13;
     public ListenerAction<? super WSwitcher> listener;
     protected int xPos, xSize, yPos;
@@ -36,10 +39,12 @@ public class WSwitcher extends WContainer {
 
     public WSwitcher(int xPos, int yPos, int xSize, int total) {
         this(
-                xPos,
-                yPos,
-                xSize,
-                IntStream.rangeClosed(1, total).mapToObj(i -> i + "/" + total).collect(Collectors.toList()));
+            xPos,
+            yPos,
+            xSize,
+            IntStream.rangeClosed(1, total)
+                .mapToObj(i -> i + "/" + total)
+                .collect(Collectors.toList()));
     }
 
     public WSwitcher(int xPos, int yPos, int xSize, List<String> keys) {

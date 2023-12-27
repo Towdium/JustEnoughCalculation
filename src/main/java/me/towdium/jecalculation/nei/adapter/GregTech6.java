@@ -1,19 +1,23 @@
 package me.towdium.jecalculation.nei.adapter;
 
-import codechicken.nei.recipe.IRecipeHandler;
-import codechicken.nei.recipe.TemplateRecipeHandler;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import javax.annotation.ParametersAreNonnullByDefault;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
+import codechicken.nei.recipe.IRecipeHandler;
+import codechicken.nei.recipe.TemplateRecipeHandler;
+
 @ParametersAreNonnullByDefault
 public class GregTech6 implements IAdapter {
+
     public static boolean isGT6() {
         try {
             Class<?> buildInfoclz = Class.forName("gregtech.BuildInfo");
@@ -37,8 +41,7 @@ public class GregTech6 implements IAdapter {
             for (Object value : maps.values()) {
                 try {
                     recipeNames.add((String) mNameNEIField.get(value));
-                } catch (IllegalAccessException ignored) {
-                }
+                } catch (IllegalAccessException ignored) {}
             }
         } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
@@ -83,27 +86,29 @@ public class GregTech6 implements IAdapter {
                 FluidStack[] fluidInputs = (FluidStack[]) mFluidInputs.get(re);
                 FluidStack[] fluidOutputs = (FluidStack[]) mFluidOutputs.get(re);
                 inputs.clear();
-                inputs.addAll(Stream.concat(Arrays.stream(input), Arrays.stream(fluidInputs))
-                        .map(i -> new Object[] {i})
+                inputs.addAll(
+                    Stream.concat(Arrays.stream(input), Arrays.stream(fluidInputs))
+                        .map(i -> new Object[] { i })
                         .collect(Collectors.toList()));
                 outputs.clear();
-                outputs.addAll(Stream.concat(Arrays.stream(output), Arrays.stream(fluidOutputs))
-                        .map(o -> new Object[] {o})
+                outputs.addAll(
+                    Stream.concat(Arrays.stream(output), Arrays.stream(fluidOutputs))
+                        .map(o -> new Object[] { o })
                         .collect(Collectors.toList()));
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 e.printStackTrace();
             }
-            //            for (int i = 0; i < inputs.size(); i++) {
-            //                Object[] objects = Arrays.stream(inputs.get(i)).map(o ->
+            // for (int i = 0; i < inputs.size(); i++) {
+            // Object[] objects = Arrays.stream(inputs.get(i)).map(o ->
             // GregTech6.convertFluid((ItemStack) o)).toArray();
-            //                inputs.set(i, objects);
-            //            }
-            //            List<PositionedStack> otherStacks = recipe.getOtherStacks(index);
-            //            outputs.addAll(otherStacks
-            //                    .stream()
-            //                    .map(stack -> stack.items)
-            //                    .map(is -> Arrays.stream(is).map(GregTech6::convertFluid).toArray())
-            //                    .collect(Collectors.toList()));
+            // inputs.set(i, objects);
+            // }
+            // List<PositionedStack> otherStacks = recipe.getOtherStacks(index);
+            // outputs.addAll(otherStacks
+            // .stream()
+            // .map(stack -> stack.items)
+            // .map(is -> Arrays.stream(is).map(GregTech6::convertFluid).toArray())
+            // .collect(Collectors.toList()));
         }
     }
 
@@ -117,10 +122,8 @@ public class GregTech6 implements IAdapter {
             Class<?> itemListClz = Class.forName("gregapi.data.FL");
             Method getFluidMethod = itemListClz.getDeclaredMethod("getFluid", ItemStack.class, boolean.class);
             return (FluidStack) getFluidMethod.invoke(null, aDisplayStack, true);
-        } catch (ClassNotFoundException
-                | NoSuchMethodException
-                | IllegalAccessException
-                | InvocationTargetException e) {
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException
+            | InvocationTargetException e) {
             e.printStackTrace();
             return null;
         }

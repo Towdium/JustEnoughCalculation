@@ -2,9 +2,10 @@ package me.towdium.jecalculation.utils.wrappers;
 
 /**
  * Author: Towdium
- * Date:   2016/7/1.
+ * Date: 2016/7/1.
  */
 public class Trio<T, U, V> {
+
     public T one;
     public U two;
     public V three;

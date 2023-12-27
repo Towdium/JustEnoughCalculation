@@ -1,11 +1,13 @@
 package me.towdium.jecalculation.polyfill.mc.util.math;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Random;
 import java.util.UUID;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 public class MathHelper {
+
     public static final float SQRT_2 = sqrt(2.0F);
     private static final float[] SIN_TABLE = new float[65536];
     private static final Random RANDOM = new Random();
@@ -430,8 +432,12 @@ public class MathHelper {
                 f6 = f2;
                 break;
             default:
-                throw new RuntimeException("Something went wrong when converting from HSV to RGB. Input was " + hue
-                        + ", " + saturation + ", " + value);
+                throw new RuntimeException(
+                    "Something went wrong when converting from HSV to RGB. Input was " + hue
+                        + ", "
+                        + saturation
+                        + ", "
+                        + value);
         }
 
         int j = clamp((int) (f4 * 255.0F), 0, 255);
@@ -454,10 +460,8 @@ public class MathHelper {
             SIN_TABLE[i] = (float) Math.sin((double) i * Math.PI * 2.0D / 65536.0D);
         }
 
-        MULTIPLY_DE_BRUIJN_BIT_POSITION = new int[] {
-            0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8, 31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11,
-            5, 10, 9
-        };
+        MULTIPLY_DE_BRUIJN_BIT_POSITION = new int[] { 0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8, 31, 27,
+            13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9 };
         FRAC_BIAS = Double.longBitsToDouble(4805340802404319232L);
         ASINE_TAB = new double[257];
         COS_TAB = new double[257];

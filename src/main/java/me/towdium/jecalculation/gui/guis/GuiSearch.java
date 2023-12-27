@@ -6,7 +6,11 @@ import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.function.Consumer;
+
 import javax.annotation.ParametersAreNonnullByDefault;
+
+import org.lwjgl.input.Keyboard;
+
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.structure.Recipe;
@@ -16,34 +20,35 @@ import me.towdium.jecalculation.gui.widgets.*;
 import me.towdium.jecalculation.polyfill.MethodsReturnNonnullByDefault;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Trio;
-import org.lwjgl.input.Keyboard;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class GuiSearch extends Gui {
+
     IdentityHashMap<ILabel, Trio<Recipe, String, Integer>> recipes;
     WLabelScroll labels = new WLabelScroll(7, 51, 8, 6, false).setLsnrLeftClick((i, v) -> {
-        ILabel l = i.get(v).getLabel();
+        ILabel l = i.get(v)
+            .getLabel();
         if (l != ILabel.EMPTY) setOverlay(new Overlay(i.get(v)));
     });
     WSwitcher group;
     WTextField text = new WTextField(7, 25, 119);
     WButton no = new WButtonIcon(130, 25, 20, 20, BTN_NO, "common.cancel").setListener(i -> setRename(false));
-    WButton yes = new WButtonIcon(149, 25, 20, 20, BTN_YES, "search.confirm")
-            .setDisabled(true)
-            .setListener(i -> {
-                Controller.renameGroup(group.getText(), text.getText());
-                refreshGroups();
-                group.setText(text.getText());
-                refreshDisplay();
-                setRename(false);
-            });
-    WButton exportN =
-            new WButtonIcon(111, 25, 20, 20, BTN_EXPORT_N, "search.export_all").setListener(i -> Controller.export());
+    WButton yes = new WButtonIcon(149, 25, 20, 20, BTN_YES, "search.confirm").setDisabled(true)
+        .setListener(i -> {
+            Controller.renameGroup(group.getText(), text.getText());
+            refreshGroups();
+            group.setText(text.getText());
+            refreshDisplay();
+            setRename(false);
+        });
+    WButton exportN = new WButtonIcon(111, 25, 20, 20, BTN_EXPORT_N, "search.export_all")
+        .setListener(i -> Controller.export());
     WButton export1 = new WButtonIcon(111, 25, 20, 20, BTN_EXPORT_1, "search.export_group")
-            .setListener(i -> Controller.export(group.getText()));
+        .setListener(i -> Controller.export(group.getText()));
     WButton deleteN = new WButtonIcon(130, 25, 20, 20, BTN_DELETE_N, "search.delete_all").setListener(i -> {
-        Controller.getGroups().forEach(Controller::removeGroup);
+        Controller.getGroups()
+            .forEach(Controller::removeGroup);
         refreshGroups();
         refreshDisplay();
     });
@@ -53,7 +58,7 @@ public class GuiSearch extends Gui {
         refreshDisplay();
     });
     WButton inport = new WButtonIcon(92, 25, 20, 20, BTN_IMPORT, "search.import")
-            .setListener(i -> JecaGui.displayGui(new GuiImport()));
+        .setListener(i -> JecaGui.displayGui(new GuiImport()));
     WButton rename = new WButtonIcon(149, 25, 20, 20, BTN_EDIT, "search.rename").setListener(i -> setRename(true));
     WIcon icon = new WIcon(7, 25, 20, 20, ICN_TEXT, "common.search");
     WSearch search = new WSearch(26, 25, 61, labels);
@@ -62,7 +67,9 @@ public class GuiSearch extends Gui {
     public GuiSearch() {
         text.setListener(i -> {
             String s = i.getText();
-            yes.setDisabled(s.isEmpty() || Controller.getGroups().contains(s));
+            yes.setDisabled(
+                s.isEmpty() || Controller.getGroups()
+                    .contains(s));
         });
         add(new WHelp("search"), new WPanel());
         add(labels, icon, search, inport, exportN, deleteN, rename);
@@ -77,9 +84,11 @@ public class GuiSearch extends Gui {
             identifiers.add(id);
         };
 
-        Recipes.RecipeIterator it =
-                group.getIndex() == 0 ? Controller.recipeIterator() : Controller.recipeIterator(group.getText());
-        it.stream().map(j -> new Trio<>(j, it.getGroup(), it.getIndex())).forEach(add);
+        Recipes.RecipeIterator it = group.getIndex() == 0 ? Controller.recipeIterator()
+            : Controller.recipeIterator(group.getText());
+        it.stream()
+            .map(j -> new Trio<>(j, it.getGroup(), it.getIndex()))
+            .forEach(add);
     }
 
     @Override
@@ -134,6 +143,7 @@ public class GuiSearch extends Gui {
     }
 
     class Overlay extends WOverlay {
+
         public Overlay(WLabel l) {
             Trio<Recipe, String, Integer> recipe = recipes.get(l.getLabel());
             int x = l.xPos - 1;
