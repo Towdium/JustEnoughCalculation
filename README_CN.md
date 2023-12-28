@@ -60,9 +60,9 @@ This mod is focused on calculation, so you might find it powerful and high perfo
 - [ ] 计算器 gui 会覆盖 NEI 的 tooltip
 - [ ] 流体需要针对 mod 进行适配, 开发人员可以查看 [Adapter](./src/main/java/me/towdium/jecalculation/nei/Adapter.java)
 
-[1]: http://cf.way2muchnoise.eu/full_just-enough-calculation_downloads.svg
+[1]: http://cf.way2muchnoise.eu/full_242223_downloads.svg
 
-[2]: http://cf.way2muchnoise.eu/versions/just-enough-calculation.svg
+[2]: http://cf.way2muchnoise.eu/versions/242223.svg
 
 [3]: https://minecraft.curseforge.com/projects/just-enough-calculation
 
