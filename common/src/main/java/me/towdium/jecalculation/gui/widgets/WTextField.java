@@ -52,7 +52,7 @@ public class WTextField implements IWidget {
 
     @Override
     public boolean onDraw(JecaGui gui, int xMouse, int yMouse) {
-        textField.renderButton(gui.getMatrix(), xPos, yPos, 0);
+        textField.renderWidget(gui.getMatrix(), xPos, yPos, 0);
         return false;
     }
 

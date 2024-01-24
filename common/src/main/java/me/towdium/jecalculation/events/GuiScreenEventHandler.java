@@ -12,6 +12,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -73,7 +74,7 @@ public class GuiScreenEventHandler {
                 && !(screen instanceof JecaGui);
     }
 
-    public void onDrawForeground(Screen screen, PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+    public void onDrawForeground(Screen screen, GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         Minecraft minecraft = Minecraft.getInstance();
         LocalPlayer player = minecraft.player;
         if (player == null || overlayHandler == null || !isScreenValidForOverlay(screen)) {
@@ -90,10 +91,11 @@ public class GuiScreenEventHandler {
             gui.init(Minecraft.getInstance(), screen.width, screen.height);
         }
 
-        gui.setMatrix(poseStack);
+        gui.setMatrix(guiGraphics);
         mouseX = gui.getGlobalMouseX();
         mouseY = gui.getGlobalMouseY();
 
+        var poseStack = guiGraphics.pose();
         poseStack.pushPose();
         poseStack.translate(gui.getGuiLeft(), gui.getGuiTop(), 0);
         overlayHandler.onDraw(gui, mouseX, mouseY);
@@ -101,14 +103,14 @@ public class GuiScreenEventHandler {
 
         List<String> tooltip = new ArrayList<>();
         overlayHandler.onTooltip(gui, mouseX, mouseY, tooltip);
-        gui.drawHoveringText(poseStack, tooltip, mouseX + gui.getGuiLeft(), mouseY + gui.getGuiTop(), minecraft.font);
+        gui.drawHoveringText(guiGraphics, tooltip, mouseX + gui.getGuiLeft(), mouseY + gui.getGuiTop(), minecraft.font);
         if (cachedTooltipEvent != null) {
-            gui.renderTooltipInternal(poseStack, (List<ClientTooltipComponent>) cachedTooltipEvent.one, cachedTooltipEvent.two, cachedTooltipEvent.three, DefaultTooltipPositioner.INSTANCE);
+            guiGraphics.renderTooltipInternal(minecraft.font,(List<ClientTooltipComponent>) cachedTooltipEvent.one,cachedTooltipEvent.two, cachedTooltipEvent.three, DefaultTooltipPositioner.INSTANCE);
             cachedTooltipEvent = null;
         }
     }
 
-    public EventResult onTooltip(PoseStack poseStack, List<? extends ClientTooltipComponent> components, int x, int y) {
+    public EventResult onTooltip(GuiGraphics guiGraphics, List<? extends ClientTooltipComponent> components, int x, int y) {
         if (overlayHandler == null || cachedTooltipEvent != null)
             return pass();
 

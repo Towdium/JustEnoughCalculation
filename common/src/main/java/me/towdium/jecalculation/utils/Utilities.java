@@ -353,7 +353,7 @@ public class Utilities {
         }
 
         public static Locale getLocale() {
-            String code = Minecraft.getInstance().getLanguageManager().getSelected().getCode();
+            String code = Minecraft.getInstance().getLanguageManager().getSelected();
             String[] splitLangCode = code.split("_", 2);
             return splitLangCode.length == 1 ? new Locale(code) : new Locale(splitLangCode[0], splitLangCode[1]);
         }

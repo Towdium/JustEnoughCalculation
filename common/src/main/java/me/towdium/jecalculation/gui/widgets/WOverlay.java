@@ -37,10 +37,10 @@ public class WOverlay extends WContainer {
     @Override
     @SuppressWarnings("deprecation")
     public boolean onDraw(JecaGui gui, int mouseX, int mouseY) {
-        gui.getMatrix().pushPose();
-        gui.getMatrix().translate(0, 0, 180);
+        gui.getMatrix().pose().pushPose();
+        gui.getMatrix().pose().translate(0, 0, 180);
         super.onDraw(gui, mouseX, mouseY);
-        gui.getMatrix().popPose();
+        gui.getMatrix().pose().popPose();
         return false;
     }
 }
