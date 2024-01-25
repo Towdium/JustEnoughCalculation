@@ -422,7 +422,7 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
             var pose = matrixGraphics.pose();
             RenderSystem.setShader(GameRenderer::getPositionColorShader);
             RenderSystem.enableDepthTest();
-            RenderSystem.disableTexture();
+            RenderSystem.disableBlend();
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
             pose.pushPose();
@@ -462,7 +462,7 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
             }
             pose.popPose();
             RenderSystem.disableBlend();
-            RenderSystem.enableTexture();
+            RenderSystem.enableBlend();
         }
     }
 
@@ -563,7 +563,7 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
         int y = hand ? yPos : topPos + yPos;
 
         RenderSystem.enableDepthTest();
-        matrix.renderItem(is, x + itemOffset.x(), y + itemOffset.y());
+        matrix.renderItem(is, xPos + itemOffset.x(), yPos + itemOffset.y());
         matrix.renderItemDecorations(font, is, leftPos + xPos, topPos + yPos, null);
         RenderSystem.disableDepthTest();
     }
