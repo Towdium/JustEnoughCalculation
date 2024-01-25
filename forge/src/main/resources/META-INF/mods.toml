@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[44,)"
+loaderVersion = "[47,)"
 issueTrackerURL="https://github.com/Towdium/JustEnoughCalculation/issues"
 license="The MIT License (MIT)"
 
@@ -15,18 +15,18 @@ logoFile="icon.png"
 [[dependencies.jecalculation]]
 modId="architectury"
 mandatory=true
-versionRange="[7.0.65,)"
+versionRange = "[9.1.12,)"
 ordering="AFTER"
 side="BOTH"
 [[dependencies.jecalculation]]
 modId="jei"
 mandatory=false
-versionRange="[11.5.0.292,)"
+versionRange = "[15.2.0.27,)"
 ordering="BEFORE"
 side="BOTH"
 [[dependencies.jecalculation]]
 modId="roughlyenoughitems"
 mandatory=false
-versionRange="[10.0.581,)"
+versionRange = "[12.0.684,)"
 ordering="BEFORE"
 side="BOTH"
