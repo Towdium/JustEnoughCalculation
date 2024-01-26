@@ -8,6 +8,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
@@ -37,7 +38,7 @@ public class LFluidTag extends LTag<Fluid> {
 
     @Override
     protected Registry<Fluid> getRegistry() {
-        return Registry.FLUID;
+        return BuiltInRegistries.FLUID;
     }
 
     @Override

@@ -7,6 +7,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -41,7 +42,7 @@ public class LItemTag extends LTag<Item> {
 
     @Override
     protected Registry<Item> getRegistry() {
-        return Registry.ITEM;
+        return BuiltInRegistries.ITEM;
     }
 
     @Override

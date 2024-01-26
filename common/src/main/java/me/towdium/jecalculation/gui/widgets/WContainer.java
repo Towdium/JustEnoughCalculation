@@ -66,8 +66,8 @@ public class WContainer implements IContainer {
 
     @Override
     public boolean onDraw(JecaGui gui, int mouseX, int mouseY) {
-        gui.getMatrix().pushPose();
-        gui.getMatrix().translate(offsetX, offsetY, 0);
+        gui.getMatrix().pose().pushPose();
+        gui.getMatrix().pose().translate(offsetX, offsetY, 0);
         gui.getItemOffsetStack().push(offsetX, offsetY);
         Wrapper<IWidget> w = new Wrapper<>(null);
         widgets.forEach(i -> {
@@ -75,7 +75,7 @@ public class WContainer implements IContainer {
         });
         if (w.value != null) w.value.onDraw(gui, mouseX - offsetX, mouseY - offsetY);
         gui.getItemOffsetStack().pop();
-        gui.getMatrix().popPose();
+        gui.getMatrix().pose().popPose();
         return false;
     }
 

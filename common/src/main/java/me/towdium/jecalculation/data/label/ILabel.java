@@ -439,9 +439,9 @@ public interface ILabel {
 
         @Override
         public void drawLabel(JecaGui gui, int xPos, int yPos, boolean center, boolean hand) {
-            gui.getMatrix().pushPose();
+            gui.getMatrix().pose().pushPose();
             drawLabel(center ? xPos - 8 : xPos, center ? yPos - 8 : yPos, gui, hand);
-            gui.getMatrix().popPose();
+            gui.getMatrix().pose().popPose();
         }
 
         abstract protected void drawLabel(int xPos, int yPos, JecaGui gui, boolean hand);

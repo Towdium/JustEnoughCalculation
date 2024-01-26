@@ -10,18 +10,17 @@
     "metadata": {
       "name": "Just Enough Calculation",
       "description": "A simple mod to help you with recipe calculation.",
+      "authors": [
+        "Towdium",
+        "MorningSage",
+        "6LeoY"
+      ],
       "contact": {
         "sources": "https://github.com/Towdium/JustEnoughCalculation"
       },
-      "license": "AML",
       "icon": "icon.png",
-      "contributors": {
-        "Towdium": "",
-        "MorningSage": "",
-        "6LeoY": ""
-      }
+      "license": "MIT"
     },
-
     "intermediate_mappings": "net.fabricmc:intermediary",
     "entrypoints": {
       "init": [
@@ -45,12 +44,15 @@
       },
       {
         "id": "minecraft",
-        "version": "1.19.2"
+        "version": ">=1.20.1"
       },
       {
         "id": "architectury",
-        "version": ">=6.4.62"
+        "version": ">=9.1.12"
       }
     ]
+  },
+  "minecraft": {
+    "environment": "*"
   }
 }

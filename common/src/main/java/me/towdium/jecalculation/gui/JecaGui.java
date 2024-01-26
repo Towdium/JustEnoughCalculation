@@ -24,6 +24,7 @@ import net.minecraft.Util;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -76,7 +77,7 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
     protected static JecaGui last;
     public static JecaGui override;
     protected JecaGui parent;
-    protected PoseStack matrix;
+    protected GuiGraphics matrix;
     protected final Utilities.OffsetStack itemOffset = new Utilities.OffsetStack();
     protected final boolean isWidget;
     protected boolean preventRecipeScreen = false;
@@ -112,23 +113,22 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
     public void init(Minecraft minecraft, int width, int height) {
         if (!isWidget) {
             super.init(minecraft, width, height);
-            minecraft.keyboardHandler.setSendRepeatsToGui(true);
+            //minecraft.keyboardHandler.setSendRepeatsToGui(true);
             return;
         }
         this.minecraft = minecraft;
-        this.itemRenderer = minecraft.getItemRenderer();
         this.font = minecraft.font;
         this.width = width;
         this.height = height;
         this.init();
-        minecraft.keyboardHandler.setSendRepeatsToGui(true);
+        //minecraft.keyboardHandler.setSendRepeatsToGui(true);
     }
 
     @Override
     public void removed() {
         super.removed();
         Objects.requireNonNull(this.minecraft);
-        this.minecraft.keyboardHandler.setSendRepeatsToGui(false);
+        //this.minecraft.keyboardHandler.setSendRepeatsToGui(false);
     }
 
     public static int getMouseX() {
@@ -241,11 +241,11 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
         return pass();
     }
 
-    @Override
-    public void tick() {
-        super.tick();
-        root.onTick(this);
-    }
+//    @Override
+//    public void tick() {
+//        super.tick();
+//        root.onTick(this);
+//    }
 
     @Nullable
     public Slot getSlotUnderMouse() {
@@ -295,11 +295,11 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
         JecaGui.displayGui(root, parent);
     }
 
-    public PoseStack getMatrix() {
+    public GuiGraphics getMatrix() {
         return matrix;
     }
 
-    public void setMatrix(PoseStack matrix) {
+    public void setMatrix(GuiGraphics matrix) {
         this.matrix = matrix;
     }
 
@@ -344,7 +344,7 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
     }
 
 
-    public static EventResult onTooltip(PoseStack poseStack, List<? extends ClientTooltipComponent> components, int x, int y) {
+    public static EventResult onTooltip(GuiGraphics guiGraphics, List<? extends ClientTooltipComponent> components, int x, int y) {
         if (Minecraft.getInstance().screen instanceof JecaGui) {
             JecaGui gui = getCurrent();
             return gui.root.onTooltip(gui, x - gui.leftPos,
@@ -392,39 +392,41 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
     }
 
     @Override
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int x, int y) {
-        renderBackground(matrixStack);
+    protected void renderBg(GuiGraphics matrixGraphics, float partialTicks, int x, int y) {
+        renderBackground(matrixGraphics);
     }
 
     @Override
-    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        super.render(matrixStack, mouseX, mouseY, partialTicks);
-        matrix = matrixStack;
+    public void render(GuiGraphics matrixGraphics, int mouseX, int mouseY, float partialTicks) {
+        super.render(matrixGraphics, mouseX, mouseY, partialTicks);
+        matrix = matrixGraphics;
         mouseX -= leftPos;
         mouseY -= topPos;
-        matrixStack.pushPose();
-        matrixStack.translate(leftPos, topPos, 0);
+        PoseStack pose = matrixGraphics.pose();
+        pose.pushPose();
+        pose.translate(leftPos, topPos, 0);
         root.onDraw(this, mouseX, mouseY);
-        matrixStack.popPose();
-        matrixStack.pushPose();
-        matrixStack.translate(0, 0, 80);
+        pose.popPose();
+        pose.pushPose();
+        pose.translate(0, 0, 80);
         hand.drawLabel(this, mouseX + leftPos, mouseY + topPos, true, true);
-        matrixStack.popPose();
+        pose.popPose();
         List<String> tooltip = new ArrayList<>();
         root.onTooltip(this, mouseX, mouseY, tooltip);
-        drawHoveringText(matrixStack, tooltip, mouseX + leftPos, mouseY + topPos, font);
+        drawHoveringText(matrixGraphics, tooltip, mouseX + leftPos, mouseY + topPos, font);
     }
 
     // modified from vanilla
-    public void drawHoveringText(PoseStack matrixStack, List<String> textLines, int x, int y, net.minecraft.client.gui.Font font) {
+    public void drawHoveringText(GuiGraphics matrixGraphics, List<String> textLines, int x, int y, net.minecraft.client.gui.Font font) {
         if (!textLines.isEmpty()) {
+            var pose = matrixGraphics.pose();
             RenderSystem.setShader(GameRenderer::getPositionColorShader);
             RenderSystem.enableDepthTest();
-            RenderSystem.disableTexture();
+            RenderSystem.disableBlend();
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
-            matrixStack.pushPose();
-            matrixStack.translate(0, 0, 400);
+            pose.pushPose();
+            pose.translate(0, 0, 400);
             int i = 0;
             int separators = 0;
             for (String s : textLines) {
@@ -440,26 +442,27 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
             int k = 8 + (textLines.size() - separators - 1) * 10 + 2 * separators;
             if (l1 + i > this.width) l1 -= 28 + i;
             if (i2 + k + 6 > this.height) i2 = this.height - k - 6;
-            fillGradient(matrixStack, l1 - 3, i2 - 4, l1 + i + 3, i2 - 3, -267386864, -267386864);
-            fillGradient(matrixStack, l1 - 3, i2 + k + 3, l1 + i + 3, i2 + k + 4, -267386864, -267386864);
-            fillGradient(matrixStack, l1 - 3, i2 - 3, l1 + i + 3, i2 + k + 3, -267386864, -267386864);
-            fillGradient(matrixStack, l1 - 4, i2 - 3, l1 - 3, i2 + k + 3, -267386864, -267386864);
-            fillGradient(matrixStack, l1 + i + 3, i2 - 3, l1 + i + 4, i2 + k + 3, -267386864, -267386864);
-            fillGradient(matrixStack, l1 - 3, i2 - 3 + 1, l1 - 3 + 1, i2 + k + 3 - 1, 1347420415, 1344798847);
-            fillGradient(matrixStack, l1 + i + 2, i2 - 3 + 1, l1 + i + 3, i2 + k + 3 - 1, 1347420415, 1344798847);
-            fillGradient(matrixStack, l1 - 3, i2 - 3, l1 + i + 3, i2 - 3 + 1, 1347420415, 1347420415);
-            fillGradient(matrixStack, l1 - 3, i2 + k + 2, l1 + i + 3, i2 + k + 3, 1344798847, 1344798847);
+            matrixGraphics.fillGradient(l1 - 3, i2 - 4, l1 + i + 3, i2 - 3, -267386864, -267386864);
+            matrixGraphics.fillGradient(l1 - 3, i2 + k + 3, l1 + i + 3, i2 + k + 4, -267386864, -267386864);
+            matrixGraphics.fillGradient(l1 - 3, i2 - 3, l1 + i + 3, i2 + k + 3, -267386864, -267386864);
+            matrixGraphics.fillGradient(l1 - 4, i2 - 3, l1 - 3, i2 + k + 3, -267386864, -267386864);
+            matrixGraphics.fillGradient(l1 + i + 3, i2 - 3, l1 + i + 4, i2 + k + 3, -267386864, -267386864);
+            matrixGraphics.fillGradient(l1 - 3, i2 - 3 + 1, l1 - 3 + 1, i2 + k + 3 - 1, 1347420415, 1344798847);
+            matrixGraphics.fillGradient(l1 + i + 2, i2 - 3 + 1, l1 + i + 3, i2 + k + 3 - 1, 1347420415, 1344798847);
+            matrixGraphics.fillGradient(l1 - 3, i2 - 3, l1 + i + 3, i2 - 3 + 1, 1347420415, 1347420415);
+            matrixGraphics.fillGradient(l1 - 3, i2 + k + 2, l1 + i + 3, i2 + k + 3, 1344798847, 1344798847);
             for (String s1 : textLines) {
                 //noinspection StringEquality
                 if (s1 == SEPARATOR) i2 += 2;
                 else {
-                    font.drawShadow(matrixStack, s1, (float) l1, (float) i2, -1);
+//                    font.drawShadow(matrixStack, s1, (float) l1, (float) i2, -1);
+                    matrixGraphics.drawString(font,s1,l1,i2,-1,true);
                     i2 += 10;
                 }
             }
-            matrixStack.popPose();
+            pose.popPose();
             RenderSystem.disableBlend();
-            RenderSystem.enableTexture();
+            RenderSystem.enableBlend();
         }
     }
 
@@ -470,7 +473,7 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
     public void drawResource(Resource r, int xPos, int yPos, int color) {
         setColor(color);
         RenderSystem.setShaderTexture(0, r.getResourceLocation());
-        blit(matrix, xPos, yPos, r.getXPos(), r.getYPos(), r.getXSize(), r.getYSize());
+        matrix.blit(r.getResourceLocation(),xPos, yPos, r.getXPos(), r.getYPos(), r.getXSize(), r.getYSize());
     }
 
     public void drawResourceContinuous(Resource r, int xPos, int yPos, int xSize, int ySize, int border) {
@@ -500,11 +503,11 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
             return;
         RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
         setColor(FluidStackHooks.getColor(f) & 0x00FFFFFF);
-        blit(matrix, xPos, yPos, 0, xSize, ySize, fluidTexture);
+        matrix.blit(xPos, yPos, 0, xSize, ySize, fluidTexture);
     }
 
     public void drawRectangle(int xPos, int yPos, int xSize, int ySize, int color) {
-        fill(matrix, xPos, yPos, xPos + xSize, yPos + ySize, color);
+        matrix.fill(xPos, yPos, xPos + xSize, yPos + ySize, color);
     }
 
     public int getStringWidth(String s) {
@@ -519,8 +522,8 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
         drawText(xPos, yPos, f, () -> {
             int y = 0;
             for (String i : ss) {
-                if (f.shadow) font.drawShadow(matrix, i, 0, y, f.color);
-                else font.draw(matrix, i, 0, y, f.color);
+                if (f.shadow) matrix.drawString(font,i,0,y,f.color);
+                else matrix.drawString(font,i,0,y,f.color,false);
                 y += font.lineHeight + 1;
             }
         });
@@ -537,17 +540,17 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
             int ellipsisWidth = f.getTextWidth("...");
             if (strWidth > width && strWidth > ellipsisWidth)
                 str = f.trimToWidth(str, width - ellipsisWidth).trim() + "...";
-            if (f.shadow) font.drawShadow(matrix, str, 0, 0, f.color);
-            else font.draw(matrix, str, 0, 0, f.color);
+            if (f.shadow) matrix.drawString(font,str,0,0,f.color);
+            else matrix.drawString(font,str,0,0,f.color,false);
         });
     }
 
     private void drawText(float xPos, float yPos, FontType f, Runnable r) {
-        getMatrix().pushPose();
-        getMatrix().translate(xPos, yPos, 200);
-        if (f.half) getMatrix().scale(0.5f, 0.5f, 1);
+        getMatrix().pose().pushPose();
+        getMatrix().pose().translate(xPos, yPos, 200);
+        if (f.half) getMatrix().pose().scale(0.5f, 0.5f, 1);
         r.run();
-        getMatrix().popPose();
+        getMatrix().pose().popPose();
     }
 
     public void drawItemStack(int xPos, int yPos, ItemStack is, boolean centred, boolean hand) {
@@ -560,8 +563,8 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
         int y = hand ? yPos : topPos + yPos;
 
         RenderSystem.enableDepthTest();
-        itemRenderer.renderAndDecorateItem(is, x + itemOffset.x(), y + itemOffset.y());
-        itemRenderer.renderGuiItemDecorations(font, is, leftPos + xPos, topPos + yPos, null);
+        matrix.renderItem(is, xPos + itemOffset.x(), yPos + itemOffset.y());
+        matrix.renderItemDecorations(font, is, leftPos + xPos, topPos + yPos, null);
         RenderSystem.disableDepthTest();
     }
 

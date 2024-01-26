@@ -8,7 +8,7 @@ import me.towdium.jecalculation.utils.Utilities;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -51,7 +51,7 @@ public class LItemStack extends LStack<Item> {
     public LItemStack(CompoundTag tag) {
         super(tag);
         String id = tag.getString(KEY_ITEM);
-        Optional<Item> i = Registry.ITEM.getOptional(new ResourceLocation(id));
+        Optional<Item> i = BuiltInRegistries.ITEM.getOptional(new ResourceLocation(id));
         if (i.isEmpty()) throw new SerializationException("Item " + id + " cannot be resolved, ignoring");
         init(i.get(), tag.contains(KEY_CAP) ? tag.getCompound(KEY_CAP) : null,
                 tag.contains(KEY_NBT) ? tag.getCompound(KEY_NBT) : null,
@@ -211,7 +211,7 @@ public class LItemStack extends LStack<Item> {
 
     @Override
     public CompoundTag toNbt() {
-        ResourceLocation rl = Registry.ITEM.getKey(item);
+        ResourceLocation rl = BuiltInRegistries.ITEM.getKey(item);
         if (rl == null) return ILabel.EMPTY.toNbt();
         CompoundTag ret = super.toNbt();
         ret.putString(KEY_ITEM, rl.toString());
