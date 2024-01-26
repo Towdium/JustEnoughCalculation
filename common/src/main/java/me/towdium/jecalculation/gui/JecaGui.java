@@ -11,7 +11,9 @@ import dev.architectury.event.events.client.ClientTooltipEvent;
 import dev.architectury.hooks.fluid.FluidStackHooks;
 import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
+import me.towdium.jecalculation.events.GuiScreenOverlayHandler;
 import me.towdium.jecalculation.gui.guis.GuiCraft;
+import me.towdium.jecalculation.gui.guis.GuiCraftMini;
 import me.towdium.jecalculation.gui.guis.GuiMath;
 import me.towdium.jecalculation.gui.guis.IGui;
 import me.towdium.jecalculation.utils.GuiUtils;
@@ -563,7 +565,11 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
         int y = hand ? yPos : topPos + yPos;
 
         RenderSystem.enableDepthTest();
-        matrix.renderItem(is, xPos + itemOffset.x(), yPos + itemOffset.y());
+        if (root instanceof GuiScreenOverlayHandler){
+            matrix.renderItem(is,xPos,yPos);
+        } else {
+            matrix.renderItem(is, xPos + itemOffset.x(), yPos + itemOffset.y());
+        }
         matrix.renderItemDecorations(font, is, leftPos + xPos, topPos + yPos, null);
         RenderSystem.disableDepthTest();
     }
