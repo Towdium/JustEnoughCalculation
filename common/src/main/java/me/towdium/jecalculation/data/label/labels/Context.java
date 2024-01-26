@@ -3,9 +3,7 @@ package me.towdium.jecalculation.data.label.labels;
 import dev.architectury.fluid.FluidStack;
 import me.towdium.jecalculation.utils.Utilities;
 import me.towdium.jecalculation.utils.wrappers.Pair;
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderSet;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -13,16 +11,12 @@ import net.minecraft.world.level.material.Fluid;
 
 import java.util.Collection;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 public interface Context<T> {
     LStack<T> create(T t);
 
     Stream<Pair<TagKey<T>, Stream<T>>> tags();
-
-    Registry<T> registry();
 
     LTag<T> create(TagKey<T> rl);
 
@@ -42,19 +36,6 @@ public interface Context<T> {
                 .map(this::create);
     }
 
-    default boolean matches(TagKey<?> tag, LStack<?> s) {
-        if (s.getContext() != this)
-            return false;
-
-        Optional<HolderSet.Named<T>> tagEntry = registry().getTag((TagKey<T>) tag);
-        if (tagEntry.isEmpty())
-            return false;
-
-        return tagEntry.get().stream()
-            .map(Holder::value)
-            .anyMatch(t -> t.equals(s.get()));
-    }
-
     Context<Item> ITEM = new Context<>() {
         @Override
         public LStack<Item> create(Item item) {
@@ -62,13 +43,8 @@ public interface Context<T> {
         }
 
         @Override
-        public Registry<Item> registry() {
-            return Registry.ITEM;
-        }
-
-        @Override
         public Stream<Pair<TagKey<Item>, Stream<Item>>> tags() {
-            return Utilities.getTags(registry());
+            return Utilities.getTags(BuiltInRegistries.ITEM);
         }
 
 
@@ -82,7 +58,6 @@ public interface Context<T> {
             return new LItemTag(rl, amount);
         }
     };
-
     Context<Fluid> FLUID = new Context<>() {
         @Override
         public LStack<Fluid> create(Fluid fluid) {
@@ -90,13 +65,8 @@ public interface Context<T> {
         }
 
         @Override
-        public Registry<Fluid> registry() {
-            return Registry.FLUID;
-        }
-
-        @Override
         public Stream<Pair<TagKey<Fluid>, Stream<Fluid>>> tags() {
-            return Utilities.getTags(registry());
+            return Utilities.getTags(BuiltInRegistries.FLUID);
         }
 
 
@@ -110,4 +80,12 @@ public interface Context<T> {
             return new LFluidTag(rl, amount);
         }
     };
+
+    default boolean matches(TagKey<?> tag, LStack<?> s) {
+        return s.getContext() == this && tags()
+                .filter(pair -> Utilities.equals(pair.getOne(), tag))
+                .flatMap(Pair::getTwo)
+                .anyMatch(t -> t.equals(s.get()));
+
+    }
 }
