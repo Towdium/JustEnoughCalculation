@@ -55,7 +55,7 @@ import static me.towdium.jecalculation.utils.Utilities.getPlayer;
 
 /**
  * Author: towdium
- * Date:   8/12/17.
+ * Date: 8/12/17.
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -94,7 +94,8 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
         this.parent = parent;
         this.root = root;
         this.isWidget = isWidget;
-        if (menu != null) menu.setGui(this);
+        if (menu != null)
+            menu.setGui(this);
     }
 
     public static void registerEvents() {
@@ -136,7 +137,8 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
         JecaGui gui = getCurrent();
         Minecraft mc = Objects.requireNonNull(gui.minecraft, "Internal error");
         int windowWidth = mc.getWindow().getScreenWidth();
-        if (windowWidth == 0) return 0;
+        if (windowWidth == 0)
+            return 0;
         return (int) mc.mouseHandler.xpos() * mc.getWindow().getGuiScaledWidth() / windowWidth - gui.leftPos;
     }
 
@@ -144,7 +146,8 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
         JecaGui gui = getCurrent();
         Minecraft mc = Objects.requireNonNull(gui.minecraft, "Internal error");
         int windowHeight = mc.getWindow().getScreenHeight();
-        if (windowHeight == 0) return 0;
+        if (windowHeight == 0)
+            return 0;
         return (int) mc.mouseHandler.ypos() * mc.getWindow().getGuiScaledHeight() / windowHeight - gui.topPos;
     }
 
@@ -154,7 +157,7 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
         if (width == 0) {
             return 0;
         }
-        if(IS_OSX)
+        if (IS_OSX)
             width /= 2;
         return (int) mc.mouseHandler.xpos() * mc.getWindow().getGuiScaledWidth() / width - this.leftPos;
     }
@@ -165,7 +168,7 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
         if (height == 0) {
             return 0;
         }
-        if(IS_OSX)
+        if (IS_OSX)
             height /= 2;
         return (int) mc.mouseHandler.ypos() * mc.getWindow().getGuiScaledHeight() / height - this.topPos;
     }
@@ -182,9 +185,9 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
         return imageHeight;
     }
 
-
     public static EventResult onFocused(Minecraft client, Screen screen, double mouseX, double mouseY, int button) {
-        if (!(screen instanceof JecaGui)) return pass();
+        if (!(screen instanceof JecaGui))
+            return pass();
         JecaGui gui = getCurrent();
         int xMouse = getMouseX();
         int yMouse = getMouseY();
@@ -198,8 +201,10 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
         return pass();
     }
 
-    public static EventResult onMouseClicked(Minecraft client, Screen screen, double mouseX, double mouseY, int button) {
-        if (!(screen instanceof JecaGui)) return pass();
+    public static EventResult onMouseClicked(Minecraft client, Screen screen, double mouseX, double mouseY,
+            int button) {
+        if (!(screen instanceof JecaGui))
+            return pass();
         JecaGui gui = getCurrent();
         int xMouse = getMouseX();
         int yMouse = getMouseY();
@@ -213,9 +218,10 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
         return pass();
     }
 
-
-    public static EventResult onMouseScroll(Minecraft client, Screen screen, double mouseX, double mouseY, double amount) {
-        if (!(screen instanceof JecaGui)) return pass();
+    public static EventResult onMouseScroll(Minecraft client, Screen screen, double mouseX, double mouseY,
+            double amount) {
+        if (!(screen instanceof JecaGui))
+            return pass();
         JecaGui gui = getCurrent();
         int xMouse = getMouseX();
         int yMouse = getMouseY();
@@ -224,8 +230,10 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
         return pass();
     }
 
-    public static EventResult onMouseReleased(Minecraft minecraft, Screen screen, double mouseX, double mouseY, int button) {
-        if (!(screen instanceof JecaGui)) return pass();
+    public static EventResult onMouseReleased(Minecraft minecraft, Screen screen, double mouseX, double mouseY,
+            int button) {
+        if (!(screen instanceof JecaGui))
+            return pass();
         JecaGui gui = getCurrent();
         int xMouse = getMouseX();
         int yMouse = getMouseY();
@@ -233,13 +241,20 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
         return gui.hand == ILabel.EMPTY ? pass() : interruptFalse();
     }
 
-    public static EventResult onMouseDragged(Minecraft client, Screen screen, double mouseX1, double mouseY1, int button, double mouseX2, double mouseY2) {
-        if (!(screen instanceof JecaGui)) return pass();
+    public static EventResult onMouseDragged(Minecraft client, Screen screen, double mouseX1, double mouseY1,
+            int button, double mouseX2, double mouseY2) {
+        if (!(screen instanceof JecaGui))
+            return pass();
         JecaGui gui = getCurrent();
         int xMouse = getMouseX();
         int yMouse = getMouseY();
         gui.root.onMouseDragged(gui, xMouse, yMouse, (int) mouseX2, (int) mouseY2);
         return pass();
+    }
+
+    @Override
+    public void containerTick() {
+        root.onTick(this);
     }
 
     @Nullable
@@ -248,7 +263,8 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
         Slot s = new Slot(i, 0, 0, 0);
         ILabel l = getLabelUnderMouse();
         Object rep = l == null ? null : l.getRepresentation();
-        if (rep instanceof ItemStack) s.set((ItemStack) rep);
+        if (rep instanceof ItemStack)
+            s.set((ItemStack) rep);
         return s;
     }
 
@@ -304,8 +320,8 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
 
     /**
      * @return The currently displayed {@link JecaGui}
-     * Make sure the method is called when a {@link JecaGui} is displayed!
-     * Otherwise it will throw a {@link NullPointerException}
+     *         Make sure the method is called when a {@link JecaGui} is displayed!
+     *         Otherwise it will throw a {@link NullPointerException}
      */
     public static JecaGui getCurrent() {
         Screen gui = Minecraft.getInstance().screen;
@@ -333,13 +349,15 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
     }
 
     public static EventResult onKeyPressed(Minecraft minecraft, int keyCode, int scanCode, int action, int modifiers) {
-        if (keyOpenGuiCraft.isDown()) JecaGui.openGuiCraft(null, 0);
-        if (keyOpenGuiMath.isDown()) JecaGui.openGuiMath(null, 0);
+        if (keyOpenGuiCraft.isDown())
+            JecaGui.openGuiCraft(null, 0);
+        if (keyOpenGuiMath.isDown())
+            JecaGui.openGuiMath(null, 0);
         return pass();
     }
 
-
-    public static EventResult onTooltip(PoseStack poseStack, List<? extends ClientTooltipComponent> components, int x, int y) {
+    public static EventResult onTooltip(PoseStack poseStack, List<? extends ClientTooltipComponent> components, int x,
+            int y) {
         if (Minecraft.getInstance().screen instanceof JecaGui) {
             JecaGui gui = getCurrent();
             return gui.root.onTooltip(gui, x - gui.leftPos,
@@ -356,7 +374,8 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
             override = null;
             return CompoundEventResult.interruptTrue(s);
         }
-        if (Minecraft.getInstance().screen instanceof JecaGui gui && gui.preventRecipeScreen && Utilities.isRecipeScreen(screen)) {
+        if (Minecraft.getInstance().screen instanceof JecaGui gui && gui.preventRecipeScreen
+                && Utilities.isRecipeScreen(screen)) {
             gui.preventRecipeScreen = false;
             return CompoundEventResult.interruptFalse(gui);
         }
@@ -367,8 +386,10 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
     public static int openGuiMath(@Nullable ItemStack is, int slot) {
         boolean ret = is == null && Controller.isServerActive();
         String s = "jecalculation.chat.server_mode";
-        if (ret) getPlayer().displayClientMessage(new TranslatableComponent(s), false);
-        else JecaGui.displayGui(new GuiMath(is, slot));
+        if (ret)
+            getPlayer().displayClientMessage(new TranslatableComponent(s), false);
+        else
+            JecaGui.displayGui(new GuiMath(is, slot));
         return ret ? 1 : 0;
     }
 
@@ -376,8 +397,10 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
     public static int openGuiCraft(@Nullable ItemStack is, int slot) {
         boolean ret = is == null && Controller.isServerActive();
         String s = "jecalculation.chat.server_mode";
-        if (ret) getPlayer().displayClientMessage(new TranslatableComponent(s), false);
-        else JecaGui.displayGui(new GuiCraft(is, slot));
+        if (ret)
+            getPlayer().displayClientMessage(new TranslatableComponent(s), false);
+        else
+            JecaGui.displayGui(new GuiCraft(is, slot));
         return ret ? 1 : 0;
     }
 
@@ -411,7 +434,8 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
     }
 
     // modified from vanilla
-    public void drawHoveringText(PoseStack matrixStack, List<String> textLines, int x, int y, net.minecraft.client.gui.Font font) {
+    public void drawHoveringText(PoseStack matrixStack, List<String> textLines, int x, int y,
+            net.minecraft.client.gui.Font font) {
         if (!textLines.isEmpty()) {
             RenderSystem.setShader(GameRenderer::getPositionColorShader);
             RenderSystem.enableDepthTest();
@@ -424,17 +448,22 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
             int separators = 0;
             for (String s : textLines) {
                 int j = this.font.width(s);
-                if (j > i) i = j;
-                //noinspection StringEquality
-                if (s == JecaGui.SEPARATOR) separators++;
+                if (j > i)
+                    i = j;
+                // noinspection StringEquality
+                if (s == JecaGui.SEPARATOR)
+                    separators++;
             }
-            //noinspection StringEquality
-            if (textLines.get(textLines.size() - 1) == SEPARATOR) separators--;
+            // noinspection StringEquality
+            if (textLines.get(textLines.size() - 1) == SEPARATOR)
+                separators--;
             int l1 = x + 12;
             int i2 = y - 12;
             int k = 8 + (textLines.size() - separators - 1) * 10 + 2 * separators;
-            if (l1 + i > this.width) l1 -= 28 + i;
-            if (i2 + k + 6 > this.height) i2 = this.height - k - 6;
+            if (l1 + i > this.width)
+                l1 -= 28 + i;
+            if (i2 + k + 6 > this.height)
+                i2 = this.height - k - 6;
             fillGradient(matrixStack, l1 - 3, i2 - 4, l1 + i + 3, i2 - 3, -267386864, -267386864);
             fillGradient(matrixStack, l1 - 3, i2 + k + 3, l1 + i + 3, i2 + k + 4, -267386864, -267386864);
             fillGradient(matrixStack, l1 - 3, i2 - 3, l1 + i + 3, i2 + k + 3, -267386864, -267386864);
@@ -445,8 +474,9 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
             fillGradient(matrixStack, l1 - 3, i2 - 3, l1 + i + 3, i2 - 3 + 1, 1347420415, 1347420415);
             fillGradient(matrixStack, l1 - 3, i2 + k + 2, l1 + i + 3, i2 + k + 3, 1344798847, 1344798847);
             for (String s1 : textLines) {
-                //noinspection StringEquality
-                if (s1 == SEPARATOR) i2 += 2;
+                // noinspection StringEquality
+                if (s1 == SEPARATOR)
+                    i2 += 2;
                 else {
                     font.drawShadow(matrixStack, s1, (float) l1, (float) i2, -1);
                     i2 += 10;
@@ -514,8 +544,10 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
         drawText(xPos, yPos, f, () -> {
             int y = 0;
             for (String i : ss) {
-                if (f.shadow) font.drawShadow(matrix, i, 0, y, f.color);
-                else font.draw(matrix, i, 0, y, f.color);
+                if (f.shadow)
+                    font.drawShadow(matrix, i, 0, y, f.color);
+                else
+                    font.draw(matrix, i, 0, y, f.color);
                 y += font.lineHeight + 1;
             }
         });
@@ -532,15 +564,18 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
             int ellipsisWidth = f.getTextWidth("...");
             if (strWidth > width && strWidth > ellipsisWidth)
                 str = f.trimToWidth(str, width - ellipsisWidth).trim() + "...";
-            if (f.shadow) font.drawShadow(matrix, str, 0, 0, f.color);
-            else font.draw(matrix, str, 0, 0, f.color);
+            if (f.shadow)
+                font.drawShadow(matrix, str, 0, 0, f.color);
+            else
+                font.draw(matrix, str, 0, 0, f.color);
         });
     }
 
     private void drawText(float xPos, float yPos, FontType f, Runnable r) {
         getMatrix().pushPose();
         getMatrix().translate(xPos, yPos, 200);
-        if (f.half) getMatrix().scale(0.5f, 0.5f, 1);
+        if (f.half)
+            getMatrix().scale(0.5f, 0.5f, 1);
         r.run();
         getMatrix().popPose();
     }
@@ -573,10 +608,13 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
 
     @Override
     public boolean keyPressed(int key, int scan, int modifier) {
-        if (key == GLFW.GLFW_KEY_ESCAPE && hand != ILabel.EMPTY) hand = ILabel.EMPTY;
+        if (key == GLFW.GLFW_KEY_ESCAPE && hand != ILabel.EMPTY)
+            hand = ILabel.EMPTY;
         else if (!root.onKeyPressed(this, key, modifier)) {
-            if (key == GLFW.GLFW_KEY_ESCAPE && parent != null) displayParent();
-            else return super.keyPressed(key, scan, modifier);
+            if (key == GLFW.GLFW_KEY_ESCAPE && parent != null)
+                displayParent();
+            else
+                return super.keyPressed(key, scan, modifier);
         }
         return true;
     }
@@ -639,7 +677,6 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
             return true;
         }
     }
-
 
     @Environment(EnvType.CLIENT)
     public static class ContainerTransfer extends JecaContainer {
