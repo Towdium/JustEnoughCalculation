@@ -155,17 +155,17 @@ public class JecaJEIPlugin implements IModPlugin {
 
         protected EnumMap<IO, List<Trio<ILabel, CostList, CostList>>> convertRecipe(
                 IRecipeSlotsView recipe, Class<?> context) {
-            EnumMap<me.towdium.jecalculation.data.structure.Recipe.IO, List<Trio<ILabel, CostList, CostList>>> merged = new EnumMap<>(me.towdium.jecalculation.data.structure.Recipe.IO.class);  // item disamb raw
+            EnumMap<IO, List<Trio<ILabel, CostList, CostList>>> merged = new EnumMap<>(IO.class);  // item disamb raw
             recipe.getSlotViews().forEach(view -> merge(merged, view.getAllIngredients().map(ITypedIngredient::getIngredient).toList(), context, fromRole(view.getRole())));
             return merged;
         }
     }
 
-    private static me.towdium.jecalculation.data.structure.Recipe.IO fromRole(RecipeIngredientRole role) {
+    private static IO fromRole(RecipeIngredientRole role) {
         return switch (role) {
-            case INPUT -> me.towdium.jecalculation.data.structure.Recipe.IO.INPUT;
-            case OUTPUT -> me.towdium.jecalculation.data.structure.Recipe.IO.OUTPUT;
-            case CATALYST -> me.towdium.jecalculation.data.structure.Recipe.IO.CATALYST;
+            case INPUT -> IO.INPUT;
+            case OUTPUT -> IO.OUTPUT;
+            case CATALYST -> IO.CATALYST;
             case RENDER_ONLY -> null;
         };
     }
