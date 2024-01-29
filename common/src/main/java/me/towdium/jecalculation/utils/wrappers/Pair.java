@@ -29,8 +29,7 @@ public class Pair<K, V> {
     @Override
     @SuppressWarnings("rawtypes")
     public boolean equals(Object obj) {
-        if (obj instanceof Pair) {
-            Pair p = (Pair) obj;
+        if (obj instanceof Pair p) {
             return one.equals(p.one) && two.equals(p.two);
         }
         return false;

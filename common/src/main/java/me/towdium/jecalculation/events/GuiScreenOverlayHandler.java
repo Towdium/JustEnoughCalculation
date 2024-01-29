@@ -79,8 +79,7 @@ public class GuiScreenOverlayHandler extends WContainer implements IGui {
                     }
                 }
             }
-        }
-        else {
+        } else {
             GuiCraftMini widget = new GuiCraftMini(null, 0);
             if (widget.record.overlayOpen) {
                 widget.refreshCalculator();
@@ -112,6 +111,10 @@ public class GuiScreenOverlayHandler extends WContainer implements IGui {
         boolean result = super.onDraw(gui, mouseX, mouseY);
         windows.forEach(this::ensureWindowIsOnScreen);
         return result;
+    }
+
+    public boolean hasAnyWindow() {
+        return getWidgets().stream().anyMatch(w -> w instanceof GuiCraftMini);
     }
 
     public void ensureWindowIsOnScreen(GuiCraftMini widget) {

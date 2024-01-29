@@ -115,8 +115,6 @@ public interface ILabel {
         drawLabel(gui, xPos, yPos, center, false);
     }
 
-    ;
-
 
     void drawLabel(JecaGui gui, int xPos, int yPos, boolean center, boolean hand);
 
@@ -439,9 +437,9 @@ public interface ILabel {
 
         @Override
         public void drawLabel(JecaGui gui, int xPos, int yPos, boolean center, boolean hand) {
-            gui.getMatrix().pose().pushPose();
+            gui.getGraphics().pose().pushPose();
             drawLabel(center ? xPos - 8 : xPos, center ? yPos - 8 : yPos, gui, hand);
-            gui.getMatrix().pose().popPose();
+            gui.getGraphics().pose().popPose();
         }
 
         abstract protected void drawLabel(int xPos, int yPos, JecaGui gui, boolean hand);

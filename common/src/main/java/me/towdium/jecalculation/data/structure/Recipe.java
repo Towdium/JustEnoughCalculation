@@ -67,8 +67,7 @@ public class Recipe {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Recipe)) return false;
-        Recipe r = (Recipe) obj;
+        if (!(obj instanceof Recipe r)) return false;
         BiPredicate<List<ILabel>, List<ILabel>> p = (i, j) -> {
             if (i.size() != j.size()) return false;
             for (int k = 0; k < i.size(); k++)
@@ -83,16 +82,11 @@ public class Recipe {
     }
 
     public static <T> T get(IO type, T input, T output, T catalyst) {
-        switch (type) {
-            case INPUT:
-                return input;
-            case OUTPUT:
-                return output;
-            case CATALYST:
-                return catalyst;
-            default:
-                throw new RuntimeException("Internal error");
-        }
+        return switch (type) {
+            case INPUT -> input;
+            case OUTPUT -> output;
+            case CATALYST -> catalyst;
+        };
     }
 
     public ILabel getRep() {

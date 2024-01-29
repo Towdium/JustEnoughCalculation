@@ -1,6 +1,5 @@
 package me.towdium.jecalculation.events;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.architectury.event.CompoundEventResult;
 import dev.architectury.event.EventResult;
 import dev.architectury.event.events.client.ClientGuiEvent;
@@ -74,7 +73,7 @@ public class GuiScreenEventHandler {
                 && !(screen instanceof JecaGui);
     }
 
-    public void onDrawForeground(Screen screen, GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void onDrawForeground(Screen screen, GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         Minecraft minecraft = Minecraft.getInstance();
         LocalPlayer player = minecraft.player;
         if (player == null || overlayHandler == null || !isScreenValidForOverlay(screen)) {
@@ -91,11 +90,11 @@ public class GuiScreenEventHandler {
             gui.init(Minecraft.getInstance(), screen.width, screen.height);
         }
 
-        gui.setMatrix(guiGraphics);
+        gui.setGraphics(graphics);
         mouseX = gui.getGlobalMouseX();
         mouseY = gui.getGlobalMouseY();
 
-        var poseStack = guiGraphics.pose();
+        var poseStack = graphics.pose();
         poseStack.pushPose();
         poseStack.translate(gui.getGuiLeft(), gui.getGuiTop(), 0);
         overlayHandler.onDraw(gui, mouseX, mouseY);
@@ -103,15 +102,15 @@ public class GuiScreenEventHandler {
 
         List<String> tooltip = new ArrayList<>();
         overlayHandler.onTooltip(gui, mouseX, mouseY, tooltip);
-        gui.drawHoveringText(guiGraphics, tooltip, mouseX + gui.getGuiLeft(), mouseY + gui.getGuiTop(), minecraft.font);
+        gui.drawHoveringText(graphics, tooltip, mouseX + gui.getGuiLeft(), mouseY + gui.getGuiTop(), minecraft.font);
         if (cachedTooltipEvent != null) {
-            guiGraphics.renderTooltipInternal(minecraft.font,(List<ClientTooltipComponent>) cachedTooltipEvent.one,cachedTooltipEvent.two, cachedTooltipEvent.three, DefaultTooltipPositioner.INSTANCE);
+            graphics.renderTooltipInternal(minecraft.font, (List<ClientTooltipComponent>) cachedTooltipEvent.one, cachedTooltipEvent.two, cachedTooltipEvent.three, DefaultTooltipPositioner.INSTANCE);
             cachedTooltipEvent = null;
         }
     }
 
     public EventResult onTooltip(GuiGraphics guiGraphics, List<? extends ClientTooltipComponent> components, int x, int y) {
-        if (overlayHandler == null || cachedTooltipEvent != null)
+        if (overlayHandler == null || cachedTooltipEvent != null || !overlayHandler.hasAnyWindow())
             return pass();
 
         boolean overlap = overlayHandler.onTooltip(gui, x - gui.getGuiLeft(), y - gui.getGuiTop(), new ArrayList<>());

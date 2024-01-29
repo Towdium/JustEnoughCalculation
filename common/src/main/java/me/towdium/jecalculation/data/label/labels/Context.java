@@ -102,12 +102,12 @@ public interface Context<T> {
             return false;
 
         Optional<HolderSet.Named<T>> tagEntry = registry().getTag((TagKey<T>) tag);
-        if (!tagEntry.isPresent())
+        if (tagEntry.isEmpty())
             return false;
 
         HolderSet.Named<T> holderSet = tagEntry.get();
         return holderSet.stream()
-            .map(Holder::value)
-            .anyMatch(t -> t.equals(s.get()));
+                .map(Holder::value)
+                .anyMatch(t -> t.equals(s.get()));
     }
 }

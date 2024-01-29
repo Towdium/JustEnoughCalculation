@@ -13,7 +13,6 @@ import me.towdium.jecalculation.data.Controller;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.events.GuiScreenOverlayHandler;
 import me.towdium.jecalculation.gui.guis.GuiCraft;
-import me.towdium.jecalculation.gui.guis.GuiCraftMini;
 import me.towdium.jecalculation.gui.guis.GuiMath;
 import me.towdium.jecalculation.gui.guis.IGui;
 import me.towdium.jecalculation.utils.GuiUtils;
@@ -79,7 +78,7 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
     protected static JecaGui last;
     public static JecaGui override;
     protected JecaGui parent;
-    protected GuiGraphics matrix;
+    protected GuiGraphics graphics;
     protected final Utilities.OffsetStack itemOffset = new Utilities.OffsetStack();
     protected final boolean isWidget;
     protected boolean preventRecipeScreen = false;
@@ -155,7 +154,7 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
         if (width == 0) {
             return 0;
         }
-        if(IS_OSX)
+        if (IS_OSX)
             width /= 2;
         return (int) mc.mouseHandler.xpos() * mc.getWindow().getGuiScaledWidth() / width - this.leftPos;
     }
@@ -166,7 +165,7 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
         if (height == 0) {
             return 0;
         }
-        if(IS_OSX)
+        if (IS_OSX)
             height /= 2;
         return (int) mc.mouseHandler.ypos() * mc.getWindow().getGuiScaledHeight() / height - this.topPos;
     }
@@ -243,11 +242,10 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
         return pass();
     }
 
-//    @Override
-//    public void tick() {
-//        super.tick();
-//        root.onTick(this);
-//    }
+    @Override
+    public void containerTick() {
+        root.onTick(this);
+    }
 
     @Nullable
     public Slot getSlotUnderMouse() {
@@ -297,12 +295,12 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
         JecaGui.displayGui(root, parent);
     }
 
-    public GuiGraphics getMatrix() {
-        return matrix;
+    public GuiGraphics getGraphics() {
+        return graphics;
     }
 
-    public void setMatrix(GuiGraphics matrix) {
-        this.matrix = matrix;
+    public void setGraphics(GuiGraphics graphics) {
+        this.graphics = graphics;
     }
 
     public Utilities.OffsetStack getItemOffsetStack() {
@@ -401,7 +399,7 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
     @Override
     public void render(GuiGraphics matrixGraphics, int mouseX, int mouseY, float partialTicks) {
         super.render(matrixGraphics, mouseX, mouseY, partialTicks);
-        matrix = matrixGraphics;
+        graphics = matrixGraphics;
         mouseX -= leftPos;
         mouseY -= topPos;
         PoseStack pose = matrixGraphics.pose();
@@ -424,7 +422,6 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
             var pose = matrixGraphics.pose();
             RenderSystem.setShader(GameRenderer::getPositionColorShader);
             RenderSystem.enableDepthTest();
-            RenderSystem.disableBlend();
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
             pose.pushPose();
@@ -457,14 +454,12 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
                 //noinspection StringEquality
                 if (s1 == SEPARATOR) i2 += 2;
                 else {
-//                    font.drawShadow(matrixStack, s1, (float) l1, (float) i2, -1);
-                    matrixGraphics.drawString(font,s1,l1,i2,-1,true);
+                    matrixGraphics.drawString(font, s1, l1, i2, -1, true);
                     i2 += 10;
                 }
             }
             pose.popPose();
             RenderSystem.disableBlend();
-            RenderSystem.enableBlend();
         }
     }
 
@@ -474,8 +469,7 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
 
     public void drawResource(Resource r, int xPos, int yPos, int color) {
         setColor(color);
-        RenderSystem.setShaderTexture(0, r.getResourceLocation());
-        matrix.blit(r.getResourceLocation(),xPos, yPos, r.getXPos(), r.getYPos(), r.getXSize(), r.getYSize());
+        graphics.blit(r.getResourceLocation(), xPos, yPos, r.getXPos(), r.getYPos(), r.getXSize(), r.getYSize());
     }
 
     public void drawResourceContinuous(Resource r, int xPos, int yPos, int xSize, int ySize, int border) {
@@ -485,7 +479,7 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
     public void drawResourceContinuous(
             Resource r, int xPos, int yPos, int xSize, int ySize,
             int borderTop, int borderBottom, int borderLeft, int borderRight) {
-        GuiUtils.drawContinuousTexturedBox(matrix, r.getResourceLocation(), xPos, yPos, r.getXPos(), r.getYPos(),
+        GuiUtils.drawContinuousTexturedBox(graphics, r.getResourceLocation(), xPos, yPos, r.getXPos(), r.getYPos(),
                 xSize, ySize, r.getXSize(), r.getYSize(), borderTop, borderBottom, borderLeft, borderRight, 0);
     }
 
@@ -503,13 +497,13 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
             fluidTexture = FluidStackHooks.getStillTexture(Fluids.WATER);
         if (fluidTexture == null)
             return;
-        RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
         setColor(FluidStackHooks.getColor(f) & 0x00FFFFFF);
-        matrix.blit(xPos, yPos, 0, xSize, ySize, fluidTexture);
+        graphics.blit(xPos, yPos, 0, xSize, ySize, fluidTexture);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
     }
 
     public void drawRectangle(int xPos, int yPos, int xSize, int ySize, int color) {
-        matrix.fill(xPos, yPos, xPos + xSize, yPos + ySize, color);
+        graphics.fill(xPos, yPos, xPos + xSize, yPos + ySize, color);
     }
 
     public int getStringWidth(String s) {
@@ -524,8 +518,8 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
         drawText(xPos, yPos, f, () -> {
             int y = 0;
             for (String i : ss) {
-                if (f.shadow) matrix.drawString(font,i,0,y,f.color);
-                else matrix.drawString(font,i,0,y,f.color,false);
+                if (f.shadow) graphics.drawString(font, i, 0, y, f.color);
+                else graphics.drawString(font, i, 0, y, f.color, false);
                 y += font.lineHeight + 1;
             }
         });
@@ -542,17 +536,17 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
             int ellipsisWidth = f.getTextWidth("...");
             if (strWidth > width && strWidth > ellipsisWidth)
                 str = f.trimToWidth(str, width - ellipsisWidth).trim() + "...";
-            if (f.shadow) matrix.drawString(font,str,0,0,f.color);
-            else matrix.drawString(font,str,0,0,f.color,false);
+            if (f.shadow) graphics.drawString(font, str, 0, 0, f.color);
+            else graphics.drawString(font, str, 0, 0, f.color, false);
         });
     }
 
     private void drawText(float xPos, float yPos, FontType f, Runnable r) {
-        getMatrix().pose().pushPose();
-        getMatrix().pose().translate(xPos, yPos, 200);
-        if (f.half) getMatrix().pose().scale(0.5f, 0.5f, 1);
+        getGraphics().pose().pushPose();
+        getGraphics().pose().translate(xPos, yPos, 200);
+        if (f.half) getGraphics().pose().scale(0.5f, 0.5f, 1);
         r.run();
-        getMatrix().pose().popPose();
+        getGraphics().pose().popPose();
     }
 
     public void drawItemStack(int xPos, int yPos, ItemStack is, boolean centred, boolean hand) {
@@ -565,12 +559,12 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
         int y = hand ? yPos : topPos + yPos;
 
         RenderSystem.enableDepthTest();
-        if (root instanceof GuiScreenOverlayHandler){
-            matrix.renderItem(is,xPos,yPos);
+        if (root instanceof GuiScreenOverlayHandler) {
+            graphics.renderItem(is, xPos, yPos);
         } else {
-            matrix.renderItem(is, xPos + itemOffset.x(), yPos + itemOffset.y());
+            graphics.renderItem(is, xPos + itemOffset.x(), yPos + itemOffset.y());
         }
-        matrix.renderItemDecorations(font, is, leftPos + xPos, topPos + yPos, null);
+        graphics.renderItemDecorations(font, is, leftPos + xPos, topPos + yPos, null);
         RenderSystem.disableDepthTest();
     }
 

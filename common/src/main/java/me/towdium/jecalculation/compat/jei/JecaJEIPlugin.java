@@ -73,7 +73,7 @@ public class JecaJEIPlugin implements IModPlugin {
         Screen s = Minecraft.getInstance().screen;
         Object rep = l.getRepresentation();
         if (rep != null) {
-            if(rep instanceof FluidStack fluidStack)
+            if (rep instanceof FluidStack fluidStack)
                 rep = runtime.getJeiHelpers().getPlatformFluidHelper().create(fluidStack.getFluid(), fluidStack.getAmount());
             Object finalRep = rep;
             runtime.getIngredientManager().getIngredientTypeChecked(rep).ifPresent(type -> runtime.getRecipesGui().show(runtime.getJeiHelpers().getFocusFactory().createFocus(RecipeIngredientRole.OUTPUT, type, finalRep)));
@@ -106,7 +106,7 @@ public class JecaJEIPlugin implements IModPlugin {
     public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
         runtime = jeiRuntime;
         ModCompat.isJEILoaded = true;
-        if(Platform.isForge())
+        if (Platform.isForge())
             try {
                 FORGE_FLUID_INGREDIENT_CLASS = Class.forName("net.minecraftforge.fluids.FluidStack");
             } catch (ClassNotFoundException e) {
