@@ -21,7 +21,7 @@ side="BOTH"
 [[dependencies.jecalculation]]
 modId="jei"
 mandatory=false
-versionRange="[10.2.0,)"
+versionRange="[9.9.0,)"
 ordering="BEFORE"
 side="BOTH"
 [[dependencies.jecalculation]]
