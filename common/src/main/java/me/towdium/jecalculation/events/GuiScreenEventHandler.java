@@ -108,7 +108,7 @@ public class GuiScreenEventHandler {
     }
 
     public EventResult onTooltip(PoseStack poseStack, List<? extends ClientTooltipComponent> components, int x, int y) {
-        if (overlayHandler == null || cachedTooltipEvent != null)
+        if (overlayHandler == null || cachedTooltipEvent != null || !overlayHandler.hasAnyWindow())
             return pass();
 
         boolean overlap = overlayHandler.onTooltip(gui, x - gui.getGuiLeft(), y - gui.getGuiTop(), new ArrayList<>());

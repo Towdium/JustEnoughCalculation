@@ -114,6 +114,10 @@ public class GuiScreenOverlayHandler extends WContainer implements IGui {
         return result;
     }
 
+    public boolean hasAnyWindow() {
+        return getWidgets().stream().anyMatch(w -> w instanceof GuiCraftMini);
+    }
+
     public void ensureWindowIsOnScreen(GuiCraftMini widget) {
         int topOffset = -gui.getGuiTop();
         int bottomOffset = gui.height - gui.getGuiTop();
