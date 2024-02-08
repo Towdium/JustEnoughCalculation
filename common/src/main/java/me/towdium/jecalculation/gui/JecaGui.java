@@ -242,8 +242,7 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
     }
 
     @Override
-    public void tick() {
-        super.tick();
+    public void containerTick() {
         root.onTick(this);
     }
 
