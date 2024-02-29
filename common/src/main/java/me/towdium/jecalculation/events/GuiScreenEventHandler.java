@@ -119,10 +119,10 @@ public class GuiScreenEventHandler {
         return interruptFalse();
     }
 
-    public EventResult onMouseScroll(Minecraft client, Screen screen, double mouseX, double mouseY, double amount) {
+    public EventResult onMouseScroll(Minecraft client, Screen screen, double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
         if (overlayHandler == null || !isScreenValidForOverlay(screen))
             return pass();
-        return amount != 0 && overlayHandler.onMouseScroll(gui, gui.getGlobalMouseX(), gui.getGlobalMouseY(), (int) amount) ? interruptFalse() : pass();
+        return verticalAmount != 0 && overlayHandler.onMouseScroll(gui, gui.getGlobalMouseX(), gui.getGlobalMouseY(), (int) verticalAmount) ? interruptFalse() : pass();
     }
 
     public EventResult onMouseClicked(Minecraft client, Screen screen, double mouseX, double mouseY, int button) {

@@ -138,8 +138,8 @@ public class WContainer implements IContainer {
                 .anyMatch(i -> i.getLabelUnderMouse(xMouse - offsetX, yMouse - offsetY, label));
     }
 
-    @Override
-    public void onTick(JecaGui gui) {
-        widgets.forEach(i -> i.onTick(gui));
-    }
+//    @Override
+//    public void onTick(JecaGui gui) {
+//        widgets.forEach(i -> i.onTick(gui));
+//    }
 }
