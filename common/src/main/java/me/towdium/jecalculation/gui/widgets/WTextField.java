@@ -36,10 +36,10 @@ public class WTextField implements IWidget {
         textField.mouseClicked(xMouse, yMouse, button);
     }
 
-    @Override
-    public void onTick(JecaGui gui) {
-        textField.tick();
-    }
+//    @Override
+//    public void onTick(JecaGui gui) {
+//        textField.tick();
+//    }
 
     @Override
     public boolean onMouseClicked(JecaGui gui, int xMouse, int yMouse, int button) {

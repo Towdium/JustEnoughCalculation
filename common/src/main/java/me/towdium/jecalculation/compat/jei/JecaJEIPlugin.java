@@ -106,7 +106,7 @@ public class JecaJEIPlugin implements IModPlugin {
     public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
         runtime = jeiRuntime;
         ModCompat.isJEILoaded = true;
-        if (Platform.isForge())
+        if (Platform.isForgeLike())
             try {
                 FORGE_FLUID_INGREDIENT_CLASS = Class.forName("net.minecraftforge.fluids.FluidStack");
             } catch (ClassNotFoundException e) {

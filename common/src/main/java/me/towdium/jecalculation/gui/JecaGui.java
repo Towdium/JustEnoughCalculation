@@ -214,13 +214,13 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
     }
 
 
-    public static EventResult onMouseScroll(Minecraft client, Screen screen, double mouseX, double mouseY, double amount) {
+    public static EventResult onMouseScroll(Minecraft client, Screen screen, double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
         if (!(screen instanceof JecaGui)) return pass();
         JecaGui gui = getCurrent();
         int xMouse = getMouseX();
         int yMouse = getMouseY();
-        if (amount != 0)
-            gui.root.onMouseScroll(gui, xMouse, yMouse, (int) amount);
+        if (verticalAmount != 0)
+            gui.root.onMouseScroll(gui, xMouse, yMouse, (int) verticalAmount);
         return pass();
     }
 
@@ -242,10 +242,10 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
         return pass();
     }
 
-    @Override
-    public void containerTick() {
-        root.onTick(this);
-    }
+//    @Override
+//    public void containerTick() {
+//        root.onTick(this);
+//    }
 
     @Nullable
     public Slot getSlotUnderMouse() {
@@ -393,7 +393,7 @@ public class JecaGui extends AbstractContainerScreen<JecaGui.JecaContainer> {
 
     @Override
     protected void renderBg(GuiGraphics matrixGraphics, float partialTicks, int x, int y) {
-        renderBackground(matrixGraphics);
+//        renderBackground(matrixGraphics);
     }
 
     @Override

@@ -100,7 +100,7 @@ public class LFluidStack extends LStack<Fluid> {
     public static String format(long amount) {
         float bucket = FluidStackHooks.bucketAmount();
         return amount >= bucket ? Utilities.cutNumber(amount / bucket, 4) + "B"
-                : amount + (Platform.isForge() ? "mB" : "U");
+                : amount + (Platform.isForgeLike() ? "mB" : "U");
     }
 
     @Override

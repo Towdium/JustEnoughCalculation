@@ -46,7 +46,7 @@ public class PickerItemStack extends IPicker.Impl implements IGui {
 
     public void update(ILabel l) {
         raw = l;
-        setFCap(!Platform.isForge());
+        setFCap(!Platform.isForgeLike());
         setFMeta(false);
         setFNbt(false);
         boolean b = l == ILabel.EMPTY;
@@ -65,7 +65,7 @@ public class PickerItemStack extends IPicker.Impl implements IGui {
     }
 
     private void setFCap(boolean b) {
-        if (Platform.isForge())
+        if (Platform.isForgeLike())
             setF(b, bCapN, bCapF, () -> fCap = b);
     }
 

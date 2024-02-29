@@ -62,8 +62,8 @@ public interface IWidget {
         return false;
     }
 
-    default void onTick(JecaGui gui) {
-    }
+//    default void onTick(JecaGui gui) {
+//    }
 
     @FunctionalInterface
     interface ListenerValue<W extends IWidget, V> {
