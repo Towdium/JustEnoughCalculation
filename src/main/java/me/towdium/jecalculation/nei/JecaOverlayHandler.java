@@ -17,6 +17,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import me.towdium.jecalculation.data.label.ILabel;
 import me.towdium.jecalculation.data.structure.CostList;
+import me.towdium.jecalculation.data.structure.MainCostListService;
 import me.towdium.jecalculation.data.structure.Recipe;
 import me.towdium.jecalculation.gui.JecaGui;
 import me.towdium.jecalculation.gui.guis.GuiRecipe;
@@ -78,17 +79,20 @@ public class JecaOverlayHandler implements IOverlayHandler {
         dst.computeIfAbsent(type, i -> new ArrayList<>())
             .stream()
             .filter(p -> {
-                CostList cl = new CostList(list);
+                CostList cl = MainCostListService.INSTANCE.newNegatedCostList(list);
                 if (p.three.equals(cl)) {
                     ILabel.MERGER.merge(p.one, fin)
                         .ifPresent(i -> p.one = i);
-                    p.two = CostList.merge(p.two, cl, true);
+                    p.two = MainCostListService.INSTANCE.strictMergeCostList(p.two, cl);
                     return true;
                 } else return false;
             })
             .findAny()
             .orElseGet(() -> {
-                Trio<ILabel, CostList, CostList> ret = new Trio<>(fin, new CostList(list), new CostList(list));
+                Trio<ILabel, CostList, CostList> ret = new Trio<>(
+                    fin,
+                    MainCostListService.INSTANCE.newNegatedCostList(list),
+                    MainCostListService.INSTANCE.newNegatedCostList(list));
                 dst.get(type)
                     .add(ret);
                 return ret;
