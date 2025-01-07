@@ -54,8 +54,10 @@ public class JecaCapability {
 
     @SubscribeEvent
     public static void onCloneCapability(PlayerEvent.Clone e) {
+        e.getOriginal().reviveCaps();
         RecordPlayer r = JecaCapability.getRecord(e.getOriginal());
-        e.getOriginal().getCapability(JecaCapability.CAPABILITY_RECORD, Direction.UP).orElseGet(Container::new).setRecord(r);
+        e.getEntity().getCapability(JecaCapability.CAPABILITY_RECORD, Direction.UP).orElseGet(Container::new).setRecord(r);
+        e.getOriginal().invalidateCaps();
     }
 
     public static class Container {

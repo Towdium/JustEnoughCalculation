@@ -30,9 +30,9 @@ public class Recipes {
     public Recipes() {
         File file = new File(Utilities.config(), "records.json");
         CompoundTag nbt = Utilities.Json.read(file);
-        if (nbt == null) JustEnoughCalculation.logger.info("Failed to load default records at " + file + ".");
+        if (nbt == null) JustEnoughCalculation.logger.info("No (optional) default records file found at: '" + file + "'");
         else {
-            JustEnoughCalculation.logger.info("Loading default records at " + file + ".");
+            JustEnoughCalculation.logger.info("Loading default records from " + file + ".");
             deserialize(nbt);
         }
     }
